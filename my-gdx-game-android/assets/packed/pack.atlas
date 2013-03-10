@@ -1,0 +1,61 @@
+
+pack.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+aj_balloon_blue
+  rotate: false
+  xy: 1, 35
+  size: 48, 68
+  orig: 48, 68
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-left-end
+  rotate: false
+  xy: 1, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-right-end
+  rotate: false
+  xy: 51, 71
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal
+  rotate: false
+  xy: 51, 37
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bricks-texture-vertical
+  rotate: false
+  xy: 85, 71
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 85, 37
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 35, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 69, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
