@@ -35,7 +35,7 @@ public class Balloon extends GameObject {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.density = 0.32f; 
 		fixtureDef.friction = 0.2f;
-		fixtureDef.restitution = 0.2f; // Make it bounce a little bit
+		fixtureDef.restitution = 0.4f; // Make it bounce a little bit
 
 		Body body = world.createBody(bd);
 		body.setUserData(this);

@@ -51,7 +51,7 @@ public class MyGdxGame implements ApplicationListener {
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 		
-		this.world = new World(new Vector2(0, 10), true);
+		this.world = new World(new Vector2(0, 40), true);
 		
 		this.debugRenderer = new Box2DDebugRenderer();
 		
