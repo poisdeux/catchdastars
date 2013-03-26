@@ -31,8 +31,8 @@ public class Textures {
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");
 		bricksHorizontal = atlas.findRegion("bricks-texture-horizontal");
-		bricksHorizontal = atlas.findRegion("bricks-texture-horizontal-right-end");
-		bricksHorizontal = atlas.findRegion("bricks-texture-horizontal-left-end");
+		bricksHorizontalEndRight = atlas.findRegion("bricks-texture-horizontal-right-end");
+		bricksHorizontalEndLeft = atlas.findRegion("bricks-texture-horizontal-left-end");
 		bricksVertical = atlas.findRegion("bricks-texture-vertical");
 	}
 

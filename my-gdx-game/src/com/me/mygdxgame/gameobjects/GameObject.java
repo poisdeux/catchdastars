@@ -2,30 +2,30 @@ package com.me.mygdxgame.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 
 public abstract class GameObject {
 	public float x;
 	public float y;
 	public float angle;
-	public Sprite sprite;
+	private Sprite sprite;
 	
-	public GameObject(Sprite sprite, float x, float y) {
+	public GameObject(float x, float y) {
 		this.x = x;
 		this.y = y;
-		
-		if( sprite == null ) {
-			sprite = new Sprite();
-		}
-		setSprite(sprite);
+		sprite = new Sprite();
 	}
 	
 	public void setSprite(Sprite sprite) {
 		this.sprite = sprite;
-		this.sprite.setOrigin(this.sprite.getWidth()/2, this.sprite.getHeight()/2);
 	}
 	
-	public void setPosition(float x, float y) {
+	public Sprite getSprite() {
+		return this.sprite;
+	}
+	
+	public void setPosition(float x, float y, boolean transform) {
 		this.x = x;
 		this.y = y;
 	}
@@ -39,5 +39,7 @@ public abstract class GameObject {
 		this.sprite.setRotation(this.angle);
 		this.sprite.draw(batch);
 	}
+	
+	abstract public void applyForce(Vector2 force);
 	
 }
