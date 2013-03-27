@@ -1,8 +1,8 @@
 package com.me.mygdxgame;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -25,7 +25,7 @@ public class MyGdxGame implements ApplicationListener {
 	private float viewportHeight = 480;
 	private float gravityFactor = 10;
 
-	private Wall wall;
+	private ArrayList<Wall> walls;
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private Vector2 gravity;
@@ -59,12 +59,21 @@ public class MyGdxGame implements ApplicationListener {
 		Balloon b = Balloon.newInstance(world, (viewportWidth - 48) / 2f, 20f);
 //		gravity.mul(4f);
 		
+		this.walls = new ArrayList<Wall>();
 		
-		this.wall = new Wall(world,
-				(800 - Textures.bricksHorizontal.getRegionWidth())/2f,
+		this.walls.add(new Wall(world,
+				(800 - (Textures.bricksHorizontal.getRegionWidth() * 5))/2f,
 				(480 - Textures.bricksHorizontal.getRegionHeight())/2f,
-				800f,
-				Type.HORIZONTAL);
+				Textures.bricksHorizontal.getRegionWidth() * 5,
+				Type.HORIZONTAL)
+		);
+		
+		this.walls.add(new Wall(world,
+				(800 - Textures.bricksHorizontal.getRegionWidth())/2f,
+				(480 - (Textures.bricksHorizontal.getRegionHeight() * 5))/2f,
+				Textures.bricksHorizontal.getRegionHeight() * 5,
+				Type.VERTICAL)
+		);
 	}
 
 	@Override
@@ -130,7 +139,13 @@ public class MyGdxGame implements ApplicationListener {
 			}
 		}
 
-		this.wall.draw(batch);
+		Iterator<Wall> wi = walls.iterator();
+		
+		while(wi.hasNext()) {
+			Wall w = wi.next();
+			w.draw(batch);
+		}
+		
 		this.batch.end();		
 
 		
