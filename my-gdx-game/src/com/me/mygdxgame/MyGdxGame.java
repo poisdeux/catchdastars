@@ -57,21 +57,20 @@ public class MyGdxGame implements ApplicationListener {
 		this.debugRenderer = new Box2DDebugRenderer();
 
 		Balloon b = Balloon.newInstance(world, (viewportWidth - 48) / 2f, 20f);
-//		gravity.mul(4f);
 		
 		this.walls = new ArrayList<Wall>();
 		
 		this.walls.add(new Wall(world,
 				(800 - (Textures.bricksHorizontal.getRegionWidth() * 5))/2f,
 				(480 - Textures.bricksHorizontal.getRegionHeight())/2f,
-				Textures.bricksHorizontal.getRegionWidth() * 5,
+				200f,
 				Type.HORIZONTAL)
 		);
 		
 		this.walls.add(new Wall(world,
-				(800 - Textures.bricksHorizontal.getRegionWidth())/2f,
+				(880 - Textures.bricksHorizontal.getRegionWidth())/2f,
 				(480 - (Textures.bricksHorizontal.getRegionHeight() * 5))/2f,
-				Textures.bricksHorizontal.getRegionHeight() * 5,
+				100f,
 				Type.VERTICAL)
 		);
 	}
