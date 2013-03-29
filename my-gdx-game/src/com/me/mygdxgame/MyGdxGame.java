@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.gameobjects.Balloon;
 import com.me.mygdxgame.gameobjects.GameObject;
+import com.me.mygdxgame.gameobjects.Star;
 import com.me.mygdxgame.gameobjects.Wall;
 import com.me.mygdxgame.gameobjects.Wall.Type;
 
@@ -26,6 +27,8 @@ public class MyGdxGame implements ApplicationListener {
 	private float gravityFactor = 10;
 
 	private ArrayList<Wall> walls;
+	private ArrayList<Star> stars;
+	private ArrayList<Balloon> balloons;
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private Vector2 gravity;
@@ -49,30 +52,35 @@ public class MyGdxGame implements ApplicationListener {
 
 		this.gravity = new Vector2();
 		gravity.set(0, -this.gravityFactor);
-		
+
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 		this.world = new World(gravity, true);
-		
+
 		this.debugRenderer = new Box2DDebugRenderer();
 
-		Balloon b = Balloon.newInstance(world, (viewportWidth - 48) / 2f, 20f);
-		
+		this.balloons = new ArrayList<Balloon>();
+		this.balloons.add(new Balloon(world, (viewportWidth - 48) / 2f, 20f));
+
 		this.walls = new ArrayList<Wall>();
-		
 		this.walls.add(new Wall(world,
-				(800 - (Textures.bricksHorizontal.getRegionWidth() * 5))/2f,
-				(480 - Textures.bricksHorizontal.getRegionHeight())/2f,
+				400,
+				240,
 				200f,
 				Type.HORIZONTAL)
-		);
-		
+				);
 		this.walls.add(new Wall(world,
-				(880 - Textures.bricksHorizontal.getRegionWidth())/2f,
-				(480 - (Textures.bricksHorizontal.getRegionHeight() * 5))/2f,
+				440,
+				240,
 				100f,
 				Type.VERTICAL)
-		);
+				);
+
+		this.stars = new ArrayList<Star>();
+		this.stars.add(new Star(world, 
+				400, 
+				200, Star.Type.RED));
+
 	}
 
 	@Override
@@ -94,60 +102,59 @@ public class MyGdxGame implements ApplicationListener {
 
 		this.world.step(1/45f, 6, 2);
 		this.debugRenderer.render(world, camera.combined);
-		
-		Iterator<Body> bi = world.getBodies();
 
 		this.batch.begin();
-		while (bi.hasNext()){
-			Body b = bi.next();
 
-			// Get the bodies user data - in this example, our user 
-			// data is an instance of the Entity class
-			GameObject o = (GameObject) b.getUserData();
+		Iterator<Balloon> bi = this.balloons.iterator();
+		while (bi.hasNext()) {
+			Balloon b = bi.next();
+			Body body = b.getBody();
 
-			if (o != null) {
-				boolean objectRequiresTranslation = false;
-				
-				Vector2 position = b.getPosition();
-				float x = position.x;
-				float y = position.y;
-				
-				if( o instanceof Balloon ) {
-					if( x < 0 ) {
-						x = 800;
-						objectRequiresTranslation = true;
-					} else if ( x > 800 ) {
-						x = 0;
-						objectRequiresTranslation = true;
-					}
+			boolean objectRequiresTranslation = false;
 
-					if( y < 0 ) {
-						y = 480;
-						objectRequiresTranslation = true;
-					} else if ( y > 480 ) {
-						y = 0;
-						objectRequiresTranslation = true;
-					}
-					
-					o.applyForce(this.world.getGravity().mul(b.getMass()).mul(-5f));
-				}
-				
-				o.setAngle(MathUtils.radiansToDegrees * b.getAngle());
-				o.setPosition(x, y, objectRequiresTranslation);
-				o.draw(batch);
+			Vector2 position = body.getPosition();
+			float x = position.x;
+			float y = position.y;
+
+			if( x < 0 ) {
+				x = 800;
+				objectRequiresTranslation = true;
+			} else if ( x > 800 ) {
+				x = 0;
+				objectRequiresTranslation = true;
 			}
+
+			if( y < 0 ) {
+				y = 480;
+				objectRequiresTranslation = true;
+			} else if ( y > 480 ) {
+				y = 0;
+				objectRequiresTranslation = true;
+			}
+
+			b.applyForce(this.world.getGravity().mul(body.getMass()).mul(-5f));
+
+
+			b.setAngle(MathUtils.radiansToDegrees * body.getAngle());
+			b.setPosition(x, y, objectRequiresTranslation);
+			b.draw(batch);
 		}
 
-		Iterator<Wall> wi = walls.iterator();
-		
-		while(wi.hasNext()) {
-			Wall w = wi.next();
+		Iterator<Wall> iw = walls.iterator();
+		while(iw.hasNext()) {
+			Wall w = iw.next();
 			w.draw(batch);
 		}
-		
+
+		Iterator<Star> is = this.stars.iterator();
+		while(is.hasNext()) {
+			Star s = is.next();
+			s.draw(batch);
+		}
+
 		this.batch.end();		
 
-		
+
 	}
 
 	@Override

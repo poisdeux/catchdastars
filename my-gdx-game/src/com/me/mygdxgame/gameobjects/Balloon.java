@@ -24,10 +24,6 @@ public class Balloon extends GameObject {
 	private float x;
 	private float y;
 	
-	public static Balloon newInstance(World world, float x, float y) {
-		return new Balloon(world, x, y);
-	}
-	
 	public Balloon(World world, float x, float y) {
 		setPosition(x, y, false);
 		setup(world);
@@ -111,5 +107,10 @@ public class Balloon extends GameObject {
 	@Override
 	public void setAngle(float angle) {
 		this.angle = angle;
+	}
+
+	@Override
+	public Body getBody() {
+		return this.balloon;
 	}
 }

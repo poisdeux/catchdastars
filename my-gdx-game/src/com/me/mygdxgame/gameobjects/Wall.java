@@ -89,4 +89,9 @@ public class Wall extends GameObject {
 	@Override
 	public void setAngle(float angle) {
 	}
+	
+	@Override
+	public Body getBody() {
+		return null;
+	}
 }
