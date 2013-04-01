@@ -1,4 +1,4 @@
-package com.me.mygdxgame.gameobjects;
+package com.strategames.catchdastars.actors;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,9 +7,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.me.mygdxgame.Textures;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.utils.Textures;
 
-public class Wall extends GameObject {
+public class Wall extends Image {
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
@@ -21,7 +22,7 @@ public class Wall extends GameObject {
 		HORIZONTAL, VERTICAL
 	}
 
-	public Wall(World world, float x, float y, float length, Type type) {
+	private Wall(World world, float x, float y, float length, Type type) {
 		this.type = type;
 
 		PolygonShape box = new PolygonShape();  
@@ -49,10 +50,14 @@ public class Wall extends GameObject {
 		box.dispose();
 	}
 
+	public static Wall create(World world, float x, float y, float length, Type type) {
+		
+		return new Wall(world, x, y, length, type);
+	}
+	
 	@Override
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, float parentAlpha) {
 		if ( type == Type.HORIZONTAL ) {
-			
 			this.spriteLeftPart.setPosition(this.startPosition.x, this.startPosition.y);
 			this.spriteLeftPart.draw(batch);
 			
@@ -69,29 +74,13 @@ public class Wall extends GameObject {
 			this.spriteRightPart.setPosition(middlePartEndPosition, this.startPosition.y);
 			this.spriteRightPart.draw(batch);
 		} else {
-			for(float yd = this.startPosition.y; yd < this.endPosition.y; yd += this.spriteMiddlePart.getHeight() ) {
+			float middlePartEndPosition = this.endPosition.y - this.spriteMiddlePart.getHeight();
+			for(float yd = this.startPosition.y; yd < middlePartEndPosition; yd += this.spriteMiddlePart.getHeight() ) {
 				this.spriteMiddlePart.setPosition(this.startPosition.x, yd);
 				this.spriteMiddlePart.draw(batch);
 			}
+			this.spriteMiddlePart.setPosition(this.startPosition.x, middlePartEndPosition);
+			this.spriteMiddlePart.draw(batch);
 		}
-	}
-
-	@Override
-	public void applyForce(Vector2 force) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setPosition(float x, float y, boolean transform) {
-	}
-
-	@Override
-	public void setAngle(float angle) {
-	}
-	
-	@Override
-	public Body getBody() {
-		return null;
 	}
 }

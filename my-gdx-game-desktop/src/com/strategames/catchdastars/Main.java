@@ -1,7 +1,8 @@
-package com.me.mygdxgame;
+package com.strategames.catchdastars;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.strategames.catchdastars.CatchDaStarsGame;
 
 public class Main {
 	public static void main(String[] args) {
@@ -11,6 +12,6 @@ public class Main {
 		cfg.width = 800;
 		cfg.height = 480;
 		
-		new LwjglApplication(new MyGdxGame(), cfg);
+		new LwjglApplication(new CatchDaStarsGame(), cfg);
 	}
 }

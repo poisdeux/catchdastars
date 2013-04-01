@@ -1,4 +1,4 @@
-package com.me.mygdxgame.screens;
+package com.strategames.catchdastars.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -52,21 +52,16 @@ public abstract class AbstractScreen implements Screen
 	protected Skin getSkin()
 	{
 		if( skin == null ) {
-			skin = new Skin( Gdx.files.internal( "uiskin.json" ) );
+			skin = new Skin( Gdx.files.internal( "skin/uiskin.json" ) );
 		}
 		return skin;
 	}
 
-	protected Table getTable()
-	{
-		if( table == null ) {
-			table = new Table( getSkin() );
-			table.setFillParent( true );
-			stage.addActor( table );
-		}
-		return table;
-	}
-
+	protected boolean isGameScreen()
+    {
+        return false;
+    }
+	
 	// Screen implementation
 
 	@Override
@@ -87,26 +82,22 @@ public abstract class AbstractScreen implements Screen
 
 		// resize and clear the stage
 		stage.setViewport( width, height, true );
-		stage.clear();
+//		stage.clear();
 	}
 
 	@Override
 	public void render(
 			float delta )
 	{
-		// (1) process the game logic
-
 		// update the actors
 		stage.act( delta );
 
-		// (2) draw the result
-
-		// clear the screen with the given RGB color (black)
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// draw the actors
 		stage.draw();
+		
 	}
 
 	@Override

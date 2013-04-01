@@ -1,4 +1,4 @@
-package com.me.mygdxgame.gameobjects;
+package com.strategames.catchdastars.actors;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,14 +7,15 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.me.mygdxgame.Textures;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.utils.Textures;
 
 /**
  * @author martijn brekhof
  * 
  */
 
-public class Star extends GameObject {
+public class Star extends Image {
 	private float rotationSpeed;
 	private Body star;
 	private Sprite sprite;
@@ -51,37 +52,6 @@ public class Star extends GameObject {
 		
 		this.rotationSpeed = 0.1f;
 		
-		setPosition(x, y, false);
-	}
-
-
-	@Override
-	public void setPosition(float x, float y, boolean transform) {
-		this.sprite.setPosition(x, y);
-	}
-
-
-	@Override
-	public void setAngle(float angle) {
-	}
-
-
-	@Override
-	public void draw(SpriteBatch batch) {
-		this.sprite.rotate(this.rotationSpeed);
-		this.sprite.draw(batch);
-	}
-
-
-	@Override
-	public void applyForce(Vector2 force) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public Body getBody() {
-		return this.star;
+		setPosition(x, y);
 	}
 }

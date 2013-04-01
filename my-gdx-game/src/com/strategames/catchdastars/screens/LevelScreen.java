@@ -1,4 +1,4 @@
-package com.me.mygdxgame.screens;
+package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,11 +18,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.me.mygdxgame.Textures;
-import com.me.mygdxgame.gameobjects.Balloon;
-import com.me.mygdxgame.gameobjects.Star;
-import com.me.mygdxgame.gameobjects.Wall;
-import com.me.mygdxgame.gameobjects.Wall.Type;
+import com.strategames.catchdastars.actors.Balloon;
+import com.strategames.catchdastars.actors.Star;
+import com.strategames.catchdastars.actors.Wall;
+import com.strategames.catchdastars.actors.Wall.Type;
+import com.strategames.catchdastars.utils.Textures;
 
 public class LevelScreen extends AbstractScreen
 {
@@ -47,7 +47,7 @@ public class LevelScreen extends AbstractScreen
 	private Box2DDebugRenderer debugRenderer;
 
 	boolean accelerometerAvailable;
-	
+
 
 	public LevelScreen(
 			Game game,
@@ -82,8 +82,8 @@ public class LevelScreen extends AbstractScreen
 		//		stage.addActor( ship2d );
 
 		// add a fade-in effect to the whole stage
-//		stage.getRoot().getColor().a = 0f;
-//		stage.getRoot().addAction( Actions.fadeIn( 0.5f ) );
+		//		stage.getRoot().getColor().a = 0f;
+		//		stage.getRoot().addAction( Actions.fadeIn( 0.5f ) );
 
 		this.camera = new OrthographicCamera();
 		this.camera.setToOrtho(false, viewportWidth, viewportHeight);
@@ -100,100 +100,48 @@ public class LevelScreen extends AbstractScreen
 
 		this.debugRenderer = new Box2DDebugRenderer();
 
+		stage.clear();
+
 		this.balloons = new ArrayList<Balloon>();
-		this.balloons.add(new Balloon(world, (viewportWidth - 48) / 2f, 20f));
+		this.balloons.add(Balloon.create(world, (viewportWidth - 48) / 2f, 20f));
+
+		for(Balloon balloon : this.balloons ) {
+			stage.addActor(balloon);
+		}
 
 		this.walls = new ArrayList<Wall>();
-		this.walls.add(new Wall(world,
-				400,
-				240,
-				200f,
-				Type.HORIZONTAL)
-				);
-		this.walls.add(new Wall(world,
-				440,
-				240,
-				100f,
-				Type.VERTICAL)
-				);
+		this.walls.add(Wall.create(world, 400, 240, 200f, Type.HORIZONTAL));
+		this.walls.add(Wall.create(world, 440, 240,	100f, Type.VERTICAL));
 
-		this.stars = new ArrayList<Star>();
-		this.stars.add(new Star(world, 
-				400, 
-				200, Star.Type.RED));
+		for(Wall wall : this.walls ) {
+			stage.addActor(wall);
+		}
+
+		//		this.stars = new ArrayList<Star>();
+		//		this.stars.add(new Star(world, 
+		//				400, 
+		//				200, Star.Type.RED));
+		//		
+		//		for(Star star : this.stars ) {
+		//			stage.addActor(star);
+		//		}	
 	}
-	
+
 	@Override
 	public void render(float delta) {
-		// TODO Auto-generated method stub
-//		super.render(delta);
-		
-		Gdx.gl.glClearColor(0, 0, 0.0f, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		super.render(delta);
 
 		if( Gdx.app.getType() == ApplicationType.Android ) {
 			gravity.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
-			//		orientation.nor();
+			//              orientation.nor();
 			gravity.mul(this.gravityFactor);
 			world.setGravity(gravity);
 		} 
 
 		this.world.step(1/45f, 6, 2);
-		this.debugRenderer.render(world, camera.combined);
-
-		this.batch.begin();
-
-		Iterator<Balloon> bi = this.balloons.iterator();
-		while (bi.hasNext()) {
-			Balloon b = bi.next();
-			Body body = b.getBody();
-
-			boolean objectRequiresTranslation = false;
-
-			Vector2 position = body.getPosition();
-			float x = position.x;
-			float y = position.y;
-
-			if( x < 0 ) {
-				x = 800;
-				objectRequiresTranslation = true;
-			} else if ( x > 800 ) {
-				x = 0;
-				objectRequiresTranslation = true;
-			}
-
-			if( y < 0 ) {
-				y = 480;
-				objectRequiresTranslation = true;
-			} else if ( y > 480 ) {
-				y = 0;
-				objectRequiresTranslation = true;
-			}
-
-			b.applyForce(this.world.getGravity().mul(body.getMass()).mul(-5f));
-
-
-			b.setAngle(MathUtils.radiansToDegrees * body.getAngle());
-			b.setPosition(x, y, objectRequiresTranslation);
-			b.draw(batch);
-		}
-
-		Iterator<Wall> iw = walls.iterator();
-		while(iw.hasNext()) {
-			Wall w = iw.next();
-			w.draw(batch);
-		}
-
-		Iterator<Star> is = this.stars.iterator();
-		while(is.hasNext()) {
-			Star s = is.next();
-			s.draw(batch);
-		}
-
-		this.batch.end();		
-
+		this.debugRenderer.render(world, camera.combined);	
 	}
-	
+
 	@Override
 	public void dispose() {
 		batch.dispose();

@@ -1,10 +1,10 @@
-package com.me.mygdxgame.gameobjects;
+package com.strategames.catchdastars.actors;
 
 import aurelienribon.bodyeditor.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,64 +13,54 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
-import com.me.mygdxgame.Textures;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.utils.Textures;
 
-public class Balloon extends GameObject {
-	private Vector2 localPositionTopOfBalloon;
+public class Balloon extends Image {
 	private Body knot;
 	private Body balloon;
-	private Sprite sprite;
-	private float angle;
-	private float x;
-	private float y;
+	private float scale = 0.6f;
+	private World world;
+	private Vector2 localPositionTopOfBalloon;
 	
-	public Balloon(World world, float x, float y) {
-		setPosition(x, y, false);
+	private Balloon(World world, TextureRegionDrawable trd, float x, float y) {
+		super(trd, Scaling.none);
+		this.world = world;
+		setPosition(x, y);
+		setScale(this.scale);
 		setup(world);
 	}
 
-	@Override
-	public void setPosition(float x, float y, boolean transform) {
-		this.x = x;
-		this.y = y;
-		if( transform ) {
-			knot.setTransform(knot.getWorldCenter().x, y, knot.getAngle());
-			knot.setAwake(true);
-			balloon.setTransform(x, y, balloon.getAngle());
-			balloon.setAwake(true);
-		}
+	public static Balloon create(World world, float x, float y) {
+		TextureRegionDrawable trd = new TextureRegionDrawable(Textures.blueBalloon);
+		return new Balloon(world, trd, x, y);
 	}
-
+	
 	private void setup(World world) {
-		float scale = 0.6f;
 		
-		this.sprite = new Sprite(Textures.blueBalloon);
-		this.sprite.setScale(scale);
-		
-		float balloonWidth = this.sprite.getWidth() * scale;
-		float balloonHeight = this.sprite.getHeight();
-		
+		float balloonWidth = getPrefWidth() * this.scale;
+		float balloonHeight = getPrefHeight() * this.scale;
+
 		this.localPositionTopOfBalloon = new Vector2(balloonWidth / 2f, balloonHeight);
-		
+
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 
 		//Balloon body
 		BodyDef bd = new BodyDef();
-		bd.position.set(this.x, this.y);
+		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 0.8f;
 		this.balloon = world.createBody(bd);
-		this.balloon.setUserData(this);
 		
 		FixtureDef fixtureBalloon = new FixtureDef();
-		fixtureBalloon.density = 0.32f; 
+		fixtureBalloon.density = 10.33f;  // Helium density 
 		fixtureBalloon.friction = 0.2f;
-		fixtureBalloon.restitution = 0.8f; // Make it bounce a little bit
+		fixtureBalloon.restitution = 0.9f; // Make it bounce a little bit
 
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 		Vector2 origin = loader.getOrigin("Balloon", balloonWidth).cpy();
-		
-		this.sprite.setOrigin(origin.x, origin.y);
 		
 		//Balloon knot
 		bd = new BodyDef();
@@ -91,26 +81,17 @@ public class Balloon extends GameObject {
 	}
 
 	@Override
-	public void applyForce(Vector2 force) {
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
+		setPosition(this.balloon.getPosition().x, this.balloon.getPosition().y);
+		super.draw(batch, parentAlpha);
+	}
+	
+	@Override
+	public void act(float delta) {
+		super.act(delta);
+		
 		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.localPositionTopOfBalloon);
-		this.balloon.applyForce(force, worldPointOfForce);
-	}
-
-	@Override
-	public void draw(SpriteBatch batch) {
-		this.sprite.setPosition(this.x, this.y);
-		this.sprite.setRotation(this.angle);
-		//batch.draw(this.sprite.getTexture(), super.x, super.y);
-		this.sprite.draw(batch);
-	}
-
-	@Override
-	public void setAngle(float angle) {
-		this.angle = angle;
-	}
-
-	@Override
-	public Body getBody() {
-		return this.balloon;
+		this.balloon.applyForce(this.world.getGravity().mul(this.balloon.getMass()).mul(-3f), worldPointOfForce);
 	}
 }
