@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.strategames.catchdastars.CatchDaStarsGame;
 
 public class MainActivity extends AndroidApplication {
     @Override
@@ -16,6 +15,6 @@ public class MainActivity extends AndroidApplication {
         cfg.useAccelerometer = true;
         cfg.useCompass = false;
         
-        initialize(new CatchDaStarsGame(), cfg);
+        initialize(new CatchDaStars(), cfg);
     }
 }

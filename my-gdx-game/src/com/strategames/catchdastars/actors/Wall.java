@@ -8,9 +8,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.strategames.catchdastars.utils.Textures;
 
-public class Wall extends Image {
+public class Wall extends GameObject {
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
@@ -22,9 +24,11 @@ public class Wall extends Image {
 		HORIZONTAL, VERTICAL
 	}
 
+	
 	private Wall(World world, float x, float y, float length, Type type) {
 		this.type = type;
-
+		setName(getClass().getSimpleName() + "_" + type.name());
+		setPosition(x, y);
 		PolygonShape box = new PolygonShape();  
 
 		if( type == Type.HORIZONTAL ) {
@@ -82,5 +86,17 @@ public class Wall extends Image {
 			this.spriteMiddlePart.setPosition(this.startPosition.x, middlePartEndPosition);
 			this.spriteMiddlePart.draw(batch);
 		}
+	}
+
+	@Override
+	void writeValues(Json json) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void readValue(String key, Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

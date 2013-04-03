@@ -1,6 +1,6 @@
 package com.strategames.catchdastars.screens;
 
-import com.badlogic.gdx.Game;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -8,23 +8,17 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 public abstract class AbstractScreen implements Screen
 {
-	protected final Game game;
-	protected final Stage stage;
+	private final Stage stage;
 
 	protected BitmapFont font;
 	protected SpriteBatch batch;
 	protected Skin skin;
 
-	private Table table;
-	
-	public AbstractScreen(
-			Game game )
+	public AbstractScreen()
 	{
-		this.game = game;
 		this.stage = new Stage( 0, 0, true );
 	}
 
@@ -68,9 +62,6 @@ public abstract class AbstractScreen implements Screen
 	public void show()
 	{
 		Gdx.app.log( "AbstractScreen", "Showing screen: " + getName() );
-
-		// set the input processor
-		Gdx.input.setInputProcessor( stage );
 	}
 
 	@Override
@@ -129,5 +120,9 @@ public abstract class AbstractScreen implements Screen
 		if( font != null ) font.dispose();
 		if( batch != null ) batch.dispose();
 		if( skin != null ) skin.dispose();
+	}
+	
+	public Stage getStage() {
+		return this.stage;
 	}
 }

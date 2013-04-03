@@ -1,17 +1,21 @@
 package com.strategames.catchdastars.screens;
 
-import com.badlogic.gdx.Game;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.strategames.catchdastars.Game;
 
 public class MenuScreen extends AbstractScreen {
+	private Game game;
+	
 	public MenuScreen(
 			Game game )
 	{
-		super( game );
+		this.game = game;
 	}
 
 
@@ -68,17 +72,14 @@ public class MenuScreen extends AbstractScreen {
 		
 		table.add( highScoresButton ).uniform().fill();
 		
-		super.stage.addActor(table);
-		
+		Stage stage = getStage();
+		stage.addActor(table);
 		Gdx.input.setInputProcessor( stage );
 	}
 	
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
 		super.resize(width, height);
-		
-		
 	}
 }
 

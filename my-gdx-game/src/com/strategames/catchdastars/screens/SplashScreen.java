@@ -1,27 +1,21 @@
 package com.strategames.catchdastars.screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
+
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.SplashImage;
 
-public class SplashScreen
-extends
-AbstractScreen
-{
+public class SplashScreen extends AbstractScreen {
+	private Game game;
 	private SplashImage splashImage;
 
-	public SplashScreen(
-			Game game )
-	{
-		super( game );
+	public SplashScreen(Game game )	{
+		this.game = game;
 	}
 
 	@Override
@@ -36,8 +30,10 @@ AbstractScreen
 			int height )
 	{
 		super.resize( width, height );
-
+		
+		Stage stage = getStage();
 		stage.clear();
+		
 		this.splashImage = new SplashImage(); 
 
 		// configure the fade-in/out effect on the splash image
