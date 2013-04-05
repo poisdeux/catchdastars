@@ -1,5 +1,6 @@
 package com.strategames.catchdastars.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -7,10 +8,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -32,10 +31,13 @@ public class Star extends GameObject {
 
 	public Type type;
 	
+	public Star() {
+		
+	}
+	
 	private Star(World world, float x, float y, Type type, TextureRegionDrawable trd) {
 		super(trd, Scaling.none);
 		this.type = type;
-		setName(getClass().getSimpleName() + "_" + type.name());
 		
 		setScale(this.scale);
 		setOrigin(getPrefWidth() / 2f, getPrefHeight() / 2f);
@@ -84,13 +86,17 @@ public class Star extends GameObject {
 
 	@Override
 	void writeValues(Json json) {
-		// TODO Auto-generated method stub
-		
+		json.writeValue("type", this.type.name());
+		json.writeValue("rotationSpeed", this.rotationSpeed);
 	}
 
 	@Override
 	void readValue(String key, Object value) {
-		// TODO Auto-generated method stub
-		
+		Gdx.app.log("Star", "readValue: key="+key+", value="+value.toString());
+		if( key.contentEquals("type")) {
+			this.type = Type.valueOf(value.toString());
+		} else if( key.contentEquals("rotationSpeed")) {
+			this.rotationSpeed = Float.valueOf(value.toString());
+		}
 	}
 }

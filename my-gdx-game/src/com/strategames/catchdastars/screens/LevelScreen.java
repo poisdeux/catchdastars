@@ -32,7 +32,8 @@ public class LevelScreen extends AbstractScreen
 		this.game.setupStage(getStage());
 		
 		GameFile gameFile = new GameFile();
-		gameFile.save(getStage(), 1);
+		gameFile.load(1);
+//		gameFile.save(getStage(), 1);
 		
 		// add a fade-in effect to the whole stage
 		//		stage.getRoot().getColor().a = 0f;

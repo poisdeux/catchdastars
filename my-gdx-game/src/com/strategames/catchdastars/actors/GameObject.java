@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.actors.Balloon.Type;
 
 abstract public class GameObject extends Image implements Json.Serializable {
 	private float length;
@@ -15,10 +14,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private String name;
 	
 	public GameObject() {
+		setName(getClass().getSimpleName());
 	}
 	
 	public GameObject(TextureRegionDrawable trd, Scaling scaling) {
 		super(trd, scaling);
+		setName(getClass().getSimpleName());
 	}
 	
 	public void setLength(float length) {

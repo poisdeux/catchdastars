@@ -15,8 +15,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -35,6 +33,8 @@ public class Balloon extends GameObject {
 
 	private Type type;
 
+	public Balloon() { }
+	
 	private Balloon(World world, TextureRegionDrawable trd, float x, float y, Type type) {
 		super(trd, Scaling.none);
 		this.world = world;
@@ -42,7 +42,6 @@ public class Balloon extends GameObject {
 		setPosition(x, y);
 		setScale(this.scale);
 		setup(world);
-		setName(getClass().getSimpleName());
 	}
 
 	public static Balloon create(World world, float x, float y, Type type) {
@@ -113,6 +112,7 @@ public class Balloon extends GameObject {
 
 	@Override
 	void readValue(String key, Object value) {
+		Gdx.app.log("Balloon", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
 			this.type = Type.valueOf(value.toString());
 		}
