@@ -2,6 +2,7 @@ package com.strategames.catchdastars;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -24,7 +25,8 @@ abstract public class Game extends com.badlogic.gdx.Game {
 		// this approach avoids calling the screen's resize method repeatedly
 		if( getScreen() == null ) {
 //			setScreen( new SplashScreen( this ) );
-			setScreen( new LevelScreen(this, 1));
+//			setScreen( new LevelScreen(this, 1));
+			setScreen(new LevelEditorMenuScreen(this));
 		}
 	}
 	

@@ -10,18 +10,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 
 public class MenuScreen extends AbstractScreen {
-	private Game game;
 	
 	public MenuScreen(
 			Game game )
 	{
-		this.game = game;
+		super(game);
 	}
 
 
 	@Override
 	public void show()
 	{
+		final Game game = getGame();
+		
 		// retrieve the default table actor
 //		Table table = super.getTable();
 		Table table = new Table( getSkin() );
@@ -75,11 +76,6 @@ public class MenuScreen extends AbstractScreen {
 		Stage stage = getStage();
 		stage.addActor(table);
 		Gdx.input.setInputProcessor( stage );
-	}
-	
-	@Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
 	}
 }
 

@@ -4,14 +4,12 @@ import com.strategames.catchdastars.Game;
 
 
 public class LevelScreen extends AbstractScreen
-{
-	private Game game;
-	
+{	
 	public LevelScreen(
 			Game game,
 			int level )
 	{
-		this.game = game;
+		super(game);
 	}
 
 	@Override
@@ -23,12 +21,12 @@ public class LevelScreen extends AbstractScreen
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-		this.game.setupStage(getStage());
+		getGame().setupStage(getStage());
 	}
 	
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		this.game.update(delta);
+		getGame().update(delta);
 	}
 }

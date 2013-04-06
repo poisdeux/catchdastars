@@ -11,18 +11,12 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.SplashImage;
 
 public class SplashScreen extends AbstractScreen {
-	private Game game;
+	
+	public SplashScreen(Game game) {
+		super(game);
+	}
+
 	private SplashImage splashImage;
-
-	public SplashScreen(Game game )	{
-		this.game = game;
-	}
-
-	@Override
-	public void show()
-	{
-		super.show();
-	}
 
 	@Override
 	public void resize(
@@ -50,6 +44,7 @@ public class SplashScreen extends AbstractScreen {
 			
 			@Override
 			public boolean act(float delta) {
+				Game game = getGame();
 				game.setScreen(new MenuScreen(game));
 				return true;
 			}

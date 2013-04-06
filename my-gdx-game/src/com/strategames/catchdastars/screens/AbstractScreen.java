@@ -8,20 +8,26 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.strategames.catchdastars.Game;
 
 public abstract class AbstractScreen implements Screen
 {
 	private final Stage stage;
-
+	private Game game;
 	protected BitmapFont font;
 	protected SpriteBatch batch;
 	protected Skin skin;
-
-	public AbstractScreen()
+	
+	public AbstractScreen(Game game)
 	{
 		this.stage = new Stage( 0, 0, true );
+		this.game = game;
 	}
 
+	protected Game getGame() {
+		return this.game;
+	}
+	
 	protected String getName()
 	{
 		return getClass().getSimpleName();
