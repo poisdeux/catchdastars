@@ -21,39 +21,56 @@ import com.strategames.catchdastars.utils.Textures;
 public class Balloon extends GameObject {
 	private Body knot;
 	private Body balloon;
-	private float scale = 0.6f;
-	private World world;
 	private Vector2 localPositionTopOfBalloon;
-
+	private World world;
+	private float balloonHalfWidth;
+	private float balloonHalfHeight;
+	
 	public static enum Type {
-		BLUE, 
-		RED,
-		YELLOW
+		BLUE
 	}
 
 	private Type type;
 
 	public Balloon() { }
-	
-	private Balloon(World world, TextureRegionDrawable trd, float x, float y, Type type) {
-		super(trd, Scaling.none);
-		this.world = world;
-		this.type = type;
-		setPosition(x, y);
-		setScale(this.scale);
-		setup(world);
-	}
 
 	public static Balloon create(World world, float x, float y, Type type) {
-		TextureRegionDrawable trd = new TextureRegionDrawable(Textures.blueBalloon);
-		return new Balloon(world, trd, x, y, type);
+		Balloon balloon = new Balloon();
+		balloon.setType(type);
+		balloon.setPosition(x, y);
+		balloon.setScale(0.6f);
+		balloon.setup(world);
+		return balloon;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public void setup(World world) {
+		this.world = world;
+		setupImage();
+		setupBox2D(world);
 	}
 
-	private void setup(World world) {
-
-		float balloonWidth = getPrefWidth() * this.scale;
-		float balloonHeight = getPrefHeight() * this.scale;
-
+	private void setupImage() {
+		TextureRegionDrawable trd = null;
+		if( type == Type.BLUE ) {
+			trd = new TextureRegionDrawable(Textures.blueBalloon);
+		}
+		setDrawable(trd);
+		setScaling(Scaling.none);
+	}
+	
+	private void setupBox2D(World world) {
+		float balloonWidth = getPrefWidth() * getScaleX();
+		float balloonHeight = getPrefHeight() * getScaleY();
+		
+		this.balloonHalfWidth = balloonWidth / 2f;
+		this.balloonHalfHeight = balloonHeight / 2f;
+		
+		setOrigin(-this.balloonHalfWidth, -this.balloonHalfHeight);
+		
 		this.localPositionTopOfBalloon = new Vector2(balloonWidth / 2f, balloonHeight);
 
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
@@ -72,7 +89,7 @@ public class Balloon extends GameObject {
 
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 		Vector2 origin = loader.getOrigin("Balloon", balloonWidth).cpy();
-
+		
 		//Balloon knot
 		bd = new BodyDef();
 		Vector2 knotPosition = new Vector2(this.balloon.getWorldPoint(origin));
@@ -90,11 +107,14 @@ public class Balloon extends GameObject {
 		wd.initialize(this.balloon, knot, this.balloon.getWorldCenter());
 		world.createJoint(wd);
 	}
-
+	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+		setPosition(
+				this.balloon.getPosition().x + this.balloonHalfWidth, 
+				this.balloon.getPosition().y + this.balloonHalfHeight
+				);
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
-		setPosition(this.balloon.getPosition().x, this.balloon.getPosition().y);
 		super.draw(batch, parentAlpha);
 	}
 

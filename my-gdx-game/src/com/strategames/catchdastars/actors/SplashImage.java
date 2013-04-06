@@ -3,6 +3,7 @@ package com.strategames.catchdastars.actors;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 
 
@@ -27,6 +28,12 @@ public class SplashImage extends GameObject {
 
 	@Override
 	void readValue(String key, Object value) {
+		
+	}
+
+	@Override
+	public void setup(World world) {
+		// TODO Auto-generated method stub
 		
 	}
 }

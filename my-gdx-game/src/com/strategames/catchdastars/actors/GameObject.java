@@ -1,5 +1,6 @@
 package com.strategames.catchdastars.actors;
 
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
@@ -9,8 +10,6 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
 
 abstract public class GameObject extends Image implements Json.Serializable {
-	private float length;
-	private float rotationSpeed;
 	private String name;
 	
 	public GameObject() {
@@ -22,22 +21,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		setName(getClass().getSimpleName());
 	}
 	
-	public void setLength(float length) {
-		this.length = length;
-	}
-	
-	public float getLength() {
-		return this.length;
-	}
-	
-	public void setRotationSpeed(float speed) {
-		this.rotationSpeed = speed;
-	}
-	
-	public float getRotationSpeed() {
-		return this.rotationSpeed;
-	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -45,6 +28,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public String getName() {
 		return this.name;
 	}
+	
+	/**
+	 * Setup the image and body of this game object
+	 * @param world Box2D world that should hold the body
+	 */
+	abstract public void setup(World world);
 	
 	/**
 	 * Use this to write specific object properties to file(s)
@@ -83,13 +72,16 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract void readValue(String key, Object value);
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void read(Json json, OrderedMap<String, Object> jsonData) {
 		Entries<String, Object> entries = jsonData.entries();
 		
 		while(entries.hasNext) {
 			Entry<String, Object> entry = entries.next();
-			if ( entry.key.contentEquals("x")) {
+			if ( entry.value instanceof OrderedMap ) {
+				read(json, (OrderedMap<String, Object>) entry.value);
+			} else if ( entry.key.contentEquals("x")) {
 				setX(Float.valueOf(entry.value.toString()));
 			} else if ( entry.key.contentEquals("y")) {
 				setY(Float.valueOf(entry.value.toString()));

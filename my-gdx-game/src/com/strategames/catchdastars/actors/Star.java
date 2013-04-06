@@ -32,43 +32,22 @@ public class Star extends GameObject {
 	public Type type;
 	
 	public Star() {
-		
-	}
-	
-	private Star(World world, float x, float y, Type type, TextureRegionDrawable trd) {
-		super(trd, Scaling.none);
-		this.type = type;
-		
-		setScale(this.scale);
-		setOrigin(getPrefWidth() / 2f, getPrefHeight() / 2f);
-		float halfWidth = getPrefWidth() / 2f;
-		float halfHeight = getPrefHeight() / 2f;
-		setPosition(x - halfWidth, y - halfHeight);
-		
-		CircleShape circle = new CircleShape();
-		circle.setRadius((halfWidth * this.scale) * 0.7f);
-		
-		BodyDef bd = new BodyDef();  
-		bd.position.set(new Vector2(x, y));
-		this.star = world.createBody(bd);  
-		Fixture fixture = this.star.createFixture(circle, 0.0f);
-		fixture.setSensor(true);
-		circle.dispose();
-		
-		this.rotationSpeed = getRotationSpeed();
 	}
 	
 	public static Star create(World world, float x, float y, Type type) {
-		TextureRegionDrawable trd = null;
-		if( type == Type.BLUE ) {
-			trd = new TextureRegionDrawable(Textures.starBlue);
-		} else if ( type == Type.RED ) {
-			trd = new TextureRegionDrawable(Textures.starRed);
-		} else if ( type == Type.YELLOW ) {
-			trd = new TextureRegionDrawable(Textures.starYellow);
-		}
-		
-		return new Star(world, x, y, type, trd);
+		Star star = new Star();
+		star.setType(type);
+		star.setPosition(x, y);
+		star.setup(world);
+		return star;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public void setRotationSpeed(float speed) {
+		this.rotationSpeed = speed;
 	}
 	
 	@Override
@@ -98,5 +77,41 @@ public class Star extends GameObject {
 		} else if( key.contentEquals("rotationSpeed")) {
 			this.rotationSpeed = Float.valueOf(value.toString());
 		}
+	}
+
+	@Override
+	public void setup(World world) {
+		setupImage();
+		setupBox2D(world);
+	}
+	
+	private void setupImage() {
+		TextureRegionDrawable trd = null;
+		if( type == Type.BLUE ) {
+			trd = new TextureRegionDrawable(Textures.starBlue);
+		} else if ( type == Type.RED ) {
+			trd = new TextureRegionDrawable(Textures.starRed);
+		} else if ( type == Type.YELLOW ) {
+			trd = new TextureRegionDrawable(Textures.starYellow);
+		}
+		setDrawable(trd);
+		setScaling(Scaling.none);
+	}
+	
+	private void setupBox2D(World world) {
+		float x = getX();
+		float y = getY();
+		setScale(this.scale);
+		float halfWidth = getPrefWidth() / 2f;
+		
+		CircleShape circle = new CircleShape();
+		circle.setRadius((halfWidth * this.scale) * 0.7f);
+		
+		BodyDef bd = new BodyDef();  
+		bd.position.set(new Vector2(x, y));
+		this.star = world.createBody(bd);  
+		Fixture fixture = this.star.createFixture(circle, 0.0f);
+		fixture.setSensor(true);
+		circle.dispose();
 	}
 }

@@ -46,24 +46,23 @@ public class Wall extends GameObject {
 	}
 	
 	private void setupBox2D(World world) {
-		PolygonShape box = new PolygonShape();  
+		Gdx.app.log("Wall",	"setupBox2D: length="+this.length);
 		
+		PolygonShape box = new PolygonShape();  
 		if( type == Type.HORIZONTAL ) {
 			box.setAsBox(this.length/2f, this.spriteMiddlePart.getHeight()/2f);
 		} else {
 			box.setAsBox(this.spriteMiddlePart.getWidth()/2f, this.length/2f);
 		}
 		
-		BodyDef groundBodyDef =new BodyDef();  
+		BodyDef groundBodyDef = new BodyDef();  
 		groundBodyDef.position.set(getX(), getY()); // Set its world position
 		Body body = world.createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
 	}
 	
-	private void setup(World world, float length, Type type) {
-		this.type = type;
-		this.length = length;
+	public void setup(World world) {
 		setupImages();
 		setupBox2D(world);
 	}
@@ -71,8 +70,18 @@ public class Wall extends GameObject {
 	public static Wall create(World world, float x, float y, float length, Type type) {
 		Wall wall = new Wall();
 		wall.setPosition(x, y);
-		wall.setup(world, length, type);
+		wall.setLength(length);
+		wall.setType(type);
+		wall.setup(world);
 		return wall;
+	}
+	
+	public void setLength(float length) {
+		this.length = length;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
 	}
 	
 	@Override
