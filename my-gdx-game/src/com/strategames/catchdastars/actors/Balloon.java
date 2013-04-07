@@ -23,8 +23,11 @@ public class Balloon extends GameObject {
 	private Body balloon;
 	private Vector2 localPositionTopOfBalloon;
 	private World world;
+	private Vector2 origin;
 	private float balloonHalfWidth;
 	private float balloonHalfHeight;
+	private float imageOffsetX;
+	private float imageOffsetY;
 	
 	public static enum Type {
 		BLUE
@@ -66,10 +69,11 @@ public class Balloon extends GameObject {
 		float balloonWidth = getPrefWidth() * getScaleX();
 		float balloonHeight = getPrefHeight() * getScaleY();
 		
-		this.balloonHalfWidth = balloonWidth / 2f;
-		this.balloonHalfHeight = balloonHeight / 2f;
+		balloonHalfWidth = (balloonWidth / 2f);
+		balloonHalfHeight = (balloonHeight / 2f);
 		
-		setOrigin(-this.balloonHalfWidth, -this.balloonHalfHeight);
+		this.imageOffsetX = balloonHalfWidth;
+		this.imageOffsetY = balloonHalfHeight;
 		
 		this.localPositionTopOfBalloon = new Vector2(balloonWidth / 2f, balloonHeight);
 
@@ -88,7 +92,7 @@ public class Balloon extends GameObject {
 		fixtureBalloon.restitution = 0.9f; // Make it bounce a little bit
 
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
-		Vector2 origin = loader.getOrigin("Balloon", balloonWidth).cpy();
+		this.origin = loader.getOrigin("Balloon", balloonWidth).cpy();
 		
 		//Balloon knot
 		bd = new BodyDef();
@@ -110,11 +114,11 @@ public class Balloon extends GameObject {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		setPosition(
-				this.balloon.getPosition().x + this.balloonHalfWidth, 
-				this.balloon.getPosition().y + this.balloonHalfHeight
-				);
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
+		setPosition(
+				this.balloon.getPosition().x + imageOffsetX, 
+				this.balloon.getPosition().y + imageOffsetY
+				);
 		super.draw(batch, parentAlpha);
 	}
 

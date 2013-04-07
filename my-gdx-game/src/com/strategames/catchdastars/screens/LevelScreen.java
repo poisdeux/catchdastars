@@ -6,8 +6,7 @@ import com.strategames.catchdastars.Game;
 public class LevelScreen extends AbstractScreen
 {	
 	public LevelScreen(
-			Game game,
-			int level )
+			Game game )
 	{
 		super(game);
 	}
