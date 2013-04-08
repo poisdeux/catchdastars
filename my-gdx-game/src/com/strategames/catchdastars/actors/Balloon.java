@@ -19,15 +19,9 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject {
-	private Body knot;
 	private Body balloon;
 	private Vector2 localPositionTopOfBalloon;
 	private World world;
-	private Vector2 origin;
-	private float balloonHalfWidth;
-	private float balloonHalfHeight;
-	private float imageOffsetX;
-	private float imageOffsetY;
 	
 	public static enum Type {
 		BLUE
@@ -68,14 +62,6 @@ public class Balloon extends GameObject {
 	private void setupBox2D(World world) {
 		float balloonWidth = getPrefWidth() * getScaleX();
 		float balloonHeight = getPrefHeight() * getScaleY();
-		
-		balloonHalfWidth = (balloonWidth / 2f);
-		balloonHalfHeight = (balloonHeight / 2f);
-		
-		this.imageOffsetX = balloonHalfWidth;
-		this.imageOffsetY = balloonHalfHeight;
-		
-		this.localPositionTopOfBalloon = new Vector2(balloonWidth / 2f, balloonHeight);
 
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 
@@ -89,36 +75,19 @@ public class Balloon extends GameObject {
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 10.33f;  // Helium density 
 		fixtureBalloon.friction = 0.2f;
-		fixtureBalloon.restitution = 0.9f; // Make it bounce a little bit
+		fixtureBalloon.restitution = 0.6f; // Make it bounce a little bit
 
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
-		this.origin = loader.getOrigin("Balloon", balloonWidth).cpy();
 		
-		//Balloon knot
-		bd = new BodyDef();
-		Vector2 knotPosition = new Vector2(this.balloon.getWorldPoint(origin));
-		knotPosition.x += balloonWidth * 0.7f;
-		bd.position.set(knotPosition);
-		bd.type = BodyType.DynamicBody;
-		this.knot = world.createBody(bd);
-
-		PolygonShape shape = new PolygonShape();
-		float knotSize = balloonWidth/30f;
-		shape.setAsBox(knotSize, knotSize);
-		this.knot.createFixture(shape, fixtureBalloon.density * 40f);
-
-		WeldJointDef wd = new WeldJointDef();
-		wd.initialize(this.balloon, knot, this.balloon.getWorldCenter());
-		world.createJoint(wd);
+		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
+		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
 	}
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+		Vector2 balloonPos = this.balloon.getWorldCenter();
+	    setPosition(balloonPos.x, balloonPos.y);	    
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
-		setPosition(
-				this.balloon.getPosition().x + imageOffsetX, 
-				this.balloon.getPosition().y + imageOffsetY
-				);
 		super.draw(batch, parentAlpha);
 	}
 

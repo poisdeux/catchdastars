@@ -99,8 +99,6 @@ public class Star extends GameObject {
 	}
 	
 	private void setupBox2D(World world) {
-		float x = getX();
-		float y = getY();
 		setScale(this.scale);
 		float halfWidth = getPrefWidth() / 2f;
 		
@@ -108,7 +106,7 @@ public class Star extends GameObject {
 		circle.setRadius((halfWidth * this.scale) * 0.7f);
 		
 		BodyDef bd = new BodyDef();  
-		bd.position.set(new Vector2(x, y));
+		bd.position.set(new Vector2(getX(), getY()));
 		this.star = world.createBody(bd);  
 		Fixture fixture = this.star.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
