@@ -5,9 +5,9 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -17,7 +17,10 @@ import com.strategames.catchdastars.Game;
 
 public class LevelEditorMenuScreen extends AbstractScreen {
 	private Skin skin;
-
+	private Table levelButtonsTable;
+	private int lastLevelNumber;
+	private String dialogMessage;
+	
 	public LevelEditorMenuScreen(Game game) {
 		super(game);
 
@@ -31,12 +34,17 @@ public class LevelEditorMenuScreen extends AbstractScreen {
 		table.add( "Level editor" ).expand().top();
 		table.row();
 
-		Table levelButtonsTable = new Table(skin);
-		ArrayList<TextButton> levelButtons = getLevels();
-		for( TextButton button : levelButtons ) {
+		this.levelButtonsTable = new Table(skin);
+		
+		ArrayList<String> levelNames = getGame().getLevelNames();
+			
+		this.lastLevelNumber = 1;
+		for( String name : levelNames ) {
+			TextButton button = new TextButton(this.lastLevelNumber++ + ". " +name, skin);
 			levelButtonsTable.add(button).expand();
 			levelButtonsTable.row();
 		}
+		
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
 		table.add(scrollPane).expand().fill().colspan(4);;
 		table.row();
@@ -47,6 +55,21 @@ public class LevelEditorMenuScreen extends AbstractScreen {
 			public void clicked(InputEvent event, float x, float y) {
 				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
 				//				game.getSoundManager().play( TyrianSound.CLICK );
+				Gdx.input.getTextInput(new TextInputListener() {
+			        @Override
+			        public void input(String text) {
+			        	TextButton button = new TextButton(lastLevelNumber++ + ". " +text, skin);
+						levelButtonsTable.add(button).expand();
+						levelButtonsTable.row();
+			        }
+			        
+			        @Override
+			        public void canceled() {
+			        	
+			        }
+			      }, "Enter name for new level", "");
+				
+				
 			}
 		}); 
 
@@ -56,28 +79,5 @@ public class LevelEditorMenuScreen extends AbstractScreen {
 		Stage stage = getStage();
 		stage.addActor(table);
 		Gdx.input.setInputProcessor( stage );
-	}
-
-	private ArrayList<TextButton> getLevels() {
-		ArrayList<TextButton> levels = new ArrayList<TextButton>();
-		levels.add(new TextButton("1. Mind the wall", skin));
-		levels.add(new TextButton("2. Save the red balloon", skin));
-		levels.add(new TextButton("3. Up and down", skin));
-		levels.add(new TextButton("4. The spiral", skin));
-		levels.add(new TextButton("5. Do not pop the balloon", skin));
-		levels.add(new TextButton("6. Learn to navigate", skin));
-		levels.add(new TextButton("7. Mind the wall", skin));
-		levels.add(new TextButton("8. Save the red balloon", skin));
-		levels.add(new TextButton("9. Up and down", skin));
-		levels.add(new TextButton("10. The spiral", skin));
-		levels.add(new TextButton("11. Do not pop the balloon", skin));
-		levels.add(new TextButton("12. Learn to navigate", skin));
-		levels.add(new TextButton("13. Mind the wall", skin));
-		levels.add(new TextButton("14. Save the red balloon", skin));
-		levels.add(new TextButton("15. Up and down", skin));
-		levels.add(new TextButton("16. The spiral", skin));
-		levels.add(new TextButton("17. Do not pop the balloon", skin));
-		levels.add(new TextButton("18. Learn to navigate", skin));
-		return levels;
 	}
 }

@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.strategames.catchdastars.actors.Balloon;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.actors.Star;
-import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 
 public class CatchDaStars extends Game {

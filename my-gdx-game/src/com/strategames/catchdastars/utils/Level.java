@@ -46,8 +46,13 @@ public class Level {
 	 * @return ArrayList<GameObject>
 	 */
 	static public Level loadInternal(int level) {
-		FileHandle file = Gdx.files.internal(PATH + "/" + level);
-		return load(level, file);
+		try {
+			FileHandle file = Gdx.files.internal(PATH + "/" + level);
+			return load(level, file);
+		} catch (Exception e) {
+			return null;
+		}
+		
 	}
 	
 	/**
@@ -56,8 +61,12 @@ public class Level {
 	 * @return ArrayList<GameObject>
 	 */
 	static public Level loadLocal(int level) {
-		FileHandle file = Gdx.files.local(PATH + "/" + level);
-		return load(level, file);
+		try {
+			FileHandle file = Gdx.files.local(PATH + "/" + level);
+			return load(level, file);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
