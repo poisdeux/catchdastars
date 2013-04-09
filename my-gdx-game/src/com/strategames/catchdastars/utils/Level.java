@@ -70,7 +70,7 @@ public class Level {
 	static public Level load(int level, FileHandle file) {
 		Json json = new Json();
 		String text = file.readString();
-		Object root =  json.fromJson(ArrayList.class, text);
+		Object root =  json.fromJson(Level.class, text);
 		return (Level) root;
 	}
 	
@@ -83,7 +83,7 @@ public class Level {
 	public void save() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
-
+		
 		FileHandle file = Gdx.files.local(PATH + "/" + this.number);
 		file.delete();
 		

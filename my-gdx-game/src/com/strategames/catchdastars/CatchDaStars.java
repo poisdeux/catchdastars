@@ -56,29 +56,30 @@ public class CatchDaStars extends Game {
 		
 		stage.clear();
 
-//		Level level = Level.loadInternal(1);
-//		ArrayList<GameObject> gameObjects = level.getGameObjects();
-//		
-//		for(GameObject gameObject : gameObjects ) {
-//			gameObject.setup(this.world);
-//			stage.addActor(gameObject);
-//		}
+		Level level = Level.loadInternal(1);
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
 		
-		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
-		
-		gameObjects.add(Star.create(this.world, 400, 200, Star.Type.RED));
-		gameObjects.add(Balloon.create(this.world, (stage.getWidth() - 48) / 2f, 20f, Balloon.Type.BLUE));
-		gameObjects.add(Wall.create(this.world, 400, 240, 200f, Wall.Type.HORIZONTAL));
-		gameObjects.add(Wall.create(this.world, 440, 240,	100f, Wall.Type.VERTICAL));
-
 		for(GameObject gameObject : gameObjects ) {
+			gameObject.setup(this.world);
 			stage.addActor(gameObject);
 		}
 		
-		Level level = new Level();
-		level.setGameObjects(gameObjects);
-		level.setLevelNumber(1);
-		level.save();
+//		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+//		
+//		gameObjects.add(Star.create(this.world, 400, 200, Star.Type.RED));
+//		gameObjects.add(Balloon.create(this.world, (stage.getWidth() - 48) / 2f, 20f, Balloon.Type.BLUE));
+//		gameObjects.add(Wall.create(this.world, 400, 240, 200f, Wall.Type.HORIZONTAL));
+//		gameObjects.add(Wall.create(this.world, 440, 240,	100f, Wall.Type.VERTICAL));
+//
+//		for(GameObject gameObject : gameObjects ) {
+//			stage.addActor(gameObject);
+//		}
+//		
+//		Level level = new Level();
+//		level.setGameObjects(gameObjects);
+//		level.setLevelNumber(1);
+//		level.setName("Test level");
+//		level.save();
 		
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 	}

@@ -10,9 +10,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Scaling;
@@ -35,7 +33,6 @@ public class Balloon extends GameObject {
 		Balloon balloon = new Balloon();
 		balloon.setType(type);
 		balloon.setPosition(x, y);
-		balloon.setScale(0.6f);
 		balloon.setup(world);
 		return balloon;
 	}
