@@ -125,7 +125,7 @@ public class Level implements Comparable<Level> {
 		try {
 			FileHandle file = Gdx.files.local(PATH + "/" + level);
 			if( file.delete() ) {
-				reorderLevels(level);
+				reorderLevelFiles();
 				return true;
 			}
 			return false;
@@ -134,9 +134,13 @@ public class Level implements Comparable<Level> {
 		}
 	}
 
-	static private void reorderLevels(int number) {
+	static private void reorderLevelFiles() {
 		ArrayList<Level> levels = loadAllLocalLevels();
 		Collections.sort(levels);
+		
+		if(! deleteLocalLevelsDir()) {
+			return;
+		}
 		
 		int levelNumber = 1;
 		
@@ -146,6 +150,11 @@ public class Level implements Comparable<Level> {
 		}
 	}
 
+	static private boolean deleteLocalLevelsDir() {
+		FileHandle file = Gdx.files.local(PATH);
+		return file.deleteDirectory();
+	}
+	
 	/**
 	 * Saves the content of stage to a local file.
 	 * These files can be loaded using {@link #loadLocal(int)}
