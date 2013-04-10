@@ -3,6 +3,7 @@ package com.strategames.catchdastars;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.utils.Level;
@@ -10,16 +11,19 @@ import com.strategames.catchdastars.utils.Textures;
 
 abstract public class Game extends com.badlogic.gdx.Game {
 	private ArrayList<String> levelNames;
+	private Level currentLevel;
 	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
-		for(int i = 1; ;i++) {
-			Level level = Level.loadInternal(i);
-			if( level == null )
-				break;
-			
-			this.levelNames.add(level.getName());
-		}
+		
+//		FileHandle dir = Level.getInternalLevelsDir();
+//		FileHandle[] files = dir.list();
+//		for(FileHandle file : files) {
+//			Level level = Level.loadInternal(Integer.parseInt(file.name()));
+//			if( level != null ) {
+//				this.levelNames.add(level.getName());
+//			}
+//		}
 	}
 	
 	@Override
@@ -49,6 +53,14 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	
 	public int getAmountOfLevels() {
 		return this.levelNames.size();
+	}
+	
+	public void setCurrentLevel(Level level) {
+		this.currentLevel = level;
+	}
+	
+	public Level getCurrentLevel() {
+		return this.currentLevel;
 	}
 	
 	public ArrayList<String> getLevelNames() {
