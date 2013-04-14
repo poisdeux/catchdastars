@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
-import com.strategames.catchdastars.actors.Balloon.Type;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Wall extends GameObject {
@@ -34,12 +34,14 @@ public class Wall extends GameObject {
 		float x = getX();
 		float y = getY();
 		if( type == Type.HORIZONTAL ) {
+			setDrawable(new TextureRegionDrawable(Textures.bricksHorizontal));
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
 			this.startPosition = new Vector2(x - (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
 			this.endPosition = new Vector2(x + (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
 		} else {
+			setDrawable(new TextureRegionDrawable(Textures.bricksVertical));
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
 			this.startPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y - (this.length/2f));
 			this.endPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y + (this.length/2f));
@@ -78,6 +80,7 @@ public class Wall extends GameObject {
 	
 	public void setType(Type type) {
 		this.type = type;
+		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
 	
 	@Override

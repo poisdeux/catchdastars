@@ -46,7 +46,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean longPress(float x, float y) {
-		Gdx.app.log("LevelEditorScreen", "longPress: x="+x+", y="+y);
 		this.touchPosition.set(x, y);
 		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
 		getStage().addActor(dialog);
