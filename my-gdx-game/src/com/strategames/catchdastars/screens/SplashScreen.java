@@ -2,7 +2,6 @@ package com.strategames.catchdastars.screens;
 
 
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
@@ -19,14 +18,8 @@ public class SplashScreen extends AbstractScreen {
 	private SplashImage splashImage;
 
 	@Override
-	public void resize(
-			int width,
-			int height )
+	public void show( )
 	{
-		super.resize( width, height );
-		
-		Stage stage = getStage();
-		stage.clear();
 		
 		this.splashImage = new SplashImage(); 
 
@@ -51,7 +44,7 @@ public class SplashScreen extends AbstractScreen {
 		});
 		this.splashImage.addAction(sequence);
 
-		stage.addActor( this.splashImage );
+		getGame().addUIElement( this.splashImage );
 	}
 
 	@Override

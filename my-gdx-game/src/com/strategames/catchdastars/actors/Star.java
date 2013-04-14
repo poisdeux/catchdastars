@@ -38,7 +38,8 @@ public class Star extends GameObject {
 		Star star = new Star();
 		star.setType(type);
 		star.setPosition(x, y);
-		star.setup(world);
+		star.setWorld(world);
+		star.setup();
 		return star;
 	}
 	
@@ -80,7 +81,7 @@ public class Star extends GameObject {
 	}
 	
 	@Override
-	void setupImage() {
+	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.starBlue);
@@ -89,12 +90,11 @@ public class Star extends GameObject {
 		} else if ( type == Type.YELLOW ) {
 			trd = new TextureRegionDrawable(Textures.starYellow);
 		}
-		setDrawable(trd);
-		setScaling(Scaling.none);
+		return trd;
 	}
 	
 	@Override
-	void setupBox2D() {
+	Body setupBox2D() {
 		setScale(this.scale);
 		float halfWidth = getPrefWidth() / 2f;
 		
@@ -107,6 +107,8 @@ public class Star extends GameObject {
 		Fixture fixture = this.star.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
 		circle.dispose();
+		
+		return this.star;
 	}
 	
 	

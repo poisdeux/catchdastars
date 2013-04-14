@@ -12,16 +12,18 @@ import com.strategames.catchdastars.Game;
 
 public abstract class AbstractScreen implements Screen
 {
-	private final Stage stage;
 	private Game game;
 	protected BitmapFont font;
 	protected SpriteBatch batch;
 	protected Skin skin;
+	private final Stage stageActors;
+	private final Stage stageUIElements;
 	
 	public AbstractScreen(Game game)
 	{
-		this.stage = new Stage( 0, 0, true );
 		this.game = game;
+		this.stageUIElements = new Stage(0, 0, true);
+		this.stageActors = new Stage(0, 0, true);
 	}
 
 	protected Game getGame() {
@@ -71,30 +73,15 @@ public abstract class AbstractScreen implements Screen
 	}
 
 	@Override
-	public void resize(
-			int width,
-			int height )
-	{
-		Gdx.app.log( "AbstractScreen", "Resizing screen: " + getName() + " to: " + width + " x " + height );
-
-		// resize and clear the stage
-		stage.setViewport( width, height, true );
-//		stage.clear();
-	}
-
-	@Override
 	public void render(
 			float delta )
-	{
-		// update the actors
-		stage.act( delta );
-
+	{		
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// draw the actors
-		stage.draw();
-		
+		this.stageActors.draw();
+		this.stageUIElements.draw();
 	}
 
 	@Override
@@ -119,16 +106,28 @@ public abstract class AbstractScreen implements Screen
 	}
 
 	@Override
+	public void resize(int width, int height) {
+		Gdx.app.log( "AbstractScreen", "Resizing screen: " + getName() );
+		this.stageActors.setViewport( width, height, true );
+		this.stageUIElements.setViewport( width, height, true );
+	}
+	
+	@Override
 	public void dispose()
 	{
 		Gdx.app.log( "AbstractScreen", "Disposing screen: " + getName() );
-		stage.dispose();
+		this.stageActors.dispose();
+		this.stageUIElements.dispose();
 		if( font != null ) font.dispose();
 		if( batch != null ) batch.dispose();
 		if( skin != null ) skin.dispose();
 	}
 	
-	public Stage getStage() {
-		return this.stage;
+	public Stage getStageActors() {
+		return this.stageActors;
+	}
+	
+	public Stage getStageUIElements() {
+		return this.stageUIElements;
 	}
 }

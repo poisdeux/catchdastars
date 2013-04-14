@@ -29,26 +29,29 @@ public class Wall extends GameObject {
 		super();
 	}
 	
-	
-	void setupImage() {
+	@Override
+	TextureRegionDrawable createTexture() {
+		TextureRegionDrawable trd = null;
 		float x = getX();
 		float y = getY();
 		if( type == Type.HORIZONTAL ) {
-			setDrawable(new TextureRegionDrawable(Textures.bricksHorizontal));
+			trd = new TextureRegionDrawable(Textures.bricksHorizontal);
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
 			this.startPosition = new Vector2(x - (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
 			this.endPosition = new Vector2(x + (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
 		} else {
-			setDrawable(new TextureRegionDrawable(Textures.bricksVertical));
+			trd = new TextureRegionDrawable(Textures.bricksVertical);
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
 			this.startPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y - (this.length/2f));
 			this.endPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y + (this.length/2f));
 		}
+		return trd;
 	}
 	
-	void setupBox2D() {
+	@Override
+	Body setupBox2D() {
 		Gdx.app.log("Wall",	"setupBox2D: length="+this.length);
 		
 		PolygonShape box = new PolygonShape();  
@@ -63,6 +66,8 @@ public class Wall extends GameObject {
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
+		
+		return body;
 	}
 	
 	public static Wall create(World world, float x, float y, float length, Type type) {
@@ -70,7 +75,8 @@ public class Wall extends GameObject {
 		wall.setPosition(x, y);
 		wall.setLength(length);
 		wall.setType(type);
-		wall.setup(world);
+		wall.setWorld(world);
+		wall.setup();
 		return wall;
 	}
 	

@@ -3,8 +3,11 @@ package com.strategames.catchdastars;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
@@ -13,36 +16,18 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
 	private ArrayList<GameObject> availableGameObjects;
+	private World world;
 	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 	}
 	
 	@Override
-	public void render() {		
-		super.render();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		super.resize( width, height );
-		Gdx.app.log( "Game", "Resizing game to: " + width + " x " + height );
-
-		// show the splash screen when the game is resized for the first time;
-		// this approach avoids calling the screen's resize method repeatedly
-		if( getScreen() == null ) {
-//			setScreen( new SplashScreen( this ) );
-//			setScreen( new LevelScreen(this));
-			setScreen(new LevelEditorMenuScreen(this));
-		}
-		
-		this.availableGameObjects = availableGameObjects();
-	}
-	
-	@Override
 	public void create() {
 		Gdx.app.log( "Game", "create() called" );
 		Textures.load();
+		setScreen(new LevelEditorMenuScreen(this));
+		this.availableGameObjects = availableGameObjects();
 	}
 	
 	public int getAmountOfLevels() {
@@ -65,6 +50,14 @@ abstract public class Game extends com.badlogic.gdx.Game {
 		this.levelNames.add(name);
 	}
 	
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
+	public World getWorld() {
+		return world;
+	}
+	
 	/**
 	 * Returns a single game object for each type used in this game
 	 * @return
@@ -72,6 +65,31 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	public ArrayList<GameObject> getAvailableGameObjects() {
 		return this.availableGameObjects;
 	}
+	
+	/**
+	 * Use this to add game objects that require collision detection and physics to calculate the objects new position.
+	 * @param object the actual game object
+	 */
+	public void addGameObject(GameObject object) {
+		object.setWorld(getWorld());
+		object.setup();
+		AbstractScreen screen = (AbstractScreen) getScreen();
+		screen.getStageActors().addActor(object);
+	}
+	
+	/**
+	 * Use this to add User interface elements that do not require collision detection nor physics
+	 * Example: score bar, buttons, background images/animations
+	 * @param actor
+	 */
+	public void addUIElement(Actor actor) {
+		AbstractScreen screen = (AbstractScreen) getScreen();
+		screen.getStageUIElements().addActor(actor);
+	}
+	
+//	public ArrayList<GameObject> getGameObjects() {
+//		return this.stageActors;
+//	}
 	
 	/**
 	 * This should return one game object for each type used in the game.
@@ -82,6 +100,4 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	abstract public void setupStage(Stage stage);
 	
 	abstract public void update(float delta);
-
-	abstract public void addGameObject(GameObject object);
 }

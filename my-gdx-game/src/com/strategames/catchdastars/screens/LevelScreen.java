@@ -18,9 +18,8 @@ public class LevelScreen extends AbstractScreen
 	}
 
 	@Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
-		getGame().setupStage(getStage());
+	public void show() {
+		getGame().setupStage(getStageActors());
 	}
 	
 	@Override

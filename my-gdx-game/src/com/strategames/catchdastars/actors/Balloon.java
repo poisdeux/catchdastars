@@ -11,15 +11,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject {
-	private Body balloon;
 	private Vector2 localPositionTopOfBalloon;
-
+	private Body balloon;
+	
 	public static enum Type {
 		BLUE
 	}
@@ -32,7 +33,8 @@ public class Balloon extends GameObject {
 		Balloon balloon = new Balloon();
 		balloon.setType(type);
 		balloon.setPosition(x, y);
-		balloon.setup(world);
+		balloon.setWorld(world);
+		balloon.setup();
 		return balloon;
 	}
 
@@ -41,17 +43,16 @@ public class Balloon extends GameObject {
 	}
 
 	@Override
-	void setupImage() {
+	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
 		}
-		setDrawable(trd);
-		setScaling(Scaling.none);
+		return trd;
 	}
 
 	@Override
-	void setupBox2D() {
+	Body setupBox2D() {
 		World world = getWorld();
 		float balloonWidth = getPrefWidth() * getScaleX();
 		float balloonHeight = getPrefHeight() * getScaleY();
@@ -64,7 +65,7 @@ public class Balloon extends GameObject {
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 0.8f;
 		this.balloon = world.createBody(bd);
-
+		
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 10.33f;  // Helium density 
 		fixtureBalloon.friction = 0.2f;
@@ -74,6 +75,8 @@ public class Balloon extends GameObject {
 
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
 		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
+		
+		return this.balloon;
 	}
 
 	@Override

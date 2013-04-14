@@ -18,10 +18,9 @@ import com.strategames.catchdastars.utils.Level;
 public class CatchDaStars extends Game {
 	private Vector2 gravity;
 	private float gravityFactor = 10;
-	private World world;
 	private Box2DDebugRenderer debugRenderer;
 	private Camera camera;
-	private Stage stage;
+	
 	
 	static final float WORLD_TO_BOX = 0.01f;
 	static final float BOX_TO_WORLD = 100f;
@@ -32,21 +31,20 @@ public class CatchDaStars extends Game {
 	}
 
 	public void update(float delta) {
+		World world = getWorld();
 		if( this.accelerometerAvailable ) {
-			gravity.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
-			gravity.mul(this.gravityFactor);
+			this.gravity.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
+			this.gravity.mul(this.gravityFactor);
 			world.setGravity(gravity);
 		} 
 
-		this.world.step(1/45f, 6, 2);
-		this.debugRenderer.render(this.world, this.camera.combined);	
+		world.step(1/45f, 6, 2);
+		this.debugRenderer.render(world, this.camera.combined);	
 	}
 
 	@Override
 	public void setupStage(Stage stage) {
 		Gdx.app.log("CatchDaStars", "setting up the stage");
-
-		this.stage = stage;
 		
 		this.camera = stage.getCamera();
 		this.debugRenderer = new Box2DDebugRenderer();
@@ -54,8 +52,8 @@ public class CatchDaStars extends Game {
 		this.gravity = new Vector2();
 		this.gravity.set(0, -this.gravityFactor);
 
-		this.world = new World(this.gravity, true);
-
+		setWorld(new World(this.gravity, true));
+		
 		stage.clear();
 
 		Level level = getCurrentLevel();
@@ -63,8 +61,7 @@ public class CatchDaStars extends Game {
 
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
-				gameObject.setup(this.world);
-				stage.addActor(gameObject);
+				addGameObject(gameObject);
 			}
 		}
 
@@ -100,9 +97,5 @@ public class CatchDaStars extends Game {
 		return objects;
 	}
 
-	@Override
-	public void addGameObject(GameObject object) {
-		object.setup(this.world);
-		stage.addActor(object);
-	}
+	
 }

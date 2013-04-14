@@ -1,8 +1,11 @@
 package com.strategames.catchdastars.actors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
@@ -12,6 +15,7 @@ import com.badlogic.gdx.utils.Scaling;
 abstract public class GameObject extends Image implements Json.Serializable {
 	private String name;
 	private World world;
+	private Body body;
 	
 	public GameObject() {
 		setName(getClass().getSimpleName());
@@ -38,29 +42,51 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.world;
 	}
 	
+	public void setBody(Body body) {
+		this.body = body;
+	}
+	
+	public Body getBody() {
+		return body;
+	}
+	
 	/**
 	 * Setup the image and body of this game object. 
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
-	public void setup(World world) {
-		setWorld(world);
+	public void setup() {
+		TextureRegionDrawable trd = createTexture();
+		if( trd != null ) {
+			setDrawable(trd);
+			setScaling(Scaling.none);
+			setWidth(trd.getRegion().getRegionWidth());
+			setHeight(trd.getRegion().getRegionHeight());
+		}
 		
-		setupImage();
-		
-		if( world != null ) {
-			setupBox2D();
+		if( this.world != null ) {
+			this.body = setupBox2D();
+		}
+	}
+	
+	public void moveTo(float x, float y) {
+		Gdx.app.log("GameObject", "moveTo: x="+x+", y="+y);
+		if( this.body != null ) {
+//			this.body.setTransform(x, y, this.body.getAngle());
+//			this.body.setAwake(true);
+			this.body.setTransform(x,  y, this.body.getAngle());
 		}
 	}
 	
 	/**
 	 * Called to create the image for the game object
 	 */
-	abstract void setupImage();
+	abstract TextureRegionDrawable createTexture();
 	
 	/**
-	 * Called to create the Box2D body of the game object
+	 * Called to create the Box2D body of the game object.
+	 * @return the created body
 	 */
-	abstract void setupBox2D();
+	abstract Body setupBox2D();
 	
 	/**
 	 * Use this to write specific object properties to file(s)

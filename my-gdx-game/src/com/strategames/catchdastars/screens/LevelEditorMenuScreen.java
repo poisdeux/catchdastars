@@ -29,6 +29,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		this.skin = getSkin();
 	}
 
+		
 	@Override
 	public void show() {
 		this.table = new Table( skin );
@@ -76,7 +77,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 
 		this.table.add( addLevel ).size( Gdx.graphics.getWidth(), 60 ).expand().bottom();
 		this.table.row();
-		Stage stage = getStage();
+		Stage stage = getStageUIElements();
+		Gdx.app.log("LevelEditorMenuScreen", "resize():  stage.getHeight()="+stage.getHeight()+", stage.getWidth()="+stage.getWidth());
 		stage.addActor(this.table);
 		Gdx.input.setInputProcessor( stage );
 	}
@@ -118,7 +120,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		});
 		dialog.button(changeNameButton);
 		
-		dialog.show(getStage());
+		dialog.show(getStageUIElements());
 	}
 	
 	private void changeLevelName(final Level level, final TextButton button) {

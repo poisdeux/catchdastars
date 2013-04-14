@@ -73,7 +73,7 @@ public class MenuScreen extends AbstractScreen {
 		
 		table.add( highScoresButton ).uniform().fill();
 		
-		Stage stage = getStage();
+		Stage stage = getStageUIElements();
 		stage.addActor(table);
 		Gdx.input.setInputProcessor( stage );
 	}
