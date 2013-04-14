@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.actors.Balloon.Type;
 import com.strategames.catchdastars.utils.Textures;
 
 /**
@@ -78,14 +79,9 @@ public class Star extends GameObject {
 			this.rotationSpeed = Float.valueOf(value.toString());
 		}
 	}
-
-	@Override
-	public void setup(World world) {
-		setupImage();
-		setupBox2D(world);
-	}
 	
-	private void setupImage() {
+	@Override
+	void setupImage() {
 		TextureRegionDrawable trd = null;
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.starBlue);
@@ -98,7 +94,8 @@ public class Star extends GameObject {
 		setScaling(Scaling.none);
 	}
 	
-	private void setupBox2D(World world) {
+	@Override
+	void setupBox2D() {
 		setScale(this.scale);
 		float halfWidth = getPrefWidth() / 2f;
 		
@@ -107,9 +104,19 @@ public class Star extends GameObject {
 		
 		BodyDef bd = new BodyDef();  
 		bd.position.set(new Vector2(getX(), getY()));
-		this.star = world.createBody(bd);  
+		this.star = getWorld().createBody(bd);  
 		Fixture fixture = this.star.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
 		circle.dispose();
+	}
+	
+	
+	@Override
+	public GameObject createCopy() {
+		GameObject object = Star.create(getWorld(), 
+				getX(), 
+				getY(), 
+				type);
+		return object;
 	}
 }

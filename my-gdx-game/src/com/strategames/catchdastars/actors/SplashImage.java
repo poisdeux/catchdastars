@@ -32,8 +32,20 @@ public class SplashImage extends GameObject {
 	}
 
 	@Override
-	public void setup(World world) {
+	void setupImage() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	void setupBox2D() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public GameObject createCopy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

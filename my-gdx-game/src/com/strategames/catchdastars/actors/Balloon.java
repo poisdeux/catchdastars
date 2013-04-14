@@ -19,8 +19,7 @@ import com.strategames.catchdastars.utils.Textures;
 public class Balloon extends GameObject {
 	private Body balloon;
 	private Vector2 localPositionTopOfBalloon;
-	private World world;
-	
+
 	public static enum Type {
 		BLUE
 	}
@@ -36,18 +35,13 @@ public class Balloon extends GameObject {
 		balloon.setup(world);
 		return balloon;
 	}
-	
+
 	public void setType(Type type) {
 		this.type = type;
 	}
-	
-	public void setup(World world) {
-		this.world = world;
-		setupImage();
-		setupBox2D(world);
-	}
 
-	private void setupImage() {
+	@Override
+	void setupImage() {
 		TextureRegionDrawable trd = null;
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
@@ -55,8 +49,10 @@ public class Balloon extends GameObject {
 		setDrawable(trd);
 		setScaling(Scaling.none);
 	}
-	
-	private void setupBox2D(World world) {
+
+	@Override
+	void setupBox2D() {
+		World world = getWorld();
 		float balloonWidth = getPrefWidth() * getScaleX();
 		float balloonHeight = getPrefHeight() * getScaleY();
 
@@ -75,15 +71,15 @@ public class Balloon extends GameObject {
 		fixtureBalloon.restitution = 0.6f; // Make it bounce a little bit
 
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
-		
+
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
 		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		Vector2 balloonPos = this.balloon.getWorldCenter();
-	    setPosition(balloonPos.x, balloonPos.y);	    
+		setPosition(balloonPos.x, balloonPos.y);	    
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
 		super.draw(batch, parentAlpha);
 	}
@@ -92,7 +88,7 @@ public class Balloon extends GameObject {
 	public void act(float delta) {
 		super.act(delta);		
 		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.localPositionTopOfBalloon);
-		this.balloon.applyForce(this.world.getGravity().mul(this.balloon.getMass()).mul(-4f), worldPointOfForce);
+		this.balloon.applyForce(getWorld().getGravity().mul(this.balloon.getMass()).mul(-4f), worldPointOfForce);
 	}
 
 	@Override
@@ -106,5 +102,14 @@ public class Balloon extends GameObject {
 		if( key.contentEquals("type")) {
 			this.type = Type.valueOf(value.toString());
 		}
+	}
+
+	@Override
+	public GameObject createCopy() {
+		GameObject object = Balloon.create(getWorld(), 
+				getX(), 
+				getY(), 
+				type);
+		return object;
 	}
 }

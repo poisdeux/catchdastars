@@ -118,8 +118,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		});
 		dialog.button(changeNameButton);
 		
-		Stage stage = getStage();
-		stage.addActor(dialog);
+		dialog.show(getStage());
 	}
 	
 	private void changeLevelName(final Level level, final TextButton button) {

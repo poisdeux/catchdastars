@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
@@ -11,6 +12,7 @@ import com.strategames.catchdastars.utils.Textures;
 abstract public class Game extends com.badlogic.gdx.Game {
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
+	private ArrayList<GameObject> availableGameObjects;
 	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
@@ -33,6 +35,8 @@ abstract public class Game extends com.badlogic.gdx.Game {
 //			setScreen( new LevelScreen(this));
 			setScreen(new LevelEditorMenuScreen(this));
 		}
+		
+		this.availableGameObjects = availableGameObjects();
 	}
 	
 	@Override
@@ -61,8 +65,23 @@ abstract public class Game extends com.badlogic.gdx.Game {
 		this.levelNames.add(name);
 	}
 	
+	/**
+	 * Returns a single game object for each type used in this game
+	 * @return
+	 */
+	public ArrayList<GameObject> getAvailableGameObjects() {
+		return this.availableGameObjects;
+	}
+	
+	/**
+	 * This should return one game object for each type used in the game.
+	 * @return
+	 */
+	abstract public ArrayList<GameObject> availableGameObjects();
+	
 	abstract public void setupStage(Stage stage);
 	
 	abstract public void update(float delta);
-	
+
+	abstract public void addGameObject(GameObject object);
 }

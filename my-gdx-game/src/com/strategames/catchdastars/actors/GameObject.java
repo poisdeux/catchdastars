@@ -2,7 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
@@ -11,13 +11,14 @@ import com.badlogic.gdx.utils.Scaling;
 
 abstract public class GameObject extends Image implements Json.Serializable {
 	private String name;
+	private World world;
 	
 	public GameObject() {
 		setName(getClass().getSimpleName());
 	}
 	
-	public GameObject(TextureRegionDrawable trd, Scaling scaling) {
-		super(trd, scaling);
+	public GameObject(Drawable trd) {
+		super(trd, Scaling.none);
 		setName(getClass().getSimpleName());
 	}
 	
@@ -29,11 +30,37 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.name;
 	}
 	
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
+	public World getWorld() {
+		return this.world;
+	}
+	
 	/**
-	 * Setup the image and body of this game object
-	 * @param world Box2D world that should hold the body
+	 * Setup the image and body of this game object. 
+	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
-	abstract public void setup(World world);
+	public void setup(World world) {
+		setWorld(world);
+		
+		setupImage();
+		
+		if( world != null ) {
+			setupBox2D();
+		}
+	}
+	
+	/**
+	 * Called to create the image for the game object
+	 */
+	abstract void setupImage();
+	
+	/**
+	 * Called to create the Box2D body of the game object
+	 */
+	abstract void setupBox2D();
 	
 	/**
 	 * Use this to write specific object properties to file(s)
@@ -90,4 +117,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			}
 		}
 	}
+	
+	abstract public GameObject createCopy();
 }

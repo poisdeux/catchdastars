@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
+import com.strategames.catchdastars.actors.Balloon.Type;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Wall extends GameObject {
@@ -29,7 +30,7 @@ public class Wall extends GameObject {
 	}
 	
 	
-	private void setupImages() {
+	void setupImage() {
 		float x = getX();
 		float y = getY();
 		if( type == Type.HORIZONTAL ) {
@@ -45,7 +46,7 @@ public class Wall extends GameObject {
 		}
 	}
 	
-	private void setupBox2D(World world) {
+	void setupBox2D() {
 		Gdx.app.log("Wall",	"setupBox2D: length="+this.length);
 		
 		PolygonShape box = new PolygonShape();  
@@ -57,14 +58,9 @@ public class Wall extends GameObject {
 		
 		BodyDef groundBodyDef = new BodyDef();  
 		groundBodyDef.position.set(getX(), getY()); // Set its world position
-		Body body = world.createBody(groundBodyDef);
+		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
-	}
-	
-	public void setup(World world) {
-		setupImages();
-		setupBox2D(world);
 	}
 	
 	public static Wall create(World world, float x, float y, float length, Type type) {
@@ -127,5 +123,15 @@ public class Wall extends GameObject {
 		} else if( key.contentEquals("length")) {
 			this.length = Float.valueOf(value.toString());
 		}
+	}
+	
+	@Override
+	public GameObject createCopy() {
+		GameObject object = Wall.create(getWorld(), 
+					getX(), 
+					getY(),
+					this.length,
+					this.type);
+		return object;
 	}
 }
