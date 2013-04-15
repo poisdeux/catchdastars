@@ -48,6 +48,16 @@ public class GameObjectPickerDialog extends Window {
 			add(tButton);
 			row().fill().expandX();
 		}
+		
+		TextButton cancelButton = new TextButton("Cancel", skin);
+		cancelButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameObjectPickerDialog.this.remove();
+			}
+		});
+		add(cancelButton);
+		row().fill().expandX();
 		pack();
 	}
 }

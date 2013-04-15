@@ -69,10 +69,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 	
 	public void moveTo(float x, float y) {
-		Gdx.app.log("GameObject", "moveTo: x="+x+", y="+y);
+		setPosition(x, y);
 		if( this.body != null ) {
-//			this.body.setTransform(x, y, this.body.getAngle());
-//			this.body.setAwake(true);
 			this.body.setTransform(x,  y, this.body.getAngle());
 		}
 	}

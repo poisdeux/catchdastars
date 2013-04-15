@@ -16,8 +16,7 @@ public class Wall extends GameObject {
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
-	private Vector2 startPosition;
-	private Vector2 endPosition;
+	private Vector2 halfSize;
 	private Type type;
 	private float length;
 	
@@ -32,20 +31,20 @@ public class Wall extends GameObject {
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
-		float x = getX();
-		float y = getY();
 		if( type == Type.HORIZONTAL ) {
 			trd = new TextureRegionDrawable(Textures.bricksHorizontal);
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
-			this.startPosition = new Vector2(x - (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
-			this.endPosition = new Vector2(x + (this.length/2f), y - (this.spriteMiddlePart.getHeight() / 2f));
+			
+			//Make sure length is not smaller than a single block
+			this.length = this.length < this.spriteMiddlePart.getWidth() ? this.spriteMiddlePart.getWidth() : this.length;
+			
+			this.halfSize = new Vector2(this.length / 2f, this.spriteMiddlePart.getHeight() / 2f);
 		} else {
 			trd = new TextureRegionDrawable(Textures.bricksVertical);
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
-			this.startPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y - (this.length/2f));
-			this.endPosition = new Vector2(x - (this.spriteMiddlePart.getWidth() / 2f), y + (this.length/2f));
+			this.halfSize = new Vector2(this.spriteMiddlePart.getWidth() / 2f, this.length / 2f);
 		}
 		return trd;
 	}
@@ -91,30 +90,34 @@ public class Wall extends GameObject {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+		float x = getX() - this.halfSize.x;
+		float y = getY() - this.halfSize.y;
 		if ( type == Type.HORIZONTAL ) {
-			this.spriteLeftPart.setPosition(this.startPosition.x, this.startPosition.y);
+			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch);
 			
 			float stepSize = this.spriteMiddlePart.getWidth();
-			float middlePartEndPosition = this.endPosition.x - this.spriteRightPart.getWidth();
+			float middlePartEndPosition = x + this.length - stepSize;
 			
-			for(float xd = this.startPosition.x + this.spriteLeftPart.getWidth(); 
+			for(float xd = x + stepSize; 
 					xd < middlePartEndPosition; 
 					xd += stepSize ) {
-				this.spriteMiddlePart.setPosition(xd, this.startPosition.y);
+				this.spriteMiddlePart.setPosition(xd, y);
 				this.spriteMiddlePart.draw(batch);
 			}
 			
-			this.spriteRightPart.setPosition(middlePartEndPosition, this.startPosition.y);
+			this.spriteRightPart.setPosition(middlePartEndPosition, y);
 			this.spriteRightPart.draw(batch);
 		} else {
-			float middlePartEndPosition = this.endPosition.y - this.spriteMiddlePart.getHeight();
-			for(float yd = this.startPosition.y; yd < middlePartEndPosition; yd += this.spriteMiddlePart.getHeight() ) {
-				this.spriteMiddlePart.setPosition(this.startPosition.x, yd);
+			float stepSize = this.spriteMiddlePart.getHeight();
+			float middlePartEndPosition = y + this.length;
+			
+			for(float yd = y; 
+					yd < middlePartEndPosition; 
+					yd += stepSize ) {
+				this.spriteMiddlePart.setPosition(x, yd);
 				this.spriteMiddlePart.draw(batch);
 			}
-			this.spriteMiddlePart.setPosition(this.startPosition.x, middlePartEndPosition);
-			this.spriteMiddlePart.draw(batch);
 		}
 	}
 
