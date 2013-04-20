@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.actors;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -48,5 +50,17 @@ public class SplashImage extends GameObject {
 	public GameObject createCopy() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	protected HashMap<String, Float> createConfigurationItems() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void updateConfigurationItem(String name, Float value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

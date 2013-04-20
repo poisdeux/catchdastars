@@ -9,14 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.interfaces.OnSelectListener;
 
 public class GameObjectPickerDialog extends Window {
-
-	public interface SelectListener {
-		public void onSelectListener(GameObject object);
-	}
 	
-	public GameObjectPickerDialog(Game game, Skin skin, final SelectListener listener) {
+	public GameObjectPickerDialog(Game game, Skin skin, final OnSelectListener listener) {
 		super("Select a game object", skin);
 		
 		setPosition(0, 0);
@@ -31,7 +28,7 @@ public class GameObjectPickerDialog extends Window {
 			iButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					listener.onSelectListener(gameObject);
+					listener.onObjectSelectListener(gameObject);
 					GameObjectPickerDialog.this.remove();
 				}
 			});
@@ -41,7 +38,7 @@ public class GameObjectPickerDialog extends Window {
 			tButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					listener.onSelectListener(gameObject);
+					listener.onObjectSelectListener(gameObject);
 					GameObjectPickerDialog.this.remove();
 				}
 			});

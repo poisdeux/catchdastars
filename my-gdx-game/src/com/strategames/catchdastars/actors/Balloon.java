@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.actors;
 
+import java.util.HashMap;
+
 import aurelienribon.bodyeditor.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
@@ -112,5 +114,17 @@ public class Balloon extends GameObject {
 				getY(), 
 				type);
 		return object;
+	}
+
+	@Override
+	protected HashMap<String, Float> createConfigurationItems() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void updateConfigurationItem(String name, Float value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

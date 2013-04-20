@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.actors;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -36,16 +38,11 @@ public class Wall extends GameObject {
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
-			
-			//Make sure length is not smaller than a single block
-			this.length = this.length < this.spriteMiddlePart.getWidth() ? this.spriteMiddlePart.getWidth() : this.length;
-			
-			this.halfSize = new Vector2(this.length / 2f, this.spriteMiddlePart.getHeight() / 2f);
 		} else {
 			trd = new TextureRegionDrawable(Textures.bricksVertical);
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
-			this.halfSize = new Vector2(this.spriteMiddlePart.getWidth() / 2f, this.length / 2f);
 		}
+		setLength(this.length);
 		return trd;
 	}
 	
@@ -72,15 +69,22 @@ public class Wall extends GameObject {
 	public static Wall create(World world, float x, float y, float length, Type type) {
 		Wall wall = new Wall();
 		wall.setPosition(x, y);
-		wall.setLength(length);
 		wall.setType(type);
 		wall.setWorld(world);
 		wall.setup();
+		wall.setLength(length);
 		return wall;
 	}
 	
 	public void setLength(float length) {
-		this.length = length;
+		if( type == Type.HORIZONTAL ) {
+			//Make sure length is not smaller than a single block
+			this.length = length < this.spriteMiddlePart.getWidth() ? this.spriteMiddlePart.getWidth() : length;
+			this.halfSize = new Vector2(this.length / 2f, this.spriteMiddlePart.getHeight() / 2f);
+		} else {
+			this.length = length < this.spriteMiddlePart.getHeight() ? this.spriteMiddlePart.getHeight() : length;
+			this.halfSize = new Vector2(this.spriteMiddlePart.getWidth() / 2f, this.length / 2f);
+		}
 	}
 	
 	public void setType(Type type) {
@@ -145,5 +149,19 @@ public class Wall extends GameObject {
 					this.length,
 					this.type);
 		return object;
+	}
+
+	@Override
+	protected HashMap<String, Float> createConfigurationItems() {
+		HashMap<String, Float> items = new HashMap<String, Float>();
+		items.put("length", this.length);
+		return items;
+	}
+
+	@Override
+	protected void updateConfigurationItem(String name, Float value) {
+		if( name.contentEquals("length") ) {
+			setLength(value.floatValue());
+		}
 	}
 }

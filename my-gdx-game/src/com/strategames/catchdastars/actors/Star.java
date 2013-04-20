@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.actors;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -118,5 +120,17 @@ public class Star extends GameObject {
 				getY(), 
 				type);
 		return object;
+	}
+
+	@Override
+	protected HashMap<String, Float> createConfigurationItems() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void updateConfigurationItem(String name, Float value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

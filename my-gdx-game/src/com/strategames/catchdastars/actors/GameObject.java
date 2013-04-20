@@ -1,6 +1,7 @@
 package com.strategames.catchdastars.actors;
 
-import com.badlogic.gdx.Gdx;
+import java.util.HashMap;
+
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -16,14 +17,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private String name;
 	private World world;
 	private Body body;
+	private HashMap<String, Float> configurationItems;
 	
 	public GameObject() {
 		setName(getClass().getSimpleName());
+		this.configurationItems = createConfigurationItems();
 	}
 	
 	public GameObject(Drawable trd) {
 		super(trd, Scaling.none);
 		setName(getClass().getSimpleName());
+		this.configurationItems = createConfigurationItems();
 	}
 	
 	public void setName(String name) {
@@ -48,6 +52,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	public Body getBody() {
 		return body;
+	}
+	
+	public HashMap<String, Float> getConfigurationItems() {
+		return this.configurationItems;
 	}
 	
 	/**
@@ -143,4 +151,24 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 	
 	abstract public GameObject createCopy();
+	
+	/**
+	 * Called when game objected is created to set the configuration items for
+	 * this game object
+	 * @return HashMap<String, Float> the key should hold the name of the configuration item and the value the default value
+	 */
+	abstract protected HashMap<String, Float> createConfigurationItems();
+	
+	/**
+	 * Called when configuration item value has been updated. Use this
+	 * to set the actual property value of this game object.
+	 * @param name key of the configuration item as set using {@link #createConfigurationItems()}
+	 * @param value value of the configuration item
+	 */
+	abstract protected void updateConfigurationItem(String name, Float value);
+	
+	public void setConfigurationItemValue(String name, Float value) {
+		this.configurationItems.put(name, value);
+		updateConfigurationItem(name, value);
+	}
 }
