@@ -168,7 +168,19 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	abstract protected void updateConfigurationItem(String name, Float value);
 	
 	public void setConfigurationItemValue(String name, Float value) {
+		if( this.configurationItems == null ) return;
+		
 		this.configurationItems.put(name, value);
 		updateConfigurationItem(name, value);
 	}
+	
+	/**
+	 * Should increase the size of the game object one step
+	 */
+	abstract public void increaseSize();
+	
+	/**
+	 * Should decrease the size of the game object one step
+	 */
+	abstract public void decreaseSize();
 }

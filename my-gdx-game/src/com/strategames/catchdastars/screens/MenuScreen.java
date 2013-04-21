@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 
 public class MenuScreen extends AbstractScreen {
-	
+
 	public MenuScreen(
 			Game game )
 	{
@@ -19,63 +19,67 @@ public class MenuScreen extends AbstractScreen {
 
 
 	@Override
-	public void show()
-	{
+	protected void setupUI(Stage stage) {
 		final Game game = getGame();
-		
+
 		// retrieve the default table actor
-//		Table table = super.getTable();
+		//		Table table = super.getTable();
 		Table table = new Table( getSkin() );
 		table.setFillParent(true);
 		table.add( "Welcome to Catch Da Stars!" ).spaceBottom( 50 );
 		table.row();
 
-		// register the button "start game"
-		TextButton startGameButton = new TextButton( "Start game", getSkin() );
-		startGameButton.addListener( new ClickListener() {
-			
+		TextButton button = new TextButton( "Start game", getSkin() );
+		button.addListener( new ClickListener() {
+
 			public void clicked(InputEvent event, float x, float y) {
-			        Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-//				game.getSoundManager().play( TyrianSound.CLICK );
+				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
+				//				game.getSoundManager().play( TyrianSound.CLICK );
 				game.setScreen( new LevelScreen( game ) );
 			}
 		}); 
-				
-		table.add( startGameButton ).size( 300, 60 ).uniform().spaceBottom( 10 );
+
+		table.add( button ).size( 300, 60 ).uniform().spaceBottom( 10 );
 		table.row();
 
-		// register the button "options"
-		TextButton optionsButton = new TextButton( "Options", getSkin() );
-		optionsButton.addListener( new ClickListener() {
-			
+		button = new TextButton( "Options", getSkin() );
+		button.addListener( new ClickListener() {
+
 			public void clicked(InputEvent event, float x, float y) {
-		        Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-//				super.touchUp( event, x, y, pointer, button );
-//				game.getSoundManager().play( TyrianSound.CLICK );
-//				game.setScreen( new OptionsScreen( game ) );
-		     }
-		  });
-		table.add( optionsButton ).uniform().fill().spaceBottom( 10 );
+				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
+				//				super.touchUp( event, x, y, pointer, button );
+				//				game.getSoundManager().play( TyrianSound.CLICK );
+				//				game.setScreen( new OptionsScreen( game ) );
+			}
+		});
+		table.add( button ).uniform().fill().spaceBottom( 10 );
 		table.row();
 
-		// register the button "high scores"
-		TextButton highScoresButton = new TextButton( "High Scores", getSkin() );
-		highScoresButton.addListener( new ClickListener() {
-			
+		button = new TextButton( "High Scores", getSkin() );
+		button.addListener( new ClickListener() {
+
 			public void clicked(InputEvent event, float x, float y) {
-	        	Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-//				super.touchUp( event, x, y, pointer, button );
-//				game.getSoundManager().play( TyrianSound.CLICK );
-//				game.setScreen( new HighScoresScreen( game ) );
-	        }
-	    } );
+			}
+		} );
+		table.add( button ).uniform().fill();
+		table.row();
 		
-		
-		table.add( highScoresButton ).uniform().fill();
-		
-		Stage stage = getStageUIElements();
+		button = new TextButton( "Game editor", getSkin() );
+		button.addListener( new ClickListener() {
+
+			public void clicked(InputEvent event, float x, float y) {
+				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+			}
+		} );
+		table.add( button ).uniform().fill();
+
 		stage.addActor(table);
 		Gdx.input.setInputProcessor( stage );
+	}
+	
+	@Override
+	protected void setupActors(Stage stage) {
+		// TODO Auto-generated method stub
 	}
 }
 

@@ -127,4 +127,16 @@ public class Balloon extends GameObject {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void increaseSize() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void decreaseSize() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,5 +1,6 @@
 package com.strategames.catchdastars.screens;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.Game;
 
 
@@ -18,13 +19,12 @@ public class LevelScreen extends AbstractScreen
 	}
 
 	@Override
-	public void show() {
-		getGame().setupStage(getStageActors());
+	protected void setupUI(Stage stage) {
+		// TODO Auto-generated method stub
 	}
 	
 	@Override
-	public void render(float delta) {
-		super.render(delta);
-		getGame().update(delta);
+	protected void setupActors(Stage stage) {
+		getGame().setupStage(stage);
 	}
 }

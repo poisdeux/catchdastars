@@ -1,6 +1,9 @@
 package com.strategames.catchdastars.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
@@ -11,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Grid;
+import com.strategames.catchdastars.utils.Level;
 import com.strategames.interfaces.OnSelectListener;
 import com.strategames.ui.GameObjectPickerDialog;
 
@@ -19,7 +23,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Vector2 longPressPosition;
 	private Vector2 touchPositionObjectDelta;
 	private Actor actorHit;
-	private Actor previousActorHit;
+	private float previousZoomDistance;
+	private InputMultiplexer multiplexer;
 	
 	public LevelEditorScreen(Game game) {
 		super(game);
@@ -27,23 +32,30 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.longPressPosition = new Vector2();
 		this.touchPositionObjectDelta = new Vector2();
 		this.actorHit = null;
+		
+		Gdx.input.setCatchBackKey(true);
+		
+		this.multiplexer = new InputMultiplexer();
+		this.multiplexer.addProcessor(new GestureDetector(this));
+		this.multiplexer.addProcessor(this);
+		Gdx.input.setInputProcessor(this.multiplexer);
 	}
 
 	@Override
-	public void show() {
-		getGame().setupStage(getStageActors());
-
-		InputMultiplexer multiplexer = new InputMultiplexer();
-		multiplexer.addProcessor(new GestureDetector(this));
-		multiplexer.addProcessor(this);
-		multiplexer.addProcessor(getStageActors());
-		multiplexer.addProcessor(getStageUIElements());
-		Gdx.input.setInputProcessor(multiplexer);
+	protected void setupUI(Stage stage) {
+		this.multiplexer.addProcessor(stage);
 	}
 
+	@Override
+	protected void setupActors(Stage stage) {
+		getGame().setupStage(stage);
+		this.multiplexer.addProcessor(stage);
+	}
+	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Gdx.app.log("LevelEditorScreen", "touchDown");
+		this.previousZoomDistance = 0f; // reset zoom distance
 		return false;
 	}
 
@@ -70,12 +82,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		Gdx.app.log("LevelEditorScreen", "tap");
 		Stage stage = getStageActors();
 		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
-		
-		deselectActor(this.actorHit);
-		
+
+		deselectGameObject((GameObject) this.actorHit);
+
 		this.actorHit = stage.hit(stageCoords.x, stageCoords.y, false);
 		if( this.actorHit != null ) {
-			selectActor(this.actorHit);
+			selectGameObject((GameObject) this.actorHit);
 			Gdx.app.log("LevelEditorScreen", "touchDown: hit " + actorHit.getName());
 			this.touchPositionObjectDelta.x = this.actorHit.getX() - stageCoords.x;
 			this.touchPositionObjectDelta.y = this.actorHit.getY() - stageCoords.y;
@@ -111,26 +123,36 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
 		Gdx.app.log("LevelEditorScreen", "zoom");
-		return false;
+		if( this.previousZoomDistance == 0 ) {
+			this.previousZoomDistance = distance;
+		}
+
+		if( this.actorHit == null ) return false;
+
+		if( distance > this.previousZoomDistance ) {
+			GameObject gameObject = (GameObject) this.actorHit;
+			gameObject.increaseSize();
+		} else if( distance < this.previousZoomDistance ) {
+			GameObject gameObject = (GameObject) this.actorHit;
+			gameObject.decreaseSize();
+		}
+		return true;
 	}
 
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
 			Vector2 pointer1, Vector2 pointer2) {
 		Gdx.app.log("LevelEditorScreen", "pinch");
-		if( this.actorHit != null ) {
-//			this.actorHit = this.previousActorHit;
-			Gdx.app.log("LevelEditorScreen", "pinch: object="+this.actorHit.getName());
-			GameObject gameObject = (GameObject) this.actorHit;
-			gameObject.setConfigurationItemValue("length", 0.1f);
-		}
 		return true;
 	}
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
+		if(keycode == Keys.BACK){
+			saveLevel();
+			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+		}
+        return false;
 	}
 
 	@Override
@@ -156,7 +178,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		Gdx.app.log("LevelEditorScreen", "touchUp");
 		//Hold reference to previous actor in case user performs a pinch gesture
-//		this.previousActorHit = this.actorHit;
+		//		this.previousActorHit = this.actorHit;
 		return false;
 	}
 
@@ -182,24 +204,36 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		copy.setPosition(stageCoordsMapped.x, stageCoordsMapped.y);
 		getGame().addGameObject(copy);
 		stage.addActor(copy);
-		deselectActor(copy);
+		deselectGameObject(copy);
 	}
 
 	@Override
 	public void onConfigurationItemSelectListener(String name, Float value) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	private void selectActor(Actor actor) {
-		if( actor == null) return;
-		
-		actor.setColor(1f, 1f, 1f, 1.0f);
+
 	}
 
-	private void deselectActor(Actor actor) {
-		if( actor == null) return;
+	private void selectGameObject(GameObject gameObject) {
+		if( gameObject == null) return;
+
+		gameObject.setColor(1f, 1f, 1f, 1.0f);
+	}
+
+	private void deselectGameObject(GameObject gameObject) {
+		if( gameObject == null) return;
+
+		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+	}
+	
+	private void saveLevel() {
+		Game game = getGame();
+		Level level = game.getCurrentLevel();
 		
-		actor.setColor(0.8f, 0.8f, 0.8f, 1.0f);
+		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+		for( Actor actor : getStageActors().getActors() ) {
+			gameObjects.add((GameObject) actor);
+		}
+		level.setGameObjects(gameObjects);
+		level.save();
 	}
 }

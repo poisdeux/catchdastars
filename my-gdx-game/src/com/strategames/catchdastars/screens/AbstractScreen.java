@@ -22,8 +22,11 @@ public abstract class AbstractScreen implements Screen
 	public AbstractScreen(Game game)
 	{
 		this.game = game;
-		this.stageUIElements = new Stage(0, 0, true);
-		this.stageActors = new Stage(0, 0, true);
+		
+		this.stageActors = new Stage();
+		this.stageUIElements = new Stage();
+		
+		Gdx.input.setCatchBackKey(false);
 	}
 
 	protected Game getGame() {
@@ -70,6 +73,9 @@ public abstract class AbstractScreen implements Screen
 	public void show()
 	{
 		Gdx.app.log( "AbstractScreen", "Showing screen: " + getName() );
+		
+		setupUI(this.stageUIElements);
+		setupActors(this.stageActors);
 	}
 
 	@Override
@@ -81,6 +87,8 @@ public abstract class AbstractScreen implements Screen
 
 		// draw the actors
 		this.stageActors.draw();
+		this.stageActors.act();
+		
 		this.stageUIElements.draw();
 	}
 
@@ -130,4 +138,23 @@ public abstract class AbstractScreen implements Screen
 	public Stage getStageUIElements() {
 		return this.stageUIElements;
 	}
+	
+	/**
+	 * Called to create the stage for the UI elements.
+	 * <br>
+	 * The actors in this stage will only be drawn and
+	 * not updated using Box2D
+	 * @return stage that should hold the UI elements
+	 */
+	abstract protected void setupUI(Stage stage);
+	
+	/**
+	 * Called to create the stage for the game object elements.
+	 * <br>
+	 * The actors in this stage will be drawn and
+	 * updated using Box2D
+	 * @param stage that should hold the game actors
+	 */
+	abstract protected void setupActors(Stage stage);
+	
 }

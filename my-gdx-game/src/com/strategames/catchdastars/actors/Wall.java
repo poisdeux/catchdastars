@@ -21,7 +21,8 @@ public class Wall extends GameObject {
 	private Vector2 halfSize;
 	private Type type;
 	private float length;
-	
+	private float increaseDecreaseSizeAccumulatedDelta;
+
 	public enum Type {
 		HORIZONTAL, VERTICAL
 	}
@@ -29,7 +30,7 @@ public class Wall extends GameObject {
 	public Wall() {
 		super();
 	}
-	
+
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
@@ -45,27 +46,27 @@ public class Wall extends GameObject {
 		setLength(this.length);
 		return trd;
 	}
-	
+
 	@Override
 	Body setupBox2D() {
 		Gdx.app.log("Wall",	"setupBox2D: length="+this.length);
-		
+
 		PolygonShape box = new PolygonShape();  
 		if( type == Type.HORIZONTAL ) {
 			box.setAsBox(this.length/2f, this.spriteMiddlePart.getHeight()/2f);
 		} else {
 			box.setAsBox(this.spriteMiddlePart.getWidth()/2f, this.length/2f);
 		}
-		
+
 		BodyDef groundBodyDef = new BodyDef();  
 		groundBodyDef.position.set(getX(), getY()); // Set its world position
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
-		
+
 		return body;
 	}
-	
+
 	public static Wall create(World world, float x, float y, float length, Type type) {
 		Wall wall = new Wall();
 		wall.setPosition(x, y);
@@ -75,23 +76,24 @@ public class Wall extends GameObject {
 		wall.setLength(length);
 		return wall;
 	}
-	
+
 	public void setLength(float length) {
+		float width = this.spriteMiddlePart.getWidth();
+		float height = this.spriteMiddlePart.getHeight();
 		if( type == Type.HORIZONTAL ) {
-			//Make sure length is not smaller than a single block
-			this.length = length < this.spriteMiddlePart.getWidth() ? this.spriteMiddlePart.getWidth() : length;
-			this.halfSize = new Vector2(this.length / 2f, this.spriteMiddlePart.getHeight() / 2f);
+			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
+			this.halfSize = new Vector2(this.length / 2f, height / 2f);
 		} else {
-			this.length = length < this.spriteMiddlePart.getHeight() ? this.spriteMiddlePart.getHeight() : length;
-			this.halfSize = new Vector2(this.spriteMiddlePart.getWidth() / 2f, this.length / 2f);
+			this.length = length < height ? height : length; //Make sure length is not smaller than a single block
+			this.halfSize = new Vector2(width / 2f, this.length / 2f);
 		}
 	}
-	
+
 	public void setType(Type type) {
 		this.type = type;
 		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		float x = getX() - this.halfSize.x;
@@ -99,23 +101,23 @@ public class Wall extends GameObject {
 		if ( type == Type.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch);
-			
+
 			float stepSize = this.spriteMiddlePart.getWidth();
 			float middlePartEndPosition = x + this.length - stepSize;
-			
+
 			for(float xd = x + stepSize; 
 					xd < middlePartEndPosition; 
 					xd += stepSize ) {
 				this.spriteMiddlePart.setPosition(xd, y);
 				this.spriteMiddlePart.draw(batch);
 			}
-			
+
 			this.spriteRightPart.setPosition(middlePartEndPosition, y);
 			this.spriteRightPart.draw(batch);
 		} else {
 			float stepSize = this.spriteMiddlePart.getHeight();
 			float middlePartEndPosition = y + this.length;
-			
+
 			for(float yd = y; 
 					yd < middlePartEndPosition; 
 					yd += stepSize ) {
@@ -140,14 +142,14 @@ public class Wall extends GameObject {
 			this.length = Float.valueOf(value.toString());
 		}
 	}
-	
+
 	@Override
 	public GameObject createCopy() {
 		GameObject object = Wall.create(getWorld(), 
-					getX(), 
-					getY(),
-					this.length,
-					this.type);
+				getX(), 
+				getY(),
+				this.length,
+				this.type);
 		return object;
 	}
 
@@ -162,6 +164,46 @@ public class Wall extends GameObject {
 	protected void updateConfigurationItem(String name, Float value) {
 		if( name.contentEquals("length") ) {
 			setLength(value.floatValue());
+		}
+	}
+
+	@Override
+	public void increaseSize() {
+		this.increaseDecreaseSizeAccumulatedDelta += 1f;
+
+		if( this.increaseDecreaseSizeAccumulatedDelta > this.spriteMiddlePart.getWidth() ) {
+			this.increaseDecreaseSizeAccumulatedDelta = 0;
+			
+			if( type == Type.HORIZONTAL ) {
+				setLength(this.length + this.spriteMiddlePart.getWidth());
+			} else {
+				setLength(this.length + this.spriteMiddlePart.getHeight());
+			}
+		}
+	}
+
+	@Override
+	public void decreaseSize() {
+		this.increaseDecreaseSizeAccumulatedDelta -= 1f;
+
+		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.spriteMiddlePart.getWidth() ) {
+			this.increaseDecreaseSizeAccumulatedDelta = 0;
+			
+			if( type == Type.HORIZONTAL ) {
+				setLength(this.length - this.spriteMiddlePart.getWidth());
+			} else {
+				setLength(this.length - this.spriteMiddlePart.getHeight());
+			}
+		}
+	}
+	
+	@Override
+	public void setColor(float r, float g, float b, float a) {
+		super.setColor(r, g, b, a);
+		this.spriteMiddlePart.setColor(r, g, b, a);
+		if( type == Type.HORIZONTAL ) {
+			this.spriteLeftPart.setColor(r, g, b, a);
+			this.spriteRightPart.setColor(r, g, b, a);
 		}
 	}
 }
