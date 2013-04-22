@@ -11,6 +11,8 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Grid;
@@ -50,6 +52,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	protected void setupActors(Stage stage) {
 		getGame().setupStage(stage);
 		this.multiplexer.addProcessor(stage);
+		
+		Array<Actor> actors = stage.getActors();
+		for( Actor actor : actors ) {
+			deselectGameObject((GameObject) actor);
+		}
 	}
 	
 	@Override
@@ -235,5 +242,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 		level.setGameObjects(gameObjects);
 		level.save();
+	}
+
+	@Override
+	public void onButtonPressedListener(Button button) {
+		if( button.getName().contentEquals("quit") ) {
+			saveLevel();
+			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+		}
 	}
 }

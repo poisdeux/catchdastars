@@ -46,7 +46,7 @@ public class GameObjectPickerDialog extends Window {
 			row().fill().expandX();
 		}
 		
-		TextButton cancelButton = new TextButton("Cancel", skin);
+		final TextButton cancelButton = new TextButton("Cancel", skin);
 		cancelButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -54,6 +54,17 @@ public class GameObjectPickerDialog extends Window {
 			}
 		});
 		add(cancelButton);
+		
+		final TextButton quitButton = new TextButton("Quit", skin);
+		quitButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameObjectPickerDialog.this.remove();
+				quitButton.setName("quit");
+				listener.onButtonPressedListener(quitButton);
+			}
+		});
+		add(quitButton);
 		row().fill().expandX();
 		pack();
 	}

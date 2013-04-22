@@ -1,1 +1,1 @@
-{number:1,name:test1}
+{gameObjects:[{class:com.strategames.catchdastars.actors.Star,Star:{x:256.0,y:384.0,type:YELLOW,rotationSpeed:0.0}},{class:com.strategames.catchdastars.actors.Balloon,Balloon:{x:535.4934,y:205.3245,type:BLUE}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:192.0,y:192.0,type:HORIZONTAL,length:32.0}}],number:1,name:test1}

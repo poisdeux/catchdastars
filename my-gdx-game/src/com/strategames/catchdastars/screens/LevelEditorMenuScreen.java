@@ -48,8 +48,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		addLevel.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-				//				game.getSoundManager().play( TyrianSound.CLICK );
 				Gdx.input.getTextInput(new TextInputListener() {
 			        @Override
 			        public void input(String text) {
@@ -74,7 +72,17 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 			}
 		}); 
 
-		this.table.add( addLevel ).size( Gdx.graphics.getWidth(), 60 ).expand().bottom();
+		this.table.add( addLevel ).fillX().expand().bottom();
+		
+		TextButton mainMenu = new TextButton( "Main menu", skin);
+		mainMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				getGame().setScreen(new MenuScreen(getGame()));
+			}
+		});
+		this.table.add( mainMenu ).fillX().expand().bottom();
+		
 		this.table.row();
 		
 		stage.addActor(this.table);

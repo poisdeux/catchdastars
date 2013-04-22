@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -89,7 +90,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	abstract TextureRegionDrawable createTexture();
 	
 	/**
-	 * Called to create the Box2D body of the game object.
+	 * Called after {@link #createTexture()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
 	abstract Body setupBox2D();

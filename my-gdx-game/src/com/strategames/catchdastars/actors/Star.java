@@ -22,7 +22,7 @@ import com.strategames.catchdastars.utils.Textures;
 public class Star extends GameObject {
 	private float rotationSpeed;
 	private Body star;
-	private float scale = 0.6f;
+	private float scale = 1f;
 	
 	public static enum Type {
 		BLUE, 
@@ -98,9 +98,10 @@ public class Star extends GameObject {
 	Body setupBox2D() {
 		setScale(this.scale);
 		float halfWidth = getPrefWidth() / 2f;
+		float radius = (halfWidth * this.scale) * 0.7f;
 		
 		CircleShape circle = new CircleShape();
-		circle.setRadius((halfWidth * this.scale) * 0.7f);
+		circle.setRadius(radius);
 		
 		BodyDef bd = new BodyDef();  
 		bd.position.set(new Vector2(getX(), getY()));

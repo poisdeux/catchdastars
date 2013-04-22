@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.utils.Level;
 
 public class MenuScreen extends AbstractScreen {
 
@@ -35,6 +36,7 @@ public class MenuScreen extends AbstractScreen {
 			public void clicked(InputEvent event, float x, float y) {
 				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
 				//				game.getSoundManager().play( TyrianSound.CLICK );
+				game.setCurrentLevel(Level.loadLocal(1));
 				game.setScreen( new LevelScreen( game ) );
 			}
 		}); 

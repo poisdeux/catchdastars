@@ -6,10 +6,13 @@ import com.strategames.catchdastars.Game;
 
 public class LevelScreen extends AbstractScreen
 {	
+	private Game game;
+	
 	public LevelScreen(
 			Game game )
 	{
 		super(game);
+		this.game = game;
 	}
 
 	@Override
@@ -25,6 +28,12 @@ public class LevelScreen extends AbstractScreen
 	
 	@Override
 	protected void setupActors(Stage stage) {
-		getGame().setupStage(stage);
+		this.game.setupStage(stage);
+	}
+	
+	@Override
+	public void render(float delta) {
+		super.render(delta);
+		this.game.update(delta);
 	}
 }
