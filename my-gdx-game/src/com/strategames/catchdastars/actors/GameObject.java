@@ -19,6 +19,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private World world;
 	private Body body;
 	private HashMap<String, Float> configurationItems;
+	protected float halfWidth;
+	protected float halfHeight;
 	
 	public GameObject() {
 		setName(getClass().getSimpleName());
@@ -70,6 +72,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			setScaling(Scaling.none);
 			setWidth(trd.getRegion().getRegionWidth());
 			setHeight(trd.getRegion().getRegionHeight());
+			this.halfWidth = trd.getRegion().getRegionWidth() / 2f;
+			this.halfHeight = trd.getRegion().getRegionHeight() / 2f;
 		}
 		
 		if( this.world != null ) {

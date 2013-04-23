@@ -21,6 +21,7 @@ public class Balloon extends GameObject {
 	private Vector2 localPositionTopOfBalloon;
 	private Body balloon;
 	
+	
 	public static enum Type {
 		BLUE
 	}
@@ -48,6 +49,7 @@ public class Balloon extends GameObject {
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
 		}
+		
 		return trd;
 	}
 
@@ -76,13 +78,15 @@ public class Balloon extends GameObject {
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
 		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
 		
+		setOrigin(this.halfWidth, this.halfHeight);
+		
 		return this.balloon;
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		Vector2 balloonPos = this.balloon.getWorldCenter();
-		setPosition(balloonPos.x, balloonPos.y);	    
+		Vector2 v = this.balloon.getWorldCenter();
+		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);    
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
 		super.draw(batch, parentAlpha);
 	}

@@ -18,6 +18,7 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Grid;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.interfaces.OnSelectListener;
+import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, OnSelectListener, InputProcessor {
@@ -107,10 +108,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public boolean longPress(float x, float y) {
 		Gdx.app.log("LevelEditorScreen", "longPress");
 		this.longPressPosition.set(x, y);
+		
+		Actor dialog;
 		if( this.actorHit != null ) {
-			//show gameobject options dialog
+			dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin(), this);
+		} else {
+			dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
 		}
-		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
 		getStageUIElements().addActor(dialog);
 		return true;
 	}
@@ -155,7 +159,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if(keycode == Keys.BACK){
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
 			saveLevel();
 			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 		}

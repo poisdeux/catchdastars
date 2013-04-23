@@ -15,21 +15,27 @@ public class GameObjectConfigurationDialog extends Window implements TextField.T
 
 	public GameObjectConfigurationDialog(GameObject object, Skin skin, final OnSelectListener listener) {
 		super("", skin);
-		
+
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
-		
+
 		HashMap<String, Float> configurationItems = object.getConfigurationItems();
-		
-		for( String name : configurationItems.keySet() ) {
-			Label label = new Label(name, skin);
+
+		if( configurationItems == null ) {
+			Label label = new Label("No configuration options available", skin);
 			add(label);
-			
-			TextField tf = new TextField(configurationItems.get(name).toString(), skin);
-			tf.setTextFieldFilter( this );
-			add(tf);
 			row().fill().expandX();
+		} else {
+			for( String name : configurationItems.keySet() ) {
+				Label label = new Label(name, skin);
+				add(label);
+
+				TextField tf = new TextField(configurationItems.get(name).toString(), skin);
+				tf.setTextFieldFilter( this );
+				add(tf);
+				row().fill().expandX();
+			}
 		}
 		
 		TextButton cancelButton = new TextButton("Cancel", skin);
@@ -41,6 +47,7 @@ public class GameObjectConfigurationDialog extends Window implements TextField.T
 		});
 		add(cancelButton);
 		row().fill().expandX();
+		
 		pack();
 	}
 

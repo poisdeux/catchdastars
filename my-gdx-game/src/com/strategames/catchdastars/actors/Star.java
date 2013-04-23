@@ -54,7 +54,8 @@ public class Star extends GameObject {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		setPosition(getX(), getY());
+		Vector2 v = this.star.getWorldCenter();
+		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
 		rotate(this.rotationSpeed);
 		super.draw(batch, parentAlpha);
 	}
@@ -91,6 +92,7 @@ public class Star extends GameObject {
 		} else if ( type == Type.YELLOW ) {
 			trd = new TextureRegionDrawable(Textures.starYellow);
 		}
+		
 		return trd;
 	}
 	
