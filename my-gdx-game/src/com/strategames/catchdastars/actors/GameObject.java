@@ -1,8 +1,7 @@
 package com.strategames.catchdastars.actors;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,18 +12,18 @@ import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.utils.ConfigurationItem;
 
 abstract public class GameObject extends Image implements Json.Serializable {
 	private String name;
 	private World world;
 	private Body body;
-	private HashMap<String, Float> configurationItems;
+	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
 	protected float halfHeight;
 	
 	public GameObject() {
 		setName(getClass().getSimpleName());
-		this.configurationItems = createConfigurationItems();
 	}
 	
 	public GameObject(Drawable trd) {
@@ -57,7 +56,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return body;
 	}
 	
-	public HashMap<String, Float> getConfigurationItems() {
+	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
 	
@@ -157,27 +156,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	abstract public GameObject createCopy();
 	
+	public void initializeConfigurationItems() {
+		this.configurationItems = createConfigurationItems();
+	}
+	
 	/**
 	 * Called when game objected is created to set the configuration items for
 	 * this game object
 	 * @return HashMap<String, Float> the key should hold the name of the configuration item and the value the default value
 	 */
-	abstract protected HashMap<String, Float> createConfigurationItems();
+	abstract protected ArrayList<ConfigurationItem> createConfigurationItems();
 	
-	/**
-	 * Called when configuration item value has been updated. Use this
-	 * to set the actual property value of this game object.
-	 * @param name key of the configuration item as set using {@link #createConfigurationItems()}
-	 * @param value value of the configuration item
-	 */
-	abstract protected void updateConfigurationItem(String name, Float value);
-	
-	public void setConfigurationItemValue(String name, Float value) {
-		if( this.configurationItems == null ) return;
-		
-		this.configurationItems.put(name, value);
-		updateConfigurationItem(name, value);
-	}
 	
 	/**
 	 * Should increase the size of the game object one step

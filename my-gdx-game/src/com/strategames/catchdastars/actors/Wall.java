@@ -1,6 +1,6 @@
 package com.strategames.catchdastars.actors;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,9 +12,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.catchdastars.utils.Textures;
 
-public class Wall extends GameObject {
+public class Wall extends GameObject implements OnConfigurationItemChangedListener {
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
@@ -154,17 +156,26 @@ public class Wall extends GameObject {
 	}
 
 	@Override
-	protected HashMap<String, Float> createConfigurationItems() {
-		HashMap<String, Float> items = new HashMap<String, Float>();
-		items.put("length", this.length);
-		return items;
-	}
-
-	@Override
-	protected void updateConfigurationItem(String name, Float value) {
-		if( name.contentEquals("length") ) {
-			setLength(value.floatValue());
+	protected ArrayList<ConfigurationItem> createConfigurationItems() {
+		ArrayList<ConfigurationItem> items = new ArrayList<ConfigurationItem>();
+		
+		ConfigurationItem item = new ConfigurationItem(this);
+		item.setName("length");
+		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
+		item.setValueNumeric(this.length);
+		item.setMaxValue(Gdx.app.getGraphics().getWidth());
+		
+		if( type == Type.HORIZONTAL ) {
+			item.setMinValue(this.spriteMiddlePart.getWidth());
+			item.setStepSize(this.spriteMiddlePart.getWidth());
+		} else {
+			item.setMinValue(this.spriteMiddlePart.getHeight());
+			item.setStepSize(this.spriteMiddlePart.getHeight());
 		}
+		
+		items.add(item);
+		
+		return items;
 	}
 
 	@Override
@@ -204,6 +215,13 @@ public class Wall extends GameObject {
 		if( type == Type.HORIZONTAL ) {
 			this.spriteLeftPart.setColor(r, g, b, a);
 			this.spriteRightPart.setColor(r, g, b, a);
+		}
+	}
+
+	@Override
+	public void onConfigurationItemChanged(ConfigurationItem item) {
+		if( item.getName().contentEquals("length") ) {
+			setLength(item.getValueNumeric());
 		}
 	}
 }
