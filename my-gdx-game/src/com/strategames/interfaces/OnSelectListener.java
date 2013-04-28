@@ -5,6 +5,5 @@ import com.strategames.catchdastars.actors.GameObject;
 
 public interface OnSelectListener {
 	public void onObjectSelectListener(GameObject object);
-	public void onConfigurationItemSelectListener(String name, Float value);
-	public void onButtonPressedListener(Button button);
+	public void onPressedListener(Button button);
 }

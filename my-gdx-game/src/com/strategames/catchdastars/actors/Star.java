@@ -59,6 +59,7 @@ public class Star extends GameObject {
 		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
 		rotate(this.rotationSpeed);
 		super.draw(batch, parentAlpha);
+		drawBoundingBox(batch);
 	}
 	
 	@Override

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -20,7 +19,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
-	private Vector2 halfSize;
 	private Type type;
 	private float length;
 	private float increaseDecreaseSizeAccumulatedDelta;
@@ -84,10 +82,10 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		float height = this.spriteMiddlePart.getHeight();
 		if( type == Type.HORIZONTAL ) {
 			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
-			this.halfSize = new Vector2(this.length / 2f, height / 2f);
+			setWidth(this.length);
 		} else {
 			this.length = length < height ? height : length; //Make sure length is not smaller than a single block
-			this.halfSize = new Vector2(width / 2f, this.length / 2f);
+			setHeight(this.length);
 		}
 	}
 
@@ -98,8 +96,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		float x = getX() - this.halfSize.x;
-		float y = getY() - this.halfSize.y;
+		float x = getX() ;
+		float y = getY() ;
 		if ( type == Type.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch);
@@ -127,6 +125,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				this.spriteMiddlePart.draw(batch);
 			}
 		}
+		drawBoundingBox(batch);
 	}
 
 	@Override

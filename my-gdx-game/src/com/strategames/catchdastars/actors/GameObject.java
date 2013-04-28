@@ -2,6 +2,9 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -21,45 +24,51 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
 	protected float halfHeight;
-	
+	private ShapeRenderer shapeRenderer;
+
 	public GameObject() {
-		setName(getClass().getSimpleName());
+		init();
 	}
-	
+
 	public GameObject(Drawable trd) {
 		super(trd, Scaling.none);
-		setName(getClass().getSimpleName());
+		init();
 		this.configurationItems = createConfigurationItems();
+	}
+
+	private void init() {
+		setName(getClass().getSimpleName());
+		this.shapeRenderer = new ShapeRenderer();
 	}
 	
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public void setWorld(World world) {
 		this.world = world;
 	}
-	
+
 	public World getWorld() {
 		return this.world;
 	}
-	
+
 	public void setBody(Body body) {
 		this.body = body;
 	}
-	
+
 	public Body getBody() {
 		return body;
 	}
-	
+
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
-	
+
 	/**
 	 * Setup the image and body of this game object. 
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
@@ -74,30 +83,39 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			this.halfWidth = trd.getRegion().getRegionWidth() / 2f;
 			this.halfHeight = trd.getRegion().getRegionHeight() / 2f;
 		}
-		
+
 		if( this.world != null ) {
 			this.body = setupBox2D();
 		}
 	}
-	
+
 	public void moveTo(float x, float y) {
 		setPosition(x, y);
 		if( this.body != null ) {
 			this.body.setTransform(x,  y, this.body.getAngle());
 		}
 	}
-	
+
+
+	public void drawBoundingBox(SpriteBatch batch) {
+		batch.end();
+		this.shapeRenderer.begin(ShapeType.Line);
+		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
+		this.shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+		this.shapeRenderer.end();
+		batch.begin();
+	}
 	/**
 	 * Called to create the image for the game object
 	 */
 	abstract TextureRegionDrawable createTexture();
-	
+
 	/**
 	 * Called after {@link #createTexture()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
 	abstract Body setupBox2D();
-	
+
 	/**
 	 * Use this to write specific object properties to file(s)
 	 * Note that generic properties are saved by GameObject abstract class
@@ -111,7 +129,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param json
 	 */
 	abstract void writeValues(Json json);
-	
+
 	@Override
 	public void write(Json json) {
 		json.writeObjectStart(this.getClass().getSimpleName());
@@ -134,12 +152,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param value	The object you set using json.writeValue(String name, Object value)
 	 */
 	abstract void readValue(String key, Object value);
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void read(Json json, OrderedMap<String, Object> jsonData) {
 		Entries<String, Object> entries = jsonData.entries();
-		
+
 		while(entries.hasNext) {
 			Entry<String, Object> entry = entries.next();
 			if ( entry.value instanceof OrderedMap ) {
@@ -153,26 +171,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			}
 		}
 	}
-	
+
 	abstract public GameObject createCopy();
-	
+
 	public void initializeConfigurationItems() {
 		this.configurationItems = createConfigurationItems();
 	}
-	
+
 	/**
 	 * Called when game objected is created to set the configuration items for
 	 * this game object
 	 * @return HashMap<String, Float> the key should hold the name of the configuration item and the value the default value
 	 */
 	abstract protected ArrayList<ConfigurationItem> createConfigurationItems();
-	
-	
+
+
 	/**
 	 * Should increase the size of the game object one step
 	 */
 	abstract public void increaseSize();
-	
+
 	/**
 	 * Should decrease the size of the game object one step
 	 */

@@ -90,6 +90,7 @@ public class Balloon extends GameObject {
 		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);    
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
 		super.draw(batch, parentAlpha);
+		drawBoundingBox(batch);
 	}
 
 	@Override
