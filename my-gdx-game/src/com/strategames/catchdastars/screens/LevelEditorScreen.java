@@ -10,18 +10,17 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.utils.Grid;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.interfaces.OnSelectListener;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
-import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, OnSelectListener, InputProcessor {
 
@@ -65,7 +64,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown");
+		//Gdx.app.log("LevelEditorScreen", "touchDown");
 		this.previousZoomDistance = 0f; // reset zoom distance
 
 		Stage stage = getStageUIElements();
@@ -89,31 +88,32 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Gdx.app.log("LevelEditorScreen", "touchDragged");
+//		Gdx.app.log("LevelEditorScreen", "touchDragged");
 		if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
 			Vector2 stageCoords = getStageActors().screenToStageCoordinates(new Vector2(screenX, screenY));
-			Gdx.app.log("LevelEditorScreen", "touchDragged: stageCoords: x="+stageCoords.x+
-					", y="+stageCoords.y);
-			//			Vector2 stageCoordsMapped = Grid.map(stageCoords.x , stageCoords.y);
-			//			Gdx.app.log("LevelEditorScreen", "touchDragged: stageCoordsMapped: x="+stageCoordsMapped.x+
-			//					", y="+stageCoordsMapped.y);
-
+			
+			GameObject gameObject = (GameObject) this.actorHit;
+			Vector2 v = gameObject.getBody().getWorldCenter();
+			float left = gameObject.getX() - v.x;
+			float bottom = gameObject.getY() - v.y;
+			Gdx.app.log("LevelEditorScreen", "touchDragged: v=("+v.x+", "+v.y+"), left="
+					+left+", bottom="+bottom+"\n"+
+					"stageCoords=("+stageCoords.x+", "+stageCoords.y+")");
 			
 			//Check if actor does not overlap other actor when moving horizontally
-			Rectangle rectangle = new Rectangle(stageCoords.x, this.actorHit.getY(),
+			Rectangle rectangle = new Rectangle(stageCoords.x + left, this.actorHit.getY(),
 					this.actorHit.getWidth(), this.actorHit.getHeight());
 			if( getActor(rectangle) != null ) { // we cannot move horizontally
-				stageCoords.x = this.actorHit.getX();
+				stageCoords.x = v.x;
 			}
 			
 			//Check if actor does not overlap other actor when moving vertically
-			rectangle = new Rectangle(this.actorHit.getX(), stageCoords.y,
+			rectangle = new Rectangle(this.actorHit.getX(), stageCoords.y + bottom,
 					this.actorHit.getWidth(), this.actorHit.getHeight());
 			if( getActor(rectangle) != null ) { // we cannot move vertically
-				stageCoords.y = this.actorHit.getY();
+				stageCoords.y = v.y;
 			}
 			
-			GameObject gameObject = (GameObject) this.actorHit;
 			gameObject.moveTo(stageCoords.x, stageCoords.y);
 			return true;
 		}
@@ -122,12 +122,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		Gdx.app.log("LevelEditorScreen", "tap");
+//		Gdx.app.log("LevelEditorScreen", "tap");
 		Stage stage = getStageActors();
 		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
 
 		if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-			Gdx.app.log("LevelEditorScreen", "touchDown: hit " + actorHit.getName());
+//			Gdx.app.log("LevelEditorScreen", "touchDown: hit " + actorHit.getName());
 			this.touchPositionObjectDelta.x = this.actorHit.getX() - stageCoords.x;
 			this.touchPositionObjectDelta.y = this.actorHit.getY() - stageCoords.y;
 			return true;
@@ -137,7 +137,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean longPress(float x, float y) {
-		Gdx.app.log("LevelEditorScreen", "longPress");
+//		Gdx.app.log("LevelEditorScreen", "longPress");
 		this.longPressPosition.set(x, y);
 
 		if( this.actorHit != null ) {
@@ -153,19 +153,19 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button) {
-		Gdx.app.log("LevelEditorScreen", "fling");
+//		Gdx.app.log("LevelEditorScreen", "fling");
 		return false;
 	}
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		Gdx.app.log("LevelEditorScreen", "pan");
+//		Gdx.app.log("LevelEditorScreen", "pan");
 		return false;
 	}
 
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
-		Gdx.app.log("LevelEditorScreen", "zoom");
+//		Gdx.app.log("LevelEditorScreen", "zoom");
 		if( this.previousZoomDistance == 0 ) {
 			this.previousZoomDistance = distance;
 		}
@@ -185,7 +185,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
 			Vector2 pointer1, Vector2 pointer2) {
-		Gdx.app.log("LevelEditorScreen", "pinch");
+//		Gdx.app.log("LevelEditorScreen", "pinch");
 		return true;
 	}
 
@@ -213,14 +213,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown");
+//		Gdx.app.log("LevelEditorScreen", "touchDown");
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchUp");
+//		Gdx.app.log("LevelEditorScreen", "touchUp");
 		//Hold reference to previous actor in case user performs a pinch gesture
 		//		this.previousActorHit = this.actorHit;
 		return false;
@@ -240,7 +240,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public void onObjectSelectListener(GameObject object) {
-		Gdx.app.log("LevelEditorScreen", "onSelectListener");
+//		Gdx.app.log("LevelEditorScreen", "onSelectListener");
 		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
 		Vector2 stageCoords = stage.screenToStageCoordinates(this.longPressPosition);

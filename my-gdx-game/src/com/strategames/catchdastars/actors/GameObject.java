@@ -41,6 +41,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer = new ShapeRenderer();
 	}
 	
+	public float getHalfHeight() {
+		return halfHeight;
+	}
+	
+	public float getHalfWidth() {
+		return halfWidth;
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -90,9 +98,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	public void moveTo(float x, float y) {
-		setPosition(x, y);
 		if( this.body != null ) {
-			this.body.setTransform(x,  y, this.body.getAngle());
+			this.body.setTransform(x, y, this.body.getAngle());
+		} else {
+			setPosition(x, y);
 		}
 	}
 

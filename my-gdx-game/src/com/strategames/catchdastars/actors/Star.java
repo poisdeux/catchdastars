@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
@@ -108,11 +109,19 @@ public class Star extends GameObject {
 		circle.setRadius(radius);
 		
 		BodyDef bd = new BodyDef();  
-		bd.position.set(new Vector2(getX(), getY()));
+		bd.position.set(getX(), getY());
 		this.star = getWorld().createBody(bd);  
 		Fixture fixture = this.star.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
 		circle.dispose();
+		
+		MassData massData = this.star.getMassData();
+		Gdx.app.log("Star", "massData.center.x="+massData.center.x+
+				", massData.center.y"+massData.center.y+
+				", massData.I="+massData.I+
+				", massData.mass="+massData.mass);
+		Vector2 v = this.star.getWorldCenter();
+		Gdx.app.log("Balloon", "v=("+v.x+", "+v.y+")");
 		
 		return this.star;
 	}

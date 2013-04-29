@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -96,8 +97,10 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		float x = getX() ;
-		float y = getY() ;
+		Vector2 v = getBody().getWorldCenter();
+		float x = v.x - super.halfWidth;
+		float y = v.y - super.halfHeight;
+		setPosition(x, y);
 		if ( type == Type.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch);
