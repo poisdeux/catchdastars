@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -99,7 +100,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	public void moveTo(float x, float y) {
 		if( this.body != null ) {
-			this.body.setTransform(x, y, this.body.getAngle());
+			Vector2 v = this.body.getLocalCenter(); // make sure we position object on center of mass
+			this.body.setTransform(x - v.x, y - v.y, this.body.getAngle());
 		} else {
 			setPosition(x, y);
 		}
