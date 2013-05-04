@@ -126,6 +126,8 @@ public class GameObjectConfigurationDialog extends Window {
 		row().fill().expandX();
 
 		pack();
+		
+		stage.addActor(this);
 	}
 	
 	public void addButton(String name, final OnSelectListener listener) {

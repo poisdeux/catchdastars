@@ -137,10 +137,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean longPress(float x, float y) {
-//		Gdx.app.log("LevelEditorScreen", "longPress");
+		Gdx.app.log("LevelEditorScreen", "longPress");
 		this.longPressPosition.set(x, y);
 
-		if( this.actorHit != null ) {
+		if( this.uiElementHit != null ) return false;
+		
+		if( ( this.actorHit != null ) ){
+			Gdx.app.log("LevelEditorScreen", "longPress on actor");
 			GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
 			dialog.show(getStageUIElements());
 		} else {

@@ -65,8 +65,7 @@ public class Balloon extends GameObject {
 
 		//Balloon body
 		BodyDef bd = new BodyDef();
-//		bd.position.set(getX(), getY());
-		bd.position.set(0,0);
+		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 0.8f;
 		this.balloon = world.createBody(bd);
@@ -76,31 +75,17 @@ public class Balloon extends GameObject {
 		fixtureBalloon.friction = 0.2f;
 		fixtureBalloon.restitution = 0.6f; // Make it bounce a little bit
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
-
-		MassData massData = this.balloon.getMassData();
-		Gdx.app.log("Balloon", "massData.center.x="+massData.center.x+
-				", massData.center.y"+massData.center.y+
-				", massData.I="+massData.I+
-				", massData.mass="+massData.mass);
-		Vector2 v = this.balloon.getWorldCenter();
-		Gdx.app.log("Balloon", "v=("+v.x+", "+v.y+")");
 		
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
 		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
-		
-//		setOrigin(this.halfWidth, this.halfHeight);
 		
 		return this.balloon;
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		Vector2 v = this.balloon.getWorldCenter();
-		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
-//		setPosition(v.x, v.y);
-//		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
+		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
 		super.draw(batch, parentAlpha);
-		drawBoundingBox(batch);
 	}
 
 	@Override

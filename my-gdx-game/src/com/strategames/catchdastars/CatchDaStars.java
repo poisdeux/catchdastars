@@ -44,8 +44,6 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void setupStage(Stage stage) {
-		Gdx.app.log("CatchDaStars", "setting up the stage");
-		
 		this.camera = stage.getCamera();
 		this.debugRenderer = new Box2DDebugRenderer();
 

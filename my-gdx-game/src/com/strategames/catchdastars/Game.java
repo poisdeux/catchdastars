@@ -24,7 +24,6 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	
 	@Override
 	public void create() {
-		Gdx.app.log( "Game", "create() called" );
 		Textures.load();
 		setScreen(new SplashScreen(this));
 		this.availableGameObjects = availableGameObjects();
@@ -71,8 +70,10 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	 * @param object the actual game object
 	 */
 	public void addGameObject(GameObject object) {
+		Gdx.app.log("Game", "addGameObject: before setup "+object);
 		object.setWorld(getWorld());
 		object.setup();
+		Gdx.app.log("Game", "addGameObject: after setup "+object);
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		screen.getStageActors().addActor(object);
 	}

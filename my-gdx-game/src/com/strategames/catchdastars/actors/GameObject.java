@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 
 abstract public class GameObject extends Image implements Json.Serializable {
-	private String name;
 	private World world;
 	private Body body;
 	private ArrayList<ConfigurationItem> configurationItems;
@@ -50,14 +49,18 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return halfWidth;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public void setHeight(float height) {
+		super.setHeight(height);
+		this.halfHeight = height/2f;
 	}
-
-	public String getName() {
-		return this.name;
+	
+	@Override
+	public void setWidth(float width) {
+		super.setWidth(width);
+		this.halfWidth = width/2f;
 	}
-
+	
 	public void setWorld(World world) {
 		this.world = world;
 	}
@@ -78,8 +81,15 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.configurationItems;
 	}
 
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		Vector2 v = this.body.getWorldCenter();
+		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
+		super.draw(batch, parentAlpha);
+	}
+	
 	/**
-	 * Setup the image and body of this game object. 
+	 * Setup the image and body for this game object. 
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
@@ -144,8 +154,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	@Override
 	public void write(Json json) {
 		json.writeObjectStart(this.getClass().getSimpleName());
-		json.writeValue("x", getX());
-		json.writeValue("y", getY());
+		
+		Vector2 position = new Vector2();
+		if( this.body != null ) {
+			position = this.body.getWorldCenter();
+		} else {
+			position.x = getX();
+			position.y = getY();
+		}
+		json.writeValue("x", position.x);
+		json.writeValue("y", position.y);
+		
 		writeValues(json);
 		json.writeObjectEnd();
 	}
@@ -206,4 +225,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Should decrease the size of the game object one step
 	 */
 	abstract public void decreaseSize();
+	
+	@Override
+	public String toString() {
+		String message = super.toString();
+		StringBuffer messageBuffer = new StringBuffer();
+		messageBuffer.append(message);
+		messageBuffer.append(", halfWidth="+this.halfWidth);
+		messageBuffer.append(", halfHeight="+this.halfHeight);
+		return messageBuffer.toString();
+	}
 }

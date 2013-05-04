@@ -56,11 +56,8 @@ public class Star extends GameObject {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		Vector2 v = this.star.getWorldCenter();
-		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
 		rotate(this.rotationSpeed);
 		super.draw(batch, parentAlpha);
-		drawBoundingBox(batch);
 	}
 	
 	@Override
@@ -114,14 +111,6 @@ public class Star extends GameObject {
 		Fixture fixture = this.star.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
 		circle.dispose();
-		
-		MassData massData = this.star.getMassData();
-		Gdx.app.log("Star", "massData.center.x="+massData.center.x+
-				", massData.center.y"+massData.center.y+
-				", massData.I="+massData.I+
-				", massData.mass="+massData.mass);
-		Vector2 v = this.star.getWorldCenter();
-		Gdx.app.log("Balloon", "v=("+v.x+", "+v.y+")");
 		
 		return this.star;
 	}
