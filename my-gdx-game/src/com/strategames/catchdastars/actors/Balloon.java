@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
@@ -51,7 +50,6 @@ public class Balloon extends GameObject {
 		if( type == Type.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
 		}
-		
 		return trd;
 	}
 
@@ -77,7 +75,7 @@ public class Balloon extends GameObject {
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 		
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
-		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
+		this.localPositionTopOfBalloon.y += balloonHeight / 4f;
 		
 		return this.balloon;
 	}
@@ -85,6 +83,8 @@ public class Balloon extends GameObject {
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
+		Vector2 v = super.body.getPosition();
+		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
 	}
 

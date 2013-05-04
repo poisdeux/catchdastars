@@ -17,6 +17,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 		super(game);
 		this.game = game;
 		Gdx.input.setInputProcessor(this);
+		Gdx.input.setCatchBackKey(true);
 	}
 
 	@Override
@@ -43,7 +44,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if( keycode == Keys.ESCAPE ) {
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
 			getGame().setScreen(new MenuScreen(getGame()));
 			return true;
 		}

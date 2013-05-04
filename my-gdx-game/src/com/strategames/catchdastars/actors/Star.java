@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
@@ -57,6 +56,8 @@ public class Star extends GameObject {
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		rotate(this.rotationSpeed);
+		Vector2 v = super.body.getWorldCenter();
+		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
 		super.draw(batch, parentAlpha);
 	}
 	

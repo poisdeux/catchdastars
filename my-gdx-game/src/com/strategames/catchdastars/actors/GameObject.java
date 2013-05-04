@@ -20,7 +20,7 @@ import com.strategames.catchdastars.utils.ConfigurationItem;
 
 abstract public class GameObject extends Image implements Json.Serializable {
 	private World world;
-	private Body body;
+	protected Body body;
 	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
 	protected float halfHeight;
@@ -79,13 +79,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
-	}
-
-	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
-		Vector2 v = this.body.getWorldCenter();
-		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
-		super.draw(batch, parentAlpha);
 	}
 	
 	/**

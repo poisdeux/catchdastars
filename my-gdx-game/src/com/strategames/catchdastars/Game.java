@@ -2,7 +2,6 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -70,10 +69,8 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	 * @param object the actual game object
 	 */
 	public void addGameObject(GameObject object) {
-		Gdx.app.log("Game", "addGameObject: before setup "+object);
 		object.setWorld(getWorld());
 		object.setup();
-		Gdx.app.log("Game", "addGameObject: after setup "+object);
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		screen.getStageActors().addActor(object);
 	}
