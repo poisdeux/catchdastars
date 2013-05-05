@@ -6,19 +6,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.interfaces.OnSelectListener;
+import com.strategames.interfaces.DialogInterface;
 
-public class GameObjectPickerDialog extends Window {
+public class GameObjectPickerDialog extends Dialog {
 	private final Skin skin;
 	private ArrayList<TextButton> textButtons;
-	private final OnSelectListener listener;
+	private final DialogInterface listener;
 	private final Game game;
 	
-	public GameObjectPickerDialog(Game game, Skin skin, final OnSelectListener listener) {
+	public GameObjectPickerDialog(Game game, Skin skin, final DialogInterface listener) {
 		super("Select a game object", skin);
 		this.skin = skin;
 		this.textButtons = new ArrayList<TextButton>();
@@ -79,16 +78,16 @@ public class GameObjectPickerDialog extends Window {
 		stage.addActor(this);
 	}
 	
-	public void addButton(String name, final OnSelectListener listener) {
-		final TextButton button = new TextButton(name, this.skin);
-		button.setName(name);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				GameObjectPickerDialog.this.remove();
-				listener.onPressedListener(button);
-			}
-		});
-		this.textButtons.add(button);
-	}
+//	public void addButton(String name, final DialogInterface listener) {
+//		final TextButton button = new TextButton(name, this.skin);
+//		button.setName(name);
+//		button.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				GameObjectPickerDialog.this.remove();
+//				listener.onPressedListener(button);
+//			}
+//		});
+//		this.textButtons.add(button);
+//	}
 }

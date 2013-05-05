@@ -10,19 +10,18 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.interfaces.OnSelectListener;
+import com.strategames.interfaces.DialogInterface;
+import com.strategames.ui.Dialog;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
 
-public class LevelEditorScreen extends AbstractScreen implements GestureListener, OnSelectListener, InputProcessor {
+public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface, InputProcessor {
 
 	private Vector2 longPressPosition;
 	private Vector2 touchPositionObjectDelta;
@@ -147,22 +146,56 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
-	public boolean longPress(float x, float y) {
+	public boolean longPress(final float x, final float y) {
 		//		Gdx.app.log("LevelEditorScreen", "longPress");
 		if( this.state == States.NONE ) {
 			this.state = States.LONGPRESS;
 
-			this.longPressPosition.set(x, y);
-
 			if( this.uiElementHit != null ) return false;
 
 			if( ( this.actorHit != null ) ){
-				Gdx.app.log("LevelEditorScreen", "longPress on actor");
 				GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
+				dialog.addButton("Copy " + this.actorHit.getName(), new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						Stage stage = getStageActors();
+						GameObject copy = ((GameObject) actorHit).createCopy();
+						Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
+						//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
+						copy.setPosition(stageCoords.x, stageCoords.y);
+						getGame().addGameObject(copy);
+						stage.addActor(copy);
+						deselectGameObject(copy);
+					}
+				});
+				dialog.addButton("Delete " + this.actorHit.getName(), new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						actorHit.remove();
+						dialog.remove();
+					}
+				});
+				
+				dialog.setPositiveButton("Close", new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						dialog.remove();
+					}
+				});
 				dialog.show(getStageUIElements());
 			} else {
 				GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-				dialog.addButton("Quit", this);
+				dialog.addButton("Quit", new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						saveLevel();
+						getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+					}
+				});
 				dialog.show(getStageUIElements());
 			}
 			return true;
@@ -298,16 +331,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 		level.setGameObjects(gameObjects);
 		level.save();
-	}
-
-	@Override
-	public void onPressedListener(Button button) {
-		if( button.getName().contentEquals("Quit") ) {
-			saveLevel();
-			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
-		} else if( button.getName().contentEquals("Delete object") ) {
-			this.actorHit.remove();
-		}
 	}
 
 	private Actor getActor(Rectangle rectangle) {

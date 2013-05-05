@@ -3,7 +3,6 @@ package com.strategames.ui;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -11,43 +10,36 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.ConfigurationItem;
-import com.strategames.interfaces.OnSelectListener;
 
-public class GameObjectConfigurationDialog extends Window {
-	private final GameObject object;
-	private final Skin skin;
+public class GameObjectConfigurationDialog extends Dialog {
+	private final GameObject gameObject;
+	
 	private ArrayList<TextButton> textButtons;
 
 	public GameObjectConfigurationDialog(final GameObject object, Skin skin) {
-		super("", skin);
-		this.object = object;
-		this.skin = skin;
+		super(object.getName() + " configuration", skin);
+		this.gameObject = object;
 		this.textButtons = new ArrayList<TextButton>();
 	}
 
-	/**
-	 * Use this to create and add the actual dialog to the stage.
-	 * @param stage the stage this dialog should be added to as an Actor
-	 */
-	public void show(Stage stage) {
+	@Override
+	public void show(final Stage stage) {
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
 
-		object.initializeConfigurationItems();
+		gameObject.initializeConfigurationItems();
 
-		ArrayList<ConfigurationItem> configurationItems = object.getConfigurationItems();
+		ArrayList<ConfigurationItem> configurationItems = gameObject.getConfigurationItems();
 
 		if( configurationItems != null ) {
 			for( ConfigurationItem item : configurationItems ) {
 				final ConfigurationItem fItem = item;
 
-				Label label = new Label(item.getName(), skin);
+				Label label = new Label(item.getName(), super.skin);
 				add(label);
 
 				if( item.getType() == ConfigurationItem.Type.TEXT ) {
@@ -111,42 +103,39 @@ public class GameObjectConfigurationDialog extends Window {
 			row();
 		}
 
-		TextButton delButton = new TextButton("Delete object", skin);
-		delButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				object.remove();
-				GameObjectConfigurationDialog.this.remove();
-			}
-		});
-		add(delButton).expand().left();
+//		TextButton copyButton = new TextButton("Copy object", skin);
+//		copyButton.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				onSelectListener.onCopyObjectListener(gameObject);
+//				GameObjectConfigurationDialog.this.remove();
+//			}
+//		});
+//		add(copyButton).expand().left();
+//		
+//		TextButton delButton = new TextButton("Delete object", skin);
+//		delButton.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				gameObject.remove();
+//				GameObjectConfigurationDialog.this.remove();
+//			}
+//		});
+//		add(delButton).expand().left();
 
-		TextButton closeButton = new TextButton("Close", skin);
-		closeButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				GameObjectConfigurationDialog.this.remove();
-			}
-		});
-		add(closeButton).expand().bottom().right();
-
-		row();
-
-		pack();
-
-		stage.addActor(this);
+		super.show(stage);
 	}
 
-	public void addButton(String name, final OnSelectListener listener) {
-		final TextButton button = new TextButton(name, this.skin);
-		button.setName(name);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				GameObjectConfigurationDialog.this.remove();
-				listener.onPressedListener(button);
-			}
-		});
-		this.textButtons.add(button);
-	}
+//	public void addButton(String name, final DialogInterface listener) {
+//		final TextButton button = new TextButton(name, this.skin);
+//		button.setName(name);
+//		button.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				GameObjectConfigurationDialog.this.remove();
+//				listener.onPressedListener(button);
+//			}
+//		});
+//		this.textButtons.add(button);
+//	}
 }
