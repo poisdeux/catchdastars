@@ -78,7 +78,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		mainMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new MenuScreen(getGame()));
+				getGame().setScreen(new MainMenuScreen(getGame()));
 			}
 		});
 		this.table.add( mainMenu ).fillX().expand().bottom();

@@ -46,7 +46,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	public boolean keyDown(int keycode) {
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
-			getGame().setScreen(new MenuScreen(getGame()));
+			getGame().setScreen(new MainMenuScreen(getGame()));
 			return true;
 		}
 		return false;

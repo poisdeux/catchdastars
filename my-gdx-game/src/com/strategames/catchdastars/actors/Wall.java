@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.catchdastars.utils.Textures;
@@ -33,7 +34,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 	@Override
-	TextureRegionDrawable createTexture() {
+	public void setup() {
 		if( type == Type.HORIZONTAL ) {
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
@@ -42,8 +43,16 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
 		}
 		
+		setDrawable(new TextureRegionDrawable(this.spriteMiddlePart));
+		setScaling(Scaling.none);
+		
 		setLength(this.length);
 		
+		super.setup();
+	}
+	
+	@Override
+	TextureRegionDrawable createTexture() {
 		return null;
 	}
 
@@ -56,7 +65,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			box.setAsBox(this.spriteMiddlePart.getWidth()/2f, this.length/2f);
 		}
 
-		BodyDef groundBodyDef = new BodyDef();  
+		BodyDef groundBodyDef = new BodyDef();
 		groundBodyDef.position.set(getX(), getY()); // Set its world position
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
@@ -72,14 +81,15 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		wall.setType(type);
 		wall.setWorld(world);
 		wall.setup();
+		wall.setLength(length);
 		return wall;
 	}
 
+	/**
+	 * Sets the length of this object. This can only be called after {@link #setup()} has been called.
+	 * @param length
+	 */
 	public void setLength(float length) {
-		if( this.spriteMiddlePart == null ) {
-			createTexture();
-		}
-		
 		float width = this.spriteMiddlePart.getWidth();
 		float height = this.spriteMiddlePart.getHeight();
 		if( type == Type.HORIZONTAL ) {
@@ -132,7 +142,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		}
 		
 		setPosition(x, y);
-		drawBoundingBox(batch);
 	}
 
 	@Override
@@ -147,13 +156,12 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		if( key.contentEquals("type")) {
 			this.type = Type.valueOf(value.toString());
 		} else if( key.contentEquals("length")) {
-			setLength(Float.valueOf(value.toString()));
+			this.length = Float.valueOf(value.toString());
 		}
 	}
 
 	@Override
 	public GameObject createCopy() {
-		Gdx.app.log("Wall", "createCopy:");
 		GameObject object = Wall.create(getWorld(), 
 				getX(), 
 				getY(),

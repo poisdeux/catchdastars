@@ -13,6 +13,7 @@ import com.strategames.catchdastars.actors.Balloon;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
+import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Level;
 
 public class CatchDaStars extends Game {
@@ -52,9 +53,9 @@ public class CatchDaStars extends Game {
 
 		setWorld(new World(this.gravity, true));
 		
-		stage.clear();
-
-		Level level = getCurrentLevel();
+		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
+		setCurrentLevel(level);
+			
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
 
 		if( gameObjects != null ) {
@@ -62,8 +63,27 @@ public class CatchDaStars extends Game {
 				addGameObject(gameObject);
 			}
 		}
+		
+		reset();
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+	}
+
+	@Override
+	public void reset() {
+		AbstractScreen screen = (AbstractScreen) getScreen();
+		screen.getStageActors().clear();
+		
+		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
+		setCurrentLevel(level);
+			
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
+
+		if( gameObjects != null ) {
+			for(GameObject gameObject : gameObjects ) {
+				addGameObject(gameObject);
+			}
+		}
 	}
 
 	@Override
@@ -78,5 +98,6 @@ public class CatchDaStars extends Game {
 		return objects;
 	}
 
+	
 	
 }

@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -227,5 +228,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		messageBuffer.append(", halfWidth="+this.halfWidth);
 		messageBuffer.append(", halfHeight="+this.halfHeight);
 		return messageBuffer.toString();
+	}
+	
+	@Override
+	public boolean remove() {
+		Gdx.app.log("GameObject", "Removing "+getName());
+//		this.world.destroyBody(this.body);
+//		this.body = null;
+		return super.remove();
 	}
 }

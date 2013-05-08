@@ -10,9 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Level;
 
-public class MenuScreen extends AbstractScreen {
+public class MainMenuScreen extends AbstractScreen {
 
-	public MenuScreen(
+	public MainMenuScreen(
 			Game game )
 	{
 		super(game);

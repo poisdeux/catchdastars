@@ -97,5 +97,7 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	
 	abstract public void setupStage(Stage stage);
 	
+	abstract public void reset();
+	
 	abstract public void update(float delta);
 }

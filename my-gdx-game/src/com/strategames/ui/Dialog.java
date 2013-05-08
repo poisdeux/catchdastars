@@ -84,7 +84,7 @@ abstract public class Dialog extends Window {
 			add(this.buttonNegative).expand().bottom().right();
 		}
 		if( this.buttonNeutral != null ) {
-			add(this.buttonNegative).expand().bottom().right();
+			add(this.buttonNeutral).expand().bottom().right();
 		}
 		if( this.buttonPositive != null ) {
 			add(this.buttonPositive).expand().bottom().right();

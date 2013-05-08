@@ -25,6 +25,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 		this.textButtons = new ArrayList<TextButton>();
 	}
 
+	public GameObject getGameObject() {
+		return gameObject;
+	}
+	
 	@Override
 	public void show(final Stage stage) {
 		setPosition(0, 0);
@@ -103,39 +107,8 @@ public class GameObjectConfigurationDialog extends Dialog {
 			row();
 		}
 
-//		TextButton copyButton = new TextButton("Copy object", skin);
-//		copyButton.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				onSelectListener.onCopyObjectListener(gameObject);
-//				GameObjectConfigurationDialog.this.remove();
-//			}
-//		});
-//		add(copyButton).expand().left();
-//		
-//		TextButton delButton = new TextButton("Delete object", skin);
-//		delButton.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				gameObject.remove();
-//				GameObjectConfigurationDialog.this.remove();
-//			}
-//		});
-//		add(delButton).expand().left();
-
 		super.show(stage);
 	}
-
-//	public void addButton(String name, final DialogInterface listener) {
-//		final TextButton button = new TextButton(name, this.skin);
-//		button.setName(name);
-//		button.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				GameObjectConfigurationDialog.this.remove();
-//				listener.onPressedListener(button);
-//			}
-//		});
-//		this.textButtons.add(button);
-//	}
+	
+	
 }

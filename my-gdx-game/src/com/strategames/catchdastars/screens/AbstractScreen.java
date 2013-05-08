@@ -88,7 +88,6 @@ public abstract class AbstractScreen implements Screen
 		// draw the actors
 		this.stageActors.act();
 		this.stageActors.draw();
-		
 		this.stageUIElements.draw();
 	}
 

@@ -29,7 +29,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private float previousZoomDistance;
 	private InputMultiplexer multiplexer;
 	private Actor uiElementHit;
-
+	private Game game;
+	private boolean testGame;
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -38,7 +40,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	public LevelEditorScreen(Game game) {
 		super(game);
-
+		
+		this.game = game;
+		
+		this.testGame = false;
+		
 		this.longPressPosition = new Vector2();
 		this.touchPositionObjectDelta = new Vector2();
 		this.actorHit = null;
@@ -58,9 +64,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	protected void setupActors(Stage stage) {
-		getGame().setupStage(stage);
+		this.game.setupStage(stage);
 		this.multiplexer.addProcessor(stage);
-
+		
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
 			deselectGameObject((GameObject) actor);
@@ -68,8 +74,20 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
+	public void render(float delta) {
+		super.render(delta);
+		if( testGame ) {
+			this.game.update(delta);
+		}
+	}
+	
+	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		//Gdx.app.log("LevelEditorScreen", "touchDown");
+		if( this.testGame ) { //do not handle event in game mode
+			return false;
+		}
+		
 		this.previousZoomDistance = 0f; // reset zoom distance
 		this.state = States.NONE;
 
@@ -105,9 +123,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				Vector2 v = gameObject.getBody().getWorldCenter();
 				float left = gameObject.getX() - v.x;
 				float bottom = gameObject.getY() - v.y;
-				Gdx.app.log("LevelEditorScreen", "touchDragged: v=("+v.x+", "+v.y+"), left="
-						+left+", bottom="+bottom+"\n"+
-						"stageCoords=("+stageCoords.x+", "+stageCoords.y+")");
 
 				//Check if actor does not overlap other actor when moving horizontally
 				Rectangle rectangle = new Rectangle(stageCoords.x + left, this.actorHit.getY(),
@@ -133,6 +148,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		//		Gdx.app.log("LevelEditorScreen", "tap");
+		if( this.testGame ) { //return to edit mode
+			this.testGame = false;
+			getGame().reset();
+		}
+		
 		Stage stage = getStageActors();
 		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
 
@@ -148,6 +168,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean longPress(final float x, final float y) {
 		//		Gdx.app.log("LevelEditorScreen", "longPress");
+		if( this.testGame ) { //do not handle event in game mode
+			return false;
+		}
+		
 		if( this.state == States.NONE ) {
 			this.state = States.LONGPRESS;
 
@@ -156,11 +180,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			if( ( this.actorHit != null ) ){
 				GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
 				dialog.addButton("Copy " + this.actorHit.getName(), new OnClickListener() {
-					
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						Stage stage = getStageActors();
-						GameObject copy = ((GameObject) actorHit).createCopy();
+						GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
 						Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
 						//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
 						copy.setPosition(stageCoords.x, stageCoords.y);
@@ -170,16 +194,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					}
 				});
 				dialog.addButton("Delete " + this.actorHit.getName(), new OnClickListener() {
-					
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
-						actorHit.remove();
+						((GameObjectConfigurationDialog) dialog).getGameObject().remove();
 						dialog.remove();
 					}
 				});
-				
+
 				dialog.setPositiveButton("Close", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						dialog.remove();
@@ -188,8 +212,25 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				dialog.show(getStageUIElements());
 			} else {
 				GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-				dialog.addButton("Quit", new OnClickListener() {
-					
+				dialog.setNeutralButton("Test", new OnClickListener() {
+
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						multiplexer.removeProcessor(getStageActors());
+						testGame = true;
+						dialog.remove();
+					}
+				});
+				dialog.setPositiveButton("Close", new OnClickListener() {
+
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						saveLevel();
+						dialog.remove();
+					}
+				});
+				dialog.setNegativeButton("Quit", new OnClickListener() {
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						saveLevel();
@@ -218,6 +259,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
 		//		Gdx.app.log("LevelEditorScreen", "zoom");
+		if( this.testGame ) { //do not handle event in game mode
+			return false;
+		}
+		
 		if( ( this.state == States.ZOOM) || 
 				( this.state == States.NONE ) ) {
 			this.state = States.ZOOM;

@@ -65,29 +65,8 @@ public class GameObjectPickerDialog extends Dialog {
 			row().fill().expandX();
 		}
 		
-		final TextButton cancelButton = new TextButton("Cancel", skin);
-		cancelButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				GameObjectPickerDialog.this.remove();
-			}
-		});
-		add(cancelButton);
 		pack();
 		
-		stage.addActor(this);
+		super.show(stage);
 	}
-	
-//	public void addButton(String name, final DialogInterface listener) {
-//		final TextButton button = new TextButton(name, this.skin);
-//		button.setName(name);
-//		button.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				GameObjectPickerDialog.this.remove();
-//				listener.onPressedListener(button);
-//			}
-//		});
-//		this.textButtons.add(button);
-//	}
 }
