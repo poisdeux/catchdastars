@@ -70,6 +70,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.world;
 	}
 
+	public void deleteBody() {
+		this.world.destroyBody(this.body);
+		this.body = null;
+	}
+	
 	public void setBody(Body body) {
 		this.body = body;
 	}
@@ -87,6 +92,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
+		Gdx.app.log("GameObject", "Setup "+getName());
 		TextureRegionDrawable trd = createTexture();
 		if( trd != null ) {
 			setDrawable(trd);
@@ -230,11 +236,5 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return messageBuffer.toString();
 	}
 	
-	@Override
-	public boolean remove() {
-		Gdx.app.log("GameObject", "Removing "+getName());
-//		this.world.destroyBody(this.body);
-//		this.body = null;
-		return super.remove();
-	}
+	
 }
