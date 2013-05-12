@@ -26,7 +26,16 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected float halfWidth;
 	protected float halfHeight;
 	private ShapeRenderer shapeRenderer;
-
+	protected boolean isDeleted;
+	protected boolean isHit;
+	protected boolean isCollectible;
+	
+	public static enum Type {
+		WALL, BALLOON, STAR
+	}
+	
+	public Type type;
+	
 	public GameObject() {
 		init();
 	}
@@ -40,6 +49,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private void init() {
 		setName(getClass().getSimpleName());
 		this.shapeRenderer = new ShapeRenderer();
+		this.type = setType();
+	}
+	
+	public Type getType() {
+		return type;
 	}
 	
 	public float getHalfHeight() {
@@ -70,9 +84,23 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.world;
 	}
 
-	public void deleteBody() {
+	public void setCollectible(boolean isCollectible) {
+		this.isCollectible = isCollectible;
+	}
+	
+	public boolean deleteBody() {
+		if(this.world.isLocked()) {
+			return false;
+		}
+		
 		this.world.destroyBody(this.body);
 		this.body = null;
+		
+		return true;
+	}
+	
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 	
 	public void setBody(Body body) {
@@ -89,6 +117,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	/**
 	 * Setup the image and body for this game object. 
+	 * <br/>
+	 * This will add the GameObject as user data to the Box2D body. This can be retrieved using body.getUserData().
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
@@ -105,7 +135,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 		if( this.world != null ) {
 			this.body = setupBox2D();
+			this.body.setUserData(this);
 		}
+		
+		this.isDeleted = false;
+		this.isHit = false;
 	}
 
 	public void moveTo(float x, float y) {
@@ -225,6 +259,19 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Should decrease the size of the game object one step
 	 */
 	abstract public void decreaseSize();
+	
+	/**
+	 * Called when object must be removed from game
+	 * <br/>
+	 * This should start any remove animation and set object to deleted afterwards using {@link #setDeleted(boolean)}
+	 */
+	abstract public void destroy();
+	
+	/**
+	 * Called when object is created and should return the {@linkplain #type} of this object
+	 * @return Type the generic game object type 
+	 */
+	abstract protected Type setType();
 	
 	@Override
 	public String toString() {

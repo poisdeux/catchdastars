@@ -3,6 +3,7 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 /**
@@ -25,28 +27,33 @@ public class Star extends GameObject {
 	private Body star;
 	private float scale = 1f;
 	
-	public static enum Type {
+	public static enum ColorType {
 		BLUE, 
 		RED,
 		YELLOW
 	}
 
-	public Type type;
+	public ColorType colorType;
 	
 	public Star() {
 	}
 	
-	public static Star create(World world, float x, float y, Type type) {
+	public static Star create(World world, float x, float y, ColorType type) {
 		Star star = new Star();
-		star.setType(type);
+		star.setColorType(type);
 		star.setPosition(x, y);
 		star.setWorld(world);
 		star.setup();
+		star.setCollectible(true);
 		return star;
 	}
 	
-	public void setType(Type type) {
-		this.type = type;
+	public void setColorType(ColorType colorType) {
+		this.colorType = colorType;
+	}
+	
+	public ColorType getColorType() {
+		return colorType;
 	}
 	
 	public void setRotationSpeed(float speed) {
@@ -69,7 +76,7 @@ public class Star extends GameObject {
 
 	@Override
 	void writeValues(Json json) {
-		json.writeValue("type", this.type.name());
+		json.writeValue("type", this.colorType.name());
 		json.writeValue("rotationSpeed", this.rotationSpeed);
 	}
 
@@ -77,7 +84,7 @@ public class Star extends GameObject {
 	void readValue(String key, Object value) {
 		Gdx.app.log("Star", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
-			this.type = Type.valueOf(value.toString());
+			this.colorType = ColorType.valueOf(value.toString());
 		} else if( key.contentEquals("rotationSpeed")) {
 			this.rotationSpeed = Float.valueOf(value.toString());
 		}
@@ -86,11 +93,11 @@ public class Star extends GameObject {
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
-		if( type == Type.BLUE ) {
+		if( colorType == ColorType.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.starBlue);
-		} else if ( type == Type.RED ) {
+		} else if ( colorType == ColorType.RED ) {
 			trd = new TextureRegionDrawable(Textures.starRed);
-		} else if ( type == Type.YELLOW ) {
+		} else if ( colorType == ColorType.YELLOW ) {
 			trd = new TextureRegionDrawable(Textures.starYellow);
 		}
 		
@@ -122,7 +129,7 @@ public class Star extends GameObject {
 		GameObject object = Star.create(getWorld(), 
 				getX(), 
 				getY(), 
-				type);
+				colorType);
 		return object;
 	}
 
@@ -142,5 +149,20 @@ public class Star extends GameObject {
 	public void decreaseSize() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void destroy() {
+		if(remove()) {
+			Sounds.glass.play();
+			if(deleteBody()) {
+				setDeleted(true);
+			}
+		}
+	}
+
+	@Override
+	protected Type setType() {
+		return Type.STAR;
 	}
 }

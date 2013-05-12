@@ -2,6 +2,9 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,9 +12,10 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
-abstract public class Game extends com.badlogic.gdx.Game {
+abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
 	private ArrayList<GameObject> availableGameObjects;
@@ -24,8 +28,38 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	@Override
 	public void create() {
 		Textures.load();
+		
+		if( Gdx.app.getType() == ApplicationType.Desktop ) {
+			Sounds.load();
+		}
+		
 		setScreen(new SplashScreen(this));
 		this.availableGameObjects = availableGameObjects();
+	}
+	
+	@Override
+	public void resume() {
+		super.resume();
+		if( Gdx.app.getType() == ApplicationType.Android ) {
+			Sounds.load();
+		}
+	}
+	
+	@Override
+	public void pause() {
+		super.pause();
+		if( Gdx.app.getType() == ApplicationType.Android ) {
+			Sounds.dispose();
+		}
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		Textures.dispose();
+		if( Gdx.app.getType() == ApplicationType.Desktop ) {
+			Sounds.dispose();
+		}
 	}
 	
 	public int getAmountOfLevels() {
@@ -50,6 +84,7 @@ abstract public class Game extends com.badlogic.gdx.Game {
 	
 	public void setWorld(World world) {
 		this.world = world;
+		this.world.setContactListener(this);
 	}
 	
 	public World getWorld() {

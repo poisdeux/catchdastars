@@ -21,11 +21,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
-	private Type type;
+	private Orientation orientation;
 	private float length;
 	private float increaseDecreaseSizeAccumulatedDelta;
 
-	public enum Type {
+	public enum Orientation {
 		HORIZONTAL, VERTICAL
 	}
 
@@ -35,7 +35,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void setup() {
-		if( type == Type.HORIZONTAL ) {
+		if( orientation == Orientation.HORIZONTAL ) {
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
@@ -59,7 +59,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	Body setupBox2D() {
 		PolygonShape box = new PolygonShape();  
-		if( type == Type.HORIZONTAL ) {
+		if( orientation == Orientation.HORIZONTAL ) {
 			box.setAsBox(this.length/2f, this.spriteMiddlePart.getHeight()/2f);
 		} else {
 			box.setAsBox(this.spriteMiddlePart.getWidth()/2f, this.length/2f);
@@ -75,7 +75,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 
-	public static Wall create(World world, float x, float y, float length, Type type) {
+	public static Wall create(World world, float x, float y, float length, Orientation type) {
 		Wall wall = new Wall();
 		wall.setPosition(x, y);
 		wall.setType(type);
@@ -92,7 +92,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public void setLength(float length) {
 		float width = this.spriteMiddlePart.getWidth();
 		float height = this.spriteMiddlePart.getHeight();
-		if( type == Type.HORIZONTAL ) {
+		if( orientation == Orientation.HORIZONTAL ) {
 			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
 			setWidth(this.length);
 			setHeight(height);
@@ -103,8 +103,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		}
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setType(Orientation type) {
+		this.orientation = type;
 		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
 
@@ -113,7 +113,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		Vector2 v = getBody().getWorldCenter();
 		float x = v.x - super.halfWidth;
 		float y = v.y - super.halfHeight;
-		if ( type == Type.HORIZONTAL ) {
+		if ( orientation == Orientation.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch);
 
@@ -146,7 +146,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	void writeValues(Json json) {
-		json.writeValue("type", this.type.name());
+		json.writeValue("type", this.orientation.name());
 		json.writeValue("length", this.length);
 	}
 
@@ -154,7 +154,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	void readValue(String key, Object value) {
 		Gdx.app.log("Wall", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
-			this.type = Type.valueOf(value.toString());
+			this.orientation = Orientation.valueOf(value.toString());
 		} else if( key.contentEquals("length")) {
 			this.length = Float.valueOf(value.toString());
 		}
@@ -166,7 +166,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				getX(), 
 				getY(),
 				this.length,
-				this.type);
+				this.orientation);
 		return object;
 	}
 
@@ -180,7 +180,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		item.setValueNumeric(this.length);
 		item.setMaxValue(Gdx.app.getGraphics().getWidth());
 
-		if( type == Type.HORIZONTAL ) {
+		if( orientation == Orientation.HORIZONTAL ) {
 			item.setMinValue(this.spriteMiddlePart.getWidth());
 			item.setStepSize(this.spriteMiddlePart.getWidth());
 		} else {
@@ -200,7 +200,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		if( this.increaseDecreaseSizeAccumulatedDelta > this.spriteMiddlePart.getWidth() ) {
 			this.increaseDecreaseSizeAccumulatedDelta = 0;
 
-			if( type == Type.HORIZONTAL ) {
+			if( orientation == Orientation.HORIZONTAL ) {
 				setLength(this.length + this.spriteMiddlePart.getWidth());
 			} else {
 				setLength(this.length + this.spriteMiddlePart.getHeight());
@@ -215,7 +215,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.spriteMiddlePart.getWidth() ) {
 			this.increaseDecreaseSizeAccumulatedDelta = 0;
 
-			if( type == Type.HORIZONTAL ) {
+			if( orientation == Orientation.HORIZONTAL ) {
 				setLength(this.length - this.spriteMiddlePart.getWidth());
 			} else {
 				setLength(this.length - this.spriteMiddlePart.getHeight());
@@ -227,7 +227,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public void setColor(float r, float g, float b, float a) {
 		super.setColor(r, g, b, a);
 		this.spriteMiddlePart.setColor(r, g, b, a);
-		if( type == Type.HORIZONTAL ) {
+		if( orientation == Orientation.HORIZONTAL ) {
 			this.spriteLeftPart.setColor(r, g, b, a);
 			this.spriteRightPart.setColor(r, g, b, a);
 		}
@@ -246,7 +246,18 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		StringBuffer messageBuffer = new StringBuffer();
 		messageBuffer.append(message);
 		messageBuffer.append(", length="+this.length);
-		messageBuffer.append(", type="+this.type);
+		messageBuffer.append(", type="+this.orientation);
 		return messageBuffer.toString();
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected Type setType() {
+		return Type.WALL;
 	}
 }

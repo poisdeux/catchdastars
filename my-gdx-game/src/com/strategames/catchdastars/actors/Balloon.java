@@ -23,31 +23,35 @@ public class Balloon extends GameObject {
 	private Body balloon;
 	
 	
-	public static enum Type {
+	public static enum ColorType {
 		BLUE
 	}
 
-	private Type type;
+	private ColorType colorType;
 
 	public Balloon() { }
 
-	public static Balloon create(World world, float x, float y, Type type) {
+	public static Balloon create(World world, float x, float y, ColorType type) {
 		Balloon balloon = new Balloon();
-		balloon.setType(type);
+		balloon.setColorType(type);
 		balloon.setPosition(x, y);
 		balloon.setWorld(world);
 		balloon.setup();
 		return balloon;
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setColorType(ColorType colorType) {
+		this.colorType = colorType;
 	}
 
+	public ColorType getColorType() {
+		return colorType;
+	}
+	
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
-		if( type == Type.BLUE ) {
+		if( colorType == ColorType.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
 		}
 		return trd;
@@ -97,14 +101,14 @@ public class Balloon extends GameObject {
 
 	@Override
 	void writeValues(Json json) {
-		json.writeValue("type", this.type.name());
+		json.writeValue("type", this.colorType.name());
 	}
 
 	@Override
 	void readValue(String key, Object value) {
 		Gdx.app.log("Balloon", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
-			this.type = Type.valueOf(value.toString());
+			this.colorType = ColorType.valueOf(value.toString());
 		}
 	}
 
@@ -113,7 +117,7 @@ public class Balloon extends GameObject {
 		GameObject object = Balloon.create(getWorld(), 
 				getX(), 
 				getY(), 
-				type);
+				colorType);
 		return object;
 	}
 
@@ -133,5 +137,16 @@ public class Balloon extends GameObject {
 	public void decreaseSize() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected Type setType() {
+		return Type.BALLOON;
 	}
 }

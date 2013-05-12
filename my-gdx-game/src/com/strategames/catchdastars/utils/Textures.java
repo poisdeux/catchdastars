@@ -2,13 +2,11 @@ package com.strategames.catchdastars.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Textures {
 
-	public static Texture items;
 	public static TextureRegion blueBalloon;
 	public static TextureRegion starBlue;
 	public static TextureRegion starYellow;
@@ -17,14 +15,13 @@ public class Textures {
 	public static TextureRegion bricksHorizontalEndLeft;
 	public static TextureRegion bricksHorizontalEndRight;
 	public static TextureRegion bricksVertical;
-	
+	private static TextureAtlas atlas;
 	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
 
 	public static void load () {		
-		TextureAtlas atlas;
 		atlas = new TextureAtlas(Gdx.files.internal("packed/pack.atlas"));
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
@@ -37,4 +34,7 @@ public class Textures {
 		bricksVertical = atlas.findRegion("bricks-texture-vertical");
 	}
 
+	public static void dispose() {
+		atlas.dispose();
+	}
 }
