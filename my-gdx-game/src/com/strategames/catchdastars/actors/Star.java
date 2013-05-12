@@ -82,7 +82,6 @@ public class Star extends GameObject {
 
 	@Override
 	void readValue(String key, Object value) {
-		Gdx.app.log("Star", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
 			this.colorType = ColorType.valueOf(value.toString());
 		} else if( key.contentEquals("rotationSpeed")) {

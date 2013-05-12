@@ -152,7 +152,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	void readValue(String key, Object value) {
-		Gdx.app.log("Wall", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
 			this.orientation = Orientation.valueOf(value.toString());
 		} else if( key.contentEquals("length")) {

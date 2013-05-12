@@ -29,6 +29,18 @@ public abstract class AbstractScreen implements Screen
 		Gdx.input.setCatchBackKey(false);
 	}
 
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	protected Game getGame() {
 		return this.game;
 	}
@@ -72,8 +84,6 @@ public abstract class AbstractScreen implements Screen
 	@Override
 	public void show()
 	{
-		Gdx.app.log( "AbstractScreen", "Showing screen: " + getName() );
-		
 		setupUI(this.stageUIElements);
 		setupActors(this.stageActors);
 	}
@@ -94,27 +104,12 @@ public abstract class AbstractScreen implements Screen
 	@Override
 	public void hide()
 	{
-		Gdx.app.log( "AbstractScreen", "Hiding screen: " + getName() );
-
 		// dispose the resources by default
 		dispose();
 	}
 
 	@Override
-	public void pause()
-	{
-		Gdx.app.log( "AbstractScreen", "Pausing screen: " + getName() );
-	}
-
-	@Override
-	public void resume()
-	{
-		Gdx.app.log( "AbstractScreen", "Resuming screen: " + getName() );
-	}
-
-	@Override
 	public void resize(int width, int height) {
-		Gdx.app.log( "AbstractScreen", "Resizing screen: " + getName() );
 		this.stageActors.setViewport( width, height, true );
 		this.stageUIElements.setViewport( width, height, true );
 	}
@@ -122,7 +117,6 @@ public abstract class AbstractScreen implements Screen
 	@Override
 	public void dispose()
 	{
-		Gdx.app.log( "AbstractScreen", "Disposing screen: " + getName() );
 		this.stageActors.dispose();
 		this.stageUIElements.dispose();
 		if( font != null ) font.dispose();

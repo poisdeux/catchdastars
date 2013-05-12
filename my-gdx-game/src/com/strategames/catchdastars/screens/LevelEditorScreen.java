@@ -172,6 +172,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			return false;
 		}
 		
+		this.longPressPosition.x = x;
+		this.longPressPosition.y = y;
+		
 		if( this.state == States.NONE ) {
 			this.state = States.LONGPRESS;
 
@@ -218,6 +221,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					public void onClick(Dialog dialog, int which) {
 						multiplexer.removeProcessor(getStageActors());
 						testGame = true;
+						saveLevel();
 						dialog.remove();
 					}
 				});

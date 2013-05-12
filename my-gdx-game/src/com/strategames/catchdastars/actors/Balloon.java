@@ -79,7 +79,7 @@ public class Balloon extends GameObject {
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 		
 		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
-		this.localPositionTopOfBalloon.y += balloonHeight / 4f;
+		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
 		
 		return this.balloon;
 	}
@@ -100,13 +100,18 @@ public class Balloon extends GameObject {
 	}
 
 	@Override
+	public void write(Json json) {
+		moveTo(getX(), getY()); // align body with image origin
+		super.write(json);
+	}
+	
+	@Override
 	void writeValues(Json json) {
 		json.writeValue("type", this.colorType.name());
 	}
 
 	@Override
 	void readValue(String key, Object value) {
-		Gdx.app.log("Balloon", "readValue: key="+key+", value="+value.toString());
 		if( key.contentEquals("type")) {
 			this.colorType = ColorType.valueOf(value.toString());
 		}
