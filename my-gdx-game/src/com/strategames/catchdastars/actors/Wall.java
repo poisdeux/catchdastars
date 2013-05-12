@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -258,5 +259,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	protected Type setType() {
 		return Type.WALL;
+	}
+
+	@Override
+	public void handleCollision(Contact contact, GameObject gameObject) {
+		// TODO Auto-generated method stub
+		
 	}
 }

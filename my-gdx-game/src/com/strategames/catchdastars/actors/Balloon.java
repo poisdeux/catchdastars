@@ -11,17 +11,27 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject {
 	private Vector2 localPositionTopOfBalloon;
 	private Body balloon;
 	
+	private float maxVolume = 0.1f;
+	/**
+	 * Box2D limits the acceleration per timestep to 2 m/s.
+	 * Therefore the maximum speed any object can obtain is
+	 * maxSpeed = worldTimeStep * 2
+	 */
+	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
 	
 	public static enum ColorType {
 		BLUE
@@ -73,7 +83,7 @@ public class Balloon extends GameObject {
 		this.balloon = world.createBody(bd);
 		
 		FixtureDef fixtureBalloon = new FixtureDef();
-		fixtureBalloon.density = 10.33f;  // Helium density 
+		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
 		fixtureBalloon.friction = 0.2f;
 		fixtureBalloon.restitution = 0.6f; // Make it bounce a little bit
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
@@ -153,5 +163,15 @@ public class Balloon extends GameObject {
 	@Override
 	protected Type setType() {
 		return Type.BALLOON;
+	}
+
+	@Override
+	public void handleCollision(Contact contact, GameObject gameObject) {
+		WorldManifold worldManifold = contact.getWorldManifold();
+		Vector2 normal = worldManifold.getNormal();
+		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal).len2();
+		if( bounceVelocity > 100 ) {
+			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
+		}
 	}
 }

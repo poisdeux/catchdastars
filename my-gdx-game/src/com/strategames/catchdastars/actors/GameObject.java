@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -264,6 +265,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * This should start any remove animation and set object to deleted afterwards using {@link #setDeleted(boolean)}
 	 */
 	abstract public void destroy();
+	
+	/**
+	 * Depending on the game engine this gets called when object collides with another object
+	 * @param gameObject object that collided
+	 */
+	abstract public void handleCollision(Contact contact, GameObject gameObject);
 	
 	/**
 	 * Called when object is created and should return the {@linkplain #type} of this object

@@ -299,7 +299,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public boolean keyDown(int keycode) {
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
-			saveLevel();
+			if( ! this.testGame ) { //do not save in game mode
+				saveLevel();
+			}
 			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 			return true;
 		}

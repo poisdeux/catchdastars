@@ -28,11 +28,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	@Override
 	public void create() {
 		Textures.load();
-		
-		if( Gdx.app.getType() == ApplicationType.Desktop ) {
-			Sounds.load();
-		}
-		
+		Sounds.load();
 		setScreen(new SplashScreen(this));
 		this.availableGameObjects = availableGameObjects();
 	}
