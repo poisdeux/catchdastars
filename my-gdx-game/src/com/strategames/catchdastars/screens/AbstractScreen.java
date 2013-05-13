@@ -16,15 +16,15 @@ public abstract class AbstractScreen implements Screen
 	protected BitmapFont font;
 	protected SpriteBatch batch;
 	protected Skin skin;
-	private final Stage stageActors;
-	private final Stage stageUIElements;
+	protected final Stage stageActors;
+	protected final Stage stageUIActors;
 	
 	public AbstractScreen(Game game)
 	{
 		this.game = game;
 		
 		this.stageActors = new Stage();
-		this.stageUIElements = new Stage();
+		this.stageUIActors = new Stage();
 		
 		Gdx.input.setCatchBackKey(false);
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractScreen implements Screen
 		return batch;
 	}
 
-	protected Skin getSkin()
+	public Skin getSkin()
 	{
 		if( skin == null ) {
 			skin = new Skin( Gdx.files.internal( "skin/uiskin.json" ) );
@@ -84,7 +84,7 @@ public abstract class AbstractScreen implements Screen
 	@Override
 	public void show()
 	{
-		setupUI(this.stageUIElements);
+		setupUI(this.stageUIActors);
 		setupActors(this.stageActors);
 	}
 
@@ -96,9 +96,8 @@ public abstract class AbstractScreen implements Screen
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// draw the actors
-		this.stageActors.act();
 		this.stageActors.draw();
-		this.stageUIElements.draw();
+		this.stageUIActors.draw();
 	}
 
 	@Override
@@ -111,14 +110,14 @@ public abstract class AbstractScreen implements Screen
 	@Override
 	public void resize(int width, int height) {
 		this.stageActors.setViewport( width, height, true );
-		this.stageUIElements.setViewport( width, height, true );
+		this.stageUIActors.setViewport( width, height, true );
 	}
 	
 	@Override
 	public void dispose()
 	{
 		this.stageActors.dispose();
-		this.stageUIElements.dispose();
+		this.stageUIActors.dispose();
 		if( font != null ) font.dispose();
 		if( batch != null ) batch.dispose();
 		if( skin != null ) skin.dispose();
@@ -129,7 +128,7 @@ public abstract class AbstractScreen implements Screen
 	}
 	
 	public Stage getStageUIElements() {
-		return this.stageUIElements;
+		return this.stageUIActors;
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 public class SplashScreen extends AbstractScreen implements InputProcessor {
-
+	
 	public SplashScreen(Game game) {
 		super(game);
 
@@ -53,6 +53,11 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 		stage.addActor( this.splashImage );
 	}
 
+	@Override
+	public void render(float delta) {
+		stageActors.act();
+		super.render(delta);
+	}
 	@Override
 	public void dispose()
 	{

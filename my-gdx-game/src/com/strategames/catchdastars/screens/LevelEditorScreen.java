@@ -77,7 +77,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
-			this.game.update(delta);
+			this.game.update(delta, stageActors);
 		}
 	}
 	

@@ -88,6 +88,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.isCollectible = isCollectible;
 	}
 	
+	/**
+	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
+	 * not running.
+	 * @return
+	 */
 	public boolean deleteBody() {
 		if(this.world.isLocked()) {
 			return false;

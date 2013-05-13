@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Textures {
 
 	public static TextureRegion blueBalloon;
+	public static TextureRegion redBalloon;
 	public static TextureRegion starBlue;
 	public static TextureRegion starYellow;
 	public static TextureRegion starRed;
@@ -25,6 +26,7 @@ public class Textures {
 		atlas = new TextureAtlas(Gdx.files.internal("packed/pack.atlas"));
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
+		redBalloon = atlas.findRegion("aj_balloon_red");
 		starBlue = atlas.findRegion("star_blue");
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");

@@ -20,7 +20,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private Level currentLevel;
 	private ArrayList<GameObject> availableGameObjects;
 	private World world;
-	
+	public boolean levelComplete;
+	public boolean levelFailed;
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 	}
@@ -56,6 +57,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		if( Gdx.app.getType() == ApplicationType.Desktop ) {
 			Sounds.dispose();
 		}
+	}
+	
+	public boolean levelComplete() {
+		return this.levelComplete;
+	}
+	
+	public boolean levelFailed() {
+		return this.levelFailed;
 	}
 	
 	public int getAmountOfLevels() {
@@ -128,7 +137,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	abstract public void setupStage(Stage stage);
 	
+	abstract public void setupLevelCompleteStage(Stage stage);
+	
+	abstract public void setupLevelFailedStage(Stage stage);
+	
 	abstract public void reset();
 	
-	abstract public void update(float delta);
+	abstract public void update(float delta, Stage stage);
 }

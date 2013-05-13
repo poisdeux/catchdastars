@@ -10,12 +10,18 @@ import com.strategames.catchdastars.Game;
 public class LevelScreen extends AbstractScreen implements InputProcessor
 {	
 	private Game game;
+	private Stage levelCompleteActors;
+	private Stage levelFailedActors;
 	
 	public LevelScreen(
 			Game game )
 	{
 		super(game);
 		this.game = game;
+		
+		this.levelCompleteActors = new Stage();
+		this.levelFailedActors = new Stage();
+		
 		Gdx.input.setInputProcessor(this);
 		Gdx.input.setCatchBackKey(true);
 	}
@@ -34,12 +40,20 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	@Override
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
+		this.game.setupLevelCompleteStage(this.levelCompleteActors);
+		this.game.setupLevelFailedStage(this.levelFailedActors);
 	}
 	
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		this.game.update(delta);
+		this.game.update(delta, super.stageActors);
+		
+		if( this.game.levelComplete) {
+			this.levelCompleteActors.draw();
+		} else if( this.game.levelFailed ) {
+			this.levelFailedActors.draw();
+		}
 	}
 
 	@Override

@@ -25,16 +25,16 @@ public class Balloon extends GameObject {
 	private Vector2 localPositionTopOfBalloon;
 	private Body balloon;
 	
-	private float maxVolume = 0.1f;
+	private float maxVolume = 0.2f;
 	/**
-	 * Box2D limits the acceleration per timestep to 2 m/s.
+	 * Box2D limits the acceleration per time step to 2 m/s.
 	 * Therefore the maximum speed any object can obtain is
 	 * maxSpeed = worldTimeStep * 2
 	 */
 	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
 	
 	public static enum ColorType {
-		BLUE
+		BLUE, RED
 	}
 
 	private ColorType colorType;
@@ -63,6 +63,8 @@ public class Balloon extends GameObject {
 		TextureRegionDrawable trd = null;
 		if( colorType == ColorType.BLUE ) {
 			trd = new TextureRegionDrawable(Textures.blueBalloon);
+		} else if( colorType == ColorType.RED ) {
+			trd = new TextureRegionDrawable(Textures.redBalloon);
 		}
 		return trd;
 	}
@@ -156,8 +158,11 @@ public class Balloon extends GameObject {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-		
+		Gdx.app.log("Balloon", "destroy");
+		if(remove()) {
+			Sounds.balloonPop.play();
+			setDeleted(true);
+		}
 	}
 
 	@Override
