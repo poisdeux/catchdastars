@@ -83,7 +83,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		//Gdx.app.log("LevelEditorScreen", "touchDown");
+		Gdx.app.log("LevelEditorScreen", "touchDown");
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}

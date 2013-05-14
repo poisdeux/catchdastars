@@ -1,16 +1,11 @@
 package com.strategames.catchdastars;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -21,8 +16,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.actors.Balloon;
 import com.strategames.catchdastars.actors.GameObject;
@@ -32,6 +26,9 @@ import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.Textures;
+import com.strategames.ui.LevelCompleteDialog;
+import com.strategames.ui.LevelFailDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravity;
@@ -41,13 +38,11 @@ public class CatchDaStars extends Game {
 	private World world;
 	
 	private Stage stageActors;
-	private Stage stageLevelCompleteActors;
-	private Stage stageLevelFailedActors;
 	
 	private ArrayList<GameObject> gameObjectsForDeletion;
 	
 	private boolean accelerometerAvailable;
-	
+	private boolean gameOn;
 	
 	private Collectable redCollectables;
 	private Collectable blueCollectables;
@@ -55,6 +50,11 @@ public class CatchDaStars extends Game {
 	private int amountOfBlueBalloons;
 	private int amountOfRedBalloons;
 
+	private final int scorePerBalloon = 10;
+	private final int scorePerBlueStar = 1;
+	private final int scorePerRedStar = 1;
+	private final int scorePerGoldStar = 5;
+	
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -74,13 +74,7 @@ public class CatchDaStars extends Game {
 		
 		this.world.step(1/45f, 6, 2);
 		this.debugRenderer.render(world, this.camera.combined);
-		
-		if( this.levelFailed ) {
-			stageLevelFailedActors.act();
-		} else if ( this.levelComplete ) {
-			stageLevelCompleteActors.act();
-		}
-		
+				
 		Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
 		while(itr.hasNext()) {
 			GameObject object = itr.next();
@@ -105,69 +99,55 @@ public class CatchDaStars extends Game {
 		setWorld(this.world);
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
-
-		this.levelComplete = false;
-		this.levelFailed = false;
 		
 		loadLevel();
-	}
-
-	@Override
-	public void setupLevelCompleteStage(Stage stage) {
-		this.stageLevelCompleteActors = stage;
-	}
-	
-	@Override
-	public void setupLevelFailedStage(Stage stage) {
-		this.stageLevelFailedActors = stage;
 		
-		Skin skin = ((AbstractScreen) getScreen()).getSkin();
-		Label gameOverLabel = new Label("Game Over", skin);
-		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gameOverLabel.getWidth() / 2);
-		gameOverLabel.setPosition(xMiddle, Gdx.graphics.getHeight() / 2);
-		
-		gameOverLabel.addAction( sequence( fadeIn( 0.25f ) ) );
-		
-		gameOverLabel.getColor().a = 0f;
-		
-		stage.addActor(gameOverLabel);
+		this.gameOn = true;
 	}
 	
 	@Override
 	public void reset() {
+		resetStageActors();
+		this.gameOn = true;
 		System.gc(); //hint the garbage collector that now is a good time to collect
-		
-		AbstractScreen screen = (AbstractScreen) getScreen();
-		Stage stage = screen.getStageActors();
+	}
 
-		Array<Actor> actors = stage.getActors();
+	private void resetStageActors() {
+		Array<Actor> actors = this.stageActors.getActors();
 		for( Actor actor : actors ) {
 			GameObject gameObject = (GameObject) actor;
 			gameObject.deleteBody();
 		}
 
-		this.levelComplete = false;
-		this.levelFailed = false;
-		
-		stage.clear();
+		this.stageActors.clear();
 
 		loadLevel();
 	}
+	
+	private void showLevelCompleteDialog() {
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(this, ((AbstractScreen) getScreen()).getSkin());
+		
+		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(Textures.starBlue), this.blueCollectables.getCollected(), this.scorePerBlueStar);
+		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected(), this.scorePerRedStar);
+		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
 
+		levelCompleteDialog.show(this.stageActors);
+	}
+	
 	@Override
 	public ArrayList<GameObject> availableGameObjects() {
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
+		
 		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.BLUE));
+		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.RED));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.BLUE));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.YELLOW));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.HORIZONTAL));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
 		return objects;
-	}
-
-	private void updateLevelFailedStage() {
-		
 	}
 	
 	private void loadLevel() {
@@ -245,26 +225,32 @@ public class CatchDaStars extends Game {
 		}
 		
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
-			this.levelFailed = true;
-			Gdx.app.log("CatchDaStars", "handleBalloonCollision: blue level failed");
+			this.gameOn = false;
+			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
+			dialog.show(this.stageActors);
 		}
 		
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
-			this.levelFailed = true;
-			Gdx.app.log("CatchDaStars", "handleBalloonCollision: red level failed: " + this.redCollectables);
+			this.gameOn = false;
+			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
+			dialog.show(this.stageActors);
 		}
 		
 		//Check if all collectables have been retrieved
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
-			this.levelComplete = true;
-			Gdx.app.log("CatchDaStars", "handleBalloonCollision: level completed");
+			this.gameOn = false;
+			showLevelCompleteDialog();
 		}
 	}
 
 	@Override
 	public void beginContact(Contact contact) {
+		if( ! this.gameOn ) {
+			return;
+		}
+		
 		Fixture f1=contact.getFixtureA();
 		Body b1=f1.getBody();
 		Fixture f2=contact.getFixtureB();
