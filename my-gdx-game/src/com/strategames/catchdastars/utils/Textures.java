@@ -17,6 +17,12 @@ public class Textures {
 	public static TextureRegion bricksHorizontalEndLeft;
 	public static TextureRegion bricksHorizontalEndRight;
 	public static TextureRegion bricksVertical;
+	public static TextureRegion chalk1;
+	public static TextureRegion chalk2;
+	public static TextureRegion chalk3;
+	public static TextureRegion chalk4;
+	public static TextureRegion chalk5;
+	
 	private static TextureAtlas atlas;
 	
 	public static Texture loadTexture (String file) {
@@ -35,6 +41,11 @@ public class Textures {
 		bricksHorizontalEndRight = atlas.findRegion("bricks-texture-horizontal-right-end");
 		bricksHorizontalEndLeft = atlas.findRegion("bricks-texture-horizontal-left-end");
 		bricksVertical = atlas.findRegion("bricks-texture-vertical");
+		chalk1 = atlas.findRegion("Chalk-01");
+		chalk2 = atlas.findRegion("Chalk-02");
+		chalk3 = atlas.findRegion("Chalk-03");
+		chalk4 = atlas.findRegion("Chalk-04");
+		chalk5 = atlas.findRegion("Chalk-05");
 	}
 
 	public static void dispose() {

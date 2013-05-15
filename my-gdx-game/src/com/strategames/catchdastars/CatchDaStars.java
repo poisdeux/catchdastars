@@ -72,7 +72,7 @@ public class CatchDaStars extends Game {
 
 		stageActors.act();
 		
-		this.world.step(1/45f, 6, 2);
+		this.world.step(UPDATE_FREQUENCY, 6, 2);
 		this.debugRenderer.render(world, this.camera.combined);
 				
 		Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();

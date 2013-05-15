@@ -26,7 +26,6 @@ public class LevelCompleteDialog {
 	private Game game;
 	private ArrayList<ScoreItem> scoreItems;
 	private float maxRowHeight;
-	private float maxImageWidth;
 	private float rowHeight;
 	private int top;
 	private final int padding = 10;

@@ -16,6 +16,8 @@ import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
+	public static float UPDATE_FREQUENCY = 1/45f;
+	
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
 	private ArrayList<GameObject> availableGameObjects;
