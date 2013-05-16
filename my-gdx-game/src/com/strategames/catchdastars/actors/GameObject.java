@@ -98,9 +98,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			return false;
 		}
 		
-		this.world.destroyBody(this.body);
-		this.body = null;
-		
+		if( this.body != null ) {
+			this.world.destroyBody(this.body);
+			this.body = null;
+		}
 		return true;
 	}
 	

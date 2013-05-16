@@ -3,18 +3,21 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Textures;
 
 public class ChalkLine extends Image {
 	private Sprite[] chalks;
 	private ArrayList<Sprite> chalkLine; 
 	private float length;
+	private float lengthPerStep;
 	private int steps;
-	private int stepSize = 8;
+	private int stepSize = 1;
 	private int duration;
 	private Random randomNumberGenerator;
 	private float x;
@@ -63,18 +66,29 @@ public class ChalkLine extends Image {
 	 */
 	public void setLength(float length) {
 		this.length = length;
-		this.steps = (int) (this.length / this.stepSize);
+		setLengthPerStep();
 	}
 
 	public void setDuration(int milliseconds) {
 		this.duration = milliseconds;
+		this.steps = (int) (this.duration / Game.UPDATE_FREQUENCY_MILLISECONDS);
+		setLengthPerStep();
+	}
+	
+	private void setLengthPerStep() {
+		if( this.steps < 1 ) { 
+			this.steps = 1;
+		}
+		this.lengthPerStep = this.length / this.steps;
 	}
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		if( this.steps > 0 ) {
-			//add chalk point
-			this.chalkLine.add(this.chalks[this.randomNumberGenerator.nextInt(5)]);
+			//add chalk points
+			for(int i = 0; i < this.lengthPerStep; i += this.stepSize) {
+				this.chalkLine.add(this.chalks[this.randomNumberGenerator.nextInt(5)]);
+			}
 			this.steps--;
 		}
 		
@@ -84,6 +98,7 @@ public class ChalkLine extends Image {
 		for(int xOffset = 0; xOffset < maxXPos; xOffset += this.stepSize) {
 			Sprite sprite = this.chalkLine.get(index++);
 			sprite.setPosition(this.x + xOffset, this.y);
+			sprite.draw(batch, parentAlpha);
 		}
 	}
 }

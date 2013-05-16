@@ -44,4 +44,16 @@ public class Sounds {
 		drawChalkLineShort1.dispose();
 		drawChalkLineShort2.dispose();
 	}
+	
+	public static Sound getSoundForIncrement(int increment) {
+		Sound sound = Sounds.singleCoinDrop;
+		
+		if( increment > 9 ) {
+			sound = Sounds.coinsDrop;
+		} else if ( increment > 49 ) {
+			sound = Sounds.coinsDropMany;
+		}
+		
+		return sound;
+	}
 }
