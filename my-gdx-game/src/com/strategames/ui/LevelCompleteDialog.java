@@ -6,11 +6,10 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
 
-import sun.font.CreatedFontTracker;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -20,11 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.ChalkLine;
+import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.ui.TextButton.TextButtonListener;
 
-public class LevelCompleteDialog {
+public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	private Skin skin;
 	private Game game;
 	private ArrayList<ScoreItem> scoreItems;
@@ -33,13 +33,21 @@ public class LevelCompleteDialog {
 	private int top;
 	private final int padding = 10;
 	private int count;
-	private int delay;
+	private int delay = 10;
 	private int delayCount;
+	private Stage stage;
+	
+	private enum animStates {
+		NONE, CHALKLINE_DRAW_BAR, CHALKLINE_CROSS_DRAW_VERTICAL, CHALKLINE_CROSS_DRAW_HORIZONTAL
+	}
+	
+	private animStates animState;
 	
 	public LevelCompleteDialog(Game game, Skin skin) {
 		this.skin = skin;
 		this.game = game;
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
+		this.animState = animStates.NONE;
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
@@ -52,7 +60,7 @@ public class LevelCompleteDialog {
 	}
 
 	public void show(Stage stage) {
-
+		this.stage = stage;
 		this.rowHeight = this.maxRowHeight + this.padding;
 
 		if( scoreItems.size() > 0 ) {
@@ -106,7 +114,7 @@ public class LevelCompleteDialog {
 		final ScoreItem scoreItem = this.scoreItems.get(number);
 
 		final int increment = scoreItem.getScorePerGameObject();
-		final int amount = scoreItem.getAmount() * increment * 5;
+		final int amount = scoreItem.getAmount() * increment;
 		final Sound sound = Sounds.getSoundForIncrement(increment);
 		
 		Table scoreItemTable = new Table();
@@ -121,12 +129,6 @@ public class LevelCompleteDialog {
 				
 		this.count = 0;
 		this.delayCount = 0;
-		
-		if( ( amount != 0 ) && ( increment != 0 ) ) {
-			this.delay = (int) (1/Game.UPDATE_FREQUENCY_SECONDS) / (amount/increment);
-		} else {
-			this.delay = 0;
-		}
 		
 		scoreItemTable.addAction(sequence(
 				moveTo(100f, finalYPosition, 1f, Interpolation.circleOut),
@@ -148,7 +150,14 @@ public class LevelCompleteDialog {
 							if( number < (scoreItems.size() - 1)  ) {
 								showScoreItem(number + 1, stage);
 							} else {
-								drawLine(50f, finalYPosition - (2 * padding), stage);
+								float y = finalYPosition - (2 * padding);
+								ChalkLine line = ChalkLine.create(50f, 
+										y, 
+										350f, 
+										y, 420, LevelCompleteDialog.this);
+								stage.addActor(line);
+								Sounds.drawChalkLine.play();
+								animState = animStates.CHALKLINE_DRAW_BAR;
 							}
 							return true;
 						}
@@ -157,13 +166,6 @@ public class LevelCompleteDialog {
 				}));
 
 		stage.addActor(scoreItemTable);
-	}
-
-	private void drawLine(float x, float y,  final Stage stage) {
-		ChalkLine line = ChalkLine.create(x, y, 200);
-		line.setDuration(420);
-		stage.addActor(line);
-		Sounds.drawChalkLine.play();
 	}
 
 	private class ScoreItem {
@@ -188,6 +190,27 @@ public class LevelCompleteDialog {
 
 		public ImageButton getImageButton() {
 			return button;
+		}
+	}
+
+	@Override
+	public void onLineDrawEnd(ChalkLine line) {
+		if( this.animState == animStates.CHALKLINE_DRAW_BAR ) {
+			Vector2 v = line.getEnd();
+			float x = v.x + (this.padding * 2);
+			float y = v.y;
+			line = ChalkLine.create(x, y, x + 50f, y, 220, this);
+			this.stage.addActor(line);
+			Sounds.drawChalkLineShort2.play();
+			animState = animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL;
+		} else if ( this.animState == animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL ) {
+			Vector2 v = line.getEnd();
+			float x = v.x - 25f;
+			float y = v.y + (line.getLength()/2f);
+			line = ChalkLine.create(x, y, x, y - 50f, 210, this);
+			this.stage.addActor(line);
+			Sounds.drawChalkLineShort1.play();
+			animState = animStates.CHALKLINE_CROSS_DRAW_VERTICAL;
 		}
 	}
 }

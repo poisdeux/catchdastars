@@ -6,6 +6,7 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
@@ -20,11 +21,21 @@ public class ChalkLine extends Image {
 	private int stepSize = 1;
 	private int duration;
 	private Random randomNumberGenerator;
-	private float x;
-	private float y;
+	private Vector2 start;
+	private Vector2 end;
+	private Vector2 increments;
+	
+	public interface ChalkLineAnimationListener {
+		public void onLineDrawEnd(ChalkLine line);
+	}
+	
+	private ChalkLineAnimationListener listener;
 	
 	public ChalkLine() {
 		super();
+		
+		this.start = new Vector2();
+		this.end = new Vector2();
 		
 		this.chalks = new Sprite[5];
 		this.chalks[0] = new Sprite(Textures.chalk1);
@@ -39,47 +50,72 @@ public class ChalkLine extends Image {
 		
 		setScaling(Scaling.none);
 		
-		setLength(this.length);
+		this.listener = null;
 	}
 
 
-	public static ChalkLine create(float x, float y, float length) {
+	public static ChalkLine create(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
 		ChalkLine line = new ChalkLine();
-		line.setStart(x, y);
-		line.setLength(length);
+		line.setStart(xStart, yStart);
+		line.setEnd(xEnd, yEnd);
+		line.setDuration(milliseconds);
+		line.setListener(listener);
+		line.init();
 		return line;
 	}
 
+	public void setListener(ChalkLineAnimationListener listener) {
+		this.listener = listener;
+	}
+	
 	/**
 	 * Sets the start position of this line
 	 * @param x
 	 * @param y
 	 */
 	public void setStart(float x, float y) {
-		this.x = x;
-		this.y = y;
+		this.start.x = x;
+		this.start.y = y;
 	}
 	
-	/**
-	 * Sets the length of the line.
-	 * @param length
-	 */
-	public void setLength(float length) {
-		this.length = length;
-		setLengthPerStep();
+	public Vector2 getStart() {
+		return start;
+	}
+	
+	public void setEnd(float x, float y) {
+		this.end.x = x;
+		this.end.y = y;
 	}
 
-	public void setDuration(int milliseconds) {
-		this.duration = milliseconds;
-		this.steps = (int) (this.duration / Game.UPDATE_FREQUENCY_MILLISECONDS);
-		setLengthPerStep();
+	public Vector2 getEnd() {
+		return end;
 	}
 	
-	private void setLengthPerStep() {
+	public void setDuration(int milliseconds) {
+		this.duration = milliseconds;
+	}
+	
+	public float getLength() {
+		return length;
+	}
+	
+	public void init() {
+		this.length = this.start.dst(this.end);
+		
+		this.steps = (int) (this.duration / Game.UPDATE_FREQUENCY_MILLISECONDS);
+		
 		if( this.steps < 1 ) { 
 			this.steps = 1;
 		}
+		
 		this.lengthPerStep = this.length / this.steps;
+		
+		this.increments = this.end.cpy(); 
+		this.increments.sub(this.start);
+		this.increments.div(this.steps * this.lengthPerStep);
+		Gdx.app.log("ChalkLine", "init: this.start="+this.start+", this.end="+this.end+", this.increments="+this.increments
+				+"\n"+
+				"this.lengthPerStep="+this.lengthPerStep+", this.length="+this.length+", this.steps="+this.steps);
 	}
 	
 	@Override
@@ -90,15 +126,23 @@ public class ChalkLine extends Image {
 				this.chalkLine.add(this.chalks[this.randomNumberGenerator.nextInt(5)]);
 			}
 			this.steps--;
+		} else if( this.steps == 0 ) {
+			if( this.listener != null ) {
+				this.listener.onLineDrawEnd(this);
+			}
+			this.steps--;
 		}
 		
-		int maxXPos = this.chalkLine.size() * this.stepSize;
+		int lineSize = this.chalkLine.size();
 		
-		int index = 0;
-		for(int xOffset = 0; xOffset < maxXPos; xOffset += this.stepSize) {
-			Sprite sprite = this.chalkLine.get(index++);
-			sprite.setPosition(this.x + xOffset, this.y);
+		float x = this.start.x;
+		float y = this.start.y;
+		for(int i = 0; i < lineSize; i++) {
+			Sprite sprite = this.chalkLine.get(i);
+			sprite.setPosition(x, y);
 			sprite.draw(batch, parentAlpha);
+			x += this.increments.x;
+			y += this.increments.y;
 		}
 	}
 }
