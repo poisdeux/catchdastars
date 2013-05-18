@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -36,14 +37,14 @@ public class CatchDaStars extends Game {
 	private Box2DDebugRenderer debugRenderer;
 	private Camera camera;
 	private World world;
-	
+
 	private Stage stageActors;
-	
+
 	private ArrayList<GameObject> gameObjectsForDeletion;
-	
+
 	private boolean accelerometerAvailable;
 	private boolean gameOn;
-	
+
 	private Collectable redCollectables;
 	private Collectable blueCollectables;
 	private Collectable goldCollectables;
@@ -54,12 +55,12 @@ public class CatchDaStars extends Game {
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
-	
+
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
-		
+
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
 
@@ -71,24 +72,27 @@ public class CatchDaStars extends Game {
 		} 
 
 		stageActors.act();
-		
+
 		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 		this.debugRenderer.render(world, this.camera.combined);
-				
-		Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
-		while(itr.hasNext()) {
-			GameObject object = itr.next();
-			object.deleteBody();
-			itr.remove();
+
+		if( ! this.world.isLocked() ) {
+			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
+			while(itr.hasNext()) {
+				GameObject object = itr.next();
+				object.remove();
+				object.deleteBody();
+				itr.remove();
+			}
 		}
 	}
 
 	@Override
 	public void setupStage(Stage stage) {
 		this.stageActors = stage;
-		
+
 		System.gc(); //hint the garbage collector that now is a good time to collect
-		
+
 		this.camera = stage.getCamera();
 		this.debugRenderer = new Box2DDebugRenderer();
 
@@ -99,12 +103,12 @@ public class CatchDaStars extends Game {
 		setWorld(this.world);
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
-		
+
 		loadLevel();
-		
+
 		this.gameOn = true;
 	}
-	
+
 	@Override
 	public void reset() {
 		resetStageActors();
@@ -123,10 +127,18 @@ public class CatchDaStars extends Game {
 
 		loadLevel();
 	}
-	
+
 	private void showLevelCompleteDialog() {
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(this, ((AbstractScreen) getScreen()).getSkin());
-		
+		Array<Actor> actors = this.stageActors.getActors();
+		int size = actors.size;
+		for(int i = 0; i < size; i++) {
+			Actor actor = actors.get(i);
+			Color color = actor.getColor();
+			actor.setColor(color.r, color.g, color.b, 0.4f);
+		}
+
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(this, ((AbstractScreen) getScreen()).getSkin(), 0);
+
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.starBlue), this.blueCollectables.getCollected(), this.scorePerBlueStar);
@@ -135,11 +147,11 @@ public class CatchDaStars extends Game {
 
 		levelCompleteDialog.show(this.stageActors);
 	}
-	
+
 	@Override
 	public ArrayList<GameObject> availableGameObjects() {
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
-		
+
 		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.BLUE));
 		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.RED));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.BLUE));
@@ -149,7 +161,7 @@ public class CatchDaStars extends Game {
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
 		return objects;
 	}
-	
+
 	private void loadLevel() {
 		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
 		setCurrentLevel(level);
@@ -157,7 +169,7 @@ public class CatchDaStars extends Game {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
-		
+
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
@@ -223,19 +235,19 @@ public class CatchDaStars extends Game {
 		} else if ( type == Type.WALL ) {
 			balloon.handleCollision(contact, gameObject);
 		}
-		
+
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
 			this.gameOn = false;
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
 			dialog.show(this.stageActors);
 		}
-		
+
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
 			this.gameOn = false;
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
 			dialog.show(this.stageActors);
 		}
-		
+
 		//Check if all collectables have been retrieved
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
@@ -250,7 +262,7 @@ public class CatchDaStars extends Game {
 		if( ! this.gameOn ) {
 			return;
 		}
-		
+
 		Fixture f1=contact.getFixtureA();
 		Body b1=f1.getBody();
 		Fixture f2=contact.getFixtureB();
@@ -277,7 +289,7 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		
+
 
 	}
 }

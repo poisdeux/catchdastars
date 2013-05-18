@@ -1,6 +1,7 @@
 package com.strategames.ui;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
@@ -11,6 +12,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -22,12 +24,14 @@ import com.strategames.catchdastars.actors.ChalkLine;
 import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Sounds;
+import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.TextButton.TextButtonListener;
 
 public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	private Skin skin;
 	private Game game;
 	private ArrayList<ScoreItem> scoreItems;
+	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
 	private float rowHeight;
 	private int top;
@@ -36,6 +40,8 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	private int delay = 10;
 	private int delayCount;
 	private Stage stage;
+	private int totalScore;
+	
 	
 	private enum animStates {
 		NONE, CHALKLINE_DRAW_BAR, CHALKLINE_CROSS_DRAW_VERTICAL, CHALKLINE_CROSS_DRAW_HORIZONTAL
@@ -43,11 +49,19 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	
 	private animStates animState;
 	
-	public LevelCompleteDialog(Game game, Skin skin) {
+	/**
+	 * Shows a scoreboard animation
+	 * @param game
+	 * @param skin
+	 * @param currentScore the total score minus the score of the completed level
+	 */
+	public LevelCompleteDialog(Game game, Skin skin, int currentScore) {
 		this.skin = skin;
 		this.game = game;
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
 		this.animState = animStates.NONE;
+		this.totalScore = currentScore;
+		this.chalkLines = new ArrayList<ChalkLine>();
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
@@ -65,7 +79,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 
 		if( scoreItems.size() > 0 ) {
 			this.top = Gdx.graphics.getHeight() - (int) ( this.rowHeight );
-			showScoreItem(0, stage);
+			showScoreItem(0);
 		}
 
 		final Table table = new Table();
@@ -110,7 +124,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		stage.addActor(table);
 	}
 
-	private void showScoreItem(final int number, final Stage stage) {
+	private void showScoreItem(final int number) {
 		final ScoreItem scoreItem = this.scoreItems.get(number);
 
 		final int increment = scoreItem.getScorePerGameObject();
@@ -148,7 +162,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 							return false;
 						} else {
 							if( number < (scoreItems.size() - 1)  ) {
-								showScoreItem(number + 1, stage);
+								showScoreItem(number + 1);
 							} else {
 								float y = finalYPosition - (2 * padding);
 								ChalkLine line = ChalkLine.create(50f, 
@@ -165,14 +179,96 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 				
 				}));
 
+		scoreItem.setActor(scoreItemTable);
 		stage.addActor(scoreItemTable);
 	}
 
+	private void showCashRegistry(final float x, final float y) {
+		Table table = new Table();
+		table.setHeight(this.maxRowHeight);
+		table.add(new ImageButton(new Image(Textures.bricksVertical).getDrawable()));
+		final Label label = new Label(String.valueOf(this.totalScore), skin);
+		table.add(label).width(50);
+
+		table.setPosition(x, -this.rowHeight);
+		
+		table.addAction(sequence(
+				moveTo(x, y, 1f, Interpolation.circleOut),
+				new Action() {
+					@Override
+					public boolean act(float delta) {
+						calculateTotalAnimation(x, y, label);
+						return true;
+					}
+				}));
+
+		stage.addActor(table);
+	}
+	
+	private void calculateTotalAnimation(float x, float y, final Label label) {
+		int size = this.scoreItems.size();
+		for(int i = 0; i < size; i++) {
+			final ScoreItem scoreItem = this.scoreItems.get(i);
+			final Actor actor = scoreItem.getActor();
+			actor.addAction(sequence(moveTo(actor.getX(), y, 1f - (0.1f * i), Interpolation.circleIn),
+					new Action() {
+
+						@Override
+						public boolean act(float delta) {
+							final int amount = scoreItem.getAmount() * scoreItem.getScorePerGameObject();
+							if( amount > 0 ) {
+								Sounds.getSoundForIncrement(amount).play();
+								totalScore += amount;
+								label.setText(String.valueOf(totalScore));
+							}
+							actor.remove();
+							return true;
+						}
+				
+			}));
+		}
+	}
+	
+	private void showTotalScore() {
+		int size = this.chalkLines.size();
+		for(int i = 0; i < size; i++) {
+			this.chalkLines.get(i).addAction(fadeOut(1f));
+		}
+		
+	}
+	
+	@Override
+	public void onLineDrawEnd(ChalkLine line) {
+		this.chalkLines.add(line);
+		if( this.animState == animStates.CHALKLINE_DRAW_BAR ) {
+			Vector2 v = line.getEnd();
+			float x = v.x + (this.padding * 2);
+			float y = v.y;
+			line = ChalkLine.create(x, y, x + 50f, y, 220, this);
+			this.stage.addActor(line);
+			Sounds.drawChalkLineShort2.play();
+			animState = animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL;
+		} else if ( this.animState == animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL ) {
+			Vector2 v = line.getEnd();
+			float x = v.x - 25f;
+			float y = v.y + (line.getLength()/2f);
+			line = ChalkLine.create(x, y, x, y - 50f, 210, this);
+			this.stage.addActor(line);
+			Sounds.drawChalkLineShort1.play();
+			animState = animStates.CHALKLINE_CROSS_DRAW_VERTICAL;
+		} else if ( this.animState == animStates.CHALKLINE_CROSS_DRAW_VERTICAL ) {
+			Vector2 v = line.getEnd();
+			showCashRegistry(100f, v.y - (this.padding * 2));
+		}
+	}
+	
+	
 	private class ScoreItem {
 		private int amount;
 		private int scorePerGameObject;
 		private ImageButton button;
-
+		private Actor actor;
+		
 		public ScoreItem(ImageButton button, int amount, int scorePerGameObject) {
 			this.amount = amount;
 			this.scorePerGameObject = scorePerGameObject;
@@ -191,26 +287,13 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		public ImageButton getImageButton() {
 			return button;
 		}
-	}
-
-	@Override
-	public void onLineDrawEnd(ChalkLine line) {
-		if( this.animState == animStates.CHALKLINE_DRAW_BAR ) {
-			Vector2 v = line.getEnd();
-			float x = v.x + (this.padding * 2);
-			float y = v.y;
-			line = ChalkLine.create(x, y, x + 50f, y, 220, this);
-			this.stage.addActor(line);
-			Sounds.drawChalkLineShort2.play();
-			animState = animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL;
-		} else if ( this.animState == animStates.CHALKLINE_CROSS_DRAW_HORIZONTAL ) {
-			Vector2 v = line.getEnd();
-			float x = v.x - 25f;
-			float y = v.y + (line.getLength()/2f);
-			line = ChalkLine.create(x, y, x, y - 50f, 210, this);
-			this.stage.addActor(line);
-			Sounds.drawChalkLineShort1.play();
-			animState = animStates.CHALKLINE_CROSS_DRAW_VERTICAL;
+		
+		public Actor getActor() {
+			return actor;
+		}
+		
+		public void setActor(Actor actor) {
+			this.actor = actor;
 		}
 	}
 }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -43,15 +44,15 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		} else {
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
 		}
-		
+
 		setDrawable(new TextureRegionDrawable(this.spriteMiddlePart));
 		setScaling(Scaling.none);
-		
+
 		setLength(this.length);
-		
+
 		super.setup();
 	}
-	
+
 	@Override
 	TextureRegionDrawable createTexture() {
 		return null;
@@ -116,7 +117,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		float y = v.y - super.halfHeight;
 		if ( orientation == Orientation.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
-			this.spriteLeftPart.draw(batch);
+			this.spriteLeftPart.draw(batch, parentAlpha);
 
 			float stepSize = this.spriteMiddlePart.getWidth();
 			float middlePartEndPosition = x + this.length - stepSize;
@@ -125,11 +126,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 					xd < middlePartEndPosition; 
 					xd += stepSize ) {
 				this.spriteMiddlePart.setPosition(xd, y);
-				this.spriteMiddlePart.draw(batch);
+				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 
 			this.spriteRightPart.setPosition(middlePartEndPosition, y);
-			this.spriteRightPart.draw(batch);
+			this.spriteRightPart.draw(batch, parentAlpha);
 		} else {
 			float stepSize = this.spriteMiddlePart.getHeight();
 			float middlePartEndPosition = y + this.length;
@@ -138,10 +139,10 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 					yd < middlePartEndPosition; 
 					yd += stepSize ) {
 				this.spriteMiddlePart.setPosition(x, yd);
-				this.spriteMiddlePart.draw(batch);
+				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 		}
-		
+
 		setPosition(x, y);
 	}
 
@@ -239,7 +240,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			setLength(item.getValueNumeric());
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		String message = super.toString();
@@ -252,8 +253,9 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-		
+		if(remove() && deleteBody()) {
+			setDeleted(true);
+		}
 	}
 
 	@Override
@@ -264,6 +266,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void handleCollision(Contact contact, GameObject gameObject) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
