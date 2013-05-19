@@ -9,11 +9,13 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -42,6 +44,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	private Stage stage;
 	private int totalScore;
 	private Label totalScoreLabel;
+	private Table cashRegister;
 	
 	private int animationPhase;
 	private Vector2 animPosition;
@@ -60,6 +63,10 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		this.totalScore = currentScore;
 		this.chalkLines = new ArrayList<ChalkLine>();
 		this.totalScoreLabel = new Label(String.valueOf(this.totalScore), skin);
+		this.cashRegister = new Table();
+		this.cashRegister.setHeight(this.maxRowHeight);
+		this.cashRegister.add(new ImageButton(new Image(Textures.bricksVertical).getDrawable()));
+		this.cashRegister.add(totalScoreLabel).width(50);
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
@@ -163,6 +170,9 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		case 5:
 			calculateTotalAnimation(0, this.animPosition.x, this.animPosition.y);
 			break;
+		case 6:
+			showTotalScore();
+			break;
 		}
 	}
 
@@ -221,14 +231,9 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	}
 
 	private void showCashRegistry(final float x, final float y) {
-		Table table = new Table();
-		table.setHeight(this.maxRowHeight);
-		table.add(new ImageButton(new Image(Textures.bricksVertical).getDrawable()));
-		table.add(totalScoreLabel).width(50);
+		this.cashRegister.setPosition(x, -this.rowHeight);
 
-		table.setPosition(x, -this.rowHeight);
-
-		table.addAction(sequence(
+		this.cashRegister.addAction(sequence(
 				moveTo(x, y, 1f, Interpolation.circleOut),
 				new Action() {
 					@Override
@@ -238,7 +243,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					}
 				}));
 
-		stage.addActor(table);
+		stage.addActor(this.cashRegister);
 	}
 
 	private void calculateTotalAnimation(final int number, final float x, final float y) {
@@ -256,7 +261,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					totalScoreLabel.setText(String.valueOf(totalScore));
 				}
 				actor.remove();
-				if( number >= scoreItems.size() ) {
+				if( number >= ( scoreItems.size() -1 )) {
 					animationController();
 				}
 				return true;
@@ -270,11 +275,14 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	}
 
 	private void showTotalScore() {
+		Gdx.app.log("LevelCompleteDialog", "showTotalScore");
 		int size = this.chalkLines.size();
 		for(int i = 0; i < size; i++) {
 			this.chalkLines.get(i).addAction(fadeOut(1f));
 		}
-
+		float x = (Gdx.graphics.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
+		float y = (Gdx.graphics.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
+		this.cashRegister.addAction(moveTo(x, y, 1f, Interpolation.circleOut));
 	}
 
 	@Override
