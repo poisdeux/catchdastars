@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Textures {
 
@@ -22,6 +21,7 @@ public class Textures {
 	public static TextureRegion chalk3;
 	public static TextureRegion chalk4;
 	public static TextureRegion chalk5;
+	public static TextureRegion cashRegister;
 	
 	private static TextureAtlas atlas;
 	
@@ -46,6 +46,7 @@ public class Textures {
 		chalk3 = atlas.findRegion("Chalk-03");
 		chalk4 = atlas.findRegion("Chalk-04");
 		chalk5 = atlas.findRegion("Chalk-05");
+		cashRegister = atlas.findRegion("cash_register");
 	}
 
 	public static void dispose() {

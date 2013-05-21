@@ -3,100 +3,107 @@ pack.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+cash_register
+  rotate: false
+  xy: 1, 116
+  size: 128, 135
+  orig: 128, 135
+  offset: 0, 0
+  index: -1
 aj_balloon_blue
   rotate: false
-  xy: 1, 82
+  xy: 1, 69
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 aj_balloon_red
   rotate: false
-  xy: 1, 35
+  xy: 131, 206
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 bricks-texture-horizontal-left-end
   rotate: false
-  xy: 1, 1
+  xy: 1, 35
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-horizontal-right-end
   rotate: false
-  xy: 35, 95
+  xy: 35, 82
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-horizontal
   rotate: false
-  xy: 35, 61
+  xy: 131, 172
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-vertical
   rotate: false
-  xy: 69, 95
+  xy: 165, 219
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_blue
   rotate: false
-  xy: 35, 27
+  xy: 1, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_red
   rotate: false
-  xy: 69, 61
+  xy: 35, 48
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_yellow
   rotate: false
-  xy: 69, 27
+  xy: 69, 82
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 Chalk-01
   rotate: false
-  xy: 103, 111
+  xy: 131, 154
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 35, 9
+  xy: 165, 201
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 103, 93
+  xy: 199, 235
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 53, 9
+  xy: 35, 30
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 103, 75
+  xy: 69, 64
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

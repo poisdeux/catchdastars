@@ -120,6 +120,7 @@ public class ChalkLine extends Image {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+//		Gdx.app.log("ChalkLine", "draw: parentAlpha="+parentAlpha);
 		if( this.steps > 0 ) {
 			//add chalk points
 			for(int i = 0; i < this.lengthPerStep; i += this.stepSize) {
