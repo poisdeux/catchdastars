@@ -26,7 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.ChalkLine;
 import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
+import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.MainMenuScreen;
+import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.TextButton.TextButtonListener;
@@ -114,12 +116,16 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		mainMenuButton.addAction( sequence( fadeIn( 0.25f ) ) );
 		table.add(mainMenuButton).expandX().fillX().left();
 
+		Level level = game.getCurrentLevel();
+		final Level nextLevel = Level.loadInternal(level.getLevelNumber() + 1);
+		
 		TextButton nextLevelButton = new TextButton("Next level", skin);
 		nextLevelButton.setListener(new TextButtonListener() {
 
 			@Override
 			public void onTap(TextButton button) {
-
+				game.setCurrentLevel(nextLevel);
+				game.setScreen(new LevelScreen(game));
 			}
 
 			@Override
@@ -127,12 +133,19 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 
 			}
 		});
+		
+		if( nextLevel == null ) {
+			nextLevelButton.setDisabled(true);
+		}
+		
 		nextLevelButton.getColor().a = 0f;
 		nextLevelButton.addAction( sequence( fadeIn( 0.25f ) ) );
 
 		table.add(nextLevelButton).expandX().fillX().right();
 
 		stage.addActor(table);
+		
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	private void animationController() {

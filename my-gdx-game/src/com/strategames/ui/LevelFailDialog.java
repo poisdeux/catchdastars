@@ -77,6 +77,8 @@ public class LevelFailDialog {
 		table.add(mainMenuButton).expandX().fillX().right();
 		
 		stage.addActor(table);
+		
+		Gdx.input.setInputProcessor(stage);
 	}
 
 }
