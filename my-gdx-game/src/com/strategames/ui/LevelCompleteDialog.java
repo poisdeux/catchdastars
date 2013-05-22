@@ -5,6 +5,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 
@@ -166,6 +167,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					this.animPosition.y, 420, LevelCompleteDialog.this);
 			stage.addActor(line);
 			Sounds.drawChalkLine.play();
+			this.chalkLines.add(line);
 			break;
 		case 2:
 			this.animPosition.x = 350f + (this.padding * 2);
@@ -173,6 +175,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					this.animPosition.x + 50f, this.animPosition.y, 220, this);
 			this.stage.addActor(line);
 			Sounds.drawChalkLineShort2.play();
+			this.chalkLines.add(line);
 			break;
 		case 3:
 			this.animPosition.x += 25f;
@@ -180,6 +183,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					this.animPosition.x, this.animPosition.y - 25f, 210, this);
 			this.stage.addActor(line);
 			Sounds.drawChalkLineShort1.play();
+			this.chalkLines.add(line);
 			break;
 		case 4:
 			this.animPosition.x = 100f;
@@ -263,6 +267,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 				}));
 
 		stage.addActor(this.cashRegister);
+		
 		Sounds.cashRegisterOpen.play();
 	}
 
@@ -272,7 +277,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 		final int amount = scoreItem.getAmount() * scoreItem.getAmount() * scoreItem.getScorePerGameObject();
 		final Actor actor = scoreItem.getActor();
 
-		Action action = new Action() {
+		Action actionCountScore = new Action() {
 
 			@Override
 			public boolean act(float delta) {
@@ -281,14 +286,22 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 					totalScore += amount;
 					totalScoreLabel.setText(String.valueOf(totalScore));
 				}
-				actor.remove();
 				return true;
 			}
 		};
 
+		Action actionRemoveActor = new Action() {
+
+			@Override
+			public boolean act(float delta) {
+				actor.remove();
+				return true;
+			}
+		};
+		
 		if( number == 0 ) {
 			actor.addAction(sequence(moveTo(actor.getX(), y, 1f - (0.1f * number), Interpolation.circleIn), 
-					parallel(action, new Action() {
+					actionCountScore, new Action() {
 						
 						@Override
 						public boolean act(float delta) {
@@ -296,10 +309,10 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 							return true;
 						}
 
-					})));
+					}, actionRemoveActor));
 			calculateTotalAnimation(number + 1, x, y);
 		} else {
-			actor.addAction(sequence(moveTo(actor.getX(), y, 1f - (0.1f * number), Interpolation.circleIn), action));
+			actor.addAction(sequence(moveTo(actor.getX(), y, 1f - (0.1f * number), Interpolation.circleIn), actionCountScore, actionRemoveActor));
 		}
 		
 		if( number < (size - 1)) {
@@ -308,21 +321,42 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	}
 
 	private void showTotalScore() {
-		int size = this.chalkLines.size();
-		for(int i = 0; i < size; i++) {
-			Gdx.app.log("LevelCompleteDialog", "showTotalScore: i="+i);
-			ChalkLine line = this.chalkLines.get(i);
-			line.addAction(fadeOut(1f, Interpolation.circleIn));
-		}
 		float x = (Gdx.graphics.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
 		float y = (Gdx.graphics.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
-		this.cashRegister.addAction(parallel(scaleBy(1f, 1f, 1f, Interpolation.circleOut),
-				moveTo(x, y, 1f, Interpolation.circleOut)));
+		
+		final Table hiresCashRegister = new Table();
+		ImageButton imageButton = new ImageButton(new Image(Textures.cashRegister).getDrawable());
+		hiresCashRegister.add(imageButton);
+		
+		Label label = new Label(String.valueOf(this.totalScore), skin);
+		label.setFontScale(2f);
+		hiresCashRegister.add(label).width(50);
+		hiresCashRegister.setPosition(x, y);
+		
+		int size = this.chalkLines.size();
+		for(int i = 0; i < size; i++) {
+			ChalkLine line = this.chalkLines.get(i);
+			line.addAction(fadeOut(1f, Interpolation.circleOut));
+		}
+		
+		this.cashRegister.addAction(sequence(
+				parallel(scaleBy(0.5f, 0.5f, 1f, Interpolation.circle),
+				moveTo(x, y, 1f, Interpolation.circle)),
+				new Action() {
+
+					@Override
+					public boolean act(float delta) {
+						cashRegister.remove();
+						stage.addActor(hiresCashRegister);
+						cashRegister = hiresCashRegister;
+						return true;
+					}
+			
+		}));
 	}
 
 	@Override
 	public void onLineDrawEnd(ChalkLine line) {
-		this.chalkLines.add(line);
 		animationController();
 	}
 
