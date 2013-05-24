@@ -41,7 +41,7 @@ public class LevelFailDialog {
 			
 			@Override
 			public void onTap(TextButton button) {
-				gameOverLabel.clear();
+//				gameOverLabel.clear();
 				gameOverLabel.remove();
 				table.clear();
 				table.remove();

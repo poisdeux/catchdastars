@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/catchdastars"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="/home/mbrekhof/projects/gdx/PopDaBalloons/my-gdx-game/libs/gdx.jar" sourcepath="/my-gdx-game/libs/gdx-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
-	<classpathentry kind="lib" path="/home/mbrekhof/projects/gdx/tools/PhysicsBodyEditor/loaders/libgdx/bodyeditor-loader.jar" sourcepath="/home/mbrekhof/projects/gdx/tools/PhysicsBodyEditor/loaders/libgdx/bodyeditor-loader-sources.jar"/>
+	<classpathentry kind="lib" path="libs/bodyeditor-loader.jar"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

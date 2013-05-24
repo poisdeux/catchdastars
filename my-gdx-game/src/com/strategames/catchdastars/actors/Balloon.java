@@ -174,7 +174,7 @@ public class Balloon extends GameObject {
 	public void handleCollision(Contact contact, GameObject gameObject) {
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
-		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal).len2();
+		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal.x, normal.y).len2();
 		if( bounceVelocity > 100 ) {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}
