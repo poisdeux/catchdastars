@@ -2,8 +2,9 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -19,17 +20,20 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public static float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 	
+	private AssetManager manager;
+	
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
 	private ArrayList<GameObject> availableGameObjects;
 	private World world;
+	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
+		this.manager = new AssetManager();
 	}
 	
 	@Override
 	public void create() {
-		Textures.load();
 		Sounds.load();
 		setScreen(new SplashScreen(this));
 		this.availableGameObjects = availableGameObjects();
@@ -116,6 +120,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void addUIElement(Actor actor) {
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		screen.getStageUIElements().addActor(actor);
+	}
+	
+	public AssetManager getManager() {
+		return manager;
 	}
 	
 //	public ArrayList<GameObject> getGameObjects() {

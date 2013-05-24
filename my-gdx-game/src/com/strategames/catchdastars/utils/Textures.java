@@ -29,8 +29,8 @@ public class Textures {
 		return new Texture(Gdx.files.internal(file));
 	}
 
-	public static void load () {
-		atlas = new TextureAtlas(Gdx.files.internal("packed/pack.atlas"));
+	public static void setup(TextureAtlas atlas) {
+//		atlas = new TextureAtlas(Gdx.files.internal("packed/pack.atlas"));
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
 		redBalloon = atlas.findRegion("aj_balloon_red");
