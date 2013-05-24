@@ -1,0 +1,7 @@
+SETUP
+=====
+
+Run setup.sh to get required libraries
+In Eclipse choose File->Import and select all three
+projects my-gdx-game*
+Edit the properties to fix location of the physics-body-editor library.
