@@ -15,8 +15,9 @@ public class Level implements Comparable<Level> {
 	private String name;
 	private ArrayList<GameObject> gameObjects;
 
-	static private String PATH = "levels";
-
+	static private String INTERNAL_PATH = "levels";
+	static private String LOCAL_PATH = "levels";
+	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		this.gameObjects = gameObjects;
 	}
@@ -48,7 +49,7 @@ public class Level implements Comparable<Level> {
 	 */
 	static public Level loadInternal(int level) {
 		try {
-			FileHandle file = Gdx.files.internal(PATH + "/" + level);
+			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + level);
 			return load(file);
 		} catch (Exception e) {
 			return null;
@@ -63,7 +64,7 @@ public class Level implements Comparable<Level> {
 	 */
 	static public Level loadLocal(int level) {
 		try {
-			FileHandle file = Gdx.files.local(PATH + "/" + level);
+			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
 			return load(file);
 		} catch (Exception e) {
 			return null;
@@ -84,6 +85,15 @@ public class Level implements Comparable<Level> {
 		return (Level) root;
 	}
 
+	static public Level load(String filename) {
+		try {
+			FileHandle file = Gdx.files.local(filename);
+			return load(file);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	static public ArrayList<Level> loadAllLocalLevels() {
 		FileHandle dir = getLocalLevelsDir();
 		FileHandle[] files = dir.list();
@@ -99,7 +109,7 @@ public class Level implements Comparable<Level> {
 	
 	static public FileHandle getLocalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.local(PATH);
+			FileHandle dir = Gdx.files.local(LOCAL_PATH);
 			return dir;
 		} catch (Exception e) {
 //			Gdx.app.log("Level", "error");
@@ -109,7 +119,7 @@ public class Level implements Comparable<Level> {
 
 	static public FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(PATH);
+			FileHandle dir = Gdx.files.internal(INTERNAL_PATH);
 			return dir;
 		} catch (Exception e) {
 //			Gdx.app.log("Level", "error");
@@ -123,7 +133,7 @@ public class Level implements Comparable<Level> {
 	 */
 	static public boolean deleteLocal(int level) {
 		try {
-			FileHandle file = Gdx.files.local(PATH + "/" + level);
+			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
 			if( file.delete() ) {
 				reorderLevelFiles();
 				return true;
@@ -134,6 +144,14 @@ public class Level implements Comparable<Level> {
 		}
 	}
 
+	static public String getLocalPath(int level) {
+		return LOCAL_PATH + "/" + level;
+	}
+	
+	static public String getInternalPath(int level) {
+		return INTERNAL_PATH + "/" + level;
+	}
+	
 	static private void reorderLevelFiles() {
 		ArrayList<Level> levels = loadAllLocalLevels();
 		Collections.sort(levels);
@@ -151,7 +169,7 @@ public class Level implements Comparable<Level> {
 	}
 
 	static private boolean deleteLocalLevelsDir() {
-		FileHandle file = Gdx.files.local(PATH);
+		FileHandle file = Gdx.files.local(LOCAL_PATH);
 		return file.deleteDirectory();
 	}
 	
@@ -165,7 +183,7 @@ public class Level implements Comparable<Level> {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
 
-		FileHandle file = Gdx.files.local(PATH + "/" + this.number);
+		FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + this.number);
 		file.delete();
 
 		String text = json.toJson(this);

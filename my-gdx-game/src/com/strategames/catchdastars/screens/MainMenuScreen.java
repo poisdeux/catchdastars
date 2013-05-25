@@ -34,10 +34,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-				//				game.getSoundManager().play( TyrianSound.CLICK );
-				game.setCurrentLevel(Level.loadLocal(1));
-				game.setScreen( new LevelScreen( game ) );
+				game.setScreen( new LoadingScreen( game, 1 ) );
 			}
 		}); 
 

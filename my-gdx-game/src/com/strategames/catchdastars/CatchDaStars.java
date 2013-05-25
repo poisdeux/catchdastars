@@ -105,7 +105,7 @@ public class CatchDaStars extends Game {
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
-		loadLevel();
+		initLevel();
 
 		this.gameOn = true;
 	}
@@ -126,7 +126,7 @@ public class CatchDaStars extends Game {
 
 		this.stageActors.clear();
 
-		loadLevel();
+		initLevel();
 	}
 
 	private void showLevelCompleteDialog() {
@@ -170,9 +170,9 @@ public class CatchDaStars extends Game {
 		return this.availableGameObjects;
 	}
 
-	private void loadLevel() {
-		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
-		setCurrentLevel(level);
+	private void initLevel() {
+//		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
+//		setCurrentLevel(level);
 
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -181,7 +181,7 @@ public class CatchDaStars extends Game {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
+		ArrayList<GameObject> gameObjects = getCurrentLevel().getGameObjects();
 
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
