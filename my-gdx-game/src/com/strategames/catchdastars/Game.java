@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
-import com.strategames.catchdastars.utils.Assets;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
@@ -25,7 +24,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private ArrayList<String> levelNames;
 	private Level currentLevel;
-	private ArrayList<GameObject> availableGameObjects;
 	private World world;
 
 	public Game() {
@@ -35,7 +33,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	@Override
 	public void create() {
-		Sounds.load();
 		setScreen(new SplashScreen(this));
 	}
 
@@ -43,7 +40,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void resume() {
 		super.resume();
 		if( Gdx.app.getType() == ApplicationType.Android ) {
-			Sounds.load();
+			AssetManager manager = getManager();
+			Sounds.load(manager);
+			Textures.load(manager);
+			manager.finishLoading();
+			Sounds.setup(manager);
+			Textures.setup(manager);
 		}
 	}
 
@@ -51,17 +53,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void pause() {
 		super.pause();
 		if( Gdx.app.getType() == ApplicationType.Android ) {
-			Sounds.dispose();
+			AssetManager manager = getManager();
+			Sounds.dispose(manager);
+			Textures.dispose(manager);
 		}
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		if( Gdx.app.getType() == ApplicationType.Desktop ) {
-			Sounds.dispose();
-		}
-		Assets.dispose(getManager());
+		Sounds.dispose(getManager());
+		Textures.dispose(getManager());
 	}
 
 	public int getAmountOfLevels() {
@@ -117,10 +119,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public AssetManager getManager() {
 		return manager;
 	}
-
-	//	public ArrayList<GameObject> getGameObjects() {
-	//		return this.stageActors;
-	//	}
 
 	/**
 	 * This should return one game object for each type used in the game.

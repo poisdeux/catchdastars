@@ -1,6 +1,7 @@
 package com.strategames.catchdastars.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -28,7 +29,29 @@ public class Textures {
 		return new Texture(Gdx.files.internal(file));
 	}
 
-	public static void setup(TextureAtlas atlas) {
+	/**
+	 * Loads assets asynchronous
+	 */
+	static public void load(AssetManager manager) {
+		manager.load("packed/pack.atlas", TextureAtlas.class);
+	}
+	
+	/**
+	 * Unloads all loaded assets
+	 */
+	static public void dispose(AssetManager manager) {
+		manager.unload("packed/pack.atlas");
+	}
+	
+	/**
+	 * Call this to fill the different textures from the AssetManager
+	 * <br/>
+	 * Note you cannot access the textures before calling this method
+	 * @param manager
+	 */
+	public static void setup(AssetManager manager) {
+		TextureAtlas atlas = manager.get("packed/pack.atlas", TextureAtlas.class);
+		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
 		redBalloon = atlas.findRegion("aj_balloon_red");
 		starBlue = atlas.findRegion("star_blue");

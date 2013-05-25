@@ -1,6 +1,6 @@
 package com.strategames.catchdastars.utils;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 
 public class Sounds {
@@ -17,32 +17,58 @@ public class Sounds {
 	public static Sound drawChalkLineShort1;
 	public static Sound drawChalkLineShort2;
 	
-	public static void load() {
-		glass = Gdx.audio.newSound(Gdx.files.internal("sounds/glass.ogg"));
-		balloonPop = Gdx.audio.newSound(Gdx.files.internal("sounds/balloon_pop.mp3"));
-		balloonBounce = Gdx.audio.newSound(Gdx.files.internal("sounds/single_balloon_bounce.ogg"));
-		tinyBell = Gdx.audio.newSound(Gdx.files.internal("sounds/tiny_bell.ogg"));
-		cashRegisterOpen = Gdx.audio.newSound(Gdx.files.internal("sounds/cash_register_open.ogg"));
-		coinsDrop = Gdx.audio.newSound(Gdx.files.internal("sounds/coins_drop_1_beginning.ogg"));
-		coinsDropMany = Gdx.audio.newSound(Gdx.files.internal("sounds/coins_drop_1.ogg"));
-		singleCoinDrop = Gdx.audio.newSound(Gdx.files.internal("sounds/single_coin_drop_1.ogg"));
-		drawChalkLine = Gdx.audio.newSound(Gdx.files.internal("sounds/draw_line.ogg"));
-		drawChalkLineShort1 = Gdx.audio.newSound(Gdx.files.internal("sounds/draw_short_line.ogg"));
-		drawChalkLineShort2 = Gdx.audio.newSound(Gdx.files.internal("sounds/draw_short_line_2.ogg"));
+	/**
+	 * Loads assets asynchronous
+	 */
+	static public void load(AssetManager manager) {
+		manager.load("sounds/glass.ogg", Sound.class);
+		manager.load("sounds/balloon_pop.mp3", Sound.class);
+		manager.load("sounds/single_balloon_bounce.ogg", Sound.class);
+		manager.load("sounds/tiny_bell.ogg", Sound.class);
+		manager.load("sounds/cash_register_open.ogg", Sound.class);
+		manager.load("sounds/coins_drop_1_beginning.ogg", Sound.class);
+		manager.load("sounds/coins_drop_1.ogg", Sound.class);
+		manager.load("sounds/single_coin_drop_1.ogg", Sound.class);
+		manager.load("sounds/draw_line.ogg", Sound.class);
+		manager.load("sounds/draw_short_line.ogg", Sound.class);
+		manager.load("sounds/draw_short_line_2.ogg", Sound.class);
 	}
 	
-	public static void dispose() {
-		glass.dispose();
-		balloonPop.dispose();
-		balloonBounce.dispose();
-		tinyBell.dispose();
-		cashRegisterOpen.dispose();
-		coinsDrop.dispose();
-		coinsDropMany.dispose();
-		singleCoinDrop.dispose();
-		drawChalkLine.dispose();
-		drawChalkLineShort1.dispose();
-		drawChalkLineShort2.dispose();
+	/**
+	 * Unloads all loaded assets
+	 */
+	static public void dispose(AssetManager manager) {
+		manager.unload("sounds/glass.ogg");
+		manager.unload("sounds/balloon_pop.mp3");
+		manager.unload("sounds/single_balloon_bounce.ogg");
+		manager.unload("sounds/tiny_bell.ogg");
+		manager.unload("sounds/cash_register_open.ogg");
+		manager.unload("sounds/coins_drop_1_beginning.ogg");
+		manager.unload("sounds/coins_drop_1.ogg");
+		manager.unload("sounds/single_coin_drop_1.ogg");
+		manager.unload("sounds/draw_line.ogg");
+		manager.unload("sounds/draw_short_line.ogg");
+		manager.unload("sounds/draw_short_line_2.ogg");
+	}
+	
+	/**
+	 * Call this to fill the different sounds from the AssetManager
+	 * <br/>
+	 * Note you cannot access the sounds before calling this method
+	 * @param manager
+	 */
+	public static void setup(AssetManager manager) {
+		glass = manager.get("sounds/glass.ogg", Sound.class);
+		balloonPop = manager.get("sounds/balloon_pop.mp3", Sound.class);
+		balloonBounce = manager.get("sounds/single_balloon_bounce.ogg", Sound.class);
+		tinyBell = manager.get("sounds/tiny_bell.ogg", Sound.class);
+		cashRegisterOpen = manager.get("sounds/cash_register_open.ogg", Sound.class);
+		coinsDrop = manager.get("sounds/coins_drop_1_beginning.ogg", Sound.class);
+		coinsDropMany = manager.get("sounds/coins_drop_1.ogg", Sound.class);
+		singleCoinDrop = manager.get("sounds/single_coin_drop_1.ogg", Sound.class);
+		drawChalkLine = manager.get("sounds/draw_line.ogg", Sound.class);
+		drawChalkLineShort1 = manager.get("sounds/draw_short_line.ogg", Sound.class);
+		drawChalkLineShort2 = manager.get("sounds/draw_short_line_2.ogg", Sound.class);
 	}
 	
 	public static Sound getSoundForIncrement(int increment) {
