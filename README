@@ -1,7 +1,24 @@
-SETUP
-=====
+RESTORE FROM BACKUP TARBALL
+===========================
 
-Run setup.sh to get required libraries
-In Eclipse choose File->Import and select all three
-projects my-gdx-game*
-Edit the properties to fix location of the physics-body-editor library.
+1. Create a directory for the project:
+
+mkdir PopDaBalloons
+cd PopDaBalloons
+
+2. Extract tarball
+
+tar xf popdaballoons-gdx.tgz
+
+3. Checkout master
+
+git checkout .
+
+4. Get get required libraries
+
+./setup.sh
+
+5. Startup eclipse and select File->Import and select 
+   all three projects my-gdx-game*
+
+6. Edit the properties to fix location of the physics-body-editor library.

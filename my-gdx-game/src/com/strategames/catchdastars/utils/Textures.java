@@ -23,15 +23,12 @@ public class Textures {
 	public static TextureRegion chalk5;
 	public static TextureRegion cashRegister;
 	
-	private static TextureAtlas atlas;
 	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
 
 	public static void setup(TextureAtlas atlas) {
-//		atlas = new TextureAtlas(Gdx.files.internal("packed/pack.atlas"));
-		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
 		redBalloon = atlas.findRegion("aj_balloon_red");
 		starBlue = atlas.findRegion("star_blue");
@@ -47,9 +44,5 @@ public class Textures {
 		chalk4 = atlas.findRegion("Chalk-04");
 		chalk5 = atlas.findRegion("Chalk-05");
 		cashRegister = atlas.findRegion("cash_register");
-	}
-
-	public static void dispose() {
-		atlas.dispose();
 	}
 }

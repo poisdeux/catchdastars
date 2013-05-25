@@ -41,7 +41,8 @@ public class CatchDaStars extends Game {
 	private Stage stageActors;
 
 	private ArrayList<GameObject> gameObjectsForDeletion;
-
+	private ArrayList<GameObject> availableGameObjects;
+	
 	private boolean accelerometerAvailable;
 	private boolean gameOn;
 
@@ -149,7 +150,11 @@ public class CatchDaStars extends Game {
 	}
 
 	@Override
-	public ArrayList<GameObject> availableGameObjects() {
+	public ArrayList<GameObject> getAvailableGameObjects() {
+		if( this.availableGameObjects != null ) {
+			return this.availableGameObjects;
+		}
+		
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
 		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.BLUE));
@@ -159,7 +164,10 @@ public class CatchDaStars extends Game {
 		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.HORIZONTAL));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
-		return objects;
+		
+		this.availableGameObjects = objects;
+		
+		return this.availableGameObjects;
 	}
 
 	private void loadLevel() {

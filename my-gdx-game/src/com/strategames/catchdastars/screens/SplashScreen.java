@@ -1,21 +1,21 @@
 package com.strategames.catchdastars.screens;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.strategames.catchdastars.Game;
-import com.strategames.catchdastars.utils.Textures;
-
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.utils.Assets;
+import com.strategames.catchdastars.utils.Textures;
 
 public class SplashScreen extends AbstractScreen implements InputProcessor {
 	
@@ -24,7 +24,7 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 	public SplashScreen(Game game) {
 		super(game);
 
-		this.assetManager = game.getManager();
+		this.assetManager = getGame().getManager();
 		
 		Gdx.input.setInputProcessor(this);
 	}
@@ -61,14 +61,14 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 		stage.addActor( this.splashImage );
 		
 		//Now setup assets to load in background
-		this.assetManager.load("packed/pack.atlas", TextureAtlas.class);
+		Assets.load(this.assetManager);
 	}
 	
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		if (this.assetManager.update()) {
-			Textures.setup(this.assetManager.get("packed/pack.atlas", TextureAtlas.class));
+		if (Assets.finishedLoading(this.assetManager)) {
+			Textures.setup(Assets.getTextureAtlas(this.assetManager));
 			Game game = getGame();
 			game.setScreen(new MainMenuScreen(game));
 		}
