@@ -90,6 +90,8 @@ public class Level implements Comparable<Level> {
 			FileHandle file = Gdx.files.local(filename);
 			return load(file);
 		} catch (Exception e) {
+			Gdx.app.log("Level", "Error while loading "+filename+"\n"+e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 	}

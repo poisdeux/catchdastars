@@ -1,6 +1,5 @@
 package com.strategames.catchdastars.utils;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
@@ -21,15 +20,13 @@ public class LevelLoader extends AsynchronousAssetLoader<Level, LevelLoader.Leve
 	@Override
 	public void loadAsync(AssetManager manager, String fileName,
 			LevelLoaderParameter parameter) {
-		Gdx.app.log("LevelLoader", "loadAsync: Loading "+fileName);
-		this.level = Level.load(fileName);
-		Gdx.app.log("LevelLoader", "loadAsync: Finished loading "+fileName);
+		
 	}
 
 	@Override
 	public Level loadSync(AssetManager manager, String fileName,
 			LevelLoaderParameter parameter) {
-		Gdx.app.log("LevelLoader", "loadSync "+fileName);
+		this.level = Level.load(fileName);
 		return this.level;
 	}
 

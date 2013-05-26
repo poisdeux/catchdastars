@@ -1,3 +1,6 @@
 gen/
 proguard.cfg
 bin/
+libs/
+libgdx/
+tools/
