@@ -112,22 +112,22 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void reset() {
-		resetStageActors();
+		initLevel();
 		this.gameOn = true;
 		System.gc(); //hint the garbage collector that now is a good time to collect
 	}
 
-	private void resetStageActors() {
-		Array<Actor> actors = this.stageActors.getActors();
-		for( Actor actor : actors ) {
-			GameObject gameObject = (GameObject) actor;
-			gameObject.deleteBody();
-		}
-
-		this.stageActors.clear();
-
-		initLevel();
-	}
+//	private void resetStageActors() {
+//		Array<Actor> actors = this.stageActors.getActors();
+//		for( Actor actor : actors ) {
+//			GameObject gameObject = (GameObject) actor;
+//			gameObject.deleteBody();
+//		}
+//
+//		this.stageActors.clear();
+//
+//		initLevel();
+//	}
 
 	private void showLevelCompleteDialog() {
 		Array<Actor> actors = this.stageActors.getActors();
@@ -171,9 +171,20 @@ public class CatchDaStars extends Game {
 	}
 
 	private void initLevel() {
-//		Level level = Level.loadLocal(getCurrentLevel().getLevelNumber());
-//		setCurrentLevel(level);
+		Level level = getLevel();
+		
+		if ( level == null ) {
+			return;
+		}
+		
+		Array<Actor> actors = this.stageActors.getActors();
+		for( Actor actor : actors ) {
+			GameObject gameObject = (GameObject) actor;
+			gameObject.deleteBody();
+		}
 
+		this.stageActors.clear();
+		
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
@@ -181,7 +192,7 @@ public class CatchDaStars extends Game {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		ArrayList<GameObject> gameObjects = getCurrentLevel().getGameObjects();
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
 
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {

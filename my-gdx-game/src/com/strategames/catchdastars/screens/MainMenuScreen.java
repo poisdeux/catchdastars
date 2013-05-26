@@ -34,7 +34,8 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				game.setScreen( new LoadingScreen( game, 1 ) );
+				AbstractScreen screen = new LevelScreen(game);
+				game.setScreen( new LoadingScreen( screen, game, 1 ) );
 			}
 		}); 
 

@@ -374,7 +374,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private void saveLevel() {
 		Game game = getGame();
-		Level level = game.getCurrentLevel();
+		Level level = game.getLevel();
 
 		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 		for( Actor actor : getStageActors().getActors() ) {

@@ -5,36 +5,40 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
-import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 public class LoadingScreen extends AbstractScreen {
 
+	private AbstractScreen screen;
+	
 	private AssetManager assetManager;
-	private boolean finishedLoading = false;
 	private boolean animationFinished = false;
-	private int levelNumber;
 	
 	private Image loadingImage;
 	private Image dotImage1;
 	private Image dotImage2;
 	private Image dotImage3;
 	
-	public LoadingScreen(Game game, int levelNumber) {
+	/**
+	 * 
+	 * @param screen Screen that should be started after loading assets
+	 * @param game
+	 * @param levelNumber
+	 */
+	public LoadingScreen(AbstractScreen screen, Game game, int levelNumber) {
 		super(game);
 
 		this.assetManager = getGame().getManager();
-		this.levelNumber = levelNumber;
+		this.screen = screen;
+		
+		game.setLevelNumber(levelNumber);
 	}
 
 	@Override
@@ -95,26 +99,23 @@ public class LoadingScreen extends AbstractScreen {
 		stage.addActor(this.dotImage2);
 		stage.addActor(this.dotImage3);
 		
-		this.assetManager.setLoader(Level.class, new LevelLoader(new InternalFileHandleResolver()));
-		this.assetManager.load(Level.getLocalPath(this.levelNumber), Level.class);
+		getGame().loadLevel();
 	}
 
 	@Override
 	public void render(float delta) {
 		this.stageActors.act();
 		super.render(delta);
-		Gdx.app.log("LoadingScreen", "render");
 		
-		if ( this.assetManager.update() && this.animationFinished ) {
-			Game game = getGame();
+		if ( this.animationFinished && this.assetManager.update() ) {
 			
-			game.setCurrentLevel(this.assetManager.get(Level.getLocalPath(this.levelNumber), Level.class));
+//			game.setCurrentLevel(this.assetManager.get(Level.getLocalPath(this.levelNumber), Level.class));
 			
-			this.finishedLoading = true;
 			Textures.setup(this.assetManager);
 			Sounds.setup(this.assetManager);
 
-			game.setScreen(new LevelScreen(game));
+			Game game = getGame();
+			game.setScreen(screen);
 		} 
 	}
 

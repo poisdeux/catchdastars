@@ -113,9 +113,6 @@ public class ChalkLine extends Image {
 		this.increments = this.end.cpy(); 
 		this.increments.sub(this.start);
 		this.increments.div(this.steps * this.lengthPerStep);
-		Gdx.app.log("ChalkLine", "init: this.start="+this.start+", this.end="+this.end+", this.increments="+this.increments
-				+"\n"+
-				"this.lengthPerStep="+this.lengthPerStep+", this.length="+this.length+", this.steps="+this.steps);
 	}
 	
 	@Override

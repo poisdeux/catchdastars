@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,6 +14,7 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -23,12 +25,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private AssetManager manager;
 
 	private ArrayList<String> levelNames;
-	private Level currentLevel;
+	private int levelNumber;
+	
+	private Level level; 
+	
 	private World world;
 
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
+		
+		this.manager.setLoader(Level.class, new LevelLoader(new InternalFileHandleResolver()));
 	}
 
 	@Override
@@ -70,14 +77,63 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return this.levelNames.size();
 	}
 
-	public void setCurrentLevel(Level level) {
-		this.currentLevel = level;
+	public int getLevelNumber() {
+		return levelNumber;
+	}
+	
+	public void setLevelNumber(int levelNumber) {
+		this.levelNumber = levelNumber;
 	}
 
-	public Level getCurrentLevel() {
-		return this.currentLevel;
+	public void setLevel(Level level) {
+		this.level = level;
 	}
-
+	
+	/**
+	 * Tries to get level from AssetManager. If AssetManager has no level available
+	 * the level set through {@link #setLevel(Level)} is returned.
+	 * @return Level or null if not available or set.
+	 */
+	public Level getLevel() {
+//		Level level;
+//		try {
+//			level = getManager().get(Level.getLocalPath(this.levelNumber), Level.class);
+//		} catch( Exception e ) {
+//			level = null;
+//		}
+//		
+//		if( level == null ) {
+//			return this.level;
+//		} else {
+//			return level;
+//		}
+		return this.level;
+	}
+	
+	/**
+	 * Loads level using the AssetManager. The level loaded is the level with
+	 * level number set by {@link #setLevelNumber(int)}
+	 * <br/>
+	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
+	 */
+	public void loadLevel() {
+//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
+		this.level = Level.loadLocal(this.levelNumber);
+	}
+	
+	/**
+	 * Unloads level from AssetManager. The level unloaded is the level
+	 * with level number set by {@link #setLevelNumber(int)}
+	 */
+	public void disposeLevel() {
+		AssetManager manager = getManager();
+		String filename = manager.getAssetFileName(getLevel());
+		if( filename != null ) {
+			getManager().unload(filename);
+		}
+	}
+	
+	
 	public ArrayList<String> getLevelNames() {
 		return this.levelNames;
 	}

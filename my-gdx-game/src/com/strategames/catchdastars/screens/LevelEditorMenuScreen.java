@@ -101,8 +101,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 			return;
 		}
 		Game game = getGame();
-		game.setCurrentLevel((Level) tag);
-		game.setScreen(new LevelEditorScreen(game));
+		AbstractScreen screen = new LevelEditorScreen(game);
+		game.setScreen(new LoadingScreen(screen, game, ((Level) tag).getLevelNumber()));
 	}
 
 	@Override
@@ -160,6 +160,10 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		Level.deleteLocal(level.getLevelNumber());
 		fillLevelButtonsTable();
 	}
+	
+	/**
+	 * TODO replace loading all levels completely by something less memory hungry. We only need level number and name.
+	 */
 	
 	private void fillLevelButtonsTable() {
 		this.levelButtonsTable.clear();

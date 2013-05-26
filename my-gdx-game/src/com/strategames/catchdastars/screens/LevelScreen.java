@@ -22,6 +22,14 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	}
 
 	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		super.hide();
+		
+		this.game.disposeLevel();
+	}
+	
+	@Override
 	protected boolean isGameScreen()
 	{
 		return true;

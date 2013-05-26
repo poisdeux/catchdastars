@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Json;
@@ -40,6 +42,13 @@ public class Level implements Comparable<Level> {
 
 	public int getLevelNumber() {
 		return this.number;
+	}
+	
+	/**
+	 * Loads assets using AssetManager
+	 */
+	public void load(AssetManager manager) {
+		manager.load(Level.getLocalPath(this.number), Level.class);
 	}
 
 	/**
