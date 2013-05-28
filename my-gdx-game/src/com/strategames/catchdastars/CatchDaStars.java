@@ -42,7 +42,7 @@ public class CatchDaStars extends Game {
 
 	private ArrayList<GameObject> gameObjectsForDeletion;
 	private ArrayList<GameObject> availableGameObjects;
-	
+
 	private boolean accelerometerAvailable;
 	private boolean gameOn;
 
@@ -117,17 +117,17 @@ public class CatchDaStars extends Game {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 	}
 
-//	private void resetStageActors() {
-//		Array<Actor> actors = this.stageActors.getActors();
-//		for( Actor actor : actors ) {
-//			GameObject gameObject = (GameObject) actor;
-//			gameObject.deleteBody();
-//		}
-//
-//		this.stageActors.clear();
-//
-//		initLevel();
-//	}
+	//	private void resetStageActors() {
+	//		Array<Actor> actors = this.stageActors.getActors();
+	//		for( Actor actor : actors ) {
+	//			GameObject gameObject = (GameObject) actor;
+	//			gameObject.deleteBody();
+	//		}
+	//
+	//		this.stageActors.clear();
+	//
+	//		initLevel();
+	//	}
 
 	private void showLevelCompleteDialog() {
 		Array<Actor> actors = this.stageActors.getActors();
@@ -154,7 +154,7 @@ public class CatchDaStars extends Game {
 		if( this.availableGameObjects != null ) {
 			return this.availableGameObjects;
 		}
-		
+
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
 		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.BLUE));
@@ -164,19 +164,19 @@ public class CatchDaStars extends Game {
 		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.HORIZONTAL));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
-		
+
 		this.availableGameObjects = objects;
-		
+
 		return this.availableGameObjects;
 	}
 
 	private void initLevel() {
 		Level level = getLevel();
-		
+
 		if ( level == null ) {
 			return;
 		}
-		
+
 		Array<Actor> actors = this.stageActors.getActors();
 		for( Actor actor : actors ) {
 			GameObject gameObject = (GameObject) actor;
@@ -184,7 +184,7 @@ public class CatchDaStars extends Game {
 		}
 
 		this.stageActors.clear();
-		
+
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
@@ -222,7 +222,11 @@ public class CatchDaStars extends Game {
 
 	}
 
-	private void handleBalloonCollision(Contact contact, Balloon balloon, GameObject gameObject) {
+	private void handleBalloonCollision(Contact contact, ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
+		if( ! this.gameOn ) {
+			return;
+		}
+
 		Balloon.ColorType balloonColor = balloon.getColorType();
 
 		Type type = gameObject.getType();
@@ -252,7 +256,7 @@ public class CatchDaStars extends Game {
 				}
 			}
 		} else if ( type == Type.WALL ) {
-			balloon.handleCollision(contact, gameObject);
+			balloon.handleCollision(contact, impulse, gameObject);
 		}
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
@@ -276,26 +280,13 @@ public class CatchDaStars extends Game {
 		}
 	}
 
+	private void handleRockCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
+		
+        
+	}
+	
 	@Override
 	public void beginContact(Contact contact) {
-		if( ! this.gameOn ) {
-			return;
-		}
-
-		Fixture f1=contact.getFixtureA();
-		Body b1=f1.getBody();
-		Fixture f2=contact.getFixtureB();
-		Body b2=f2.getBody();
-		GameObject gameObject1 = (GameObject) b1.getUserData();
-		GameObject gameObject2 = (GameObject) b2.getUserData();
-
-		Type type1 = gameObject1.getType();
-		Type type2 = gameObject2.getType();
-		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ){
-			handleBalloonCollision(contact, (Balloon) gameObject1, gameObject2);
-		} else if( ( type1 != Type.BALLOON ) && ( type2 == Type.BALLOON ) ){
-			handleBalloonCollision(contact, (Balloon) gameObject2, gameObject1);
-		}
 	}
 
 	@Override
@@ -308,7 +299,26 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
+		Fixture f1=contact.getFixtureA();
+		Body b1=f1.getBody();
+		Fixture f2=contact.getFixtureB();
+		Body b2=f2.getBody();
+		GameObject gameObject1 = (GameObject) b1.getUserData();
+		GameObject gameObject2 = (GameObject) b2.getUserData();
 
-
+		Type type1 = gameObject1.getType();
+		Type type2 = gameObject2.getType();
+		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
+			handleBalloonCollision(contact, impulse, (Balloon) gameObject1, gameObject2);
+		} else if( ( type1 != Type.BALLOON ) && ( type2 == Type.BALLOON ) ) {
+			handleBalloonCollision(contact, impulse, (Balloon) gameObject2, gameObject1);
+		} else {
+			if( type1 == Type.ROCK ) {
+				gameObject1.handleCollision(contact, impulse, gameObject1);
+			}
+			if( type2 == Type.ROCK ) {
+				gameObject1.handleCollision(contact, impulse, gameObject2);
+			}
+		}
 	}
 }

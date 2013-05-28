@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
@@ -171,7 +172,7 @@ public class Balloon extends GameObject {
 	}
 
 	@Override
-	public void handleCollision(Contact contact, GameObject gameObject) {
+	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
 		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal.x, normal.y).len2();

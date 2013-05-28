@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
@@ -21,7 +22,7 @@ import com.strategames.catchdastars.utils.ConfigurationItem;
 
 public class Icecube extends GameObject {
 	private Body body;
-	
+
 	private float maxVolume = 0.2f;
 	/**
 	 * Box2D limits the acceleration per time step to 2 m/s.
@@ -29,7 +30,7 @@ public class Icecube extends GameObject {
 	 * maxSpeed = worldTimeStep * 2
 	 */
 	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
-	
+
 
 	public Icecube() { }
 
@@ -40,11 +41,11 @@ public class Icecube extends GameObject {
 		balloon.setup();
 		return balloon;
 	}
-	
+
 	@Override
 	TextureRegionDrawable createTexture() {
-//		trd = new TextureRegionDrawable(Textures.icecube);
-//		return trd;
+		//		trd = new TextureRegionDrawable(Textures.icecube);
+		//		return trd;
 		return null;
 	}
 
@@ -61,13 +62,13 @@ public class Icecube extends GameObject {
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 0.8f;
 		this.body = world.createBody(bd);
-		
+
 		FixtureDef fixture = new FixtureDef();
 		fixture.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixture.friction = 0.2f;
 		fixture.restitution = 0.6f; // Make it bounce a little bit
 		loader.attachFixture(this.body, "Icecube_part1", fixture, width);
-		
+
 		return this.body;
 	}
 
@@ -100,12 +101,12 @@ public class Icecube extends GameObject {
 
 	@Override
 	public void increaseSize() {
-		
+
 	}
-	
+
 	@Override
 	public void decreaseSize() {
-		
+
 	}
 
 	@Override
@@ -117,26 +118,36 @@ public class Icecube extends GameObject {
 
 	@Override
 	protected Type setType() {
-		return Type.BALLOON;
+		return Type.ROCK;
 	}
 
 	@Override
-	public void handleCollision(Contact contact, GameObject gameObject) {
-		WorldManifold worldManifold = contact.getWorldManifold();
-		Vector2 normal = worldManifold.getNormal();
-		float bounceVelocity = this.body.getLinearVelocity().mul(normal.x, normal.y).len2();
-		if( bounceVelocity > 100 ) {
-			//Sounds.rockHit.play(bounceVelocity / this.maxVelocitySquared);
+	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
+		float maxImpulse = 0.0f;
+
+		float[] impulses = impulse.getNormalImpulses();
+		int size = impulses.length;
+
+		for (int i = 0; i < size; ++i)
+		{
+			if(impulses[i] > maxImpulse) {
+				maxImpulse = impulses[i];
+			}
+		}
+
+		if (maxImpulse > 40.0f)
+		{
+			setBreakObject(true);
 		}
 	}
 
 	@Override
 	void writeValues(Json json) {
-		
+
 	}
 
 	@Override
 	void readValue(String key, Object value) {
-		
+
 	}
 }

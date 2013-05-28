@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -29,9 +30,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isDeleted;
 	protected boolean isHit;
 	protected boolean isCollectible;
+	protected boolean breakObject;
 	
 	public static enum Type {
-		WALL, BALLOON, STAR
+		WALL, BALLOON, STAR, ROCK
 	}
 	
 	public Type type;
@@ -165,6 +167,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.end();
 		batch.begin();
 	}
+	
+	public void setBreakObject(boolean breakObject) {
+		this.breakObject = breakObject;
+	}
+	
 	/**
 	 * Called to create the image for the game object
 	 */
@@ -276,7 +283,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Depending on the game engine this gets called when object collides with another object
 	 * @param gameObject object that collided
 	 */
-	abstract public void handleCollision(Contact contact, GameObject gameObject);
+	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
 	
 	/**
 	 * Called when object is created and should return the {@linkplain #type} of this object
