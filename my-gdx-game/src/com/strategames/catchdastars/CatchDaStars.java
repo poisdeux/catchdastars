@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.actors.Balloon;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.actors.GameObject.Type;
+import com.strategames.catchdastars.actors.Icecube;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
@@ -164,7 +165,8 @@ public class CatchDaStars extends Game {
 		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.HORIZONTAL));
 		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
-
+		objects.add(Icecube.create(null, 0, 0));
+		
 		this.availableGameObjects = objects;
 
 		return this.availableGameObjects;
@@ -278,11 +280,6 @@ public class CatchDaStars extends Game {
 			this.gameOn = false;
 			showLevelCompleteDialog();
 		}
-	}
-
-	private void handleRockCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
-		
-        
 	}
 	
 	@Override

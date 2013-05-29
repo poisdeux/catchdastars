@@ -52,31 +52,30 @@ public class Icecube extends GameObject {
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
-		float width = getPrefWidth() * getScaleX();
+		float width = getPrefWidth();
 
-		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
+		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
 
 		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
-		bd.angularDamping = 0.8f;
+		bd.angularDamping = 0.1f;
 		this.body = world.createBody(bd);
 
 		FixtureDef fixture = new FixtureDef();
 		fixture.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixture.friction = 0.2f;
-		fixture.restitution = 0.6f; // Make it bounce a little bit
-		loader.attachFixture(this.body, "Icecube_part1", fixture, width);
-
+		fixture.restitution = 0.01f; // Make it bounce a little bit
+		loader.attachFixture(this.body, "icecube-part1", fixture, width);
+//		loader.attachFixture(this.body, "icecube-part2", fixture, width);
+//		loader.attachFixture(this.body, "icecube-part3", fixture, width);
+		
 		return this.body;
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		setRotation(MathUtils.radiansToDegrees * this.body.getAngle());
-		Vector2 v = super.body.getPosition();
-		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
 	}
 
