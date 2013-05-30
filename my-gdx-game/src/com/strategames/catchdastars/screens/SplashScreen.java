@@ -33,12 +33,12 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 	private Image splashImage;
 
 	@Override
-	protected void setupUI(Stage stage) {
+	protected void setupActors(Stage stage) {
 
 	}
 
 	@Override
-	protected void setupActors(Stage stage) {
+	protected void setupUI(Stage stage) {
 		Texture texture = new Texture( "images/splashscreen.png" );
 
 		this.splashImage = new Image(texture);
@@ -59,7 +59,7 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		this.stageActors.act();
+		this.stageUIActors.act();
 		super.render(delta);
 
 		if ( this.assetManager.update() && ( ! this.finishedLoading ) ) {

@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 
 public class Icecube extends GameObject {
@@ -52,8 +53,9 @@ public class Icecube extends GameObject {
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
-		float width = getPrefWidth();
-
+		//float width = getPrefWidth();
+		float width = Game.convertWorldToBox(32f);
+		
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
 
 		//Balloon body
@@ -67,9 +69,16 @@ public class Icecube extends GameObject {
 		fixture.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixture.friction = 0.2f;
 		fixture.restitution = 0.01f; // Make it bounce a little bit
-		loader.attachFixture(this.body, "icecube-part1", fixture, width);
-//		loader.attachFixture(this.body, "icecube-part2", fixture, width);
-//		loader.attachFixture(this.body, "icecube-part3", fixture, width);
+		loader.attachFixture(this.body, "icecube-part1.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part2.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part3.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part4.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part5.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part6.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part7.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part8.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part9.png", fixture, width);
+		loader.attachFixture(this.body, "icecube-part10.png", fixture, width);
 		
 		return this.body;
 	}

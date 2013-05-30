@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 
 abstract public class GameObject extends Image implements Json.Serializable {
@@ -133,11 +134,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		TextureRegionDrawable trd = createTexture();
 		if( trd != null ) {
 			setDrawable(trd);
-			setScaling(Scaling.none);
-			setWidth(trd.getRegion().getRegionWidth());
-			setHeight(trd.getRegion().getRegionHeight());
-			this.halfWidth = trd.getRegion().getRegionWidth() / 2f;
-			this.halfHeight = trd.getRegion().getRegionHeight() / 2f;
+			setScaling(Scaling.stretch);
+			float width = trd.getRegion().getRegionWidth() * Game.WORLD_TO_BOX;
+			float height = trd.getRegion().getRegionHeight()  * Game.WORLD_TO_BOX;
+			setWidth(width);
+			setHeight(height);
+			this.halfWidth = width / 2f;
+			this.halfHeight = height / 2f;
 		}
 
 		if( this.world != null ) {

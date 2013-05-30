@@ -109,7 +109,7 @@ public abstract class AbstractScreen implements Screen
 
 	@Override
 	public void resize(int width, int height) {
-		this.stageActors.setViewport( width, height, true );
+		this.stageActors.setViewport( width * Game.WORLD_TO_BOX, height * Game.WORLD_TO_BOX, true );
 		this.stageUIActors.setViewport( width, height, true );
 	}
 	

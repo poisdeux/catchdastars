@@ -42,12 +42,12 @@ public class LoadingScreen extends AbstractScreen {
 	}
 
 	@Override
-	protected void setupUI(Stage stage) {
+	protected void setupActors(Stage stage) {
 
 	}
 
 	@Override
-	protected void setupActors(Stage stage) {
+	protected void setupUI(Stage stage) {
 		this.loadingImage = new Image(new Texture( "images/Loading.png" ));
 		this.dotImage1 = new Image(new Texture( "images/dot.png" ));
 		this.dotImage2 = new Image(new Texture( "images/dot.png" ));
@@ -104,7 +104,7 @@ public class LoadingScreen extends AbstractScreen {
 
 	@Override
 	public void render(float delta) {
-		this.stageActors.act();
+		this.stageUIActors.act();
 		super.render(delta);
 		
 		if ( this.animationFinished && this.assetManager.update() ) {

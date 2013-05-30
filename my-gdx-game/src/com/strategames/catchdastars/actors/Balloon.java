@@ -18,12 +18,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Scaling;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject {
-	private Vector2 localPositionTopOfBalloon;
+	private Vector2 upwardLiftPosition;
 	private Body balloon;
 	
 	private float maxVolume = 0.2f;
@@ -67,14 +69,14 @@ public class Balloon extends GameObject {
 		} else if( colorType == ColorType.RED ) {
 			trd = new TextureRegionDrawable(Textures.redBalloon);
 		}
+		
 		return trd;
 	}
 
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
-		float balloonWidth = getPrefWidth() * getScaleX();
-		float balloonHeight = getPrefHeight() * getScaleY();
+		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
 
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 
@@ -82,17 +84,17 @@ public class Balloon extends GameObject {
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
-		bd.angularDamping = 0.8f;
+		bd.angularDamping = 1f;
 		this.balloon = world.createBody(bd);
 		
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
 		fixtureBalloon.friction = 0.2f;
-		fixtureBalloon.restitution = 0.6f; // Make it bounce a little bit
+		fixtureBalloon.restitution = 0.3f; // Make it bounce a little bit
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 		
-		this.localPositionTopOfBalloon = this.balloon.getLocalCenter();
-		this.localPositionTopOfBalloon.y += balloonHeight / 2f;
+		this.upwardLiftPosition = this.balloon.getLocalCenter();
+		this.upwardLiftPosition.y += 0.01f;
 		
 		return this.balloon;
 	}
@@ -108,8 +110,8 @@ public class Balloon extends GameObject {
 	@Override
 	public void act(float delta) {
 		super.act(delta);		
-		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.localPositionTopOfBalloon);
-		this.balloon.applyForce(getWorld().getGravity().mul(this.balloon.getMass()).mul(-4f), worldPointOfForce);
+		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.upwardLiftPosition);
+		this.balloon.applyForce(getWorld().getGravity().mul(this.balloon.getMass()).mul(-1.04f), worldPointOfForce);
 	}
 
 	@Override

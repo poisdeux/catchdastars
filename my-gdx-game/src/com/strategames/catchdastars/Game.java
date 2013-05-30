@@ -22,6 +22,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public static float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 
+	public static final float WORLD_TO_BOX = 0.01f;
+	public static final float BOX_TO_WORLD = 100f;
+	
 	private AssetManager manager;
 
 	private ArrayList<String> levelNames;
@@ -73,6 +76,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		Textures.dispose(getManager());
 	}
 
+	static public float convertWorldToBox(float x) {
+		return x * WORLD_TO_BOX;
+	}
+	
+	static public float convertBoxToWorld(float x) {
+		return x * BOX_TO_WORLD;
+	}
+	
 	public int getAmountOfLevels() {
 		return this.levelNames.size();
 	}

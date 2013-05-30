@@ -34,7 +34,7 @@ import com.strategames.ui.LevelFailDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravity;
-	private float gravityFactor = 10;
+	private float gravityFactor = 50;
 	private Box2DDebugRenderer debugRenderer;
 	private Camera camera;
 	private World world;
@@ -73,6 +73,8 @@ public class CatchDaStars extends Game {
 			this.world.setGravity(gravity);
 		} 
 
+		this.camera.update();
+		
 		stageActors.act();
 
 		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
@@ -96,6 +98,7 @@ public class CatchDaStars extends Game {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		this.camera = stage.getCamera();
+		
 		this.debugRenderer = new Box2DDebugRenderer();
 
 		this.gravity = new Vector2();
@@ -163,8 +166,8 @@ public class CatchDaStars extends Game {
 		objects.add(Star.create(null, 0, 0, Star.ColorType.BLUE));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.YELLOW));
 		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
-		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.HORIZONTAL));
-		objects.add(Wall.create(null, 0, 0, 1, Wall.Orientation.VERTICAL));
+		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
+		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
 		objects.add(Icecube.create(null, 0, 0));
 		
 		this.availableGameObjects = objects;

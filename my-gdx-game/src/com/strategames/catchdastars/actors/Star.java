@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
@@ -63,7 +64,9 @@ public class Star extends GameObject {
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		rotate(this.rotationSpeed);
-		Vector2 v = super.body.getWorldCenter();
+//		Vector2 v = super.body.getWorldCenter();
+//		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
+		Vector2 v = super.body.getPosition();
 		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
 		super.draw(batch, parentAlpha);
 	}
@@ -106,8 +109,8 @@ public class Star extends GameObject {
 	@Override
 	Body setupBox2D() {
 		setScale(this.scale);
-		float halfWidth = getPrefWidth() / 2f;
-		float radius = (halfWidth * this.scale) * 0.7f;
+		float halfWidth = Game.convertWorldToBox((getPrefWidth() * getScaleX()) / 2f);
+		float radius = halfWidth * 0.7f;
 		
 		CircleShape circle = new CircleShape();
 		circle.setRadius(radius);
