@@ -50,24 +50,24 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	@Override
 	public void resume() {
 		super.resume();
-		if( Gdx.app.getType() == ApplicationType.Android ) {
-			AssetManager manager = getManager();
-			Sounds.load(manager);
-			Textures.load(manager);
-			manager.finishLoading();
-			Sounds.setup(manager);
-			Textures.setup(manager);
-		}
+//		if( Gdx.app.getType() == ApplicationType.Android ) {
+//			AssetManager manager = getManager();
+//			Sounds.load(manager);
+//			Textures.load(manager);
+//			manager.finishLoading();
+//			Sounds.setup(manager);
+//			Textures.setup(manager);
+//		}
 	}
 
 	@Override
 	public void pause() {
 		super.pause();
-		if( Gdx.app.getType() == ApplicationType.Android ) {
-			AssetManager manager = getManager();
-			Sounds.dispose(manager);
-			Textures.dispose(manager);
-		}
+//		if( Gdx.app.getType() == ApplicationType.Android ) {
+//			AssetManager manager = getManager();
+//			Sounds.dispose(manager);
+//			Textures.dispose(manager);
+//		}
 	}
 
 	@Override
