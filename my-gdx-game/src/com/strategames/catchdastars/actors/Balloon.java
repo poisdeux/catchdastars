@@ -182,4 +182,13 @@ public class Balloon extends GameObject {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		String message = super.toString();
+		StringBuffer messageBuffer = new StringBuffer();
+		messageBuffer.append(message);
+		messageBuffer.append(", colorType="+this.colorType.name());
+		return messageBuffer.toString();
+	}
 }

@@ -71,9 +71,7 @@ public class CatchDaStars extends Game {
 			this.gravity.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
 			this.gravity.mul(this.gravityFactor);
 			this.world.setGravity(gravity);
-		} 
-
-		this.camera.update();
+		}
 		
 		stageActors.act();
 

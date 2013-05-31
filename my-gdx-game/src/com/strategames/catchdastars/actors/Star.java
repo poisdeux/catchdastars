@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -65,9 +66,8 @@ public class Star extends GameObject {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		rotate(this.rotationSpeed);
 //		Vector2 v = super.body.getWorldCenter();
-//		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
 		Vector2 v = super.body.getPosition();
-		setPosition(v.x - this.halfWidth, v.y - this.halfHeight);
+		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
 		super.draw(batch, parentAlpha);
 	}
 	
@@ -172,5 +172,14 @@ public class Star extends GameObject {
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public String toString() {
+		String message = super.toString();
+		StringBuffer messageBuffer = new StringBuffer();
+		messageBuffer.append(message);
+		messageBuffer.append(", colorType="+this.colorType.name());
+		return messageBuffer.toString();
 	}
 }

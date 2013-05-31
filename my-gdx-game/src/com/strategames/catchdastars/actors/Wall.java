@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -41,19 +42,23 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public void setup() {
 		if( orientation == Orientation.HORIZONTAL ) {
 			this.spriteMiddlePart = new Sprite(Textures.bricksHorizontal);
-			this.spriteMiddlePart.setScale(Game.WORLD_TO_BOX);
+			this.spriteMiddlePart.setSize(Game.convertWorldToBox(this.spriteMiddlePart.getWidth()), 
+					Game.convertWorldToBox(this.spriteMiddlePart.getHeight()));
 			this.spriteLeftPart = new Sprite(Textures.bricksHorizontalEndLeft);
-			this.spriteLeftPart.setScale(Game.WORLD_TO_BOX);
+			this.spriteLeftPart.setSize(Game.convertWorldToBox(this.spriteLeftPart.getWidth()), 
+					Game.convertWorldToBox(this.spriteLeftPart.getHeight()));
 			this.spriteRightPart = new Sprite(Textures.bricksHorizontalEndRight);
-			this.spriteRightPart.setScale(Game.WORLD_TO_BOX);
+			this.spriteRightPart.setSize(Game.convertWorldToBox(this.spriteRightPart.getWidth()), 
+					Game.convertWorldToBox(this.spriteRightPart.getHeight()));
 		} else {
 			this.spriteMiddlePart = new Sprite(Textures.bricksVertical);
-			this.spriteMiddlePart.setScale(Game.WORLD_TO_BOX);
+			this.spriteMiddlePart.setSize(Game.convertWorldToBox(this.spriteMiddlePart.getWidth()), 
+					Game.convertWorldToBox(this.spriteMiddlePart.getHeight()));
 		}
 
 		setDrawable(new TextureRegionDrawable(this.spriteMiddlePart));
 		setScaling(Scaling.stretch);
-		setBoxLength(this.length);
+		setLength(this.length);
 
 		super.setup();
 	}
@@ -79,7 +84,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
 
-		Gdx.app.log("Wall", "setupBox2D: getX()="+getX()+", getY()="+getY());
 		return body;
 	}
 
@@ -90,17 +94,17 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		wall.setType(type);
 		wall.setWorld(world);
 		wall.setup();
-		wall.setBoxLength(length);
+		wall.setLength(length);
 		return wall;
 	}
 
 	/**
 	 * Sets the length of this object. This can only be called after {@link #setup()} has been called.
-	 * @param length
+	 * @param length in Box2D
 	 */
-	public void setBoxLength(float length) {
-		float width = Game.convertWorldToBox(this.spriteMiddlePart.getWidth());
-		float height = Game.convertWorldToBox(this.spriteMiddlePart.getHeight());
+	public void setLength(float length) {
+		float width = this.spriteMiddlePart.getWidth();
+		float height = this.spriteMiddlePart.getHeight();
 		
 		if( orientation == Orientation.HORIZONTAL ) {
 			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
@@ -117,8 +121,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		} else {
 			this.stepSize = height;
 		}
-		
-		Gdx.app.log("Wall", "setBoxLength: length="+length+", this.length="+this.length+", stepSize="+stepSize);
 	}
 
 	public void setType(Orientation type) {
@@ -128,29 +130,25 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		Vector2 v = getBody().getWorldCenter();
+		Vector2 v = super.body.getPosition();
 		float x = v.x - super.halfWidth;
 		float y = v.y - super.halfHeight;
-//		Vector2 v = super.body.getPosition();
-//		setPosition(v.x, v.y);
-//		float x = v.x;
-//		float y = v.y;
-		if ( orientation == Orientation.HORIZONTAL ) {
-			this.spriteMiddlePart.setPosition(x, y);
-			this.spriteMiddlePart.draw(batch, parentAlpha);
 
-//			float middlePartEndPosition = x + this.length - stepSize;
-//
-//			Gdx.app.log("Wall", "draw: x="+x+", y="+y+", middlePartEndPosition="+middlePartEndPosition+", stepSize="+stepSize);
-//			for(float xd = x + stepSize; 
-//					xd < middlePartEndPosition; 
-//					xd += stepSize ) {
-//				this.spriteMiddlePart.setPosition(xd, y);
-//				this.spriteMiddlePart.draw(batch, parentAlpha);
-//			}
-//
-//			this.spriteRightPart.setPosition(middlePartEndPosition, y);
-//			this.spriteRightPart.draw(batch, parentAlpha);
+		if ( orientation == Orientation.HORIZONTAL ) {
+			this.spriteLeftPart.setPosition(x, y);
+			this.spriteLeftPart.draw(batch, parentAlpha);
+
+			float middlePartEndPosition = x + this.length - stepSize;
+
+			for(float xd = x + stepSize; 
+					xd < middlePartEndPosition; 
+					xd += stepSize ) {
+				this.spriteMiddlePart.setPosition(xd, y);
+				this.spriteMiddlePart.draw(batch, parentAlpha);
+			}
+
+			this.spriteRightPart.setPosition(middlePartEndPosition, y);
+			this.spriteRightPart.draw(batch, parentAlpha);
 		} else {
 			float middlePartEndPosition = y + this.length;
 
@@ -196,16 +194,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		item.setName("length");
 		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
 		item.setValueNumeric(this.length);
-		item.setMaxValue(Gdx.app.getGraphics().getWidth());
+		item.setMaxValue(Game.convertWorldToBox(Gdx.app.getGraphics().getWidth()));
 
-		if( orientation == Orientation.HORIZONTAL ) {
-			item.setMinValue(this.spriteMiddlePart.getWidth());
-			item.setStepSize(this.spriteMiddlePart.getWidth());
-		} else {
-			item.setMinValue(this.spriteMiddlePart.getHeight());
-			item.setStepSize(this.spriteMiddlePart.getHeight());
-		}
-
+		item.setMinValue(this.stepSize);
+		item.setStepSize(this.stepSize);
+		
 		items.add(item);
 
 		return items;
@@ -213,31 +206,23 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void increaseSize() {
-		this.increaseDecreaseSizeAccumulatedDelta += 1f;
+		this.increaseDecreaseSizeAccumulatedDelta += this.stepSize;
 
-		if( this.increaseDecreaseSizeAccumulatedDelta > this.spriteMiddlePart.getWidth() ) {
+		if( this.increaseDecreaseSizeAccumulatedDelta > this.stepSize ) {
 			this.increaseDecreaseSizeAccumulatedDelta = 0;
 
-			if( orientation == Orientation.HORIZONTAL ) {
-				setBoxLength(this.length + this.spriteMiddlePart.getWidth());
-			} else {
-				setBoxLength(this.length + this.spriteMiddlePart.getHeight());
-			}
+			setLength(this.length + this.stepSize);
 		}
 	}
 
 	@Override
 	public void decreaseSize() {
-		this.increaseDecreaseSizeAccumulatedDelta -= 1f;
-
-		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.spriteMiddlePart.getWidth() ) {
+		this.increaseDecreaseSizeAccumulatedDelta -= this.stepSize;
+		
+		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.stepSize ) {
 			this.increaseDecreaseSizeAccumulatedDelta = 0;
 
-			if( orientation == Orientation.HORIZONTAL ) {
-				setBoxLength(this.length - this.spriteMiddlePart.getWidth());
-			} else {
-				setBoxLength(this.length - this.spriteMiddlePart.getHeight());
-			}
+			setLength(this.length - this.stepSize);
 		}
 	}
 
@@ -254,7 +239,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void onConfigurationItemChanged(ConfigurationItem item) {
 		if( item.getName().contentEquals("length") ) {
-			setBoxLength(item.getValueNumeric());
+			setLength(item.getValueNumeric());
 		}
 	}
 

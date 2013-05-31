@@ -135,12 +135,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		if( trd != null ) {
 			setDrawable(trd);
 			setScaling(Scaling.stretch);
-			float width = trd.getRegion().getRegionWidth() * Game.WORLD_TO_BOX;
-			float height = trd.getRegion().getRegionHeight()  * Game.WORLD_TO_BOX;
+			float width = Game.convertWorldToBox(trd.getRegion().getRegionWidth());
+			float height = Game.convertWorldToBox(trd.getRegion().getRegionHeight());
 			setWidth(width);
 			setHeight(height);
-			this.halfWidth = width / 2f;
-			this.halfHeight = height / 2f;
 		}
 
 		if( this.world != null ) {
@@ -303,6 +301,4 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		messageBuffer.append(", halfHeight="+this.halfHeight);
 		return messageBuffer.toString();
 	}
-	
-	
 }
