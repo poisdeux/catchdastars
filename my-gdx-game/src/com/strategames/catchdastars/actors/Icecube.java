@@ -6,8 +6,6 @@ import aurelienribon.bodyeditor.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -15,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
@@ -23,15 +20,6 @@ import com.strategames.catchdastars.utils.ConfigurationItem;
 
 public class Icecube extends GameObject {
 	private Body body;
-
-	private float maxVolume = 0.2f;
-	/**
-	 * Box2D limits the acceleration per time step to 2 m/s.
-	 * Therefore the maximum speed any object can obtain is
-	 * maxSpeed = worldTimeStep * 2
-	 */
-	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
-
 
 	public Icecube() { }
 

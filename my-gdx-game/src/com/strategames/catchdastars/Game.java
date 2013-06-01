@@ -2,8 +2,6 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -19,12 +17,13 @@ import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
-	public static float UPDATE_FREQUENCY_SECONDS = 1f/45f;
-	public static float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
+	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
+	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 
 	public static final float BOX_TO_WORLD = 50f;
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 	
+	public static final float GRAVITY = 9.81f;
 	
 	private AssetManager manager;
 

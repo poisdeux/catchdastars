@@ -285,6 +285,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param gameObject object that collided
 	 */
 	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
+
 	
 	/**
 	 * Called when object is created and should return the {@linkplain #type} of this object

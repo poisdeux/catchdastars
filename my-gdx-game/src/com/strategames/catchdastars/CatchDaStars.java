@@ -33,8 +33,8 @@ import com.strategames.ui.LevelCompleteDialog;
 import com.strategames.ui.LevelFailDialog;
 
 public class CatchDaStars extends Game {
-	private Vector2 gravity;
-	private float gravityFactor = 50;
+	private Vector2 gravityVector;
+
 	private Box2DDebugRenderer debugRenderer;
 	private Camera camera;
 	private World world;
@@ -58,6 +58,9 @@ public class CatchDaStars extends Game {
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
 
+	private GameObject collidingGameObject1;
+	private GameObject collidingGameObject2;
+
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -68,15 +71,16 @@ public class CatchDaStars extends Game {
 
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
-			this.gravity.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
-			this.gravity.mul(this.gravityFactor);
-			this.world.setGravity(gravity);
+			this.gravityVector.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
+			this.gravityVector.mul(GRAVITY);
+			this.world.setGravity(gravityVector);
 		}
-		
+
 		stageActors.act();
 
-		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 		this.debugRenderer.render(world, this.camera.combined);
+
+		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 
 		if( ! this.world.isLocked() ) {
 			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
@@ -96,13 +100,13 @@ public class CatchDaStars extends Game {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		this.camera = stage.getCamera();
-		
+
 		this.debugRenderer = new Box2DDebugRenderer();
 
-		this.gravity = new Vector2();
-		this.gravity.set(0, -this.gravityFactor);
+		this.gravityVector = new Vector2();
+		this.gravityVector.set(0, -GRAVITY);
 
-		this.world = new World(this.gravity, true);
+		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
@@ -118,18 +122,6 @@ public class CatchDaStars extends Game {
 		this.gameOn = true;
 		System.gc(); //hint the garbage collector that now is a good time to collect
 	}
-
-	//	private void resetStageActors() {
-	//		Array<Actor> actors = this.stageActors.getActors();
-	//		for( Actor actor : actors ) {
-	//			GameObject gameObject = (GameObject) actor;
-	//			gameObject.deleteBody();
-	//		}
-	//
-	//		this.stageActors.clear();
-	//
-	//		initLevel();
-	//	}
 
 	private void showLevelCompleteDialog() {
 		Array<Actor> actors = this.stageActors.getActors();
@@ -167,7 +159,7 @@ public class CatchDaStars extends Game {
 		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
 		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
 		objects.add(Icecube.create(null, 0, 0));
-		
+
 		this.availableGameObjects = objects;
 
 		return this.availableGameObjects;
@@ -282,41 +274,41 @@ public class CatchDaStars extends Game {
 			showLevelCompleteDialog();
 		}
 	}
-	
+
 	@Override
 	public void beginContact(Contact contact) {
+		//		Gdx.app.log("CatchDaStars", "beginContact");
+		this.collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
+		this.collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
+		Type type1 = this.collidingGameObject1.getType();
+		Type type2 = this.collidingGameObject2.getType();
+		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
+			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
+		} else if( ( type1 != Type.BALLOON ) && ( type2 == Type.BALLOON ) ) {
+			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
+		} 
 	}
 
 	@Override
 	public void endContact(Contact contact) {
+		//		Gdx.app.log("CatchDaStars", "endContact");
 	}
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
+		//		Gdx.app.log("CatchDaStars", "preSolve");
 	}
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		Fixture f1=contact.getFixtureA();
-		Body b1=f1.getBody();
-		Fixture f2=contact.getFixtureB();
-		Body b2=f2.getBody();
-		GameObject gameObject1 = (GameObject) b1.getUserData();
-		GameObject gameObject2 = (GameObject) b2.getUserData();
-
-		Type type1 = gameObject1.getType();
-		Type type2 = gameObject2.getType();
-		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
-			handleBalloonCollision(contact, impulse, (Balloon) gameObject1, gameObject2);
-		} else if( ( type1 != Type.BALLOON ) && ( type2 == Type.BALLOON ) ) {
-			handleBalloonCollision(contact, impulse, (Balloon) gameObject2, gameObject1);
-		} else {
-			if( type1 == Type.ROCK ) {
-				gameObject1.handleCollision(contact, impulse, gameObject1);
-			}
-			if( type2 == Type.ROCK ) {
-				gameObject1.handleCollision(contact, impulse, gameObject2);
-			}
+		Type type1 = this.collidingGameObject1.getType();
+		Type type2 = this.collidingGameObject2.getType();
+		if( type1 == Type.ROCK ) {
+			this.collidingGameObject1.handleCollision(contact, impulse, this.collidingGameObject2);
+		}
+		if( type2 == Type.ROCK ) {
+			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
 		}
 	}
 }
+

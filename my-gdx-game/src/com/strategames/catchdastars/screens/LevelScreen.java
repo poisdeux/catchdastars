@@ -63,7 +63,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	@Override
 	public boolean keyUp(int keycode) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

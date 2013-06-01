@@ -18,7 +18,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.Sounds;
@@ -26,16 +25,23 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject {
 	private Vector2 upwardLiftPosition;
+	private float upwardLift;
+
+	private float velocity;
 	private Body balloon;
-	
+
 	private float maxVolume = 0.2f;
 	/**
-	 * Box2D limits the acceleration per time step to 2 m/s.
-	 * Therefore the maximum speed any object can obtain is
-	 * maxSpeed = worldTimeStep * 2
+	 * New velocity is calculated as follows by Box2D
+	 * 
+	 * velocity += Game.UPDATE_FREQUENCY_SECONDS * (Game.GRAVITY + ((1f/this.balloon.getMass()) * (this.upwardLift * Game.GRAVITY)));
+	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
+	 * 
+	 * Where bd.linearDamping is set in 
+	 * 
 	 */
 	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
-	
+
 	public static enum ColorType {
 		BLUE, RED
 	}
@@ -60,7 +66,7 @@ public class Balloon extends GameObject {
 	public ColorType getColorType() {
 		return colorType;
 	}
-	
+
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
@@ -69,7 +75,7 @@ public class Balloon extends GameObject {
 		} else if( colorType == ColorType.RED ) {
 			trd = new TextureRegionDrawable(Textures.redBalloon);
 		}
-		
+
 		return trd;
 	}
 
@@ -85,16 +91,24 @@ public class Balloon extends GameObject {
 		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 1f;
+		bd.linearDamping=1f;
 		this.balloon = world.createBody(bd);
-		
+
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
-		fixtureBalloon.friction = 0.2f;
-		fixtureBalloon.restitution = 0.3f; // Make it bounce a little bit
+		fixtureBalloon.friction = 0.8f;
+		fixtureBalloon.restitution = 0.4f; // Make it bounce a little bit
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
-		
+
 		this.upwardLiftPosition = this.balloon.getLocalCenter();
-		this.upwardLiftPosition.y += 0.01f;
+		this.upwardLiftPosition.y += 0.1f;
+
+		this.upwardLift = -this.balloon.getMass() * 1.4f;// * Game.UPDATE_FREQUENCY_SECONDS; //f = mv/t
+
+//		for( int i = 0; i < 1/Game.UPDATE_FREQUENCY_SECONDS; i++) {
+//			velocity += Game.UPDATE_FREQUENCY_SECONDS * ((1.0f * 9.81f) + ((1f/this.balloon.getMass()) * (this.upwardLift * 9.81f)));
+//			velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * 1f);
+//		}
 		
 		return this.balloon;
 	}
@@ -111,7 +125,10 @@ public class Balloon extends GameObject {
 	public void act(float delta) {
 		super.act(delta);		
 		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.upwardLiftPosition);
-		this.balloon.applyForce(getWorld().getGravity().mul(this.balloon.getMass()).mul(-1.04f), worldPointOfForce);
+		this.balloon.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
+
+		Gdx.app.log("Balloon", "act: linearVelocity="+this.balloon.getLinearVelocity()+" calculatedMax="+
+				velocity);
 	}
 
 	@Override
@@ -119,7 +136,7 @@ public class Balloon extends GameObject {
 		moveTo(getX(), getY()); // align body with image origin
 		super.write(json);
 	}
-	
+
 	@Override
 	void writeValues(Json json) {
 		json.writeValue("type", this.colorType.name());
@@ -150,13 +167,13 @@ public class Balloon extends GameObject {
 	@Override
 	public void increaseSize() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void decreaseSize() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -181,8 +198,9 @@ public class Balloon extends GameObject {
 		if( bounceVelocity > 100 ) {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}
+		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+", this.maxVelocitySquared="+this.maxVelocitySquared);
 	}
-	
+
 	@Override
 	public String toString() {
 		String message = super.toString();
