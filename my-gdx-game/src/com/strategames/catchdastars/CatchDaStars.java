@@ -71,8 +71,9 @@ public class CatchDaStars extends Game {
 
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
+			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
+			//normalize and then multiply the vector with gravity for performance sake
 			this.gravityVector.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
-			this.gravityVector.mul(GRAVITY);
 			this.world.setGravity(gravityVector);
 		}
 

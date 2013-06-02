@@ -20,27 +20,33 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
-public class Balloon extends GameObject {
+public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
+	private static final float MIN_LIFTFACTOR = 1f;
+	private static final float MAX_LIFTFACTOR = 4f;
+	private static final float DEFAULT_LIFTFACTOR = 1.6f;
+	
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
-
-	private float velocity;
+	private float liftFactor = DEFAULT_LIFTFACTOR;
+	
 	private Body balloon;
 
-	private float maxVolume = 0.2f;
+	private float maxVolume = 0.5f;
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
 	 * velocity += Game.UPDATE_FREQUENCY_SECONDS * (Game.GRAVITY + ((1f/this.balloon.getMass()) * (this.upwardLift * Game.GRAVITY)));
 	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
 	 * 
-	 * Where bd.linearDamping is set in 
-	 * 
+	 * Where bd.linearDamping is set in setupBox2D()
+	 * Following value of 28.77593 was determined empirically by checking maximum speed of balloon
+	 * in game for maximum liftFactor (see createConfigurationItems)
 	 */
-	private final float maxVelocitySquared = 8100f * (1/maxVolume); // (45 * 2) ^ 2  * maxVolume
+	private final float maxVelocitySquared = 28.77593f * 28.77593f * (1/maxVolume);
 
 	public static enum ColorType {
 		BLUE, RED
@@ -56,6 +62,7 @@ public class Balloon extends GameObject {
 		balloon.setPosition(x, y);
 		balloon.setWorld(world);
 		balloon.setup();
+		balloon.setLiftFactor(DEFAULT_LIFTFACTOR);
 		return balloon;
 	}
 
@@ -67,6 +74,24 @@ public class Balloon extends GameObject {
 		return colorType;
 	}
 
+	public void setLiftFactor(float liftFactor) {
+		
+		if( liftFactor > MAX_LIFTFACTOR ) {
+			liftFactor = MAX_LIFTFACTOR;
+		} else if( liftFactor < MIN_LIFTFACTOR ) {
+			liftFactor = MIN_LIFTFACTOR;
+		}
+		this.liftFactor = liftFactor;
+		
+		if( this.balloon != null ) {
+			this.upwardLift = -this.balloon.getMass() * this.liftFactor;
+		}
+	}
+	
+	public float getLiftFactor() {
+		return liftFactor;
+	}
+	
 	@Override
 	TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
@@ -101,14 +126,9 @@ public class Balloon extends GameObject {
 		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
 
 		this.upwardLiftPosition = this.balloon.getLocalCenter();
-		this.upwardLiftPosition.y += 0.1f;
-
-		this.upwardLift = -this.balloon.getMass() * 1.4f;// * Game.UPDATE_FREQUENCY_SECONDS; //f = mv/t
-
-//		for( int i = 0; i < 1/Game.UPDATE_FREQUENCY_SECONDS; i++) {
-//			velocity += Game.UPDATE_FREQUENCY_SECONDS * ((1.0f * 9.81f) + ((1f/this.balloon.getMass()) * (this.upwardLift * 9.81f)));
-//			velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * 1f);
-//		}
+		this.upwardLiftPosition.y += 0.3f;
+ 		
+		setLiftFactor(this.liftFactor);
 		
 		return this.balloon;
 	}
@@ -126,42 +146,55 @@ public class Balloon extends GameObject {
 		super.act(delta);		
 		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.upwardLiftPosition);
 		this.balloon.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
-
-		Gdx.app.log("Balloon", "act: linearVelocity="+this.balloon.getLinearVelocity()+" calculatedMax="+
-				velocity);
 	}
 
-	@Override
-	public void write(Json json) {
-		moveTo(getX(), getY()); // align body with image origin
-		super.write(json);
-	}
+//	@Override
+//	public void write(Json json) {
+//		moveTo(getX(), getY()); // align body with image origin
+//		super.write(json);
+//	}
 
 	@Override
 	void writeValues(Json json) {
 		json.writeValue("type", this.colorType.name());
+		json.writeValue("liftfactor", this.liftFactor);
 	}
 
 	@Override
 	void readValue(String key, Object value) {
 		if( key.contentEquals("type")) {
-			this.colorType = ColorType.valueOf(value.toString());
+			setColorType(ColorType.valueOf(value.toString()));
+		} else if( key.contentEquals("liftfactor")) {
+			setLiftFactor(Float.valueOf(value.toString()));
 		}
 	}
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Balloon.create(getWorld(), 
+		Balloon balloon = Balloon.create(getWorld(), 
 				getX(), 
-				getY(), 
-				colorType);
-		return object;
+				getY(),
+				this.colorType);
+		balloon.setLiftFactor(this.liftFactor);
+		return balloon;
 	}
 
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<ConfigurationItem> items = new ArrayList<ConfigurationItem>();
+
+		ConfigurationItem item = new ConfigurationItem(this);
+		item.setName("lift");
+		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
+		item.setValueNumeric(this.liftFactor);
+		item.setMaxValue(4f);
+
+		item.setMinValue(1f);
+		item.setStepSize(0.1f);
+		
+		items.add(item);
+
+		return items;
 	}
 
 	@Override
@@ -195,10 +228,12 @@ public class Balloon extends GameObject {
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
 		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal.x, normal.y).len2();
-		if( bounceVelocity > 100 ) {
+		if( bounceVelocity > 0.1 ) {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}
-		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+", this.maxVelocitySquared="+this.maxVelocitySquared);
+//		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+
+//				", this.maxVelocitySquared="+this.maxVelocitySquared+
+//				", this.liftFactor="+this.liftFactor);
 	}
 
 	@Override
@@ -208,5 +243,12 @@ public class Balloon extends GameObject {
 		messageBuffer.append(message);
 		messageBuffer.append(", colorType="+this.colorType.name());
 		return messageBuffer.toString();
+	}
+
+	@Override
+	public void onConfigurationItemChanged(ConfigurationItem item) {
+		if( item.getName().contentEquals("lift") ) {
+			setLiftFactor(item.getValueNumeric());
+		}
 	}
 }

@@ -38,6 +38,39 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private States state;
 
+	private class Tap {
+		private long tapTime1;
+		private long tapTime2;
+		private Actor actor;
+
+		public Tap() {
+		}
+
+		public void tap() {
+			tapTime1 = tapTime2;
+			tapTime2 = System.currentTimeMillis();
+		}
+
+		public boolean doubleTapped() {
+			return ( tapTime2 - tapTime1 ) < 200;
+		}
+
+		public void setActor(Actor actor) {
+			this.actor = actor;
+		}
+
+		public Actor getActor() {
+			return actor;
+		}
+
+		@Override
+		public String toString() {
+			return "tapTime1="+tapTime1+", tapTime2="+tapTime2+", actor="+actor;
+		}
+	}
+
+	private Tap tap = new Tap();
+
 	public LevelEditorScreen(Game game) {
 		super(game);
 
@@ -92,18 +125,18 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.state = States.NONE;
 
 		Vector2 touchPosition = new Vector2(x, y);
-		
+
 		Stage stage = getStageUIElements();
 		stage.screenToStageCoordinates(touchPosition);
 		this.uiElementHit = stage.hit(touchPosition.x, touchPosition.y, false);
-		
+
 		touchPosition.set(x, y);   //reset vector
 		stage = getStageActors();
 		stage.screenToStageCoordinates(touchPosition);
 		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
-		
-		
-		
+
+
+
 		if( actor != null ) { // actor selected
 			deselectGameObject((GameObject) this.actorHit);
 			selectGameObject((GameObject) actor);
@@ -153,41 +186,22 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
-	public boolean tap(float x, float y, int count, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "tap");
+	public boolean tap(final float x, final float y, int count, int button) {
+		/**
+		 * Used to show gameobject configuration window when double tapped
+		 */
+		Gdx.app.log("LevelEditorScreen", "tap");
 		if( this.testGame ) { //return to edit mode
 			this.testGame = false;
 			getGame().reset();
 		}
 
-		Stage stage = getStageActors();
-		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
+		tap.tap();
 
 		if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-			//			Gdx.app.log("LevelEditorScreen", "touchDown: hit " + actorHit.getName());
-			this.touchPositionObjectDelta.x = this.actorHit.getX() - stageCoords.x;
-			this.touchPositionObjectDelta.y = this.actorHit.getY() - stageCoords.y;
-			return true;
-		}
-		return false;
-	}
+			if( tap.doubleTapped() && ( this.actorHit == tap.getActor() ) ) {
+				Gdx.app.log("LevelEditorScreen", "tap: this.actorTapped="+this.tap);
 
-	@Override
-	public boolean longPress(final float x, final float y) {
-		Gdx.app.log("LevelEditorScreen", "longPress: x="+x+", y="+y);
-		if( this.testGame ) { //do not handle event in game mode
-			return false;
-		}
-
-		this.longPressPosition.x = x;
-		this.longPressPosition.y = y;
-
-		if( this.state == States.NONE ) {
-			this.state = States.LONGPRESS;
-
-			if( this.uiElementHit != null ) return false;
-
-			if( ( this.actorHit != null ) ){
 				GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
 				dialog.addButton("Copy " + this.actorHit.getName(), new OnClickListener() {
 
@@ -220,7 +234,36 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					}
 				});
 				dialog.show(getStageUIElements());
-			} else {
+				
+				return true;
+			} 
+			
+		}
+		
+		tap.setActor(this.actorHit);
+		
+		return false;
+	}
+
+	@Override
+	public boolean longPress(final float x, final float y) {
+		/**
+		 * Used to show generic configuration window
+		 */
+		Gdx.app.log("LevelEditorScreen", "longPress: x="+x+", y="+y);
+		if( this.testGame ) { //do not handle event in game mode
+			return false;
+		}
+
+		this.longPressPosition.x = x;
+		this.longPressPosition.y = y;
+
+		if( this.state == States.NONE ) {
+			this.state = States.LONGPRESS;
+
+			if( this.uiElementHit != null ) return false;
+
+			if( ( this.actorHit == null ) ) {
 				GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
 				dialog.setNeutralButton("Test", new OnClickListener() {
 
