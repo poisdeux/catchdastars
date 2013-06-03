@@ -77,8 +77,6 @@ public class CatchDaStars extends Game {
 			this.world.setGravity(gravityVector);
 		}
 
-		stageActors.act();
-
 		this.debugRenderer.render(world, this.camera.combined);
 
 		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
@@ -141,7 +139,7 @@ public class CatchDaStars extends Game {
 		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected(), this.scorePerRedStar);
 		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
 
-		levelCompleteDialog.show(this.stageActors);
+		((AbstractScreen) getScreen()).showDialog(levelCompleteDialog);
 	}
 
 	@Override

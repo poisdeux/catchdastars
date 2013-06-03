@@ -1,6 +1,5 @@
 package com.strategames.catchdastars.screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.catchdastars.Game;
+import com.strategames.ui.Dialog;
 
 public abstract class AbstractScreen implements Screen
 {
@@ -96,7 +96,10 @@ public abstract class AbstractScreen implements Screen
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
 		// draw the actors
+		this.stageActors.act();
 		this.stageActors.draw();
+		
+		this.stageUIActors.act();
 		this.stageUIActors.draw();
 	}
 
@@ -129,6 +132,10 @@ public abstract class AbstractScreen implements Screen
 	
 	public Stage getStageUIElements() {
 		return this.stageUIActors;
+	}
+	
+	public void showDialog(Dialog dialog) {
+		dialog.show(this.stageUIActors);
 	}
 	
 	/**

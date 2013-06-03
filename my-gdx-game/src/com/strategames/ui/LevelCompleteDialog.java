@@ -31,7 +31,7 @@ import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.TextButton.TextButtonListener;
 
-public class LevelCompleteDialog implements ChalkLineAnimationListener {
+public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationListener {
 	private Skin skin;
 	private Game game;
 	private ArrayList<ScoreItem> scoreItems;
@@ -58,6 +58,7 @@ public class LevelCompleteDialog implements ChalkLineAnimationListener {
 	 * @param currentScore the total score minus the score of the completed level
 	 */
 	public LevelCompleteDialog(Game game, Skin skin, int currentScore) {
+		super("", skin);
 		this.skin = skin;
 		this.game = game;
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
