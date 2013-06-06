@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import aurelienribon.bodyeditor.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -17,31 +18,33 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Textures;
 
 public class Icecube extends GameObject {
 	private Body body;
 
-	public Icecube() { }
+	private ArrayList<Sprite> parts;
+	
+	public Icecube() { 
+		this.parts = new ArrayList<Sprite>();
+	}
 
 	public static Icecube create(World world, float x, float y) {
-		Icecube balloon = new Icecube();
-		balloon.setPosition(x, y);
-		balloon.setWorld(world);
-		balloon.setup();
-		return balloon;
+		Icecube icecube = new Icecube();
+		icecube.setPosition(x, y);
+		icecube.setWorld(world);
+		icecube.setup();
+		return icecube;
 	}
 
 	@Override
 	TextureRegionDrawable createTexture() {
-		//		trd = new TextureRegionDrawable(Textures.icecube);
-		//		return trd;
-		return null;
+		return new TextureRegionDrawable(Textures.icecube);
 	}
 
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
-		//float width = getPrefWidth();
 		float width = Game.convertWorldToBox(32f);
 		
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
