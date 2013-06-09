@@ -99,7 +99,8 @@ public class LoadingScreen extends AbstractScreen {
 		stage.addActor(this.dotImage2);
 		stage.addActor(this.dotImage3);
 		
-		getGame().loadLevel();
+//		Textures.setup(this.assetManager);
+//		Sounds.setup(this.assetManager);
 	}
 
 	@Override
@@ -111,10 +112,8 @@ public class LoadingScreen extends AbstractScreen {
 			
 //			game.setCurrentLevel(this.assetManager.get(Level.getLocalPath(this.levelNumber), Level.class));
 			
-			Textures.setup(this.assetManager);
-			Sounds.setup(this.assetManager);
-
 			Game game = getGame();
+			game.loadLevel();
 			game.setScreen(screen);
 		} 
 	}

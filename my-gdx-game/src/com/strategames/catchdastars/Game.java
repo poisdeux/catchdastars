@@ -1,9 +1,12 @@
 package com.strategames.catchdastars;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -25,6 +28,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	public static final float GRAVITY = 9.81f;
 	
+	private ArrayList<Body> bodiesForDeletion;
+	private ArrayList<GameObject> gameObjectsForDeletion;
+	
 	private AssetManager manager;
 
 	private ArrayList<String> levelNames;
@@ -39,6 +45,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		this.manager = new AssetManager();
 		
 		this.manager.setLoader(Level.class, new LevelLoader(new InternalFileHandleResolver()));
+		
+		this.bodiesForDeletion = new ArrayList<Body>();
+		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
 
 	@Override
@@ -71,6 +80,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	@Override
 	public void dispose() {
+		Gdx.app.log("Game", "dispose:");
 		super.dispose();
 		Sounds.dispose(getManager());
 		Textures.dispose(getManager());
@@ -188,6 +198,41 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 
 	/**
+	 * Queues a body for removal. Note that this happens asynchronously.
+	 * @param body
+	 */
+	public void deleteBody(Body body) {
+		this.bodiesForDeletion.add(body);
+	}
+	
+	public void deleteGameObject(GameObject object) {
+		this.gameObjectsForDeletion.add(object);
+	}
+	
+	public void update(float delta, Stage stage) {
+		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+
+		if( ! this.world.isLocked() ) {
+			Iterator<Body> itr = this.bodiesForDeletion.iterator();
+			while(itr.hasNext()) {
+				Body body = itr.next();
+				this.world.destroyBody(body);
+				itr.remove();
+			}
+		}
+		
+		if( ! this.world.isLocked() ) {
+			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
+			while(itr.hasNext()) {
+				GameObject object = itr.next();
+				object.remove();
+				object.deleteBody();
+				itr.remove();
+			}
+		}
+	}
+	
+	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
 	 */
@@ -196,6 +241,4 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	abstract public void setupStage(Stage stage);
 
 	abstract public void reset();
-
-	abstract public void update(float delta, Stage stage);
 }

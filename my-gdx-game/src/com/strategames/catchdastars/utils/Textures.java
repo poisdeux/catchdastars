@@ -60,6 +60,7 @@ public class Textures {
 	 * @param manager
 	 */
 	public static void setup(AssetManager manager) {
+		Gdx.app.log("Textures", "setup:");
 		TextureAtlas atlas = manager.get("packed/pack.atlas", TextureAtlas.class);
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");

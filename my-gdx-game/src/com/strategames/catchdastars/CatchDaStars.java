@@ -41,7 +41,6 @@ public class CatchDaStars extends Game {
 
 	private Stage stageActors;
 
-	private ArrayList<GameObject> gameObjectsForDeletion;
 	private ArrayList<GameObject> availableGameObjects;
 
 	private boolean accelerometerAvailable;
@@ -65,8 +64,6 @@ public class CatchDaStars extends Game {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
-
-		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
 
 	public void update(float delta, Stage stage) {
@@ -78,18 +75,8 @@ public class CatchDaStars extends Game {
 		}
 
 		this.debugRenderer.render(world, this.camera.combined);
-
-		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
-
-		if( ! this.world.isLocked() ) {
-			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
-			while(itr.hasNext()) {
-				GameObject object = itr.next();
-				object.remove();
-				object.deleteBody();
-				itr.remove();
-			}
-		}
+		
+		super.update(delta, stage);
 	}
 
 	@Override
@@ -174,7 +161,8 @@ public class CatchDaStars extends Game {
 		Array<Actor> actors = this.stageActors.getActors();
 		for( Actor actor : actors ) {
 			GameObject gameObject = (GameObject) actor;
-			gameObject.deleteBody();
+//			gameObject.deleteBody();
+			deleteGameObject(gameObject);
 		}
 
 		this.stageActors.clear();
@@ -230,19 +218,19 @@ public class CatchDaStars extends Game {
 
 			if( starColor == Star.ColorType.YELLOW ) {
 				star.destroy();
-				this.gameObjectsForDeletion.add(star);
+				deleteGameObject(star);
 				this.goldCollectables.collect();
 			} else if( ( balloonColor == Balloon.ColorType.BLUE ) && ( starColor == Star.ColorType.BLUE ) ) {
 				star.destroy();
-				this.gameObjectsForDeletion.add(star);
+				deleteGameObject(star);
 				this.blueCollectables.collect();
 			} else if( ( balloonColor == Balloon.ColorType.RED ) && ( starColor == Star.ColorType.RED ) ) {
 				star.destroy();
-				this.gameObjectsForDeletion.add(star);
+				deleteGameObject(star);
 				this.redCollectables.collect();
 			} else {
 				balloon.destroy();
-				this.gameObjectsForDeletion.add(balloon);
+				deleteGameObject(balloon);
 				if( balloonColor == Balloon.ColorType.BLUE ) {
 					this.amountOfBlueBalloons--;
 				} else if( balloonColor == Balloon.ColorType.RED ) {

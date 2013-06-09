@@ -20,7 +20,7 @@ import com.strategames.catchdastars.utils.Textures;
 public class SplashScreen extends AbstractScreen implements InputProcessor {
 
 	private AssetManager assetManager;
-	private boolean finishedLoading = false;
+	private boolean finishedSetupAssets = false;
 
 	public SplashScreen(Game game) {
 		super(game);
@@ -62,11 +62,12 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 		this.stageUIActors.act();
 		super.render(delta);
 
-		if ( this.assetManager.update() && ( ! this.finishedLoading ) ) {
-			this.finishedLoading = true;
+		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
 			Textures.setup(this.assetManager);
 			Sounds.setup(this.assetManager);
 
+			this.finishedSetupAssets = true;
+			
 			this.splashImage.addAction( sequence(
 					delay( 0.75f ),
 					fadeOut( 0.75f ),
@@ -116,7 +117,9 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		getGame().setScreen(new MainMenuScreen(getGame()));
+		if ( this.finishedSetupAssets ) {
+			getGame().setScreen(new MainMenuScreen(getGame()));
+		}
 		return true;
 	}
 
