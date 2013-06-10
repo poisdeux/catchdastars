@@ -1,2 +1,9 @@
 Chalk images created using GIMP. Select brush Chalk-02 and select show as image.
 Save layers as separate images.
+
+
+Create texture map
+==================
+
+export CLASSPATH=../libgdx/gdx.jar:../libgdx/extensions/gdx-tools/gdx-tools.jar
+java com.badlogic.gdx.tools.imagepacker.TexturePacker2 ~/projects/gdx/PopDaBalloons/images/gameobjects-32px ~/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/
