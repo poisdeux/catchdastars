@@ -149,7 +149,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			this.spriteRightPart.setPosition(middlePartEndPosition, y);
 			this.spriteRightPart.draw(batch, parentAlpha);
 		} else {
-			float middlePartEndPosition = y + this.length;
+			float middlePartEndPosition = y + this.length - stepSize;
 
 			for( float yd = y; yd < middlePartEndPosition; yd += stepSize ) {
 				this.spriteMiddlePart.setPosition(x, yd);
