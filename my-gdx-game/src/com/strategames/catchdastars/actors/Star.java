@@ -37,13 +37,14 @@ public class Star extends GameObject {
 	public ColorType colorType;
 	
 	public Star() {
+		super();
 	}
 	
-	public static Star create(World world, float x, float y, ColorType type) {
+	public static Star create(Game game, float x, float y, ColorType type) {
 		Star star = new Star();
+		star.setGame(game);
 		star.setColorType(type);
 		star.setPosition(x, y);
-		star.setWorld(world);
 		star.setup();
 		star.setCollectible(true);
 		return star;
@@ -127,7 +128,7 @@ public class Star extends GameObject {
 	
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Star.create(getWorld(), 
+		GameObject object = Star.create(getGame(), 
 				getX(), 
 				getY(), 
 				colorType);

@@ -54,13 +54,15 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	private ColorType colorType;
 
-	public Balloon() { }
+	public Balloon() { 
+		super();
+	}
 
-	public static Balloon create(World world, float x, float y, ColorType type) {
+	public static Balloon create(Game game, float x, float y, ColorType type) {
 		Balloon balloon = new Balloon();
+		balloon.setGame(game);
 		balloon.setColorType(type);
 		balloon.setPosition(x, y);
-		balloon.setWorld(world);
 		balloon.setup();
 		balloon.setLiftFactor(DEFAULT_LIFTFACTOR);
 		return balloon;
@@ -106,7 +108,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	Body setupBox2D() {
-		World world = getWorld();
+		World world = getGame().getWorld();
 		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
 
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
@@ -171,7 +173,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	public GameObject createCopy() {
-		Balloon balloon = Balloon.create(getWorld(), 
+		Balloon balloon = Balloon.create(getGame(), 
 				getX(), 
 				getY(),
 				this.colorType);

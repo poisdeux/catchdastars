@@ -98,9 +98,6 @@ public class LoadingScreen extends AbstractScreen {
 		stage.addActor(this.dotImage1);
 		stage.addActor(this.dotImage2);
 		stage.addActor(this.dotImage3);
-		
-//		Textures.setup(this.assetManager);
-//		Sounds.setup(this.assetManager);
 	}
 
 	@Override

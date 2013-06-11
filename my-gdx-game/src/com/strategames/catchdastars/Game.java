@@ -28,7 +28,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	public static final float GRAVITY = 9.81f;
 	
-	private ArrayList<Body> bodiesForDeletion;
 	private ArrayList<GameObject> gameObjectsForDeletion;
 	
 	private AssetManager manager;
@@ -46,7 +45,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		
 		this.manager.setLoader(Level.class, new LevelLoader(new InternalFileHandleResolver()));
 		
-		this.bodiesForDeletion = new ArrayList<Body>();
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
 
@@ -177,7 +175,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * @param object the actual game object
 	 */
 	public void addGameObject(GameObject object) {
-		object.setWorld(getWorld());
+		object.setGame(this);
 		object.setup();
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		screen.getStageActors().addActor(object);
@@ -196,30 +194,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public AssetManager getManager() {
 		return manager;
 	}
-
-	/**
-	 * Queues a body for removal. Note that this happens asynchronously.
-	 * @param body
-	 */
-	public void deleteBody(Body body) {
-		this.bodiesForDeletion.add(body);
-	}
 	
+	/**
+	 * Queues a game object for removal. Note that this happens asynchronously.
+	 * @param object the GameObject to be removed
+	 */
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
 	}
 	
 	public void update(float delta, Stage stage) {
 		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
-
-		if( ! this.world.isLocked() ) {
-			Iterator<Body> itr = this.bodiesForDeletion.iterator();
-			while(itr.hasNext()) {
-				Body body = itr.next();
-				this.world.destroyBody(body);
-				itr.remove();
-			}
-		}
 		
 		if( ! this.world.isLocked() ) {
 			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();

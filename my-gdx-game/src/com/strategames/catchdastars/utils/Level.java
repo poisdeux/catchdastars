@@ -75,6 +75,7 @@ public class Level implements Comparable<Level> {
 			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
 			return load(file);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

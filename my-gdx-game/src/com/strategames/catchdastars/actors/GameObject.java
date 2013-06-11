@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -31,7 +32,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isDeleted;
 	protected boolean isHit;
 	protected boolean isCollectible;
-	protected boolean breakObject;
+	
+	protected Game game;
 	
 	public static enum Type {
 		WALL, BALLOON, STAR, ROCK
@@ -40,6 +42,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public Type type;
 	
 	public GameObject() {
+		init();
+	}
+	
+	public GameObject(Game game) {
+		this.game = game;
+		this.world = game.getWorld();
 		init();
 	}
 
@@ -53,6 +61,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		setName(getClass().getSimpleName());
 		this.shapeRenderer = new ShapeRenderer();
 		this.type = setType();
+	}
+	
+	public Game getGame() {
+		return game;
+	}
+	
+	public void setGame(Game game) {
+		this.game = game;
+		if( game != null ) {
+			this.world = game.getWorld();
+		}
 	}
 	
 	public Type getType() {
@@ -131,6 +150,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
+		Gdx.app.log("GameObject", "setup: "+this);
 		TextureRegionDrawable trd = createTexture();
 		if( trd != null ) {
 			setDrawable(trd);
@@ -167,10 +187,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
 		this.shapeRenderer.end();
 		batch.begin();
-	}
-	
-	public void setBreakObject(boolean breakObject) {
-		this.breakObject = breakObject;
 	}
 	
 	/**

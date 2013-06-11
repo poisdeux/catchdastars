@@ -87,11 +87,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 
-	public static Wall create(World world, float x, float y, float length, Orientation type) {
+	public static Wall create(Game game, float x, float y, float length, Orientation type) {
 		Wall wall = new Wall();
+		wall.setGame(game);
 		wall.setPosition(x, y);
 		wall.setType(type);
-		wall.setWorld(world);
 		wall.setup();
 		wall.setLength(length);
 		return wall;
@@ -177,7 +177,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Wall.create(getWorld(), 
+		GameObject object = Wall.create(getGame(), 
 				getX(), 
 				getY(),
 				this.length,

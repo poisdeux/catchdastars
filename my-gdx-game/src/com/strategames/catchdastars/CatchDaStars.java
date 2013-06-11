@@ -152,6 +152,7 @@ public class CatchDaStars extends Game {
 	}
 
 	private void initLevel() {
+		Gdx.app.log("CatchDaStars", "initLevel");
 		Level level = getLevel();
 
 		if ( level == null ) {

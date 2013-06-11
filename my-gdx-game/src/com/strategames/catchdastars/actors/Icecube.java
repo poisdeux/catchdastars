@@ -1,8 +1,8 @@
 package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -29,12 +30,16 @@ public class Icecube extends GameObject {
 	private Body body;
 	private static BodyEditorLoader loader;
 
-	private static List<Part> availableParts;
+	private static HashMap<String, Part> availableParts;
 
 	private ArrayList<Part> parts;
 	private int partsSize;
 
+	private Fixture breakOnFixture;
+	
 	public Icecube() {
+		super();
+		
 		if( availableParts == null ) {
 			setupAvailableParts();
 		}
@@ -46,16 +51,18 @@ public class Icecube extends GameObject {
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 
-	public static Icecube create(World world, float x, float y) {
+	public static Icecube create(Game game, float x, float y) {
 		Icecube icecube = new Icecube();
 		icecube.setPosition(x, y);
-		icecube.setWorld(world);
+		icecube.setGame(game);
 		icecube.setup();
 
 		//Initial object contains all parts
-		Iterator<Part> i = availableParts.iterator(); 
-		while (i.hasNext())
-			icecube.addPart(i.next());
+		Collection<Part> parts = availableParts.values();
+		for( Part part : parts ) {
+			icecube.addPart(part);
+		}
+		
 		return icecube;
 	}
 
@@ -110,6 +117,10 @@ public class Icecube extends GameObject {
 			sprite.setRotation(rotation);
 			sprite.draw(batch, parentAlpha);
 		}
+		
+		if( this.breakOnFixture != null ) {
+			splitObject();
+		}
 	}
 
 	@Override
@@ -120,7 +131,7 @@ public class Icecube extends GameObject {
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Icecube.create(getWorld(), 
+		GameObject object = Icecube.create(getGame(), 
 				getX(), 
 				getY());
 		return object;
@@ -159,7 +170,7 @@ public class Icecube extends GameObject {
 		float maxImpulse = 0.0f;
 
 		float[] impulses = impulse.getNormalImpulses();
-		int size = impulses.length;
+		int size = impulse.getCount();
 
 		for (int i = 0; i < size; ++i)
 		{
@@ -168,18 +179,14 @@ public class Icecube extends GameObject {
 			}
 		}
 
-		if (maxImpulse > 40.0f)
+		if (maxImpulse > 400.0f)
 		{
-			setBreakObject(true);
-			String partName;
-
 			//Get colliding fixture for this object
 			if(((GameObject) contact.getFixtureA().getBody().getUserData()) == gameObject) {
-				partName = (String) contact.getFixtureB().getUserData();
+				this.breakOnFixture = contact.getFixtureB();
 			} else {
-				partName = (String) contact.getFixtureA().getUserData();
+				this.breakOnFixture = contact.getFixtureA();
 			}
-
 		}
 	}
 
@@ -194,28 +201,61 @@ public class Icecube extends GameObject {
 				(value.toString()).contentEquals("all") ) {
 			if( this.parts.size() < 1 ) {
 				//Initial object contains all parts
-				int size = availableParts.size();
-				for(int i = 0; i < size; i++)
-					addPart(availableParts.get(i));
+				Collection<Part> parts = availableParts.values();
+				for( Part part : parts ) {
+					addPart(part);
+				}
 			}
 		}
 	}
 
 
 	private void setupAvailableParts() {
-		availableParts = new ArrayList<Part>();
-		availableParts.add(new Part("icecube-part1.png", Textures.icecubePart1));
-		availableParts.add(new Part("icecube-part2.png", Textures.icecubePart2));
-		availableParts.add(new Part("icecube-part3.png", Textures.icecubePart3));
-		availableParts.add(new Part("icecube-part4.png", Textures.icecubePart4));
-		availableParts.add(new Part("icecube-part5.png", Textures.icecubePart5));
-		availableParts.add(new Part("icecube-part6.png", Textures.icecubePart6));
-		availableParts.add(new Part("icecube-part7.png", Textures.icecubePart7));
-		availableParts.add(new Part("icecube-part8.png", Textures.icecubePart8));
-		availableParts.add(new Part("icecube-part9.png", Textures.icecubePart9));
-		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
+		availableParts = new HashMap<String, Icecube.Part>();
+		availableParts.put("icecube-part1.png", new Part("icecube-part1.png", Textures.icecubePart1));
+		availableParts.put("icecube-part2.png", new Part("icecube-part2.png", Textures.icecubePart2));
+		availableParts.put("icecube-part3.png", new Part("icecube-part3.png", Textures.icecubePart3));
+		availableParts.put("icecube-part4.png", new Part("icecube-part4.png", Textures.icecubePart4));
+		availableParts.put("icecube-part5.png", new Part("icecube-part5.png", Textures.icecubePart5));
+		availableParts.put("icecube-part6.png", new Part("icecube-part6.png", Textures.icecubePart6));
+		availableParts.put("icecube-part7.png", new Part("icecube-part7.png", Textures.icecubePart7));
+		availableParts.put("icecube-part8.png", new Part("icecube-part8.png", Textures.icecubePart8));
+		availableParts.put("icecube-part9.png", new Part("icecube-part9.png", Textures.icecubePart9));
+		availableParts.put("icecube-part10.png", new Part("icecube-part10.png", Textures.icecubePart10));
 	}
 
+	private void splitObject() {
+		// Do not break if object consists of a single part
+		if( this.partsSize <= 1 ) {
+			return;
+		}
+		
+		String partName = (String) breakOnFixture.getUserData();
+		Game game = getGame();
+		
+		// Create new object with piece that broke off
+		Icecube icecube1 = new Icecube();
+		Vector2 v = this.body.getPosition();
+		icecube1.setPosition(v.x, v.y);
+		icecube1.addPart(availableParts.get(partName));
+		game.addGameObject(icecube1);
+		
+		// Create new object with pieces that are left
+		Icecube icecube2 = new Icecube();
+		v = this.body.getPosition();
+		icecube2.setPosition(v.x, v.y);
+		
+		//TODO using string comparison is VERY expensive. We need to redesign this to use integers instead
+		for( Part part : this.parts ) {
+			if( ! part.getName().contentEquals(partName) ) {
+				icecube2.addPart(part);
+			}
+		}
+		game.addGameObject(icecube2);
+		
+		game.deleteGameObject(this);
+	}
+	
 	private class Part {
 		String name;
 		Sprite sprite;
