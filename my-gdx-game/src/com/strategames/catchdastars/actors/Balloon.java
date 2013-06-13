@@ -32,8 +32,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
-	
-	private Body balloon;
 
 	private float maxVolume = 0.5f;
 	/**
@@ -85,8 +83,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		}
 		this.liftFactor = liftFactor;
 		
-		if( this.balloon != null ) {
-			this.upwardLift = -this.balloon.getMass() * this.liftFactor;
+		if( super.body != null ) {
+			this.upwardLift = -super.body.getMass() * this.liftFactor;
 		}
 	}
 	
@@ -119,25 +117,25 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 1f;
 		bd.linearDamping=1f;
-		this.balloon = world.createBody(bd);
+		Body body = world.createBody(bd);
 
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
 		fixtureBalloon.friction = 0.8f;
 		fixtureBalloon.restitution = 0.4f; // Make it bounce a little bit
-		loader.attachFixture(this.balloon, "Balloon", fixtureBalloon, balloonWidth);
+		loader.attachFixture(body, "Balloon", fixtureBalloon, balloonWidth);
 
-		this.upwardLiftPosition = this.balloon.getLocalCenter();
+		this.upwardLiftPosition = body.getLocalCenter();
 		this.upwardLiftPosition.y += 0.3f;
  		
 		setLiftFactor(this.liftFactor);
 		
-		return this.balloon;
+		return body;
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		setRotation(MathUtils.radiansToDegrees * this.balloon.getAngle());
+		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
@@ -146,8 +144,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	@Override
 	public void act(float delta) {
 		super.act(delta);		
-		Vector2 worldPointOfForce = this.balloon.getWorldPoint(this.upwardLiftPosition);
-		this.balloon.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
+		Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
+		super.body.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
 	}
 
 //	@Override
@@ -229,7 +227,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
-		float bounceVelocity = this.balloon.getLinearVelocity().mul(normal.x, normal.y).len2();
+		float bounceVelocity = super.body.getLinearVelocity().mul(normal.x, normal.y).len2();
 		if( bounceVelocity > 0.1 ) {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}

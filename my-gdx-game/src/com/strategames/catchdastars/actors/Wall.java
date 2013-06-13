@@ -130,6 +130,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		Vector2 v = super.body.getPosition();
+		setPosition(v.x, v.y);
 		float x = v.x - super.halfWidth;
 		float y = v.y - super.halfHeight;
 
@@ -156,8 +157,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 		}
-
-		setPosition(x, y);
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -150,7 +149,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
-		Gdx.app.log("GameObject", "setup: "+this);
 		TextureRegionDrawable trd = createTexture();
 		if( trd != null ) {
 			setDrawable(trd);
@@ -172,8 +170,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	public void moveTo(float x, float y) {
 		if( this.body != null ) {
-			Vector2 v = this.body.getLocalCenter(); // make sure we position object on center of mass
-			this.body.setTransform(x - v.x, y - v.y, this.body.getAngle());
+//			Vector2 v = this.body.getLocalCenter(); // make sure we position object on center of mass
+			this.body.setTransform(x, y, this.body.getAngle());
+			setPosition(x, y);
 		} else {
 			setPosition(x, y);
 		}
@@ -220,7 +219,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		
 		Vector2 position = new Vector2();
 		if( this.body != null ) {
-			position = this.body.getWorldCenter();
+			position = this.body.getPosition();
 		} else {
 			position.x = getX();
 			position.y = getY();

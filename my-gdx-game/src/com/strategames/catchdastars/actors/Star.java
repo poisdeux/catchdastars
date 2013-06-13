@@ -25,7 +25,6 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class Star extends GameObject {
 	private float rotationSpeed;
-	private Body star;
 	private float scale = 1f;
 	
 	public static enum ColorType {
@@ -65,7 +64,6 @@ public class Star extends GameObject {
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		rotate(this.rotationSpeed);
-//		Vector2 v = super.body.getWorldCenter();
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
 		super.draw(batch, parentAlpha);
@@ -117,12 +115,13 @@ public class Star extends GameObject {
 		
 		BodyDef bd = new BodyDef();  
 		bd.position.set(getX(), getY());
-		this.star = getWorld().createBody(bd);  
-		Fixture fixture = this.star.createFixture(circle, 0.0f);
+		Body body = getWorld().createBody(bd);  
+		Fixture fixture = body.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
+		
 		circle.dispose();
 		
-		return this.star;
+		return body;
 	}
 	
 	

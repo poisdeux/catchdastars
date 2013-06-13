@@ -245,13 +245,13 @@ public class CatchDaStars extends Game {
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
 			this.gameOn = false;
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
-			dialog.show(this.stageActors);
+			((AbstractScreen) getScreen()).showDialog(dialog);
 		}
 
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
 			this.gameOn = false;
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
-			dialog.show(this.stageActors);
+			((AbstractScreen) getScreen()).showDialog(dialog);
 		}
 
 		//Check if all collectables have been retrieved

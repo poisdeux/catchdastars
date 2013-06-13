@@ -85,6 +85,7 @@ public class Icecube extends GameObject {
 	Body setupBox2D() {
 		World world = getWorld();
 
+		Gdx.app.log("Icecube", "draw: getX()="+getX()+", getY()="+getY());
 		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
@@ -109,7 +110,8 @@ public class Icecube extends GameObject {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		float rotation = MathUtils.radiansToDegrees * this.body.getAngle();
 		Vector2 v = super.body.getPosition();
-
+		setPosition(v.x, v.y);
+//		Gdx.app.log("Icecube", "draw: v="+v);
 		for(int i = 0; i < this.partsSize; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -230,19 +232,20 @@ public class Icecube extends GameObject {
 			return;
 		}
 		
+		Vector2 v = this.body.getPosition();
+		Gdx.app.log("Icecube", "splitObject: v="+v);
+		
 		String partName = (String) breakOnFixture.getUserData();
 		Game game = getGame();
 		
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();
-		Vector2 v = this.body.getPosition();
 		icecube1.setPosition(v.x, v.y);
 		icecube1.addPart(availableParts.get(partName));
 		game.addGameObject(icecube1);
 		
 		// Create new object with pieces that are left
 		Icecube icecube2 = new Icecube();
-		v = this.body.getPosition();
 		icecube2.setPosition(v.x, v.y);
 		
 		//TODO using string comparison is VERY expensive. We need to redesign this to use integers instead

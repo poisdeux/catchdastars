@@ -12,11 +12,12 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.ui.TextButton.TextButtonListener;
 
-public class LevelFailDialog {
+public class LevelFailDialog extends Dialog {
 	private Skin skin;
 	private Game game;
 	
 	public LevelFailDialog(Game game, Skin skin) {
+		super("", skin);
 		this.skin = skin;
 		this.game = game;
 	}
