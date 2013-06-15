@@ -75,17 +75,13 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	}
 
 	public void setLiftFactor(float liftFactor) {
-		
+		Gdx.app.log("Balloon", "setLiftFactor:");
 		if( liftFactor > MAX_LIFTFACTOR ) {
 			liftFactor = MAX_LIFTFACTOR;
 		} else if( liftFactor < MIN_LIFTFACTOR ) {
 			liftFactor = MIN_LIFTFACTOR;
 		}
 		this.liftFactor = liftFactor;
-		
-		if( super.body != null ) {
-			this.upwardLift = -super.body.getMass() * this.liftFactor;
-		}
 	}
 	
 	public float getLiftFactor() {
@@ -128,7 +124,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		this.upwardLiftPosition = body.getLocalCenter();
 		this.upwardLiftPosition.y += 0.3f;
  		
-		setLiftFactor(this.liftFactor);
+		this.upwardLift = -body.getMass() * this.liftFactor;
 		
 		return body;
 	}
