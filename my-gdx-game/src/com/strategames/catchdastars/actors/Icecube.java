@@ -27,7 +27,6 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class Icecube extends GameObject {
 	private final static float WIDTH = Game.convertWorldToBox(32f); 
-	private Body body;
 	private static BodyEditorLoader loader;
 
 	private static HashMap<String, Part> availableParts;
@@ -85,13 +84,14 @@ public class Icecube extends GameObject {
 	Body setupBox2D() {
 		World world = getWorld();
 
-		Gdx.app.log("Icecube", "draw: getX()="+getX()+", getY()="+getY());
+//		Gdx.app.log("Icecube", "draw: getX()="+getX()+", getY()="+getY()+", angle="+getRotation());
 		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
+		bd.angle = getRotation() * MathUtils.degreesToRadians;
 		bd.type = BodyType.DynamicBody;
 		bd.angularDamping = 0.1f;
-		this.body = world.createBody(bd);
+		Body body = world.createBody(bd);
 
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
@@ -99,11 +99,11 @@ public class Icecube extends GameObject {
 		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
 		
 		for(Part part : this.parts ) {
-			loader.attachFixture(this.body, part.getName(), fixtureDef, WIDTH);
+			loader.attachFixture(body, part.getName(), fixtureDef, WIDTH);
 			part.setOrigin(loader.getOrigin(part.getName(), WIDTH).cpy());
 		}
 
-		return this.body;
+		return body;
 	}
 
 	@Override
@@ -111,6 +111,7 @@ public class Icecube extends GameObject {
 		float rotation = MathUtils.radiansToDegrees * this.body.getAngle();
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
+		setRotation(rotation);
 //		Gdx.app.log("Icecube", "draw: v="+v);
 		for(int i = 0; i < this.partsSize; i++) {
 			Part part = this.parts.get(i);
@@ -232,8 +233,8 @@ public class Icecube extends GameObject {
 			return;
 		}
 		
-		Vector2 v = this.body.getPosition();
-		Gdx.app.log("Icecube", "splitObject: v="+v);
+		Vector2 v = super.body.getPosition();
+//		Gdx.app.log("Icecube", "splitObject: v="+v+", angle="+getRotation());
 		
 		String partName = (String) breakOnFixture.getUserData();
 		Game game = getGame();
@@ -241,13 +242,14 @@ public class Icecube extends GameObject {
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();
 		icecube1.setPosition(v.x, v.y);
+		icecube1.setRotation(getRotation());
 		icecube1.addPart(availableParts.get(partName));
 		game.addGameObject(icecube1);
 		
 		// Create new object with pieces that are left
 		Icecube icecube2 = new Icecube();
 		icecube2.setPosition(v.x, v.y);
-		
+		icecube2.setRotation(getRotation());
 		//TODO using string comparison is VERY expensive. We need to redesign this to use integers instead
 		for( Part part : this.parts ) {
 			if( ! part.getName().contentEquals(partName) ) {
