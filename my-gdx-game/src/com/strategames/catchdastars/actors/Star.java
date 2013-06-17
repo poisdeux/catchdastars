@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
@@ -65,7 +64,7 @@ public class Star extends GameObject {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		rotate(this.rotationSpeed);
 		Vector2 v = super.body.getPosition();
-		setPosition(v.x - super.halfWidth, v.y - super.halfHeight);
+		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
 	}
 	
@@ -112,7 +111,7 @@ public class Star extends GameObject {
 		
 		CircleShape circle = new CircleShape();
 		circle.setRadius(radius);
-		
+		circle.setPosition(new Vector2(getHalfWidth(), getHalfHeight()));
 		BodyDef bd = new BodyDef();  
 		bd.position.set(getX(), getY());
 		Body body = getWorld().createBody(bd);  

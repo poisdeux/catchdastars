@@ -24,7 +24,7 @@ import com.strategames.ui.GameObjectPickerDialog;
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface, InputProcessor {
 
 	private Vector2 longPressPosition;
-	private Vector2 touchPositionObjectDelta;
+	private Vector2 dragOffset;
 	private Actor actorHit;
 	private float previousZoomDistance;
 	private InputMultiplexer multiplexer;
@@ -79,7 +79,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.testGame = false;
 
 		this.longPressPosition = new Vector2();
-		this.touchPositionObjectDelta = new Vector2();
+		this.dragOffset = new Vector2();
+		
 		this.actorHit = null;
 
 		Gdx.input.setCatchBackKey(true);
@@ -116,7 +117,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown: x="+x+", y="+y);
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
@@ -135,12 +135,15 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		stage.screenToStageCoordinates(touchPosition);
 		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
 
-
-
 		if( actor != null ) { // actor selected
 			deselectGameObject((GameObject) this.actorHit);
 			selectGameObject((GameObject) actor);
 			this.actorHit = actor;
+			Vector2 v = new Vector2(this.actorHit.getX(), this.actorHit.getY());
+			stage.stageToScreenCoordinates(v);
+			this.dragOffset.x = x - v.x;
+			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - y); //Touch event coordinates are y-down coordinated
+			Gdx.app.log("LevelEditorScreen", "touchDown: v="+v+", dragOffset="+this.dragOffset);
 		} else if( this.uiElementHit == null ) { // empty space selected
 			deselectGameObject((GameObject) this.actorHit);
 			this.actorHit = null;
@@ -151,34 +154,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Gdx.app.log("LevelEditorScreen", "touchDragged");
 		if( ( this.state == States.DRAG ) || 
 				( this.state == States.NONE ) ) {
 			this.state = States.DRAG;
 
 			if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-				Vector2 stageCoords = getStageActors().screenToStageCoordinates(new Vector2(screenX, screenY));
-
-				GameObject gameObject = (GameObject) this.actorHit;
-				Vector2 v = gameObject.getBody().getWorldCenter();
-				float left = gameObject.getX() - v.x;
-				float bottom = gameObject.getY() - v.y;
-
-				//Check if actor does not overlap other actor when moving horizontally
-				Rectangle rectangle = new Rectangle(stageCoords.x + left, this.actorHit.getY(),
-						this.actorHit.getWidth(), this.actorHit.getHeight());
-				if( getActor(rectangle) != null ) { // we cannot move horizontally
-					stageCoords.x = v.x;
-				}
-
-				//Check if actor does not overlap other actor when moving vertically
-				rectangle = new Rectangle(this.actorHit.getX(), stageCoords.y + bottom,
-						this.actorHit.getWidth(), this.actorHit.getHeight());
-				if( getActor(rectangle) != null ) { // we cannot move vertically
-					stageCoords.y = v.y;
-				}
-
-				gameObject.moveTo(stageCoords.x, stageCoords.y);
+				Vector2 v = new Vector2(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
+				getStageActors().screenToStageCoordinates(v);
+				moveActor(this.actorHit, v.x, v.y);
 				return true;
 			}
 		}
@@ -200,8 +183,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
 			if( tap.doubleTapped() && ( this.actorHit == tap.getActor() ) ) {
-				Gdx.app.log("LevelEditorScreen", "tap: this.actorTapped="+this.tap);
-
 				GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
 				dialog.addButton("Copy " + this.actorHit.getName(), new OnClickListener() {
 
@@ -250,8 +231,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		/**
 		 * Used to show generic configuration window
 		 */
-		Gdx.app.log("LevelEditorScreen", "longPress: x="+x+", y="+y);
-		if( this.testGame ) { //do not handle event in game mode
+		if( this.testGame || (this.actorHit != null) ) {
 			return false;
 		}
 
@@ -444,5 +424,24 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			if( rectangle.overlaps(rectangleActor) ) return actor;
 		}
 		return null;
+	}
+	
+	private void moveActor(Actor actor, float x, float y) {
+		GameObject gameObject = (GameObject) actor;
+		
+		Rectangle rectangle = gameObject.getBoundingRectangle();
+		float curX = rectangle.x;
+		rectangle.x = x;   // position object at new X coordinate
+		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
+			rectangle.x = curX;
+		}
+
+		float curY = rectangle.y;
+		rectangle.y = y;   // position object at new Y coordinate
+		if( getActor(rectangle) != null ) { // check to see if new Y coordinate does not overlap
+			rectangle.y = curY;
+		}
+
+		gameObject.moveTo(rectangle.x, rectangle.y);
 	}
 }

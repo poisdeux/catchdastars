@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Scaling;
@@ -71,10 +70,9 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	Body setupBox2D() {
 		PolygonShape box = new PolygonShape();  
 		if( orientation == Orientation.HORIZONTAL ) {
-			box.setAsBox(this.length/2f, super.halfHeight);
+			box.setAsBox(this.length/2f, super.halfHeight, new Vector2(this.length/2f, super.halfHeight), 0f);
 		} else {
-			box.setAsBox(super.halfWidth, 
-					this.length/2f);
+			box.setAsBox(super.halfWidth, this.length/2f, new Vector2(super.halfWidth, this.length/2f), 0f);
 		}
 
 		BodyDef groundBodyDef = new BodyDef();
@@ -82,7 +80,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
-
 		return body;
 	}
 
@@ -126,14 +123,15 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		this.orientation = type;
 		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
-
+	
+	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		Vector2 v = super.body.getPosition();
-		setPosition(v.x, v.y);
-		float x = v.x - super.halfWidth;
-		float y = v.y - super.halfHeight;
-
+		float x = v.x;
+		float y = v.y;
+		setPosition(x, y);
+		
 		if ( orientation == Orientation.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch, parentAlpha);

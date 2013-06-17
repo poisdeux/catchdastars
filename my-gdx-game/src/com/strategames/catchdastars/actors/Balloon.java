@@ -144,12 +144,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		super.body.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
 	}
 
-//	@Override
-//	public void write(Json json) {
-//		moveTo(getX(), getY()); // align body with image origin
-//		super.write(json);
-//	}
-
 	@Override
 	void writeValues(Json json) {
 		json.writeValue("type", this.colorType.name());

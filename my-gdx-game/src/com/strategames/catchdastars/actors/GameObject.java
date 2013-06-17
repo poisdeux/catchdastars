@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -21,6 +22,21 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 
+/**
+ * GameObject assumes sprite origin is located at bottom left. If you extend this
+ * class for an object where the sprite origin is somewhere else you need to override
+ * the following methods
+ * <br/> 
+ * {@link #draw(SpriteBatch, float)}
+ * <br/>
+ * {@link #moveTo(float, float)}
+ * <br/>
+ * and make sure your images and bodies are aligned. You can check this by calling
+ * {@link #drawBoundingBox(SpriteBatch)} in {@link #draw(SpriteBatch, float)}.
+ * 
+ * @author martijn brekhof
+ *
+ */
 abstract public class GameObject extends Image implements Json.Serializable {
 	private World world;
 	protected Body body;
@@ -59,6 +75,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private void init() {
 		setName(getClass().getSimpleName());
 		this.shapeRenderer = new ShapeRenderer();
+		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
 		this.type = setType();
 	}
 	
@@ -141,6 +158,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
+
 	
 	/**
 	 * Setup the image and body for this game object. 
@@ -170,20 +188,28 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	public void moveTo(float x, float y) {
 		if( this.body != null ) {
-//			Vector2 v = this.body.getLocalCenter(); // make sure we position object on center of mass
 			this.body.setTransform(x, y, this.body.getAngle());
-			setPosition(x, y);
 		} else {
 			setPosition(x, y);
 		}
 	}
 
-
+	/**
+	 * Returns the bounding rectangle for this game object.
+	 * If you reposition or resize the game object you should again call this
+	 * method to get the realigned bounding rectangle
+	 * @return Rectangle
+	 */
+	public Rectangle getBoundingRectangle() {
+		return new Rectangle(getX(), getY(), getWidth(), getHeight());
+	}
+	
 	public void drawBoundingBox(SpriteBatch batch) {
 		batch.end();
-		this.shapeRenderer.begin(ShapeType.Line);
+		this.shapeRenderer.begin(ShapeType.Rectangle);
 		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
-		this.shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+		Rectangle rec = getBoundingRectangle();
+		this.shapeRenderer.rect(rec.x, rec.y, rec.width, rec.height);
 		this.shapeRenderer.end();
 		batch.begin();
 	}
