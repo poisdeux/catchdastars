@@ -25,6 +25,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private Sprite spriteRightPart;
 	private Orientation orientation;
 	private float length;
+	private float drawLength;
 	private float increaseDecreaseSizeAccumulatedDelta;
 	private float stepSize;
 	
@@ -106,16 +107,14 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
 			setWidth(this.length);
 			setHeight(height);
+			this.stepSize = width;		
+			this.drawLength = this.length - (this.stepSize * 1.9f);
 		} else {
 			this.length = length < height ? height : length; //Make sure length is not smaller than a single block
 			setHeight(this.length);
 			setWidth(width);
-		}
-		
-		if ( orientation == Orientation.HORIZONTAL ) {
-			this.stepSize = width;
-		} else {
 			this.stepSize = height;
+			this.drawLength = this.length - (this.stepSize * 0.9f);
 		}
 	}
 
@@ -136,25 +135,27 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			this.spriteLeftPart.setPosition(x, y);
 			this.spriteLeftPart.draw(batch, parentAlpha);
 
-			float middlePartEndPosition = x + this.length - stepSize;
+			float middlePartEndPosition = x + this.drawLength;
 
-			for(float xd = x + stepSize; 
+			float xd;
+			for(xd = x + stepSize; 
 					xd < middlePartEndPosition; 
 					xd += stepSize ) {
 				this.spriteMiddlePart.setPosition(xd, y);
 				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 
-			this.spriteRightPart.setPosition(middlePartEndPosition, y);
+			this.spriteRightPart.setPosition(xd, y);
 			this.spriteRightPart.draw(batch, parentAlpha);
 		} else {
-			float middlePartEndPosition = y + this.length - stepSize;
-
+			float middlePartEndPosition = y + this.drawLength;
 			for( float yd = y; yd < middlePartEndPosition; yd += stepSize ) {
 				this.spriteMiddlePart.setPosition(x, yd);
 				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 		}
+		
+		drawBoundingBox(batch);
 	}
 
 	@Override

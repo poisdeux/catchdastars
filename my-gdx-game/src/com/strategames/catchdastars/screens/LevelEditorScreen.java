@@ -143,7 +143,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			stage.stageToScreenCoordinates(v);
 			this.dragOffset.x = x - v.x;
 			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - y); //Touch event coordinates are y-down coordinated
-			Gdx.app.log("LevelEditorScreen", "touchDown: v="+v+", dragOffset="+this.dragOffset);
 		} else if( this.uiElementHit == null ) { // empty space selected
 			deselectGameObject((GameObject) this.actorHit);
 			this.actorHit = null;
@@ -173,7 +172,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		/**
 		 * Used to show gameobject configuration window when double tapped
 		 */
-		Gdx.app.log("LevelEditorScreen", "tap");
 		if( this.testGame ) { //return to edit mode
 			this.testGame = false;
 			getGame().reset();
@@ -280,19 +278,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean fling(float velocityX, float velocityY, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "fling");
 		return false;
 	}
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		//		Gdx.app.log("LevelEditorScreen", "pan");
 		return false;
 	}
 
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
-		//		Gdx.app.log("LevelEditorScreen", "zoom");
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
@@ -321,7 +316,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
 			Vector2 pointer1, Vector2 pointer2) {
-		//		Gdx.app.log("LevelEditorScreen", "pinch");
 		return true;
 	}
 
@@ -352,14 +346,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "touchDown");
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "touchUp");
 		//Hold reference to previous actor in case user performs a pinch gesture
 		//		this.previousActorHit = this.actorHit;
 		return false;
@@ -379,13 +371,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public void onObjectSelectListener(GameObject object) {
-		//		Gdx.app.log("LevelEditorScreen", "onSelectListener");
 		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
 		Vector2 stageCoords = stage.screenToStageCoordinates(this.longPressPosition);
 		//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
 		copy.setPosition(stageCoords.x, stageCoords.y);
-		Gdx.app.log("LevelEditorScreen", "onObjectSelectListener: stageCoords.x="+stageCoords.x+", stageCoords.y"+stageCoords.y);
 		getGame().addGameObject(copy);
 		stage.addActor(copy);
 		deselectGameObject(copy);
