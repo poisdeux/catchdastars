@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,7 +27,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Vector2 dragOffset;
 	private Actor actorHit;
 	private float previousZoomDistance;
-	private InputMultiplexer multiplexer;
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
@@ -71,8 +70,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private Tap tap = new Tap();
 
-	public LevelEditorScreen(Game game) {
-		super(game);
+	public LevelEditorScreen(Screen screen, Game game) {
+		super(screen, game);
 
 		this.game = game;
 
@@ -84,22 +83,19 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.actorHit = null;
 
 		Gdx.input.setCatchBackKey(true);
-
-		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(new GestureDetector(this));
-		this.multiplexer.addProcessor(this);
-		Gdx.input.setInputProcessor(this.multiplexer);
+		
+		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.multiplexer.addProcessor(stage);
+		getMultiplexer().addProcessor(stage);
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
-		this.multiplexer.addProcessor(stage);
+		getMultiplexer().addProcessor(stage);
 
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
@@ -247,7 +243,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 					@Override
 					public void onClick(Dialog dialog, int which) {
-						multiplexer.removeProcessor(getStageActors());
+						getMultiplexer().removeProcessor(getStageActors());
 						testGame = true;
 						saveLevel();
 						dialog.remove();
@@ -266,7 +262,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						saveLevel();
-						getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+						getGame().setScreen(new LevelEditorMenuScreen(LevelEditorScreen.this, getGame()));
 					}
 				});
 				dialog.show(getStageUIElements());
@@ -320,52 +316,15 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
+	public boolean keyUp(int keycode) {
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
 			if( ! this.testGame ) { //do not save in game mode
 				saveLevel();
 			}
-			getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+			getGame().setScreen(new LevelEditorMenuScreen(this, getGame()));
 			return true;
 		}
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		//Hold reference to previous actor in case user performs a pinch gesture
-		//		this.previousActorHit = this.actorHit;
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

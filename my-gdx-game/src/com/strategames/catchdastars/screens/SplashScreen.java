@@ -2,12 +2,12 @@ package com.strategames.catchdastars.screens;
 
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -17,17 +17,17 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
-public class SplashScreen extends AbstractScreen implements InputProcessor {
+public class SplashScreen extends AbstractScreen {
 
 	private AssetManager assetManager;
 	private boolean finishedSetupAssets = false;
 
-	public SplashScreen(Game game) {
-		super(game);
+	public SplashScreen(Screen screen, Game game) {
+		super(screen, game);
 
 		this.assetManager = getGame().getManager();
 
-		Gdx.input.setInputProcessor(this);
+//		Gdx.input.setInputProcessor(this);
 	}
 
 	private Image splashImage;
@@ -76,7 +76,7 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 						@Override
 						public boolean act(float delta) {
 							Game game = getGame();
-							game.setScreen(new MainMenuScreen(game));
+							game.setScreen(new MainMenuScreen(null, game));
 							return true;
 						}
 					}));
@@ -89,55 +89,5 @@ public class SplashScreen extends AbstractScreen implements InputProcessor {
 	{
 		super.dispose();
 		this.splashImage.remove();
-	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if ( this.finishedSetupAssets ) {
-			getGame().setScreen(new MainMenuScreen(getGame()));
-		}
-		return true;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

@@ -103,7 +103,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 			@Override
 			public void onTap(TextButton button) {
-				game.setScreen(new MainMenuScreen(game));
+				game.setScreen(new MainMenuScreen(null, game));
 			}
 
 			@Override
@@ -120,7 +120,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 			@Override
 			public void onTap(TextButton button) {
-				LevelScreen screen = new LevelScreen(game);
+				LevelScreen screen = new LevelScreen(new MainMenuScreen(null, game), game);
 				game.setScreen(new LoadingScreen(screen, game, game.getLevelNumber() + 1));
 			}
 
@@ -141,7 +141,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 		stage.addActor(table);
 		
-		Gdx.input.setInputProcessor(stage);
+//		Gdx.input.setInputProcessor(stage);
 	}
 
 	private void animationController() {

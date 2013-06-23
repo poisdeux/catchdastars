@@ -2,6 +2,7 @@ package com.strategames.catchdastars.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -12,9 +13,9 @@ import com.strategames.catchdastars.Game;
 public class MainMenuScreen extends AbstractScreen {
 
 	public MainMenuScreen(
-			Game game )
+			Screen screen, Game game )
 	{
-		super(game);
+		super(screen, game);
 	}
 
 
@@ -33,7 +34,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				AbstractScreen screen = new LevelScreen(game);
+				AbstractScreen screen = new LevelScreen(MainMenuScreen.this, game);
 				game.setScreen( new LoadingScreen( screen, game, 1 ) );
 			}
 		}); 
@@ -67,7 +68,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+				getGame().setScreen(new LevelEditorMenuScreen(MainMenuScreen.this, getGame()));
 			}
 		} );
 		table.add( button ).uniform().fill();

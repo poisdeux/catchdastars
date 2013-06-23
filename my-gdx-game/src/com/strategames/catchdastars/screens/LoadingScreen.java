@@ -5,6 +5,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -14,7 +15,7 @@ import com.strategames.catchdastars.Game;
 
 public class LoadingScreen extends AbstractScreen {
 
-	private AbstractScreen screen;
+	private Screen screen;
 	
 	private AssetManager assetManager;
 	private boolean animationFinished = false;
@@ -30,8 +31,8 @@ public class LoadingScreen extends AbstractScreen {
 	 * @param game
 	 * @param levelNumber
 	 */
-	public LoadingScreen(AbstractScreen screen, Game game, int levelNumber) {
-		super(game);
+	public LoadingScreen(Screen screen, Game game, int levelNumber) {
+		super(screen, game);
 
 		this.assetManager = getGame().getManager();
 		this.screen = screen;

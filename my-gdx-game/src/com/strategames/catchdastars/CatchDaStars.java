@@ -1,18 +1,16 @@
 package com.strategames.catchdastars;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,6 +29,7 @@ import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.LevelCompleteDialog;
 import com.strategames.ui.LevelFailDialog;
+import com.strategames.ui.LevelPauseDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravityVector;
@@ -66,6 +65,12 @@ public class CatchDaStars extends Game {
 		this.goldCollectables = new Collectable();
 	}
 
+	@Override
+	public void pauseGame() {
+		super.pauseGame();
+		showLevelPausedDialog();
+	}
+	
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
@@ -110,13 +115,7 @@ public class CatchDaStars extends Game {
 	}
 
 	private void showLevelCompleteDialog() {
-		Array<Actor> actors = this.stageActors.getActors();
-		int size = actors.size;
-		for(int i = 0; i < size; i++) {
-			Actor actor = actors.get(i);
-			Color color = actor.getColor();
-			actor.setColor(color.r, color.g, color.b, 0.4f);
-		}
+		darkenActors(0.4f);
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(this, ((AbstractScreen) getScreen()).getSkin(), 0);
 
@@ -128,7 +127,25 @@ public class CatchDaStars extends Game {
 
 		((AbstractScreen) getScreen()).showDialog(levelCompleteDialog);
 	}
+	
+	private void showLevelPausedDialog() {
+		darkenActors(0.4f);
+		
+		LevelPauseDialog levelPausedDialog = new LevelPauseDialog(this, ((AbstractScreen) getScreen()).getSkin());
 
+		((AbstractScreen) getScreen()).showDialog(levelPausedDialog);
+	}
+
+	private void darkenActors(float factor) {
+		Array<Actor> actors = this.stageActors.getActors();
+		int size = actors.size;
+		for(int i = 0; i < size; i++) {
+			Actor actor = actors.get(i);
+			Color color = actor.getColor();
+			actor.setColor(color.r, color.g, color.b, factor);
+		}
+	}
+	
 	@Override
 	public ArrayList<GameObject> getAvailableGameObjects() {
 		if( this.availableGameObjects != null ) {
@@ -297,6 +314,18 @@ public class CatchDaStars extends Game {
 		if( type2 == Type.ROCK ) {
 			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
 		}
+	}
+	
+	@Override
+	public boolean handleKeyEvent(int keycode) {
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
+			if( this.gameState == GAME_STATE_RUNNING ) {
+				pauseGame();
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

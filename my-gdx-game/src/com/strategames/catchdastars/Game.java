@@ -6,7 +6,6 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,6 +19,10 @@ import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
+	public final int GAME_STATE_RUNNING = 0;
+	public final int GAME_STATE_PAUSED = 1;
+	protected int gameState = GAME_STATE_RUNNING;
+	
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 
@@ -50,7 +53,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	@Override
 	public void create() {
-		setScreen(new SplashScreen(this));
+		setScreen(new SplashScreen(null, this));
 	}
 
 	@Override
@@ -76,6 +79,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 //		}
 	}
 
+	public void pauseGame() {
+		setGameState(GAME_STATE_PAUSED);
+	}
+	
+	public void resumeGame() {
+		setGameState(GAME_STATE_RUNNING);
+	}
+	
 	@Override
 	public void dispose() {
 		Gdx.app.log("Game", "dispose:");
@@ -84,6 +95,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		Textures.dispose(getManager());
 	}
 
+	public void setGameState(int gameState) {
+		this.gameState = gameState;
+	}
+	
+	public int getGameState() {
+		return gameState;
+	}
+	
 	static public float convertWorldToBox(float x) {
 		return x * WORLD_TO_BOX;
 	}
@@ -204,7 +223,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	public void update(float delta, Stage stage) {
-		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+		if( this.gameState == GAME_STATE_RUNNING ) {
+			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+		}
 		
 		if( ! this.world.isLocked() ) {
 			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
@@ -226,4 +247,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	abstract public void setupStage(Stage stage);
 
 	abstract public void reset();
+	
+	/**
+	 * Called when a key was pressed
+	 * @param keycode one of the constants in Input.Keys
+	 * @return whether the key was processed
+	 */
+	abstract public boolean handleKeyEvent(int keycode);
 }

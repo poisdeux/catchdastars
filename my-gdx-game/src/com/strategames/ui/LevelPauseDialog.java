@@ -12,11 +12,11 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.ui.TextButton.TextButtonListener;
 
-public class LevelFailDialog extends Dialog {
+public class LevelPauseDialog extends Dialog {
 	private Skin skin;
 	private Game game;
 	
-	public LevelFailDialog(Game game, Skin skin) {
+	public LevelPauseDialog(Game game, Skin skin) {
 		super("", skin);
 		this.skin = skin;
 		this.game = game;
@@ -25,46 +25,26 @@ public class LevelFailDialog extends Dialog {
 	@Override
 	public void show(Stage stage) {
 		
-		final Label gameOverLabel = new Label("Game Over", skin);
-		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gameOverLabel.getWidth() / 2);
-		gameOverLabel.setPosition(xMiddle, Gdx.graphics.getHeight() / 2);
-		gameOverLabel.addAction( sequence( fadeIn( 0.25f ) ) );
+		final Label gamePauseLabel = new Label("Game Paused", skin);
+		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
+		gamePauseLabel.setPosition(xMiddle, Gdx.graphics.getHeight() / 2);
+		gamePauseLabel.addAction( sequence( fadeIn( 0.25f ) ) );
 		
-		gameOverLabel.getColor().a = 0f;
+		gamePauseLabel.getColor().a = 0f;
 		
-		stage.addActor(gameOverLabel);
+		stage.addActor(gamePauseLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
 		table.bottom();
 		
-		TextButton retryButton = new TextButton("Retry", skin);
-		retryButton.setListener(new TextButtonListener() {
+		TextButton quitButton = new TextButton("Quit", skin);
+		quitButton.setListener(new TextButtonListener() {
 			
 			@Override
 			public void onTap(TextButton button) {
-//				gameOverLabel.clear();
-				gameOverLabel.remove();
 				table.clear();
 				table.remove();
-				game.reset();
-			}
-			
-			@Override
-			public void onLongPress(TextButton button) {
-				
-			}
-		});
-		retryButton.getColor().a = 0f;
-		retryButton.addAction( sequence( fadeIn( 0.25f ) ) );
-		
-		table.add(retryButton).expandX().fillX().left();
-		
-		TextButton mainMenuButton = new TextButton("Main menu", skin);
-		mainMenuButton.setListener(new TextButtonListener() {
-			
-			@Override
-			public void onTap(TextButton button) {
 				game.setScreen(new MainMenuScreen(null, game));
 			}
 			
@@ -73,10 +53,31 @@ public class LevelFailDialog extends Dialog {
 				
 			}
 		});
-		mainMenuButton.getColor().a = 0f;
-		mainMenuButton.addAction( sequence( fadeIn( 0.25f ) ) );
+		quitButton.getColor().a = 0f;
+		quitButton.addAction( sequence( fadeIn( 0.25f ) ) );
 		
-		table.add(mainMenuButton).expandX().fillX().right();
+		table.add(quitButton).expandX().fillX().left();
+		
+		TextButton resumeButton = new TextButton("Resume", skin);
+		resumeButton.setListener(new TextButtonListener() {
+			
+			@Override
+			public void onTap(TextButton button) {
+				gamePauseLabel.remove();
+				table.clear();
+				table.remove();
+				game.resumeGame();
+			}
+			
+			@Override
+			public void onLongPress(TextButton button) {
+				
+			}
+		});
+		resumeButton.getColor().a = 0f;
+		resumeButton.addAction( sequence( fadeIn( 0.25f ) ) );
+		
+		table.add(resumeButton).expandX().fillX().right();
 		
 		stage.addActor(table);
 	}

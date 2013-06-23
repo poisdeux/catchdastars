@@ -2,7 +2,9 @@ package com.strategames.catchdastars.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.Game;
 
@@ -10,14 +12,17 @@ import com.strategames.catchdastars.Game;
 public class LevelScreen extends AbstractScreen implements InputProcessor
 {	
 	private Game game;
+	private InputMultiplexer multiplexer;
 	
-	public LevelScreen(
-			Game game )
+	public LevelScreen(Screen screen, Game game )
 	{
-		super(game);
+		super(screen, game);
 		this.game = game;
 		
-		Gdx.input.setInputProcessor(this);
+		this.multiplexer = new InputMultiplexer();
+		this.multiplexer.addProcessor(this);
+		Gdx.input.setInputProcessor(this.multiplexer);
+		
 		Gdx.input.setCatchBackKey(true);
 	}
 
@@ -26,7 +31,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 		// TODO Auto-generated method stub
 		super.hide();
 		
-		this.game.disposeLevel();
+//		this.game.disposeLevel();
 	}
 	
 	@Override
@@ -37,6 +42,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.multiplexer.addProcessor(stage);
 	}
 	
 	@Override
@@ -52,18 +58,18 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			getGame().setScreen(new MainMenuScreen(getGame()));
-			return true;
-		}
+		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return true;
+		if( ( keycode == Keys.BACK ) ||
+				( keycode == Keys.ESCAPE ) ) {
+			getGame().pauseGame();
+			return true;
+		}
+		return false;
 	}
 
 	@Override

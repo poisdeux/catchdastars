@@ -185,10 +185,10 @@ public class Icecube extends GameObject {
 		if (maxImpulse > 400.0f)
 		{
 			//Get colliding fixture for this object
-			if(((GameObject) contact.getFixtureA().getBody().getUserData()) == gameObject) {
-				this.breakOnFixture = contact.getFixtureB();
-			} else {
+			if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
 				this.breakOnFixture = contact.getFixtureA();
+			} else {
+				this.breakOnFixture = contact.getFixtureB();
 			}
 		}
 	}
@@ -234,10 +234,11 @@ public class Icecube extends GameObject {
 		}
 		
 		Vector2 v = super.body.getPosition();
-//		Gdx.app.log("Icecube", "splitObject: v="+v+", angle="+getRotation());
 		
 		String partName = (String) breakOnFixture.getUserData();
 		Game game = getGame();
+		
+		Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture+", partName="+partName);
 		
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();

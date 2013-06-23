@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -23,8 +24,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	private int lastLevelNumber;
 	private Table table;
 	
-	public LevelEditorMenuScreen(Game game) {
-		super(game);
+	public LevelEditorMenuScreen(Screen screen, Game game) {
+		super(screen, game);
 
 		this.skin = getSkin();
 	}
@@ -78,7 +79,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		mainMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new MainMenuScreen(getGame()));
+				getGame().setScreen(new MainMenuScreen(null, getGame()));
 			}
 		});
 		this.table.add( mainMenu ).fillX().expand().bottom();
@@ -101,7 +102,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 			return;
 		}
 		Game game = getGame();
-		AbstractScreen screen = new LevelEditorScreen(game);
+		AbstractScreen screen = new LevelEditorScreen(this, game);
 		game.setScreen(new LoadingScreen(screen, game, ((Level) tag).getLevelNumber()));
 	}
 
