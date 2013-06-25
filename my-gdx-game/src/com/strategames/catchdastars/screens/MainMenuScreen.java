@@ -74,12 +74,19 @@ public class MainMenuScreen extends AbstractScreen {
 		table.add( button ).uniform().fill();
 
 		stage.addActor(table);
-		Gdx.input.setInputProcessor( stage );
+//		Gdx.input.setInputProcessor( stage );
 	}
 	
 	@Override
 	protected void setupActors(Stage stage) {
 		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
 

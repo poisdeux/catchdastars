@@ -3,8 +3,8 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -21,7 +21,7 @@ import com.strategames.ui.Dialog;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
 
-public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface, InputProcessor {
+public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface {
 
 	private Vector2 longPressPosition;
 	private Vector2 dragOffset;
@@ -30,7 +30,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
-
+	private InputMultiplexer gmultiplexer;
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -84,19 +85,26 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		Gdx.input.setCatchBackKey(true);
 		
-		getMultiplexer().addProcessor(new GestureDetector(this));
+		this.gmultiplexer = new InputMultiplexer();
+		this.gmultiplexer.addProcessor(new GestureDetector(this));
+		this.gmultiplexer.addProcessor(this);
+		Gdx.input.setInputProcessor(this.gmultiplexer);
+
+//		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-		getMultiplexer().addProcessor(stage);
+//		getMultiplexer().addProcessor(stage);
+		this.gmultiplexer.addProcessor(stage);
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
-		getMultiplexer().addProcessor(stage);
-
+//		getMultiplexer().addProcessor(stage);
+		this.gmultiplexer.addProcessor(stage);
+		
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
 			deselectGameObject((GameObject) actor);
@@ -112,7 +120,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
-	public boolean touchDown(float x, float y, int pointer, int button) {
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		Gdx.app.log("LevelEditorScreen", "touchDown int");
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
@@ -120,13 +129,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.previousZoomDistance = 0f; // reset zoom distance
 		this.state = States.NONE;
 
-		Vector2 touchPosition = new Vector2(x, y);
+		Vector2 touchPosition = new Vector2(screenX, screenY);
 
 		Stage stage = getStageUIElements();
 		stage.screenToStageCoordinates(touchPosition);
 		this.uiElementHit = stage.hit(touchPosition.x, touchPosition.y, false);
 
-		touchPosition.set(x, y);   //reset vector
+		touchPosition.set(screenX, screenY);   //reset vector
 		stage = getStageActors();
 		stage.screenToStageCoordinates(touchPosition);
 		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
@@ -137,8 +146,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.actorHit = actor;
 			Vector2 v = new Vector2(this.actorHit.getX(), this.actorHit.getY());
 			stage.stageToScreenCoordinates(v);
-			this.dragOffset.x = x - v.x;
-			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - y); //Touch event coordinates are y-down coordinated
+			this.dragOffset.x = screenX - v.x;
+			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - screenY); //Touch event coordinates are y-down coordinated
 		} else if( this.uiElementHit == null ) { // empty space selected
 			deselectGameObject((GameObject) this.actorHit);
 			this.actorHit = null;
@@ -147,6 +156,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		return false;
 	}
 
+	@Override
+	public boolean touchDown(float x, float y, int pointer, int button) {
+		Gdx.app.log("LevelEditorScreen", "touchDown float");
+		return false;
+	}
+	
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		if( ( this.state == States.DRAG ) || 

@@ -87,7 +87,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		this.table.row();
 		
 		stage.addActor(this.table);
-		Gdx.input.setInputProcessor( stage );
+//		Gdx.input.setInputProcessor( stage );
 	}
 
 	@Override
@@ -186,5 +186,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 			levelButtonsTable.add(button).expand();
 			levelButtonsTable.row();
 		}
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

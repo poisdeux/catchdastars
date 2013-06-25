@@ -21,6 +21,7 @@ public class SplashScreen extends AbstractScreen {
 
 	private AssetManager assetManager;
 	private boolean finishedSetupAssets = false;
+	private Image splashImage;
 
 	public SplashScreen(Screen screen, Game game) {
 		super(screen, game);
@@ -29,9 +30,7 @@ public class SplashScreen extends AbstractScreen {
 
 //		Gdx.input.setInputProcessor(this);
 	}
-
-	private Image splashImage;
-
+	
 	@Override
 	protected void setupActors(Stage stage) {
 
@@ -89,5 +88,11 @@ public class SplashScreen extends AbstractScreen {
 	{
 		super.dispose();
 		this.splashImage.remove();
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

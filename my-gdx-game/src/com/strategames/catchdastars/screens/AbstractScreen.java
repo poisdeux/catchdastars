@@ -40,8 +40,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(this.stageUIActors);
 		this.multiplexer.addProcessor(this);
+		this.multiplexer.addProcessor(this.stageUIActors);
 		Gdx.input.setInputProcessor(this.multiplexer);
 	}
 
@@ -165,6 +165,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		Gdx.app.log("AbstractScreen", "touchDown int");
 		return false;
 	}
 
