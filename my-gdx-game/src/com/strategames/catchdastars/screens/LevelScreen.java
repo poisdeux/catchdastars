@@ -3,7 +3,6 @@ package com.strategames.catchdastars.screens;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.Game;
 
@@ -13,9 +12,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	private Game game;
 	private InputMultiplexer multiplexer;
 	
-	public LevelScreen(Screen screen, Game game )
-	{
-		super(screen, game);
+	public LevelScreen(Game game ) {
+		super(game);
 		this.game = game;
 	}
 
@@ -56,12 +54,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 			getGame().pauseGame();
 			return true;
 		}
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

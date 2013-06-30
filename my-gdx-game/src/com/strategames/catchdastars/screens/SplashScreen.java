@@ -7,7 +7,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -23,8 +22,8 @@ public class SplashScreen extends AbstractScreen {
 	private boolean finishedSetupAssets = false;
 	private Image splashImage;
 
-	public SplashScreen(Screen screen, Game game) {
-		super(screen, game);
+	public SplashScreen(Game game) {
+		super(game);
 
 		this.assetManager = getGame().getManager();
 
@@ -75,7 +74,7 @@ public class SplashScreen extends AbstractScreen {
 						@Override
 						public boolean act(float delta) {
 							Game game = getGame();
-							game.setScreen(new MainMenuScreen(null, game));
+							game.setScreen(new MainMenuScreen(game));
 							return true;
 						}
 					}));
@@ -89,7 +88,7 @@ public class SplashScreen extends AbstractScreen {
 		super.dispose();
 		this.splashImage.remove();
 	}
-
+	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub

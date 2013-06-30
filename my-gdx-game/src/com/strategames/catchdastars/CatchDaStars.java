@@ -3,7 +3,6 @@ package com.strategames.catchdastars;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -316,16 +315,6 @@ public class CatchDaStars extends Game {
 		}
 	}
 	
-	@Override
-	public boolean handleKeyEvent(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			if( this.gameState == GAME_STATE_RUNNING ) {
-				pauseGame();
-				return true;
-			}
-		}
-		return false;
-	}
+	
 }
 

@@ -65,7 +65,7 @@ public class LevelFailDialog extends Dialog {
 			
 			@Override
 			public void onTap(TextButton button) {
-				game.setScreen(new MainMenuScreen(null, game));
+				game.setScreen(new MainMenuScreen(game));
 			}
 			
 			@Override

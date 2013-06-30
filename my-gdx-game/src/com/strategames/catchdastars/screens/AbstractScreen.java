@@ -27,11 +27,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected Skin skin;
 	protected final Stage stageActors;
 	protected final Stage stageUIActors;
-	private Screen previousScreen;
 
-	public AbstractScreen(Screen screen, Game game)
+	public AbstractScreen(Game game)
 	{
-		this.previousScreen = screen;
 		this.game = game;
 
 		this.stageActors = new Stage();
@@ -40,11 +38,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(this);
 		this.multiplexer.addProcessor(this.stageUIActors);
-		Gdx.input.setInputProcessor(this.multiplexer);
+		this.multiplexer.addProcessor(this);
 	}
-
+	
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
@@ -58,7 +55,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	public InputMultiplexer getMultiplexer() {
-		return multiplexer;
+		return this.multiplexer;
 	}
 
 	protected Game getGame() {
@@ -104,6 +101,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{
+		Gdx.input.setInputProcessor(this.multiplexer);
 		setupUI(this.stageUIActors);
 		setupActors(this.stageActors);
 	}
@@ -158,54 +156,71 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		dialog.show(this.stageUIActors);
 	}
 
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("AbstractScreen", "touchDown int");
-		return false;
+		Gdx.app.log("AbstractScreen", "touchDown");
+		return true;
 	}
+	
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		Gdx.app.log("AbstractScreen", "touchUp");
+		return false;
+	}
+	
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		Gdx.app.log("AbstractScreen", "touchDragged");
+		return false;
+	}
+	
+	@Override
+	public boolean keyDown(int keycode) {
+		Gdx.app.log("AbstractScreen", "keyDown");
+		return false;
+	}
+	
+	@Override
+	public boolean keyUp(int keycode) {
+		Gdx.app.log("AbstractScreen", "keyUp");
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
+			if ( handleBackNavigation() ) {
+				return true;
+			}
+		}
+		return this.game.handleKeyEvent(keycode);
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		Gdx.app.log("AbstractScreen", "keyTyped");
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+//		Gdx.app.log("AbstractScreen", "mouseMoved");
 		return false;
 	}
-
+	
 	@Override
 	public boolean scrolled(int amount) {
+		Gdx.app.log("AbstractScreen", "scrolled");
 		return false;
 	}
-
-	@Override
-	public boolean keyDown(int keycode) {
+	
+	/**
+	 * Implement to override default back navigation handling
+	 * by Game class
+	 * @return true if handled, false otherwise
+	 */
+	protected boolean handleBackNavigation() {
 		return false;
 	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			if( previousScreen != null ) {
-				getGame().setScreen(previousScreen);
-				return true;
-			} 
-		}
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
+	
 	/**
 	 * Called to create the stage for the UI elements.
 	 * <br>

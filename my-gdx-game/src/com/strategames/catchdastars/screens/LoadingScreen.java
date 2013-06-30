@@ -15,7 +15,7 @@ import com.strategames.catchdastars.Game;
 
 public class LoadingScreen extends AbstractScreen {
 
-	private Screen screen;
+	private Screen screenToLoad;
 	
 	private AssetManager assetManager;
 	private boolean animationFinished = false;
@@ -27,15 +27,15 @@ public class LoadingScreen extends AbstractScreen {
 	
 	/**
 	 * 
-	 * @param screen Screen that should be started after loading assets
+	 * @param screenToLoad Screen that should be started after loading assets
 	 * @param game
 	 * @param levelNumber
 	 */
-	public LoadingScreen(Screen screen, Game game, int levelNumber) {
-		super(screen, game);
+	public LoadingScreen(Screen screenToLoad, Game game, int levelNumber) {
+		super(game);
 
 		this.assetManager = getGame().getManager();
-		this.screen = screen;
+		this.screenToLoad = screenToLoad;
 		
 		game.setLevelNumber(levelNumber);
 	}
@@ -110,7 +110,7 @@ public class LoadingScreen extends AbstractScreen {
 			
 			Game game = getGame();
 			game.loadLevel();
-			game.setScreen(screen);
+			game.setScreen(this.screenToLoad);
 		} 
 	}
 
@@ -123,11 +123,5 @@ public class LoadingScreen extends AbstractScreen {
 		this.dotImage1.remove();
 		this.dotImage2.remove();
 		this.dotImage3.remove();
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

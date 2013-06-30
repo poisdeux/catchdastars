@@ -3,10 +3,6 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -30,7 +26,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
-	private InputMultiplexer gmultiplexer;
 	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
@@ -71,9 +66,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private Tap tap = new Tap();
 
-	public LevelEditorScreen(Screen screen, Game game) {
-		super(screen, game);
-
+	public LevelEditorScreen(Game game) {
+		super(game);
+		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
+		
 		this.game = game;
 
 		this.testGame = false;
@@ -82,28 +78,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.dragOffset = new Vector2();
 		
 		this.actorHit = null;
-
-		Gdx.input.setCatchBackKey(true);
-		
-		this.gmultiplexer = new InputMultiplexer();
-		this.gmultiplexer.addProcessor(new GestureDetector(this));
-		this.gmultiplexer.addProcessor(this);
-		Gdx.input.setInputProcessor(this.gmultiplexer);
-
-//		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-//		getMultiplexer().addProcessor(stage);
-		this.gmultiplexer.addProcessor(stage);
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
-//		getMultiplexer().addProcessor(stage);
-		this.gmultiplexer.addProcessor(stage);
+		getMultiplexer().addProcessor(stage);
 		
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
@@ -112,6 +96,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	@Override
+	protected boolean handleBackNavigation() {
+		saveLevel();
+		getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+		return true;
+	}
+	
+	@Override
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
@@ -119,9 +110,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 	}
 
+	
 	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown int");
+	public boolean touchDown(float x, float y, int pointer, int button) {
+		Gdx.app.log("LevelEditorScreen", "touchDown float");
+		
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
@@ -129,13 +122,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.previousZoomDistance = 0f; // reset zoom distance
 		this.state = States.NONE;
 
-		Vector2 touchPosition = new Vector2(screenX, screenY);
+		Vector2 touchPosition = new Vector2(x, y);
 
 		Stage stage = getStageUIElements();
 		stage.screenToStageCoordinates(touchPosition);
 		this.uiElementHit = stage.hit(touchPosition.x, touchPosition.y, false);
 
-		touchPosition.set(screenX, screenY);   //reset vector
+		touchPosition.set(x, y);   //reset vector
 		stage = getStageActors();
 		stage.screenToStageCoordinates(touchPosition);
 		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
@@ -146,20 +139,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.actorHit = actor;
 			Vector2 v = new Vector2(this.actorHit.getX(), this.actorHit.getY());
 			stage.stageToScreenCoordinates(v);
-			this.dragOffset.x = screenX - v.x;
-			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - screenY); //Touch event coordinates are y-down coordinated
+			this.dragOffset.x = x - v.x;
+			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - y); //Touch event coordinates are y-down coordinated
 		} else if( this.uiElementHit == null ) { // empty space selected
 			deselectGameObject((GameObject) this.actorHit);
 			this.actorHit = null;
 		}
-
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown float");
-		return false;
+		
+		return true;
 	}
 	
 	@Override
@@ -277,7 +264,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						saveLevel();
-						getGame().setScreen(new LevelEditorMenuScreen(LevelEditorScreen.this, getGame()));
+						getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 					}
 				});
 				dialog.show(getStageUIElements());
@@ -328,19 +315,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
 			Vector2 pointer1, Vector2 pointer2) {
 		return true;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			if( ! this.testGame ) { //do not save in game mode
-				saveLevel();
-			}
-			getGame().setScreen(new LevelEditorMenuScreen(this, getGame()));
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -409,3 +383,5 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		gameObject.moveTo(rectangle.x, rectangle.y);
 	}
 }
+
+

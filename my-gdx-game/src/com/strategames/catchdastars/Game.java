@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -21,7 +22,8 @@ import com.strategames.catchdastars.utils.Textures;
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
-	protected int gameState = GAME_STATE_RUNNING;
+	public final int GAME_STATE_MENU = 2;
+	protected int gameState = GAME_STATE_MENU;
 	
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
@@ -41,7 +43,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private Level level; 
 	
 	private World world;
-
+	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
@@ -50,10 +52,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
-
+	
 	@Override
 	public void create() {
-		setScreen(new SplashScreen(null, this));
+		setScreen(new SplashScreen(this));
 	}
 
 	@Override
@@ -239,6 +241,22 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	/**
+	 * Called when a key was pressed
+	 * @param keycode one of the constants in Input.Keys
+	 * @return whether the key was processed
+	 */
+	public boolean handleKeyEvent(int keycode) {
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
+			if( this.gameState == GAME_STATE_RUNNING ) {
+				pauseGame();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
 	 */
@@ -247,11 +265,4 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	abstract public void setupStage(Stage stage);
 
 	abstract public void reset();
-	
-	/**
-	 * Called when a key was pressed
-	 * @param keycode one of the constants in Input.Keys
-	 * @return whether the key was processed
-	 */
-	abstract public boolean handleKeyEvent(int keycode);
 }

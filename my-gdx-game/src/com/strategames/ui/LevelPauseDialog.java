@@ -45,7 +45,7 @@ public class LevelPauseDialog extends Dialog {
 			public void onTap(TextButton button) {
 				table.clear();
 				table.remove();
-				game.setScreen(new MainMenuScreen(null, game));
+				game.setScreen(new MainMenuScreen(game));
 			}
 			
 			@Override

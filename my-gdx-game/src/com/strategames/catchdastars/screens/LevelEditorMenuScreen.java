@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -24,8 +23,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	private int lastLevelNumber;
 	private Table table;
 	
-	public LevelEditorMenuScreen(Screen screen, Game game) {
-		super(screen, game);
+	public LevelEditorMenuScreen(Game game) {
+		super(game);
 
 		this.skin = getSkin();
 	}
@@ -79,7 +78,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		mainMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new MainMenuScreen(null, getGame()));
+				getGame().setScreen(new MainMenuScreen(getGame()));
 			}
 		});
 		this.table.add( mainMenu ).fillX().expand().bottom();
@@ -87,7 +86,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 		this.table.row();
 		
 		stage.addActor(this.table);
-//		Gdx.input.setInputProcessor( stage );
 	}
 
 	@Override
@@ -96,14 +94,21 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	}
 	
 	@Override
+	protected boolean handleBackNavigation() {
+		getGame().setScreen(new MainMenuScreen(getGame()));
+		return true;
+	}
+	
+	
+	@Override
 	public void onTap(TextButton button) {
 		Object tag = button.getTag();
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
 		Game game = getGame();
-		AbstractScreen screen = new LevelEditorScreen(this, game);
-		game.setScreen(new LoadingScreen(screen, game, ((Level) tag).getLevelNumber()));
+		LoadingScreen screen = new LoadingScreen(new LevelEditorScreen(game), game, ((Level) tag).getLevelNumber());
+		game.setScreen(screen);
 	}
 
 	@Override
@@ -186,11 +191,5 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 			levelButtonsTable.add(button).expand();
 			levelButtonsTable.row();
 		}
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
