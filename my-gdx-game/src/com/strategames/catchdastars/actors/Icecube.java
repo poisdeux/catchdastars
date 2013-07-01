@@ -84,8 +84,6 @@ public class Icecube extends GameObject {
 	Body setupBox2D() {
 		World world = getWorld();
 
-//		Gdx.app.log("Icecube", "draw: getX()="+getX()+", getY()="+getY()+", angle="+getRotation());
-		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
 		bd.angle = getRotation() * MathUtils.degreesToRadians;
@@ -112,7 +110,6 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		setRotation(rotation);
-//		Gdx.app.log("Icecube", "draw: v="+v);
 		for(int i = 0; i < this.partsSize; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -233,12 +230,15 @@ public class Icecube extends GameObject {
 			return;
 		}
 		
+		String partName = (String) breakOnFixture.getUserData();
+		if( partName == null ) {
+			Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture);
+			return;
+		}
+		
 		Vector2 v = super.body.getPosition();
 		
-		String partName = (String) breakOnFixture.getUserData();
 		Game game = getGame();
-		
-		Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture+", partName="+partName);
 		
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();

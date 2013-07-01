@@ -1,7 +1,6 @@
 package com.strategames.catchdastars.screens;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.Game;
@@ -10,16 +9,15 @@ import com.strategames.catchdastars.Game;
 public class LevelScreen extends AbstractScreen implements InputProcessor
 {	
 	private Game game;
-	private InputMultiplexer multiplexer;
 	
 	public LevelScreen(Game game ) {
 		super(game);
 		this.game = game;
+		game.startGame();
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		super.hide();
 		
 //		this.game.disposeLevel();
@@ -33,7 +31,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.multiplexer.addProcessor(stage);
 	}
 	
 	@Override

@@ -160,7 +160,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		Gdx.app.log("AbstractScreen", "touchDown");
-		return true;
+		return false;
 	}
 	
 

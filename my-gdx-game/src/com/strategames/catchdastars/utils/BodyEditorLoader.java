@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -24,6 +25,7 @@ import com.badlogic.gdx.utils.OrderedMap;
  * @author Aurelien Ribon | http://www.aurelienribon.com
  * 
  * Martijn Brekhof: Updated to support breaking objects 
+ * TODO: create list of fixtures in advance to increase performance when recreating objects
  */
 public class BodyEditorLoader {
 
@@ -97,7 +99,6 @@ public class BodyEditorLoader {
                         fd.shape = polygonShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
                         fixture.setUserData(name); // Added to support breakable objects
-                        
                         for (int ii=0, nn=vertices.length; ii<nn; ii++) {
                                 free(vertices[ii]);
                         }
@@ -113,7 +114,6 @@ public class BodyEditorLoader {
                         fd.shape = circleShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
                         fixture.setUserData(name); // Added to support breakable objects
-                        
                         free(center);
                 }
         }

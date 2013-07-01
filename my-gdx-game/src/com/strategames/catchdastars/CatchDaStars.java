@@ -78,7 +78,7 @@ public class CatchDaStars extends Game {
 			this.world.setGravity(gravityVector);
 		}
 
-		this.debugRenderer.render(world, this.camera.combined);
+//		this.debugRenderer.render(world, this.camera.combined);
 		
 		super.update(delta, stage);
 	}

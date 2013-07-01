@@ -94,13 +94,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	}
 	
 	@Override
-	protected boolean handleBackNavigation() {
-		getGame().setScreen(new MainMenuScreen(getGame()));
-		return true;
-	}
-	
-	
-	@Override
 	public void onTap(TextButton button) {
 		Object tag = button.getTag();
 		if( ! (tag instanceof Level) ) {

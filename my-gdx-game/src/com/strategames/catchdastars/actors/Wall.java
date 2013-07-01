@@ -155,7 +155,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			}
 		}
 		
-		drawBoundingBox(batch);
+//		drawBoundingBox(batch);
 	}
 
 	@Override

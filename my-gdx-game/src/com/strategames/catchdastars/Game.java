@@ -22,8 +22,8 @@ import com.strategames.catchdastars.utils.Textures;
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
-	public final int GAME_STATE_MENU = 2;
-	protected int gameState = GAME_STATE_MENU;
+	public final int GAME_STATE_STOP = 2;
+	protected int gameState = GAME_STATE_STOP;
 	
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
@@ -82,11 +82,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 
 	public void pauseGame() {
-		setGameState(GAME_STATE_PAUSED);
+		this.gameState = GAME_STATE_PAUSED;
 	}
 	
 	public void resumeGame() {
-		setGameState(GAME_STATE_RUNNING);
+		this.gameState = GAME_STATE_RUNNING;
+	}
+	
+	public void startGame() {
+		this.gameState = GAME_STATE_RUNNING;
+	}
+	
+	public void stopGame() {
+		this.gameState = GAME_STATE_STOP;
 	}
 	
 	@Override
@@ -95,10 +103,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		super.dispose();
 		Sounds.dispose(getManager());
 		Textures.dispose(getManager());
-	}
-
-	public void setGameState(int gameState) {
-		this.gameState = gameState;
 	}
 	
 	public int getGameState() {

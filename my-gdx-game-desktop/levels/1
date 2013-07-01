@@ -1,1 +1,1 @@
-{gameObjects:[],number:1,name:test}
+{gameObjects:[{class:com.strategames.catchdastars.actors.Icecube,Icecube:{x:9.14,y:6.8,parts:all}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:9.16,y:5.2000003,type:HORIZONTAL,length:5.12}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:4.88,y:2.8,type:HORIZONTAL,length:5.7599998}}],number:1,name:test}
