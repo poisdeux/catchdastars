@@ -23,8 +23,18 @@ import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
+/**
+ * TODO Move sound playing from this object to CatchDaStars.java. 
+ * This makes it more efficient and allows us to play better samples for multiple rocks colliding.
+ * We can use a static variable to count the amount of rocks hitting and another static variable 
+ * to count the number of rocks breaking. At the end of the update step we can play the appropriate
+ * sound based on the number of rocks hitting and breaking
+ * @author martijn brekhof
+ *
+ */
 public class Icecube extends GameObject {
 	private final static float WIDTH = Game.convertWorldToBox(32f); 
 	private static BodyEditorLoader loader;
@@ -35,6 +45,19 @@ public class Icecube extends GameObject {
 	private int partsSize;
 
 	private Fixture breakOnFixture;
+	
+	private float maxVolume = 0.5f;
+	/**
+	 * New velocity is calculated as follows by Box2D
+	 * 
+	 * velocity += Game.UPDATE_FREQUENCY_SECONDS * (Game.GRAVITY + ((1f/this.balloon.getMass()) * (this.upwardLift * Game.GRAVITY)));
+	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
+	 * 
+	 * Where bd.linearDamping is set in setupBox2D()
+	 * Following value of 28.77593 was determined empirically by checking maximum speed of icecube
+	 * in game
+	 */
+	private final float maxVelocitySquared = 90f * 90f * (1/maxVolume);
 	
 	public Icecube() {
 		super();
@@ -179,14 +202,18 @@ public class Icecube extends GameObject {
 			}
 		}
 
-		if (maxImpulse > 400.0f)
-		{
+		if( maxImpulse < 2025 ) { // break if speed is half maximum speed
+			if ( maxImpulse > 200 ) {
+				Sounds.rockHit.play(maxImpulse / maxVelocitySquared);
+			}
+		} else {
 			//Get colliding fixture for this object
 			if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
 				this.breakOnFixture = contact.getFixtureA();
 			} else {
 				this.breakOnFixture = contact.getFixtureB();
 			}
+			Sounds.rockBreak.play(maxImpulse / maxVelocitySquared);
 		}
 	}
 

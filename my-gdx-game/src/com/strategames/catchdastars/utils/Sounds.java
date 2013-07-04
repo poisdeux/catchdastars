@@ -16,6 +16,8 @@ public class Sounds {
 	public static Sound drawChalkLine;
 	public static Sound drawChalkLineShort1;
 	public static Sound drawChalkLineShort2;
+	public static Sound rockHit;
+	public static Sound rockBreak;
 	
 	/**
 	 * Loads assets asynchronous
@@ -32,6 +34,8 @@ public class Sounds {
 		manager.load("sounds/draw_line.ogg", Sound.class);
 		manager.load("sounds/draw_short_line.ogg", Sound.class);
 		manager.load("sounds/draw_short_line_2.ogg", Sound.class);
+		manager.load("sounds/rock_hit.ogg", Sound.class);
+		manager.load("sounds/rock_hit_break1.ogg", Sound.class);
 	}
 	
 	/**
@@ -49,6 +53,8 @@ public class Sounds {
 		manager.unload("sounds/draw_line.ogg");
 		manager.unload("sounds/draw_short_line.ogg");
 		manager.unload("sounds/draw_short_line_2.ogg");
+		manager.unload("sounds/rock_hit.ogg");
+		manager.unload("sounds/rock_hit_break1.ogg");
 	}
 	
 	/**
@@ -69,6 +75,8 @@ public class Sounds {
 		drawChalkLine = manager.get("sounds/draw_line.ogg", Sound.class);
 		drawChalkLineShort1 = manager.get("sounds/draw_short_line.ogg", Sound.class);
 		drawChalkLineShort2 = manager.get("sounds/draw_short_line_2.ogg", Sound.class);
+		rockHit = manager.get("sounds/rock_hit.ogg", Sound.class);
+		rockBreak = manager.get("sounds/rock_hit_break1.ogg", Sound.class);
 	}
 	
 	public static Sound getSoundForIncrement(int increment) {
