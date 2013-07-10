@@ -25,6 +25,7 @@ import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.LevelCompleteDialog;
 import com.strategames.ui.LevelFailDialog;
@@ -69,7 +70,7 @@ public class CatchDaStars extends Game {
 		super.pauseGame();
 		showLevelPausedDialog();
 	}
-	
+
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
@@ -78,9 +79,22 @@ public class CatchDaStars extends Game {
 			this.world.setGravity(gravityVector);
 		}
 
-//		this.debugRenderer.render(world, this.camera.combined);
-		
+		//		this.debugRenderer.render(world, this.camera.combined);
+
 		super.update(delta, stage);
+
+		if( super.amountOfRocksHit > 0 ) {
+			Sounds.playSoundRocksRolling(super.amountOfRocksHit, 
+					super.rocksHitImpulse / (Icecube.maxVelocitySquared * super.amountOfRocksHit));
+			super.amountOfRocksHit = 0;
+			super.rocksHitImpulse = 0;
+		}
+
+		if( super.amountOfRocksBreak > 0 ) {
+			Sounds.rockBreak.play(super.rocksBreakImpulse / (Icecube.maxVelocitySquared * super.amountOfRocksBreak));
+			super.amountOfRocksBreak = 0;
+			super.rocksBreakImpulse = 0;
+		}
 	}
 
 	@Override
@@ -126,10 +140,10 @@ public class CatchDaStars extends Game {
 
 		((AbstractScreen) getScreen()).showDialog(levelCompleteDialog);
 	}
-	
+
 	private void showLevelPausedDialog() {
 		darkenActors(0.4f);
-		
+
 		LevelPauseDialog levelPausedDialog = new LevelPauseDialog(this, ((AbstractScreen) getScreen()).getSkin());
 
 		((AbstractScreen) getScreen()).showDialog(levelPausedDialog);
@@ -144,7 +158,7 @@ public class CatchDaStars extends Game {
 			actor.setColor(color.r, color.g, color.b, factor);
 		}
 	}
-	
+
 	@Override
 	public ArrayList<GameObject> getAvailableGameObjects() {
 		if( this.availableGameObjects != null ) {
@@ -178,7 +192,7 @@ public class CatchDaStars extends Game {
 		Array<Actor> actors = this.stageActors.getActors();
 		for( Actor actor : actors ) {
 			GameObject gameObject = (GameObject) actor;
-//			gameObject.deleteBody();
+			//			gameObject.deleteBody();
 			deleteGameObject(gameObject);
 		}
 
@@ -314,7 +328,7 @@ public class CatchDaStars extends Game {
 			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
 		}
 	}
-	
-	
+
+
 }
 

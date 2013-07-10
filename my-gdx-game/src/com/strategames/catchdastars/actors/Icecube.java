@@ -46,7 +46,7 @@ public class Icecube extends GameObject {
 
 	private Fixture breakOnFixture;
 	
-	private float maxVolume = 0.5f;
+	private static float maxVolume = 0.5f;
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -57,7 +57,7 @@ public class Icecube extends GameObject {
 	 * Following value of 28.77593 was determined empirically by checking maximum speed of icecube
 	 * in game
 	 */
-	private final float maxVelocitySquared = 90f * 90f * (1/maxVolume);
+	public static float maxVelocitySquared = 90f * 90f * (1/maxVolume);
 	
 	public Icecube() {
 		super();
@@ -204,7 +204,7 @@ public class Icecube extends GameObject {
 
 		if( maxImpulse < 2025 ) { // break if speed is half maximum speed
 			if ( maxImpulse > 200 ) {
-				Sounds.rockHit.play(maxImpulse / maxVelocitySquared);
+				game.rockHit(maxImpulse);
 			}
 		} else {
 			//Get colliding fixture for this object
@@ -213,7 +213,7 @@ public class Icecube extends GameObject {
 			} else {
 				this.breakOnFixture = contact.getFixtureB();
 			}
-			Sounds.rockBreak.play(maxImpulse / maxVelocitySquared);
+			game.rockBreak(maxImpulse);
 		}
 	}
 

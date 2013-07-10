@@ -44,6 +44,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private World world;
 	
+	protected int amountOfRocksHit;
+	protected float rocksHitImpulse;
+	protected int amountOfRocksBreak;
+	protected float rocksBreakImpulse;
+	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
@@ -258,6 +263,22 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Call this when a rock hits a wall
+	 */
+	public void rockHit(float impulse) {
+		this.amountOfRocksHit++;
+		this.rocksHitImpulse += impulse;
+	}
+	
+	/**
+	 * Call this when a rock breaks
+	 */
+	public void rockBreak(float impulse) {
+		this.amountOfRocksBreak++;
+		this.rocksBreakImpulse += impulse;
 	}
 	
 	/**
