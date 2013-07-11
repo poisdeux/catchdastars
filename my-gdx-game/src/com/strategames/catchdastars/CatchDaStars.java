@@ -59,6 +59,8 @@ public class CatchDaStars extends Game {
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
 
+	private int delay;
+
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -82,19 +84,6 @@ public class CatchDaStars extends Game {
 		//		this.debugRenderer.render(world, this.camera.combined);
 
 		super.update(delta, stage);
-
-		if( super.amountOfRocksHit > 0 ) {
-			Sounds.playSoundRocksRolling(super.amountOfRocksHit, 
-					super.rocksHitImpulse / (Icecube.maxVelocitySquared * super.amountOfRocksHit));
-			super.amountOfRocksHit = 0;
-			super.rocksHitImpulse = 0;
-		}
-
-		if( super.amountOfRocksBreak > 0 ) {
-			Sounds.rockBreak.play(super.rocksBreakImpulse / (Icecube.maxVelocitySquared * super.amountOfRocksBreak));
-			super.amountOfRocksBreak = 0;
-			super.rocksBreakImpulse = 0;
-		}
 	}
 
 	@Override

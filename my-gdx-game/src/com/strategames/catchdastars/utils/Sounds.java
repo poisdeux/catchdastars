@@ -107,21 +107,18 @@ public class Sounds {
 	}
 
 	public static void playSoundRocksRolling(int amountOfRocks, float volume) {
+		long epoch = System.currentTimeMillis();
+		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
+			return;
+		}
+		prevPlayRocksRolling = epoch;
+
 		if( amountOfRocks > 10 ) {
-			long epoch = System.currentTimeMillis();
-			if( ( prevPlayRocksRolling + 5000 ) < epoch ) { //prevent playing sound too fast
-				Sounds.rocksRolling1.play(volume);
-				Sounds.rocksRolling2.play(volume);
-				Sounds.rocksRolling3.play(volume);
-				prevPlayRocksRolling = epoch;
-			}
-		} else if ( amountOfRocks > 2 ) {
-			long epoch = System.currentTimeMillis();
-			if( ( prevPlayRocksRolling + 5000 ) < epoch ) { //prevent playing sound too fast
-				Sounds.rocksRolling2.play(volume);
-				Sounds.rocksRolling3.play(volume);
-				prevPlayRocksRolling = epoch;
-			}
+			Sounds.rockHit.play(volume);
+			Sounds.rockBreak.play(volume);
+		} else if( amountOfRocks > 2 ) {
+			Sounds.rockHit.play(volume);
+			Sounds.rockBreak.play(volume);
 		} else {
 			Sounds.rockHit.play(volume);
 		}

@@ -45,8 +45,8 @@ public class Icecube extends GameObject {
 	private int partsSize;
 
 	private Fixture breakOnFixture;
-	
-	private static float maxVolume = 0.5f;
+
+	private static float maxVolume = 1f;
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -58,10 +58,10 @@ public class Icecube extends GameObject {
 	 * in game
 	 */
 	public static float maxVelocitySquared = 90f * 90f * (1/maxVolume);
-	
+
 	public Icecube() {
 		super();
-		
+
 		if( availableParts == null ) {
 			setupAvailableParts();
 		}
@@ -84,7 +84,7 @@ public class Icecube extends GameObject {
 		for( Part part : parts ) {
 			icecube.addPart(part);
 		}
-		
+
 		return icecube;
 	}
 
@@ -118,11 +118,13 @@ public class Icecube extends GameObject {
 		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixtureDef.friction = 0.2f;
 		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
-		
+
 		for(Part part : this.parts ) {
 			loader.attachFixture(body, part.getName(), fixtureDef, WIDTH);
 			part.setOrigin(loader.getOrigin(part.getName(), WIDTH).cpy());
 		}
+
+		body.setSleepingAllowed(false);
 
 		return body;
 	}
@@ -140,7 +142,7 @@ public class Icecube extends GameObject {
 			sprite.setRotation(rotation);
 			sprite.draw(batch, parentAlpha);
 		}
-		
+
 		if( this.breakOnFixture != null ) {
 			splitObject();
 		}
@@ -202,18 +204,20 @@ public class Icecube extends GameObject {
 			}
 		}
 
-		if( maxImpulse < 2025 ) { // break if speed is half maximum speed
-			if ( maxImpulse > 200 ) {
-				game.rockHit(maxImpulse);
-			}
-		} else {
-			//Get colliding fixture for this object
-			if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
-				this.breakOnFixture = contact.getFixtureA();
+		//		Gdx.app.log("Icecube", "handleCollisiong: maxVelocitySquared="+this.maxVelocitySquared+", maxImpulse="+maxImpulse);
+		if( maxImpulse > 500 ) { // prevent adding rocks hitting when they are lying on top of eachother
+//			game.rockHit(maxImpulse);
+			if( maxImpulse > 1000 ) { // break object
+				//Get colliding fixture for this object
+				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
+					this.breakOnFixture = contact.getFixtureA();
+				} else {
+					this.breakOnFixture = contact.getFixtureB();
+				}
+				Sounds.rockBreak.play(maxImpulse / maxVelocitySquared);
 			} else {
-				this.breakOnFixture = contact.getFixtureB();
+				Sounds.rockHit.play(maxImpulse / maxVelocitySquared);
 			}
-			game.rockBreak(maxImpulse);
 		}
 	}
 
@@ -256,24 +260,24 @@ public class Icecube extends GameObject {
 		if( this.partsSize <= 1 ) {
 			return;
 		}
-		
+
 		String partName = (String) breakOnFixture.getUserData();
 		if( partName == null ) {
 			Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture);
 			return;
 		}
-		
+
 		Vector2 v = super.body.getPosition();
-		
+
 		Game game = getGame();
-		
+
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
 		icecube1.addPart(availableParts.get(partName));
 		game.addGameObject(icecube1);
-		
+
 		// Create new object with pieces that are left
 		Icecube icecube2 = new Icecube();
 		icecube2.setPosition(v.x, v.y);
@@ -285,15 +289,15 @@ public class Icecube extends GameObject {
 			}
 		}
 		game.addGameObject(icecube2);
-		
+
 		game.deleteGameObject(this);
 	}
-	
+
 	private class Part {
 		String name;
 		Sprite sprite;
 		TextureRegion texture;
-		
+
 		public Part(String name, TextureRegion texture) {
 			this.name = name;
 			this.texture = texture;
@@ -314,7 +318,7 @@ public class Icecube extends GameObject {
 		public String getName() {
 			return name;
 		}
-		
+
 		public void setOrigin(Vector2 origin) {
 			if( sprite != null ) {
 				sprite.setOrigin(origin.x, origin.y);
