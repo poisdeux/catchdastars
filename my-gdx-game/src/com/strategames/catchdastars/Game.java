@@ -109,10 +109,20 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return gameState;
 	}
 	
+	/**
+	 * Use this to convert screen pixel sizes to Box2D sizes
+	 * @param x size in screen pixels
+	 * @return size in Box2D 
+	 */
 	static public float convertWorldToBox(float x) {
 		return x * WORLD_TO_BOX;
 	}
 	
+	/**
+	 * Use this to convert Box2D sizes to screen pixel sizes 
+	 * @param x size in Box2D
+	 * @return size in pixels
+	 */
 	static public float convertBoxToWorld(float x) {
 		return x * BOX_TO_WORLD;
 	}
@@ -206,6 +216,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		screen.getStageActors().addActor(object);
 	}
 
+	public ArrayList<GameObject> getGameObjects() {
+		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+		AbstractScreen screen = (AbstractScreen) getScreen();
+		for( Actor actor : screen.getStageActors().getActors() ) {
+			gameObjects.add((GameObject) actor);
+		}
+		return gameObjects;
+	}
+	
 	/**
 	 * Use this to add User interface elements that do not require collision detection nor physics
 	 * Example: score bar, buttons, background images/animations

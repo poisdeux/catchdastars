@@ -1,7 +1,5 @@
 package com.strategames.catchdastars.screens;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -17,6 +15,7 @@ import com.strategames.interfaces.DialogInterface;
 import com.strategames.ui.Dialog;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
+import com.strategames.ui.ToolsPickerDialog;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface {
 
@@ -243,13 +242,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 			if( ( this.actorHit == null ) ) {
 				GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-				dialog.setNeutralButton("Test", new OnClickListener() {
+				dialog.setNeutralButton("Tools", new OnClickListener() {
 
 					@Override
 					public void onClick(Dialog dialog, int which) {
-						getMultiplexer().removeProcessor(getStageActors());
-						testGame = true;
-						saveLevel();
+						ToolsPickerDialog tDialog = new ToolsPickerDialog(game, skin);
+						tDialog.show(getStageUIElements());
 						dialog.remove();
 					}
 				});
@@ -346,12 +344,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private void saveLevel() {
 		Game game = getGame();
 		Level level = game.getLevel();
-
-		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
-		for( Actor actor : getStageActors().getActors() ) {
-			gameObjects.add((GameObject) actor);
-		}
-		level.setGameObjects(gameObjects);
+		level.setGameObjects(game.getGameObjects());
 		level.save();
 	}
 

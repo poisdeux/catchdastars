@@ -156,14 +156,14 @@ public class CatchDaStars extends Game {
 
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
-		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.BLUE));
-		objects.add(Balloon.create(null, 0, 0, Balloon.ColorType.RED));
-		objects.add(Star.create(null, 0, 0, Star.ColorType.BLUE));
-		objects.add(Star.create(null, 0, 0, Star.ColorType.YELLOW));
-		objects.add(Star.create(null, 0, 0, Star.ColorType.RED));
-		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
-		objects.add(Wall.create(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
-		objects.add(Icecube.create(null, 0, 0));
+		objects.add(new Balloon(null, 0, 0, Balloon.ColorType.BLUE));
+		objects.add(new Balloon(null, 0, 0, Balloon.ColorType.RED));
+		objects.add(new Star(null, 0, 0, Star.ColorType.BLUE));
+		objects.add(new Star(null, 0, 0, Star.ColorType.YELLOW));
+		objects.add(new Star(null, 0, 0, Star.ColorType.RED));
+		objects.add(new Wall(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
+		objects.add(new Wall(null, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
+		objects.add(new Icecube(null, 0, 0));
 
 		this.availableGameObjects = objects;
 

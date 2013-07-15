@@ -36,6 +36,15 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public Wall() {
 		super();
 	}
+	
+	public Wall(Game game, float x, float y, float length, Orientation type) {
+		super();
+		setGame(game);
+		setPosition(x, y);
+		setType(type);
+		setup();
+		setLength(length);
+	}
 
 	@Override
 	public void setup() {
@@ -85,16 +94,24 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 
-	public static Wall create(Game game, float x, float y, float length, Orientation type) {
-		Wall wall = new Wall();
-		wall.setGame(game);
-		wall.setPosition(x, y);
-		wall.setType(type);
-		wall.setup();
-		wall.setLength(length);
-		return wall;
-	}
+//	public static Wall create(Game game, float x, float y, float length, Orientation type) {
+//		Wall wall = new Wall();
+//		wall.setGame(game);
+//		wall.setPosition(x, y);
+//		wall.setType(type);
+//		wall.setup();
+//		wall.setLength(length);
+//		return wall;
+//	}
 
+	/**
+	 * Returns the size increment for growing/shrinking this object
+	 * @return
+	 */
+	public float getStepSize() {
+		return stepSize;
+	}
+	
 	/**
 	 * Sets the length of this object. This can only be called after {@link #setup()} has been called.
 	 * @param length in Box2D
@@ -175,7 +192,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Wall.create(getGame(), 
+		GameObject object = new Wall(getGame(), 
 				getX(), 
 				getY(),
 				this.length,

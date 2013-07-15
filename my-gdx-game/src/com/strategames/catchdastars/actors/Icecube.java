@@ -73,19 +73,17 @@ public class Icecube extends GameObject {
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 
-	public static Icecube create(Game game, float x, float y) {
-		Icecube icecube = new Icecube();
-		icecube.setPosition(x, y);
-		icecube.setGame(game);
-		icecube.setup();
+	public Icecube(Game game, float x, float y) {
+		this();
+		setPosition(x, y);
+		setGame(game);
+		setup();
 
 		//Initial object contains all parts
 		Collection<Part> parts = availableParts.values();
 		for( Part part : parts ) {
-			icecube.addPart(part);
+			addPart(part);
 		}
-
-		return icecube;
 	}
 
 	@Override
@@ -156,7 +154,7 @@ public class Icecube extends GameObject {
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = Icecube.create(getGame(), 
+		GameObject object = new Icecube(getGame(), 
 				getX(), 
 				getY());
 		return object;

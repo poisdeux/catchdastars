@@ -61,8 +61,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 	
 	public GameObject(Game game) {
-		this.game = game;
-		this.world = game.getWorld();
+		setGame(game);
 		init();
 	}
 

@@ -56,15 +56,24 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		super();
 	}
 
-	public static Balloon create(Game game, float x, float y, ColorType type) {
-		Balloon balloon = new Balloon();
-		balloon.setGame(game);
-		balloon.setColorType(type);
-		balloon.setPosition(x, y);
-		balloon.setup();
-		balloon.setLiftFactor(DEFAULT_LIFTFACTOR);
-		return balloon;
+	public Balloon(Game game, float x, float y, ColorType type) {
+		super();
+		setGame(game);
+		setColorType(type);
+		setPosition(x, y);
+		setup();
+		setLiftFactor(DEFAULT_LIFTFACTOR);
 	}
+	
+//	public static Balloon create(Game game, float x, float y, ColorType type) {
+//		Balloon balloon = new Balloon();
+//		balloon.setGame(game);
+//		balloon.setColorType(type);
+//		balloon.setPosition(x, y);
+//		balloon.setup();
+//		balloon.setLiftFactor(DEFAULT_LIFTFACTOR);
+//		return balloon;
+//	}
 
 	public void setColorType(ColorType colorType) {
 		this.colorType = colorType;
@@ -161,7 +170,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	public GameObject createCopy() {
-		Balloon balloon = Balloon.create(getGame(), 
+		Balloon balloon = new Balloon(getGame(), 
 				getX(), 
 				getY(),
 				this.colorType);

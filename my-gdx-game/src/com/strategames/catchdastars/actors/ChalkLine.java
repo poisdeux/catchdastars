@@ -52,16 +52,24 @@ public class ChalkLine extends Image {
 		this.listener = null;
 	}
 
-
-	public static ChalkLine create(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
-		ChalkLine line = new ChalkLine();
-		line.setStart(xStart, yStart);
-		line.setEnd(xEnd, yEnd);
-		line.setDuration(milliseconds);
-		line.setListener(listener);
-		line.init();
-		return line;
+	public ChalkLine(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
+		this();
+		setStart(xStart, yStart);
+		setEnd(xEnd, yEnd);
+		setDuration(milliseconds);
+		setListener(listener);
+		init();
 	}
+	
+//	public static ChalkLine create(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
+//		ChalkLine line = new ChalkLine();
+//		line.setStart(xStart, yStart);
+//		line.setEnd(xEnd, yEnd);
+//		line.setDuration(milliseconds);
+//		line.setListener(listener);
+//		line.init();
+//		return line;
+//	}
 
 	public void setListener(ChalkLineAnimationListener listener) {
 		this.listener = listener;

@@ -156,7 +156,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		case 1:
 			this.animPosition.y -= 2 * padding;
 			this.animPosition.x = 50f;
-			ChalkLine line = ChalkLine.create(this.animPosition.x, 
+			ChalkLine line = new ChalkLine(this.animPosition.x, 
 					this.animPosition.y, 
 					350f, 
 					this.animPosition.y, 420, LevelCompleteDialog.this);
@@ -166,7 +166,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 			break;
 		case 2:
 			this.animPosition.x = 350f + (this.padding * 2);
-			line = ChalkLine.create(this.animPosition.x, this.animPosition.y, 
+			line = new ChalkLine(this.animPosition.x, this.animPosition.y, 
 					this.animPosition.x + 50f, this.animPosition.y, 220, this);
 			this.stage.addActor(line);
 			Sounds.drawChalkLineShort2.play();
@@ -174,7 +174,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 			break;
 		case 3:
 			this.animPosition.x += 25f;
-			line = ChalkLine.create(this.animPosition.x, this.animPosition.y + 25f, 
+			line = new ChalkLine(this.animPosition.x, this.animPosition.y + 25f, 
 					this.animPosition.x, this.animPosition.y - 25f, 210, this);
 			this.stage.addActor(line);
 			Sounds.drawChalkLineShort1.play();

@@ -18,9 +18,6 @@ public class Sounds {
 	public static Sound drawChalkLineShort2;
 	public static Sound rockHit;
 	public static Sound rockBreak;
-	public static Sound rocksRolling1;
-	public static Sound rocksRolling2;
-	public static Sound rocksRolling3;
 
 
 	private static long prevPlayRocksRolling;
@@ -42,9 +39,6 @@ public class Sounds {
 		manager.load("sounds/draw_short_line_2.ogg", Sound.class);
 		manager.load("sounds/rock_hit.ogg", Sound.class);
 		manager.load("sounds/rock_hit_break1.ogg", Sound.class);
-		manager.load("sounds/rocks_rolling1.ogg", Sound.class);
-		manager.load("sounds/rocks_rolling2.ogg", Sound.class);
-		manager.load("sounds/rocks_rolling3.ogg", Sound.class);
 	}
 
 	/**
@@ -64,9 +58,6 @@ public class Sounds {
 		manager.unload("sounds/draw_short_line_2.ogg");
 		manager.unload("sounds/rock_hit.ogg");
 		manager.unload("sounds/rock_hit_break1.ogg");
-		manager.unload("sounds/rocks_rolling1.ogg");
-		manager.unload("sounds/rocks_rolling2.ogg");
-		manager.unload("sounds/rocks_rolling3.ogg");
 	}
 
 	/**
@@ -89,9 +80,6 @@ public class Sounds {
 		drawChalkLineShort2 = manager.get("sounds/draw_short_line_2.ogg", Sound.class);
 		rockHit = manager.get("sounds/rock_hit.ogg", Sound.class);
 		rockBreak = manager.get("sounds/rock_hit_break1.ogg", Sound.class);
-		rocksRolling1 = manager.get("sounds/rocks_rolling1.ogg", Sound.class);
-		rocksRolling2 = manager.get("sounds/rocks_rolling2.ogg", Sound.class);
-		rocksRolling3 = manager.get("sounds/rocks_rolling3.ogg", Sound.class);
 	}
 
 	public static Sound getSoundForIncrement(int increment) {
