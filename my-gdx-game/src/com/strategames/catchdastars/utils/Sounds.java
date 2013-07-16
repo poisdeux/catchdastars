@@ -19,9 +19,6 @@ public class Sounds {
 	public static Sound rockHit;
 	public static Sound rockBreak;
 
-
-	private static long prevPlayRocksRolling;
-
 	/**
 	 * Loads assets asynchronous
 	 */
@@ -92,23 +89,5 @@ public class Sounds {
 		}
 
 		return sound;
-	}
-
-	public static void playSoundRocksRolling(int amountOfRocks, float volume) {
-		long epoch = System.currentTimeMillis();
-		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
-			return;
-		}
-		prevPlayRocksRolling = epoch;
-
-		if( amountOfRocks > 10 ) {
-			Sounds.rockHit.play(volume);
-			Sounds.rockBreak.play(volume);
-		} else if( amountOfRocks > 2 ) {
-			Sounds.rockHit.play(volume);
-			Sounds.rockBreak.play(volume);
-		} else {
-			Sounds.rockHit.play(volume);
-		}
 	}
 }

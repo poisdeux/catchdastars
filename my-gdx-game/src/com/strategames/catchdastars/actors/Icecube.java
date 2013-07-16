@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 /**
@@ -44,6 +45,9 @@ public class Icecube extends GameObject {
 	private Fixture breakOnFixture;
 
 	private static float maxVolume = 1f;
+	
+	private static long prevPlayRocksRolling;
+	
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -234,16 +238,29 @@ public class Icecube extends GameObject {
 			}
 		}
 	}
+	
+	public static void playRocksHitSound() {
+		if( rocksHit == 0 ) {
+			return;
+		}
+		
+		long epoch = System.currentTimeMillis();
+		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
+			return;
+		}
+		prevPlayRocksRolling = epoch;
 
-	public static int getRocksHit() {
-		return rocksHit;
-	}
-
-	public static float getRocksHitTotalImpulse() {
-		return rocksHitTotalImpulse;
-	}
-
-	public static void resetRocksHit() {
+		float volume = rocksHitTotalImpulse / (maxVelocitySquared * rocksHit);
+		if( rocksHit > 10 ) {
+			Sounds.rockHit.play(volume);
+			Sounds.rockBreak.play(volume);
+		} else if( rocksHit > 2 ) {
+			Sounds.rockHit.play(volume);
+			Sounds.rockBreak.play(volume);
+		} else {
+			Sounds.rockHit.play(volume);
+		}
+		
 		rocksHit = 0;
 		rocksHitTotalImpulse = 0;
 	}
