@@ -23,21 +23,18 @@ import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
-import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
 /**
- * TODO Move sound playing from this object to CatchDaStars.java. 
- * This makes it more efficient and allows us to play better samples for multiple rocks colliding.
- * We can use a static variable to count the amount of rocks hitting and another static variable 
- * to count the number of rocks breaking. At the end of the update step we can play the appropriate
- * sound based on the number of rocks hitting and breaking
  * @author martijn brekhof
  *
  */
 public class Icecube extends GameObject {
 	private final static float WIDTH = Game.convertWorldToBox(32f); 
 	private static BodyEditorLoader loader;
+
+	private static int rocksHit;
+	private static float rocksHitTotalImpulse;
 
 	private static HashMap<String, Part> availableParts;
 
@@ -204,7 +201,7 @@ public class Icecube extends GameObject {
 
 		//		Gdx.app.log("Icecube", "handleCollisiong: maxVelocitySquared="+this.maxVelocitySquared+", maxImpulse="+maxImpulse);
 		if( maxImpulse > 500 ) { // prevent adding rocks hitting when they are lying on top of eachother
-//			game.rockHit(maxImpulse);
+			//			game.rockHit(maxImpulse);
 			if( maxImpulse > 1000 ) { // break object
 				//Get colliding fixture for this object
 				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
@@ -212,10 +209,10 @@ public class Icecube extends GameObject {
 				} else {
 					this.breakOnFixture = contact.getFixtureB();
 				}
-				Sounds.rockBreak.play(maxImpulse / maxVelocitySquared);
-			} else {
-				Sounds.rockHit.play(maxImpulse / maxVelocitySquared);
+				Icecube.rocksHit++;
 			}
+			Icecube.rocksHit++;
+			Icecube.rocksHitTotalImpulse += maxImpulse;
 		}
 	}
 
@@ -238,7 +235,19 @@ public class Icecube extends GameObject {
 		}
 	}
 
+	public static int getRocksHit() {
+		return rocksHit;
+	}
 
+	public static float getRocksHitTotalImpulse() {
+		return rocksHitTotalImpulse;
+	}
+
+	public static void resetRocksHit() {
+		rocksHit = 0;
+		rocksHitTotalImpulse = 0;
+	}
+	
 	private void setupAvailableParts() {
 		availableParts = new HashMap<String, Icecube.Part>();
 		availableParts.put("icecube-part1.png", new Part("icecube-part1.png", Textures.icecubePart1));

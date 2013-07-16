@@ -83,6 +83,12 @@ public class CatchDaStars extends Game {
 
 		//		this.debugRenderer.render(world, this.camera.combined);
 
+		int rocks = Icecube.getRocksHit();
+		if( rocks > 0 ) {
+			Sounds.playSoundRocksRolling(rocks, Icecube.getRocksHitTotalImpulse() / (Icecube.maxVelocitySquared * rocks));
+			Icecube.resetRocksHit();
+		}
+		
 		super.update(delta, stage);
 	}
 
