@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -83,9 +84,9 @@ public class CatchDaStars extends Game {
 
 		//		this.debugRenderer.render(world, this.camera.combined);
 
-		
+
 		Icecube.playRocksHitSound();
-		
+
 		super.update(delta, stage);
 	}
 
@@ -227,6 +228,16 @@ public class CatchDaStars extends Game {
 
 	}
 
+	private void destroyBalloon(Balloon balloon, Balloon.ColorType color) {
+		balloon.destroy();
+		deleteGameObject(balloon);
+		if( color == Balloon.ColorType.BLUE ) {
+			this.amountOfBlueBalloons--;
+		} else if( color == Balloon.ColorType.RED ) {
+			this.amountOfRedBalloons--;
+		}
+	}
+
 	private void handleBalloonCollision(Contact contact, ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
 		if( ! this.gameOn ) {
 			return;
@@ -252,16 +263,19 @@ public class CatchDaStars extends Game {
 				deleteGameObject(star);
 				this.redCollectables.collect();
 			} else {
-				balloon.destroy();
-				deleteGameObject(balloon);
-				if( balloonColor == Balloon.ColorType.BLUE ) {
-					this.amountOfBlueBalloons--;
-				} else if( balloonColor == Balloon.ColorType.RED ) {
-					this.amountOfRedBalloons--;
-				}
+				destroyBalloon(balloon, balloonColor);
 			}
 		} else if ( type == Type.WALL ) {
 			balloon.handleCollision(contact, impulse, gameObject);
+		} else if ( type == Type.ROCK ) {
+			Icecube icecube = (Icecube) gameObject;
+			//The higher the velocity of the icecube the higher the chance the balloon
+			//will pop when the icecube is broken
+			if( icecube.isBroken() && 
+					( icecube.getBody().getLinearVelocity().len2() > MathUtils.random(Icecube.maxVelocitySquared)) ) {
+				destroyBalloon(balloon, balloonColor);
+			}
+
 		}
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
@@ -294,7 +308,7 @@ public class CatchDaStars extends Game {
 		Type type2 = this.collidingGameObject2.getType();
 		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if( ( type1 != Type.BALLOON ) && ( type2 == Type.BALLOON ) ) {
+		} else if(( type2 == Type.BALLOON ) && ( type1 != Type.BALLOON )) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
 		} 
 	}

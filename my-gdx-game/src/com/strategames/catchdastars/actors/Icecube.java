@@ -40,12 +40,12 @@ public class Icecube extends GameObject {
 	private static HashMap<String, Part> availableParts;
 
 	private ArrayList<Part> parts;
-	private int partsSize;
+	private int amountOfParts;
 
+	private boolean broken;
+	
 	private Fixture breakOnFixture;
 
-	private static float maxVolume = 1f;
-	
 	private static long prevPlayRocksRolling;
 	
 	/**
@@ -58,8 +58,8 @@ public class Icecube extends GameObject {
 	 * Following value of 28.77593 was determined empirically by checking maximum speed of icecube
 	 * in game
 	 */
-	public static float maxVelocitySquared = 90f * 90f * (1/maxVolume);
-
+	public static float maxVelocitySquared = 90f * 90f;
+	
 	public Icecube() {
 		super();
 
@@ -99,9 +99,17 @@ public class Icecube extends GameObject {
 
 	public void addPart(Part part) {
 		this.parts.add(part);
-		this.partsSize = this.parts.size();
+		this.amountOfParts = this.parts.size();
 	}
 
+	public boolean isBroken() {
+		return this.broken;
+	}
+	
+	public void setBroken(boolean broken) {
+		this.broken = broken;
+	}
+	
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
@@ -134,7 +142,7 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		setRotation(rotation);
-		for(int i = 0; i < this.partsSize; i++) {
+		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
 			sprite.setPosition(v.x, v.y);
@@ -281,7 +289,7 @@ public class Icecube extends GameObject {
 
 	private void splitObject() {
 		// Do not break if object consists of a single part
-		if( this.partsSize <= 1 ) {
+		if( this.amountOfParts <= 1 ) {
 			return;
 		}
 
@@ -300,6 +308,7 @@ public class Icecube extends GameObject {
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
 		icecube1.addPart(availableParts.get(partName));
+		icecube1.setBroken(true);
 		game.addGameObject(icecube1);
 
 		// Create new object with pieces that are left
@@ -312,6 +321,7 @@ public class Icecube extends GameObject {
 				icecube2.addPart(part);
 			}
 		}
+		icecube2.setBroken(true);
 		game.addGameObject(icecube2);
 
 		game.deleteGameObject(this);
