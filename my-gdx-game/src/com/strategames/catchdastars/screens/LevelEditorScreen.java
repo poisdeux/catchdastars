@@ -93,7 +93,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
-			deselectGameObject((GameObject) actor);
+			GameObject object = (GameObject) actor;
+			object.initializeConfigurationItems();
+			deselectGameObject(object);
 		}
 	}
 
@@ -324,6 +326,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		Vector2 stageCoords = stage.screenToStageCoordinates(this.longPressPosition);
 		//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
 		copy.setPosition(stageCoords.x, stageCoords.y);
+		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
 		stage.addActor(copy);
 		deselectGameObject(copy);

@@ -37,7 +37,7 @@ public class Icecube extends GameObject {
 	private static int rocksHit;
 	private static float rocksHitTotalImpulse;
 
-	private static HashMap<String, Part> availableParts;
+	private static ArrayList<Part> availableParts;
 
 	private ArrayList<Part> parts;
 	private int amountOfParts;
@@ -81,8 +81,7 @@ public class Icecube extends GameObject {
 		setup();
 
 		//Initial object contains all parts
-		Collection<Part> parts = availableParts.values();
-		for( Part part : parts ) {
+		for( Part part : availableParts ) {
 			addPart(part);
 		}
 	}
@@ -126,9 +125,12 @@ public class Icecube extends GameObject {
 		fixtureDef.friction = 0.2f;
 		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
 
-		for(Part part : this.parts ) {
-			loader.attachFixture(body, part.getName(), fixtureDef, WIDTH);
-			part.setOrigin(loader.getOrigin(part.getName(), WIDTH).cpy());
+		int size = this.parts.size();
+		for(int i = 0; i < size; i++) {
+			Part part = this.parts.get(i);
+			String name = part.getName();
+			loader.attachFixture(body, name, i, fixtureDef, WIDTH);
+			part.setOrigin(loader.getOrigin(name, WIDTH).cpy());
 		}
 
 		body.setSleepingAllowed(false);
@@ -239,8 +241,7 @@ public class Icecube extends GameObject {
 				(value.toString()).contentEquals("all") ) {
 			if( this.parts.size() < 1 ) {
 				//Initial object contains all parts
-				Collection<Part> parts = availableParts.values();
-				for( Part part : parts ) {
+				for( Part part : availableParts ) {
 					addPart(part);
 				}
 			}
@@ -274,17 +275,17 @@ public class Icecube extends GameObject {
 	}
 	
 	private void setupAvailableParts() {
-		availableParts = new HashMap<String, Icecube.Part>();
-		availableParts.put("icecube-part1.png", new Part("icecube-part1.png", Textures.icecubePart1));
-		availableParts.put("icecube-part2.png", new Part("icecube-part2.png", Textures.icecubePart2));
-		availableParts.put("icecube-part3.png", new Part("icecube-part3.png", Textures.icecubePart3));
-		availableParts.put("icecube-part4.png", new Part("icecube-part4.png", Textures.icecubePart4));
-		availableParts.put("icecube-part5.png", new Part("icecube-part5.png", Textures.icecubePart5));
-		availableParts.put("icecube-part6.png", new Part("icecube-part6.png", Textures.icecubePart6));
-		availableParts.put("icecube-part7.png", new Part("icecube-part7.png", Textures.icecubePart7));
-		availableParts.put("icecube-part8.png", new Part("icecube-part8.png", Textures.icecubePart8));
-		availableParts.put("icecube-part9.png", new Part("icecube-part9.png", Textures.icecubePart9));
-		availableParts.put("icecube-part10.png", new Part("icecube-part10.png", Textures.icecubePart10));
+		availableParts = new ArrayList<Icecube.Part>();
+		availableParts.add(new Part("icecube-part1.png", Textures.icecubePart1));
+		availableParts.add(new Part("icecube-part2.png", Textures.icecubePart2));
+		availableParts.add(new Part("icecube-part3.png", Textures.icecubePart3));
+		availableParts.add(new Part("icecube-part4.png", Textures.icecubePart4));
+		availableParts.add(new Part("icecube-part5.png", Textures.icecubePart5));
+		availableParts.add(new Part("icecube-part6.png", Textures.icecubePart6));
+		availableParts.add(new Part("icecube-part7.png", Textures.icecubePart7));
+		availableParts.add(new Part("icecube-part8.png", Textures.icecubePart8));
+		availableParts.add(new Part("icecube-part9.png", Textures.icecubePart9));
+		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
 	}
 
 	private void splitObject() {
@@ -293,12 +294,14 @@ public class Icecube extends GameObject {
 			return;
 		}
 
-		String partName = (String) breakOnFixture.getUserData();
-		if( partName == null ) {
+		Integer userData = (Integer) breakOnFixture.getUserData();
+		if( userData == null ) {
 			Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture);
 			return;
 		}
 
+		int partId = userData.intValue();
+		
 		Vector2 v = super.body.getPosition();
 
 		Game game = getGame();
@@ -307,18 +310,18 @@ public class Icecube extends GameObject {
 		Icecube icecube1 = new Icecube();
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
-		icecube1.addPart(availableParts.get(partName));
+		icecube1.addPart(availableParts.get(partId));
 		icecube1.setBroken(true);
 		game.addGameObject(icecube1);
 
-		// Create new object with pieces that are left
+		// Create new object with the pieces that are left
 		Icecube icecube2 = new Icecube();
 		icecube2.setPosition(v.x, v.y);
 		icecube2.setRotation(getRotation());
-		//TODO using string comparison is VERY expensive. We need to redesign this to use integers instead
-		for( Part part : this.parts ) {
-			if( ! part.getName().contentEquals(partName) ) {
-				icecube2.addPart(part);
+		int size = availableParts.size();
+		for( int i = 0; i < size; i++ ) {
+			if( i != partId ) {
+				icecube2.addPart(availableParts.get(i));
 			}
 		}
 		icecube2.setBroken(true);

@@ -208,7 +208,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		item.setName("length");
 		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
 		item.setValueNumeric(this.length);
-		item.setMaxValue(Game.convertWorldToBox(Gdx.app.getGraphics().getWidth()));
+		item.setMaxValue(Game.convertWorldToBox(Gdx.app.getGraphics().getWidth()) + this.stepSize);
 
 		item.setMinValue(this.stepSize);
 		item.setStepSize(this.stepSize);

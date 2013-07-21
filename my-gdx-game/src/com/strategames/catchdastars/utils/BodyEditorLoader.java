@@ -80,7 +80,7 @@ public class BodyEditorLoader {
          * @param fd The fixture parameters to apply to the created body fixture.
          * @param scale The desired scale of the body. The default width is 1.
          */
-        public void attachFixture(Body body, String name, FixtureDef fd, float scale) {
+        public void attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd, float scale) {
                 RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
@@ -98,7 +98,7 @@ public class BodyEditorLoader {
                         polygonShape.set(vertices);
                         fd.shape = polygonShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
-                        fixture.setUserData(name); // Added to support breakable objects
+                        fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
                         for (int ii=0, nn=vertices.length; ii<nn; ii++) {
                                 free(vertices[ii]);
                         }
@@ -113,7 +113,7 @@ public class BodyEditorLoader {
                         circleShape.setRadius(radius);
                         fd.shape = circleShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
-                        fixture.setUserData(name); // Added to support breakable objects
+                        fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
                         free(center);
                 }
         }

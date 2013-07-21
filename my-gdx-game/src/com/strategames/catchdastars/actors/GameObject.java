@@ -68,7 +68,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public GameObject(Drawable trd) {
 		super(trd, Scaling.none);
 		init();
-		this.configurationItems = createConfigurationItems();
 	}
 
 	private void init() {

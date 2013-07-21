@@ -225,7 +225,6 @@ public class CatchDaStars extends Game {
 				}
 			}
 		}
-
 	}
 
 	private void destroyBalloon(Balloon balloon, Balloon.ColorType color) {
@@ -269,13 +268,15 @@ public class CatchDaStars extends Game {
 			balloon.handleCollision(contact, impulse, gameObject);
 		} else if ( type == Type.ROCK ) {
 			Icecube icecube = (Icecube) gameObject;
-			//The higher the velocity of the icecube the higher the chance the balloon
-			//will pop when the icecube is broken
-			if( icecube.isBroken() && 
-					( icecube.getBody().getLinearVelocity().len2() > MathUtils.random(Icecube.maxVelocitySquared)) ) {
-				destroyBalloon(balloon, balloonColor);
+			if( icecube.isBroken() ) {
+				//The higher the velocity of the icecube the higher the chance the balloon
+				//will pop when the icecube is broken
+				float vel = icecube.getBody().getLinearVelocity().len2();
+				float ranVel = MathUtils.random(Icecube.maxVelocitySquared - 6000);
+				if ( vel >= ranVel ) {
+					destroyBalloon(balloon, balloonColor);
+				}
 			}
-
 		}
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
