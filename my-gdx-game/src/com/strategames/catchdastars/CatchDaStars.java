@@ -4,11 +4,9 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -26,17 +24,13 @@ import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.LevelCompleteDialog;
 import com.strategames.ui.LevelFailDialog;
-import com.strategames.ui.LevelPauseDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravityVector;
 
-	private Box2DDebugRenderer debugRenderer;
-	private Camera camera;
 	private World world;
 
 	private Stage stageActors;
@@ -60,18 +54,10 @@ public class CatchDaStars extends Game {
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
 
-	private int delay;
-
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
-	}
-
-	@Override
-	public void pauseGame() {
-		super.pauseGame();
-		showLevelPausedDialog();
 	}
 
 	public void update(float delta, Stage stage) {
@@ -96,10 +82,6 @@ public class CatchDaStars extends Game {
 
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
-		this.camera = stage.getCamera();
-
-		this.debugRenderer = new Box2DDebugRenderer();
-
 		this.gravityVector = new Vector2();
 		this.gravityVector.set(0, -GRAVITY);
 
@@ -113,6 +95,24 @@ public class CatchDaStars extends Game {
 		this.gameOn = true;
 	}
 
+	@Override
+	public void pauseGame() {
+		super.pauseGame();
+		darkenActors(0.5f);
+	}
+	
+	@Override
+	public void resumeGame() {
+		super.resumeGame();
+		darkenActors(1f);
+	}
+	
+	@Override
+	public void startGame() {
+		super.startGame();
+		darkenActors(1f);
+	}
+	
 	@Override
 	public void reset() {
 		initLevel();
@@ -132,14 +132,6 @@ public class CatchDaStars extends Game {
 		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
 
 		((AbstractScreen) getScreen()).showDialog(levelCompleteDialog);
-	}
-
-	private void showLevelPausedDialog() {
-		darkenActors(0.4f);
-
-		LevelPauseDialog levelPausedDialog = new LevelPauseDialog(this, ((AbstractScreen) getScreen()).getSkin());
-
-		((AbstractScreen) getScreen()).showDialog(levelPausedDialog);
 	}
 
 	private void darkenActors(float factor) {

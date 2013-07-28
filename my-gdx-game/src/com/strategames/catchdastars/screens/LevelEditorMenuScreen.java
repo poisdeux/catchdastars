@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.ScreenBorder;
 import com.strategames.ui.TextButton;
 import com.strategames.ui.TextButton.TextButtonListener;
 

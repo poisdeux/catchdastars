@@ -113,10 +113,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
-		// draw the actors
-		this.stageActors.act();
+		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
+			this.stageActors.act();
+		}
 		this.stageActors.draw();
-
+		
 		this.stageUIActors.act();
 		this.stageUIActors.draw();
 	}

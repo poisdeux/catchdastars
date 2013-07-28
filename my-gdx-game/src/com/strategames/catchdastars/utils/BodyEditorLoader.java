@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -180,7 +179,8 @@ public class BodyEditorLoader {
         // Json reading process
         // -------------------------------------------------------------------------
 
-        private Model readJson(String str) {
+        @SuppressWarnings("unchecked")
+		private Model readJson(String str) {
                 Model m = new Model();
                 OrderedMap<String,?> rootElem = (OrderedMap<String,?>) new JsonReader().parse(str);
 
@@ -195,7 +195,8 @@ public class BodyEditorLoader {
                 return m;
         }
 
-        private RigidBodyModel readRigidBody(OrderedMap<String,?> bodyElem) {
+        @SuppressWarnings("unchecked")
+		private RigidBodyModel readRigidBody(OrderedMap<String,?> bodyElem) {
                 RigidBodyModel rbModel = new RigidBodyModel();
                 rbModel.name = (String) bodyElem.get("name");
                 rbModel.imagePath = (String) bodyElem.get("imagePath");

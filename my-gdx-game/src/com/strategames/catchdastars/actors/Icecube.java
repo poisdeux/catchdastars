@@ -1,8 +1,6 @@
 package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -28,7 +26,8 @@ import com.strategames.catchdastars.utils.Textures;
 
 /**
  * @author martijn brekhof
- *
+ * TODO Now fixtures get recreated when object is split. 
+ *      We might want to reuse fixtures of parent object.
  */
 public class Icecube extends GameObject {
 	private final static float WIDTH = Game.convertWorldToBox(32f); 
@@ -296,7 +295,6 @@ public class Icecube extends GameObject {
 
 		Integer userData = (Integer) breakOnFixture.getUserData();
 		if( userData == null ) {
-			Gdx.app.log("Icecube", "splitObject: breakOnFixture="+breakOnFixture);
 			return;
 		}
 

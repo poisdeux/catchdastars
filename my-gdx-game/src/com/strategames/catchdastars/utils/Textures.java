@@ -34,6 +34,17 @@ public class Textures {
 	public static TextureRegion icecubePart8;
 	public static TextureRegion icecubePart9;
 	public static TextureRegion icecubePart10;
+	public static TextureRegion level;
+	public static TextureRegion digit0;
+	public static TextureRegion digit1;
+	public static TextureRegion digit2;
+	public static TextureRegion digit3;
+	public static TextureRegion digit4;
+	public static TextureRegion digit5;
+	public static TextureRegion digit6;
+	public static TextureRegion digit7;
+	public static TextureRegion digit8;
+	public static TextureRegion digit9;
 	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
@@ -89,5 +100,16 @@ public class Textures {
 		icecubePart8 = atlas.findRegion("icecube-part8");
 		icecubePart9 = atlas.findRegion("icecube-part9");
 		icecubePart10 = atlas.findRegion("icecube-part10");
+		level = atlas.findRegion("Level");
+		digit0 = atlas.findRegion("0");
+		digit1 = atlas.findRegion("1");
+		digit2 = atlas.findRegion("2");
+		digit3 = atlas.findRegion("3");
+		digit4 = atlas.findRegion("4");
+		digit5 = atlas.findRegion("5");
+		digit6 = atlas.findRegion("6");
+		digit7 = atlas.findRegion("7");
+		digit8 = atlas.findRegion("8");
+		digit9 = atlas.findRegion("9");
 	}
 }
