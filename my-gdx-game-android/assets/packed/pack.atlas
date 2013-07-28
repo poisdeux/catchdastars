@@ -3,184 +3,261 @@ pack.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Level
+  rotate: false
+  xy: 1, 173
+  size: 243, 77
+  orig: 243, 77
+  offset: 0, 0
+  index: -1
 cash_register
   rotate: false
-  xy: 1, 118
+  xy: 1, 36
   size: 128, 135
   orig: 128, 135
   offset: 0, 0
   index: -1
+0
+  rotate: false
+  xy: 131, 48
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+1
+  rotate: false
+  xy: 200, 48
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+2
+  rotate: false
+  xy: 269, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+3
+  rotate: false
+  xy: 338, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+4
+  rotate: false
+  xy: 407, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+5
+  rotate: false
+  xy: 476, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+6
+  rotate: false
+  xy: 545, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 614, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+8
+  rotate: false
+  xy: 683, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
+9
+  rotate: false
+  xy: 752, 127
+  size: 67, 123
+  orig: 67, 123
+  offset: 0, 0
+  index: -1
 aj_balloon_blue
   rotate: false
-  xy: 1, 71
+  xy: 269, 80
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 aj_balloon_red
   rotate: false
-  xy: 131, 208
+  xy: 821, 205
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 icecube-part1
   rotate: false
-  xy: 1, 36
+  xy: 1, 1
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part10
   rotate: false
-  xy: 35, 83
+  xy: 303, 92
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part2
   rotate: false
-  xy: 131, 173
+  xy: 821, 170
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part3
   rotate: false
-  xy: 165, 220
+  xy: 855, 217
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part4
   rotate: false
-  xy: 1, 1
+  xy: 35, 1
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part5
   rotate: false
-  xy: 35, 48
+  xy: 337, 92
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part6
   rotate: false
-  xy: 69, 83
+  xy: 821, 135
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part7
   rotate: false
-  xy: 131, 138
+  xy: 855, 182
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part8
   rotate: false
-  xy: 165, 185
+  xy: 889, 217
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part9
   rotate: false
-  xy: 199, 220
+  xy: 69, 1
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube
   rotate: false
-  xy: 35, 13
+  xy: 371, 92
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 bricks-texture-horizontal-left-end
   rotate: false
-  xy: 69, 49
+  xy: 855, 148
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-horizontal-right-end
   rotate: false
-  xy: 165, 151
+  xy: 889, 183
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-horizontal
   rotate: false
-  xy: 199, 186
+  xy: 923, 218
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bricks-texture-vertical
   rotate: false
-  xy: 69, 15
+  xy: 405, 93
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_blue
   rotate: false
-  xy: 199, 152
+  xy: 889, 149
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_red
   rotate: false
-  xy: 103, 84
+  xy: 923, 184
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_yellow
   rotate: false
-  xy: 103, 50
+  xy: 957, 218
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 Chalk-01
   rotate: false
-  xy: 233, 237
+  xy: 246, 234
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 131, 120
+  xy: 269, 62
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 103, 32
+  xy: 103, 18
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 233, 219
+  xy: 439, 109
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 233, 201
+  xy: 923, 166
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
