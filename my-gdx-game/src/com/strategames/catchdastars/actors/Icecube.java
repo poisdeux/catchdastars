@@ -79,10 +79,10 @@ public class Icecube extends GameObject {
 		setGame(game);
 		setup();
 
-		//Initial object contains all parts
-		for( Part part : availableParts ) {
-			addPart(part);
-		}
+//		//Initial object contains all parts
+//		for( Part part : availableParts ) {
+//			addPart(part);
+//		}
 	}
 
 	@Override
@@ -271,6 +271,16 @@ public class Icecube extends GameObject {
 		
 		rocksHit = 0;
 		rocksHitTotalImpulse = 0;
+	}
+	
+	@Override
+	public void setColor(float r, float g, float b, float a) {
+		super.setColor(r, g, b, a);
+		for(int i = 0; i < this.amountOfParts; i++) {
+			Part part = this.parts.get(i);
+			Sprite sprite = part.getSprite();
+			sprite.setColor(r, g, b, a);
+		}
 	}
 	
 	private void setupAvailableParts() {

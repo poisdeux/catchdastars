@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.Text;
+import com.strategames.ui.LevelPauseDialog;
 
 
 public class LevelScreen extends AbstractScreen implements InputProcessor
@@ -83,7 +84,10 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	public boolean keyUp(int keycode) {
 		if( ( keycode == Keys.BACK ) ||
 				( keycode == Keys.ESCAPE ) ) {
-			getGame().pauseGame();
+			Game game = getGame();
+			game.pauseGame();
+			LevelPauseDialog dialog = new LevelPauseDialog(game, getSkin());
+			dialog.show(getStageUIElements());
 			return true;
 		}
 		return false;

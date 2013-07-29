@@ -93,17 +93,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		return body;
 	}
 
-
-//	public static Wall create(Game game, float x, float y, float length, Orientation type) {
-//		Wall wall = new Wall();
-//		wall.setGame(game);
-//		wall.setPosition(x, y);
-//		wall.setType(type);
-//		wall.setup();
-//		wall.setLength(length);
-//		return wall;
-//	}
-
 	/**
 	 * Returns the size increment for growing/shrinking this object
 	 * @return

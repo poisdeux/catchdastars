@@ -248,7 +248,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 					@Override
 					public void onClick(Dialog dialog, int which) {
-						ToolsPickerDialog tDialog = new ToolsPickerDialog(game, skin);
+						ToolsPickerDialog tDialog = new ToolsPickerDialog(game, getSkin());
 						tDialog.show(getStageUIElements());
 						dialog.remove();
 					}

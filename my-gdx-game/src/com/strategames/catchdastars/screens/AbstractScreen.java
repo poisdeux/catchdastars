@@ -24,7 +24,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private InputMultiplexer multiplexer;
 	protected BitmapFont font;
 	protected SpriteBatch batch;
-	protected Skin skin;
+	private Skin skin;
 	protected final Stage stageActors;
 	protected final Stage stageUIActors;
 
@@ -44,14 +44,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public InputMultiplexer getMultiplexer() {
