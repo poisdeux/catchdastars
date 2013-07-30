@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.OrderedMap;
@@ -23,7 +24,7 @@ import com.badlogic.gdx.utils.OrderedMap;
  *
  * @author Aurelien Ribon | http://www.aurelienribon.com
  * 
- * Martijn Brekhof: Updated to support breaking objects 
+ * @author Martijn Brekhof: Updated to support breaking objects 
  * TODO: create list of fixtures in advance to increase performance when recreating objects
  */
 public class BodyEditorLoader {
@@ -76,11 +77,13 @@ public class BodyEditorLoader {
          *
          * @param body The Box2d body you want to attach the fixture to.
          * @param name The name of the fixture you want to load.
+         * @param uniqueIdentifier integer that will be attached to all fixtures. Retrieve from fixture using fixture.getUserData()
          * @param fd The fixture parameters to apply to the created body fixture.
          * @param scale The desired scale of the body. The default width is 1.
          */
-        public void attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd, float scale) {
-                RigidBodyModel rbModel = model.rigidBodies.get(name);
+        public ArrayList<Shape> attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd, float scale) {
+                ArrayList<Shape> shapes = new ArrayList<Shape>();
+        		RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
                 Vector2 origin = vec.set(rbModel.origin).mul(scale);
@@ -96,7 +99,8 @@ public class BodyEditorLoader {
 
                         polygonShape.set(vertices);
                         fd.shape = polygonShape;
-                        Fixture fixture = body.createFixture(fd); // Added to support breakable objects
+                        shapes.add(polygonShape);
+                        Fixture fixture = body.createFixture(fd); // changed to support breakable objects
                         fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
                         for (int ii=0, nn=vertices.length; ii<nn; ii++) {
                                 free(vertices[ii]);
@@ -111,10 +115,13 @@ public class BodyEditorLoader {
                         circleShape.setPosition(center);
                         circleShape.setRadius(radius);
                         fd.shape = circleShape;
-                        Fixture fixture = body.createFixture(fd); // Added to support breakable objects
+                        shapes.add(circleShape);
+                        Fixture fixture = body.createFixture(fd); // changed to support breakable objects
                         fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
                         free(center);
                 }
+                
+                return shapes;
         }
 
         /**

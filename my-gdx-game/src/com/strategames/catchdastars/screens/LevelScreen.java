@@ -4,6 +4,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
@@ -28,8 +29,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	@Override
 	public void hide() {
 		super.hide();
-
-		//		this.game.disposeLevel();
 	}
 
 	@Override
@@ -59,7 +58,10 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 				new Action() {
 					@Override
 					public boolean act(float arg0) {
-						getGame().startGame();
+						Gdx.app.log("LevelScreen", "getGame().getGameState()="+getGame().getGameState());
+						if( ! getGame().isPaused() ) { 
+							getGame().startGame();
+						}
 						levelImage.remove();
 						return true;
 					}
@@ -71,7 +73,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor
 	@Override
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
-		this.game.pauseGame();
+		getGame().stopGame();
 	}
 
 	@Override

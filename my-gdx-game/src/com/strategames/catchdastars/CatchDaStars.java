@@ -38,7 +38,6 @@ public class CatchDaStars extends Game {
 	private ArrayList<GameObject> availableGameObjects;
 
 	private boolean accelerometerAvailable;
-	private boolean gameOn;
 
 	private Collectable redCollectables;
 	private Collectable blueCollectables;
@@ -91,32 +90,35 @@ public class CatchDaStars extends Game {
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 		initLevel();
-
-		this.gameOn = true;
 	}
 
+	@Override
+	public void stopGame() {
+		super.stopGame();
+		darkenActors(0.5f);
+	}
+	
 	@Override
 	public void pauseGame() {
 		super.pauseGame();
 		darkenActors(0.5f);
 	}
-	
+
 	@Override
 	public void resumeGame() {
 		super.resumeGame();
 		darkenActors(1f);
 	}
-	
+
 	@Override
 	public void startGame() {
 		super.startGame();
 		darkenActors(1f);
 	}
-	
+
 	@Override
 	public void reset() {
 		initLevel();
-		this.gameOn = true;
 		System.gc(); //hint the garbage collector that now is a good time to collect
 	}
 
@@ -135,6 +137,9 @@ public class CatchDaStars extends Game {
 	}
 
 	private void darkenActors(float factor) {
+		if ( this.stageActors == null )
+			return;
+		
 		Array<Actor> actors = this.stageActors.getActors();
 		int size = actors.size;
 		for(int i = 0; i < size; i++) {
@@ -167,18 +172,22 @@ public class CatchDaStars extends Game {
 	}
 
 	private void initLevel() {
-		Gdx.app.log("CatchDaStars", "initLevel");
 		Level level = getLevel();
 
 		if ( level == null ) {
 			return;
 		}
 
+		//Make sure Box2D world is not updated while we add and remove objects
+		int prevGameState = getGameState();
+		setGameState(GAME_STATE_PAUSED);
+		
 		Array<Actor> actors = this.stageActors.getActors();
 		for( Actor actor : actors ) {
 			GameObject gameObject = (GameObject) actor;
-			//			gameObject.deleteBody();
-			deleteGameObject(gameObject);
+			gameObject.deleteBody();
+			gameObject.remove();
+//			deleteGameObject(gameObject);
 		}
 
 		this.stageActors.clear();
@@ -217,6 +226,8 @@ public class CatchDaStars extends Game {
 				}
 			}
 		}
+		
+		setGameState(prevGameState);
 	}
 
 	private void destroyBalloon(Balloon balloon, Balloon.ColorType color) {
@@ -230,7 +241,7 @@ public class CatchDaStars extends Game {
 	}
 
 	private void handleBalloonCollision(Contact contact, ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
-		if( ! this.gameOn ) {
+		if( ! isRunning() ) {
 			return;
 		}
 
@@ -260,25 +271,24 @@ public class CatchDaStars extends Game {
 			balloon.handleCollision(contact, impulse, gameObject);
 		} else if ( type == Type.ROCK ) {
 			Icecube icecube = (Icecube) gameObject;
-			if( icecube.isBroken() ) {
-				//The higher the velocity of the icecube the higher the chance the balloon
-				//will pop when the icecube is broken
-				float vel = icecube.getBody().getLinearVelocity().len2();
-				float ranVel = MathUtils.random(Icecube.maxVelocitySquared - 6000);
-				if ( vel >= ranVel ) {
-					destroyBalloon(balloon, balloonColor);
-				}
+			//The higher the velocity of the icecube the higher the chance the balloon
+			//will pop
+			float vel = icecube.getBody().getLinearVelocity().len2();
+			float ranVel = MathUtils.random(Icecube.maxVelocitySquared - 6000);
+			if ( vel >= ranVel ) {
+				destroyBalloon(balloon, balloonColor);
 			}
 		}
 
+
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
-			this.gameOn = false;
+			stopGame();
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
 			((AbstractScreen) getScreen()).showDialog(dialog);
 		}
 
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
-			this.gameOn = false;
+			stopGame();
 			LevelFailDialog dialog = new LevelFailDialog(this, ((AbstractScreen) getScreen()).getSkin());
 			((AbstractScreen) getScreen()).showDialog(dialog);
 		}
@@ -287,18 +297,19 @@ public class CatchDaStars extends Game {
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
-			this.gameOn = false;
+			stopGame();
 			showLevelCompleteDialog();
 		}
 	}
 
 	@Override
 	public void beginContact(Contact contact) {
-		//		Gdx.app.log("CatchDaStars", "beginContact");
+//		Gdx.app.log("CatchDaStars", "beginContact");
 		this.collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
 		this.collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
 		Type type1 = this.collidingGameObject1.getType();
 		Type type2 = this.collidingGameObject2.getType();
+//		Gdx.app.log("CatchDaStars", "beginContact: type1="+type1.name()+", type2="+type2.name());
 		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
 		} else if(( type2 == Type.BALLOON ) && ( type1 != Type.BALLOON )) {

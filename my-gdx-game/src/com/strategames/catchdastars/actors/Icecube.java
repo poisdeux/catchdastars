@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
@@ -31,18 +32,17 @@ import com.strategames.catchdastars.utils.Textures;
  */
 public class Icecube extends GameObject {
 	private final static float WIDTH = Game.convertWorldToBox(32f); 
-	private static BodyEditorLoader loader;
 
 	private static int rocksHit;
 	private static float rocksHitTotalImpulse;
 
 	private static ArrayList<Part> availableParts;
-
+	private static FixtureDef fixtureDef;
+	private static boolean fixturesSetup;
+	
 	private ArrayList<Part> parts;
 	private int amountOfParts;
 
-	private boolean broken;
-	
 	private Fixture breakOnFixture;
 
 	private static long prevPlayRocksRolling;
@@ -65,11 +65,7 @@ public class Icecube extends GameObject {
 		if( availableParts == null ) {
 			setupAvailableParts();
 		}
-
-		if( loader == null ) {
-			loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
-		}
-
+		
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 
@@ -88,7 +84,7 @@ public class Icecube extends GameObject {
 	@Override
 	TextureRegionDrawable createTexture() {
 		for(Part part : this.parts) {
-			Sprite sprite = new Sprite(part.getTexture());
+			Sprite sprite = new Sprite(part.texture);
 			sprite.setSize(Game.convertWorldToBox(sprite.getWidth()), Game.convertWorldToBox(sprite.getHeight()));
 			part.setSprite(sprite);
 		}
@@ -100,18 +96,22 @@ public class Icecube extends GameObject {
 		this.amountOfParts = this.parts.size();
 	}
 
-	public boolean isBroken() {
-		return this.broken;
-	}
-	
-	public void setBroken(boolean broken) {
-		this.broken = broken;
-	}
+//	public boolean isBroken() {
+//		return this.broken;
+//	}
+//	
+//	public void setBroken(boolean broken) {
+//		this.broken = broken;
+//	}
 	
 	@Override
 	Body setupBox2D() {
 		World world = getWorld();
-
+		
+		if( ! fixturesSetup ) {
+			setupFixtures(world);
+		}
+		
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
 		bd.angle = getRotation() * MathUtils.degreesToRadians;
@@ -119,17 +119,14 @@ public class Icecube extends GameObject {
 		bd.angularDamping = 0.1f;
 		Body body = world.createBody(bd);
 
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
-		fixtureDef.friction = 0.2f;
-		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
-
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
-			String name = part.getName();
-			loader.attachFixture(body, name, i, fixtureDef, WIDTH);
-			part.setOrigin(loader.getOrigin(name, WIDTH).cpy());
+			int shapesSize = part.shapes.size();
+			for(int j = 0; j < shapesSize; j++) {
+				fixtureDef.shape = part.shapes.get(j);
+				body.createFixture(fixtureDef);
+			}
 		}
 
 		body.setSleepingAllowed(false);
@@ -145,7 +142,7 @@ public class Icecube extends GameObject {
 		setRotation(rotation);
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
-			Sprite sprite = part.getSprite();
+			Sprite sprite = part.sprite;
 			sprite.setPosition(v.x, v.y);
 			sprite.setRotation(rotation);
 			sprite.draw(batch, parentAlpha);
@@ -231,24 +228,19 @@ public class Icecube extends GameObject {
 
 	@Override
 	void writeValues(Json json) {
-		json.writeValue("parts", "all");
 	}
 
 	@Override
 	void readValue(String key, Object value) {
-		if( key.contentEquals("parts") && 
-				(value.toString()).contentEquals("all") ) {
-			if( this.parts.size() < 1 ) {
-				//Initial object contains all parts
-				for( Part part : availableParts ) {
-					addPart(part);
-				}
-			}
+
+		int size = availableParts.size();
+		for( int i = 0; i < size; i++ ) {
+			addPart(availableParts.get(i));
 		}
 	}
 	
 	public static void playRocksHitSound() {
-		if( rocksHit == 0 ) {
+		if( ( rocksHit == 0 ) || ( rocksHitTotalImpulse == 0 ) ){
 			return;
 		}
 		
@@ -278,8 +270,7 @@ public class Icecube extends GameObject {
 		super.setColor(r, g, b, a);
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
-			Sprite sprite = part.getSprite();
-			sprite.setColor(r, g, b, a);
+			part.sprite.setColor(r, g, b, a);
 		}
 	}
 	
@@ -295,6 +286,35 @@ public class Icecube extends GameObject {
 		availableParts.add(new Part("icecube-part8.png", Textures.icecubePart8));
 		availableParts.add(new Part("icecube-part9.png", Textures.icecubePart9));
 		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
+	}
+	
+	private void setupFixtures(World world) {
+		fixtureDef = new FixtureDef();
+		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
+		fixtureDef.friction = 0.2f;
+		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
+		
+		Gdx.app.log("Icecube", "Before getWorld: isLocked?"+world.isLocked());
+		
+		Body body = world.createBody(new BodyDef());
+		Gdx.app.log("Icecube", "After getWorld");
+		
+		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
+		
+		int size = availableParts.size();
+		Gdx.app.log("Icecube", "size="+size);
+		for(int i = 0; i < size; i++) {
+			Part part = availableParts.get(i);
+			ArrayList<Shape> shapes = loader.attachFixture(body, part.name, i, fixtureDef, WIDTH);
+			part.setShapes(shapes);
+			part.setOrigin(loader.getOrigin(part.name, WIDTH).cpy());
+			
+			Gdx.app.log("Icecube", "shapes.size()="+shapes.size());
+		}
+		
+		world.destroyBody(body);
+
+		fixturesSetup = true;
 	}
 
 	private void splitObject() {
@@ -319,7 +339,7 @@ public class Icecube extends GameObject {
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
 		icecube1.addPart(availableParts.get(partId));
-		icecube1.setBroken(true);
+//		icecube1.setBroken(true);
 		game.addGameObject(icecube1);
 
 		// Create new object with the pieces that are left
@@ -332,17 +352,18 @@ public class Icecube extends GameObject {
 				icecube2.addPart(availableParts.get(i));
 			}
 		}
-		icecube2.setBroken(true);
+//		icecube2.setBroken(true);
 		game.addGameObject(icecube2);
 
 		game.deleteGameObject(this);
 	}
 
 	private class Part {
-		String name;
-		Sprite sprite;
-		TextureRegion texture;
-
+		protected String name;
+		protected Sprite sprite;
+		protected TextureRegion texture;
+		protected ArrayList<Shape> shapes;
+		
 		public Part(String name, TextureRegion texture) {
 			this.name = name;
 			this.texture = texture;
@@ -352,16 +373,8 @@ public class Icecube extends GameObject {
 			this.sprite = sprite;
 		}
 
-		public Sprite getSprite() {
-			return sprite;
-		}
-
-		public TextureRegion getTexture() {
-			return texture;
-		}
-
-		public String getName() {
-			return name;
+		public void setShapes(ArrayList<Shape> shapes) {
+			this.shapes = shapes;
 		}
 
 		public void setOrigin(Vector2 origin) {

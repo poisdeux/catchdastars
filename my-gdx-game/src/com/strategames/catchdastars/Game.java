@@ -23,7 +23,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
 	public final int GAME_STATE_STOP = 2;
-	protected int gameState = GAME_STATE_STOP;
+	private int gameState = GAME_STATE_STOP;
 	
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
@@ -97,16 +97,32 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		this.gameState = GAME_STATE_STOP;
 	}
 	
+	public boolean isRunning() {
+		return this.gameState == GAME_STATE_RUNNING;
+	}
+	
+	public boolean isStopped() {
+		return this.gameState == GAME_STATE_STOP;
+	}
+	
+	public boolean isPaused() {
+		return this.gameState == GAME_STATE_PAUSED;
+	}
+	
+	public void setGameState(int gameState) {
+		this.gameState = gameState;
+	}
+	
+	public int getGameState() {
+		return this.gameState;
+	}
+	
 	@Override
 	public void dispose() {
 		Gdx.app.log("Game", "dispose:");
 		super.dispose();
 		Sounds.dispose(getManager());
 		Textures.dispose(getManager());
-	}
-	
-	public int getGameState() {
-		return gameState;
 	}
 	
 	/**
