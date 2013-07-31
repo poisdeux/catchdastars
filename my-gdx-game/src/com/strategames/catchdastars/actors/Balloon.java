@@ -2,8 +2,6 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import aurelienribon.bodyeditor.BodyEditorLoader;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -19,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.catchdastars.utils.Sounds;
@@ -115,7 +114,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
 
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
-
+		loader.setupVertices("Balloon", balloonWidth);
+		
 		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
@@ -126,9 +126,9 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
-		fixtureBalloon.friction = 0.8f;
+		fixtureBalloon.friction = 0.6f;
 		fixtureBalloon.restitution = 0.4f; // Make it bounce a little bit
-		loader.attachFixture(body, "Balloon", fixtureBalloon, balloonWidth);
+		loader.attachFixture(body, "Balloon", 0, fixtureBalloon);
 
 		this.upwardLiftPosition = body.getLocalCenter();
 		this.upwardLiftPosition.y += 0.3f;

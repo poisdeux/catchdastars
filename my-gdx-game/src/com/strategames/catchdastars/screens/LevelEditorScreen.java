@@ -26,7 +26,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
-	
+
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -69,16 +69,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public LevelEditorScreen(Game game) {
 		super(game);
 		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
-		
+
 		this.game = game;
 
 		this.testGame = false;
 
 		this.longPressPosition = new Vector2();
 		this.dragOffset = new Vector2();
-		
+
 		this.actorHit = null;
-		
+
 		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
@@ -90,7 +90,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	protected void setupActors(Stage stage) {
 		this.game.setupStage(stage);
 		getMultiplexer().addProcessor(stage);
-		
+
 		Array<Actor> actors = stage.getActors();
 		for( Actor actor : actors ) {
 			GameObject object = (GameObject) actor;
@@ -105,7 +105,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 		return true;
 	}
-	
+
 	@Override
 	public void render(float delta) {
 		super.render(delta);
@@ -113,11 +113,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.game.update(delta, stageActors);
 		}
 	}
-	
+
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Gdx.app.log("LevelEditorScreen", "touchDown float");
-		
+
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
@@ -148,10 +148,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			deselectGameObject((GameObject) this.actorHit);
 			this.actorHit = null;
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		if( ( this.state == States.DRAG ) || 
@@ -214,14 +214,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 					}
 				});
 				dialog.show(getStageUIElements());
-				
+
 				return true;
 			} 
-			
+
 		}
-		
+
 		tap.setActor(this.actorHit);
-		
+
 		return false;
 	}
 
@@ -230,50 +230,47 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		/**
 		 * Used to show generic configuration window
 		 */
-		if( this.testGame || (this.actorHit != null) ) {
+		if( this.testGame ) {
 			return false;
 		}
-
-		this.longPressPosition.x = x;
-		this.longPressPosition.y = y;
 
 		if( this.state == States.NONE ) {
 			this.state = States.LONGPRESS;
 
+			this.longPressPosition.x = x;
+			this.longPressPosition.y = y;
+			
 			if( this.uiElementHit != null ) return false;
 
-			if( ( this.actorHit == null ) ) {
-				GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-				dialog.setNeutralButton("Tools", new OnClickListener() {
+			GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
+			dialog.setNeutralButton("Tools", new OnClickListener() {
 
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						ToolsPickerDialog tDialog = new ToolsPickerDialog(game, getSkin());
-						tDialog.show(getStageUIElements());
-						dialog.remove();
-					}
-				});
-				dialog.setPositiveButton("Close", new OnClickListener() {
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					ToolsPickerDialog tDialog = new ToolsPickerDialog(game, getSkin());
+					tDialog.show(getStageUIElements());
+					dialog.remove();
+				}
+			});
+			dialog.setPositiveButton("Close", new OnClickListener() {
 
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						saveLevel();
-						dialog.remove();
-					}
-				});
-				dialog.setNegativeButton("Quit", new OnClickListener() {
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					saveLevel();
+					dialog.remove();
+				}
+			});
+			dialog.setNegativeButton("Quit", new OnClickListener() {
 
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						saveLevel();
-						getGame().setScreen(new LevelEditorMenuScreen(getGame()));
-					}
-				});
-				dialog.show(getStageUIElements());
-			}
-			return true;
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					saveLevel();
+					getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+				}
+			});
+			dialog.show(getStageUIElements());
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -361,10 +358,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 		return null;
 	}
-	
+
 	private void moveActor(Actor actor, float x, float y) {
 		GameObject gameObject = (GameObject) actor;
-		
+
 		Rectangle rectangle = gameObject.getBoundingRectangle();
 		float curX = rectangle.x;
 		rectangle.x = x;   // position object at new X coordinate

@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.OrderedMap;
@@ -24,7 +23,7 @@ import com.badlogic.gdx.utils.OrderedMap;
  *
  * @author Aurelien Ribon | http://www.aurelienribon.com
  * 
- * @author Martijn Brekhof: Updated to support breaking objects 
+ * Martijn Brekhof: Updated to support breaking objects 
  * TODO: create list of fixtures in advance to increase performance when recreating objects
  */
 public class BodyEditorLoader {
@@ -56,6 +55,29 @@ public class BodyEditorLoader {
         // Public API
         // -------------------------------------------------------------------------
 
+        public void setupVertices(String name, float scale) {
+        	RigidBodyModel rbModel = model.rigidBodies.get(name);
+            if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
+
+            Vector2 origin = vec.set(rbModel.origin).mul(scale);
+
+            for (int i=0, n=rbModel.polygons.size(); i<n; i++) {
+                    PolygonModel polygon = rbModel.polygons.get(i);
+                    Vector2[] vertices = polygon.buffer;
+
+                    for (int ii=0, nn=vertices.length; ii<nn; ii++) {
+                            vertices[ii] = new Vector2().set(polygon.vertices.get(ii)).mul(scale);
+                            vertices[ii].sub(origin);
+                    }                    
+            }
+
+            for (int i=0, n=rbModel.circles.size(); i<n; i++) {
+                    CircleModel circle = rbModel.circles.get(i);
+                    circle.centerBuffer = newVec().set(circle.center).mul(scale);
+                    circle.radiusBuffer = circle.radius * scale;
+            }
+        }
+        
         /**
          * Creates and applies the fixtures defined in the editor. The name
          * parameter is used to retrieve the right fixture from the loaded file.
@@ -77,51 +99,30 @@ public class BodyEditorLoader {
          *
          * @param body The Box2d body you want to attach the fixture to.
          * @param name The name of the fixture you want to load.
-         * @param uniqueIdentifier integer that will be attached to all fixtures. Retrieve from fixture using fixture.getUserData()
+         * @param uniqueIdentifier will be added to the fixture. Retrieve using fixture.getUserData()
          * @param fd The fixture parameters to apply to the created body fixture.
-         * @param scale The desired scale of the body. The default width is 1.
          */
-        public ArrayList<Shape> attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd, float scale) {
-                ArrayList<Shape> shapes = new ArrayList<Shape>();
-        		RigidBodyModel rbModel = model.rigidBodies.get(name);
+        public void attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd) {
+                RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
-
-                Vector2 origin = vec.set(rbModel.origin).mul(scale);
 
                 for (int i=0, n=rbModel.polygons.size(); i<n; i++) {
                         PolygonModel polygon = rbModel.polygons.get(i);
-                        Vector2[] vertices = polygon.buffer;
-
-                        for (int ii=0, nn=vertices.length; ii<nn; ii++) {
-                                vertices[ii] = newVec().set(polygon.vertices.get(ii)).mul(scale);
-                                vertices[ii].sub(origin);
-                        }
-
-                        polygonShape.set(vertices);
+                        polygonShape.set(polygon.buffer);
                         fd.shape = polygonShape;
-                        shapes.add(polygonShape);
-                        Fixture fixture = body.createFixture(fd); // changed to support breakable objects
+                        Fixture fixture = body.createFixture(fd); // Added to support breakable objects
                         fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
-                        for (int ii=0, nn=vertices.length; ii<nn; ii++) {
-                                free(vertices[ii]);
-                        }
                 }
 
                 for (int i=0, n=rbModel.circles.size(); i<n; i++) {
                         CircleModel circle = rbModel.circles.get(i);
-                        Vector2 center = newVec().set(circle.center).mul(scale);
-                        float radius = circle.radius * scale;
 
-                        circleShape.setPosition(center);
-                        circleShape.setRadius(radius);
+                        circleShape.setPosition(circle.centerBuffer);
+                        circleShape.setRadius(circle.radiusBuffer);
                         fd.shape = circleShape;
-                        shapes.add(circleShape);
-                        Fixture fixture = body.createFixture(fd); // changed to support breakable objects
+                        Fixture fixture = body.createFixture(fd); // Added to support breakable objects
                         fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
-                        free(center);
                 }
-                
-                return shapes;
         }
 
         /**
@@ -174,12 +175,14 @@ public class BodyEditorLoader {
 
         public static class PolygonModel {
                 public final List<Vector2> vertices = new ArrayList<Vector2>();
-                private Vector2[] buffer; // used to avoid allocation in attachFixture()
+                private Vector2[] buffer; // used to avoid recalculation in attachFixture()
         }
 
         public static class CircleModel {
                 public final Vector2 center = new Vector2();
                 public float radius;
+                private Vector2 centerBuffer; // used to avoid recalculation in attachFixture()
+                private float radiusBuffer; // used to avoid recalculation in attachFixture()
         }
 
         // -------------------------------------------------------------------------

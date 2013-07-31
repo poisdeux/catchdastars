@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -162,7 +163,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Setup the image and body for this game object. 
 	 * <br/>
 	 * This will add the GameObject as user data to the Box2D body. This can be retrieved using body.getUserData().
-	 * @param world Box2D world that should hold the body. If null only image will be set and no body will be created.
 	 */
 	public void setup() {
 		TextureRegionDrawable trd = createTexture();
