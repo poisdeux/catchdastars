@@ -15,6 +15,7 @@ import com.strategames.interfaces.DialogInterface;
 import com.strategames.ui.Dialog;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
+import com.strategames.ui.Grid;
 import com.strategames.ui.ToolsPickerDialog;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface {
@@ -27,6 +28,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Game game;
 	private boolean testGame;
 
+	private Grid grid;
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -84,6 +87,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.grid = new Grid();
+		this.grid.calculateGridSize(Gdx.app.getGraphics().getWidth(), Gdx.app.getGraphics().getHeight());
+		stage.addActor(this.grid);
 	}
 
 	@Override
@@ -159,7 +165,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.state = States.DRAG;
 
 			if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-				Vector2 v = new Vector2(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
+				Vector2 v = this.grid.getGridPoint(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
 				getStageActors().screenToStageCoordinates(v);
 				moveActor(this.actorHit, v.x, v.y);
 				return true;

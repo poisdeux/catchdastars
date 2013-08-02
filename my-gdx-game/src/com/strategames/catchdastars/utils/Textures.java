@@ -45,6 +45,7 @@ public class Textures {
 	public static TextureRegion digit7;
 	public static TextureRegion digit8;
 	public static TextureRegion digit9;
+	public static TextureRegion gridPoint;
 	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
@@ -111,5 +112,6 @@ public class Textures {
 		digit7 = atlas.findRegion("7");
 		digit8 = atlas.findRegion("8");
 		digit9 = atlas.findRegion("9");
+		gridPoint = atlas.findRegion("gridpoint");
 	}
 }
