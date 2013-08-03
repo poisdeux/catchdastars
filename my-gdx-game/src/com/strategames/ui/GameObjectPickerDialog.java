@@ -9,15 +9,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.interfaces.DialogInterface;
 
 public class GameObjectPickerDialog extends Dialog {
+	public static final int BUTTON_GAMEOBJECTSELECTED = 1;
 	private final Skin skin;
 	private ArrayList<TextButton> textButtons;
-	private final DialogInterface listener;
+	private final Dialog.OnClickListener listener;
 	private final Game game;
+	private GameObject selectedGameObject;
 	
-	public GameObjectPickerDialog(Game game, Skin skin, final DialogInterface listener) {
+	public GameObjectPickerDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
 		super("Select a game object", skin);
 		this.skin = skin;
 		this.textButtons = new ArrayList<TextButton>();
@@ -42,7 +43,8 @@ public class GameObjectPickerDialog extends Dialog {
 			iButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					listener.onObjectSelectListener(gameObject);
+					selectedGameObject = gameObject;
+					listener.onClick(GameObjectPickerDialog.this, BUTTON_GAMEOBJECTSELECTED);
 					GameObjectPickerDialog.this.remove();
 				}
 			});
@@ -52,7 +54,8 @@ public class GameObjectPickerDialog extends Dialog {
 			tButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					listener.onObjectSelectListener(gameObject);
+					selectedGameObject = gameObject;
+					listener.onClick(GameObjectPickerDialog.this, BUTTON_GAMEOBJECTSELECTED);
 					GameObjectPickerDialog.this.remove();
 				}
 			});
@@ -68,5 +71,9 @@ public class GameObjectPickerDialog extends Dialog {
 		pack();
 		
 		super.show(stage);
+	}
+	
+	public GameObject getSelectedGameObject() {
+		return this.selectedGameObject;
 	}
 }

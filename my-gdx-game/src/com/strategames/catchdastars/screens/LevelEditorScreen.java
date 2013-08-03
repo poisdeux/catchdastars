@@ -6,19 +6,24 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.interfaces.DialogInterface;
+import com.strategames.catchdastars.utils.LevelEditorPreferences;
+import com.strategames.ui.ButtonsDialog;
 import com.strategames.ui.Dialog;
+import com.strategames.ui.Dialog.OnClickListener;
 import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
 import com.strategames.ui.Grid;
+import com.strategames.ui.LevelEditorOptionsDialog;
 import com.strategames.ui.ToolsPickerDialog;
 
-public class LevelEditorScreen extends AbstractScreen implements GestureListener, DialogInterface {
+public class LevelEditorScreen extends AbstractScreen implements GestureListener, Dialog.OnClickListener {
 
 	private Vector2 longPressPosition;
 	private Vector2 dragOffset;
@@ -27,9 +32,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
-
-	private Grid grid;
+	private LevelEditorPreferences preferences;
+	private boolean snapToGrid;
 	
+	private Grid grid;
+
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -82,14 +89,18 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		this.actorHit = null;
 
+		this.preferences = new LevelEditorPreferences();
+		this.snapToGrid = this.preferences.snapToGridEnabled();
+		
+		this.grid = new Grid();
+		this.grid.calculateGridSize(Gdx.app.getGraphics().getWidth(), Gdx.app.getGraphics().getHeight());
+		
 		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.grid = new Grid();
-		this.grid.calculateGridSize(Gdx.app.getGraphics().getWidth(), Gdx.app.getGraphics().getHeight());
-		stage.addActor(this.grid);
+		displayGrid(this.preferences.displayGridEnabled());
 	}
 
 	@Override
@@ -165,7 +176,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.state = States.DRAG;
 
 			if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-				Vector2 v = this.grid.getGridPoint(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
+				Vector2 v = new Vector2(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
+				if( this.snapToGrid ) {
+					this.grid.map(v);
+				}		
 				getStageActors().screenToStageCoordinates(v);
 				moveActor(this.actorHit, v.x, v.y);
 				return true;
@@ -196,7 +210,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 						Stage stage = getStageActors();
 						GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
 						Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
-						//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
 						copy.setPosition(stageCoords.x, stageCoords.y);
 						getGame().addGameObject(copy);
 						stage.addActor(copy);
@@ -245,36 +258,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 			this.longPressPosition.x = x;
 			this.longPressPosition.y = y;
-			
+
 			if( this.uiElementHit != null ) return false;
 
-			GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-			dialog.setNeutralButton("Tools", new OnClickListener() {
-
-				@Override
-				public void onClick(Dialog dialog, int which) {
-					ToolsPickerDialog tDialog = new ToolsPickerDialog(game, getSkin());
-					tDialog.show(getStageUIElements());
-					dialog.remove();
-				}
-			});
-			dialog.setPositiveButton("Close", new OnClickListener() {
-
-				@Override
-				public void onClick(Dialog dialog, int which) {
-					saveLevel();
-					dialog.remove();
-				}
-			});
-			dialog.setNegativeButton("Quit", new OnClickListener() {
-
-				@Override
-				public void onClick(Dialog dialog, int which) {
-					saveLevel();
-					getGame().setScreen(new LevelEditorMenuScreen(getGame()));
-				}
-			});
-			dialog.show(getStageUIElements());
+			showMainMenu();
+			
 		}
 		return true;
 	}
@@ -322,17 +310,35 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		return true;
 	}
 
-	@Override
-	public void onObjectSelectListener(GameObject object) {
+	public void addGameObject(GameObject object) {
 		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
 		Vector2 stageCoords = stage.screenToStageCoordinates(this.longPressPosition);
-		//		Vector2 stageCoordsMapped = Grid.map(stageCoords);
 		copy.setPosition(stageCoords.x, stageCoords.y);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
 		stage.addActor(copy);
 		deselectGameObject(copy);
+	}
+	
+	@Override
+	public void onClick(Dialog dialog, int which) {
+		if( dialog instanceof LevelEditorOptionsDialog ) {
+			switch( which ) {
+			case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
+				displayGrid(this.preferences.displayGridEnabled());
+				break;
+			case LevelEditorOptionsDialog.CHECKBOX_SNAPTOGRID:
+				this.snapToGrid = this.preferences.snapToGridEnabled();
+				break;
+			}
+		} else if( dialog instanceof GameObjectPickerDialog ) {
+			switch( which ) {
+			case GameObjectPickerDialog.BUTTON_GAMEOBJECTSELECTED:
+				addGameObject(((GameObjectPickerDialog) dialog).getSelectedGameObject());
+				break;
+			}
+		}
 	}
 
 	private void selectGameObject(GameObject gameObject) {
@@ -382,6 +388,78 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 
 		gameObject.moveTo(rectangle.x, rectangle.y);
+	}
+	
+	private void displayGrid(boolean display) {
+		if( display ) {
+			if( ! this.grid.isVisible() ) {
+				getStageUIElements().addActor(this.grid);
+			}
+		} else {
+			if( this.grid.isVisible() ) {
+				this.grid.remove();
+			}
+		}
+	}
+	
+	private void showMainMenu() {
+		ButtonsDialog dialog = new ButtonsDialog(getGame(), getSkin(), this);
+		
+		dialog.add("Add game object", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				showGameObjectPickerDialog();
+			}
+		});
+		
+		dialog.add("Tools", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				showToolsDialog();
+			}
+		});
+		
+		dialog.add("Options", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				showOptionsDialog();
+			}
+		});
+		
+		dialog.setPositiveButton("Close", new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				saveLevel();
+				dialog.remove();
+			}
+		});
+		dialog.setNegativeButton("Quit", new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				saveLevel();
+				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+			}
+		});
+		dialog.show(getStageUIElements());
+	}
+	
+	private void showGameObjectPickerDialog() {
+		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
+		dialog.setPositiveButton("Close", this);
+		dialog.setNegativeButton("Quit", this);
+		dialog.show(getStageUIElements());
+	}
+	
+	private void showToolsDialog() {
+		ToolsPickerDialog tDialog = new ToolsPickerDialog(getGame(), getSkin());
+		tDialog.show(getStageUIElements());
+	}
+	
+	private void showOptionsDialog() {
+		LevelEditorOptionsDialog tDialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
+		tDialog.show(getStageUIElements());
 	}
 }
 

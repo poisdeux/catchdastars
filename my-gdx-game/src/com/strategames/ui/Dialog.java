@@ -6,9 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.interfaces.DialogInterface;
 
 abstract public class Dialog extends Window {
+	
+	public interface OnClickListener {
+		public void onClick(Dialog dialog, int which);
+	}
 	
 	public static final int BUTTON_NEGATIVE = -2;
 	public static final int BUTTON_NEUTRAL = -3;
@@ -27,7 +30,7 @@ abstract public class Dialog extends Window {
 		this.buttons = new Array<TextButton>();
 	}
 
-	public void setPositiveButton(String text, final DialogInterface.OnClickListener onClickListener) {
+	public void setPositiveButton(String text, final Dialog.OnClickListener onClickListener) {
 		this.buttonPositive = new TextButton(text, this.skin);
 		this.buttonPositive.addListener(new ClickListener() {
 			@Override
@@ -37,7 +40,7 @@ abstract public class Dialog extends Window {
 		});
 	}
 
-	public void setNegativeButton(String text, final DialogInterface.OnClickListener onClickListener) {
+	public void setNegativeButton(String text, final Dialog.OnClickListener onClickListener) {
 		this.buttonNegative = new TextButton(text, this.skin);
 		this.buttonNegative.addListener(new ClickListener() {
 			@Override
@@ -47,7 +50,7 @@ abstract public class Dialog extends Window {
 		});
 	}
 
-	public void setNeutralButton(String text, final DialogInterface.OnClickListener onClickListener) {
+	public void setNeutralButton(String text, final Dialog.OnClickListener onClickListener) {
 		this.buttonNeutral = new TextButton(text, this.skin);
 		this.buttonNeutral.addListener(new ClickListener() {
 			@Override
@@ -57,7 +60,7 @@ abstract public class Dialog extends Window {
 		});
 	}
 	
-	public int addButton(String text, final DialogInterface.OnClickListener onClickListener) {
+	public int addButton(String text, final Dialog.OnClickListener onClickListener) {
 		TextButton button = new TextButton(text, this.skin);
 		this.buttons.add(button);
 		final int index = this.buttons.indexOf(button, true);

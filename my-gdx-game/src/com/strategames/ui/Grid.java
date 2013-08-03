@@ -47,14 +47,14 @@ public class Grid extends Image {
 		}
 	}
 	
-	public Vector2 getGridPoint(float x, float y) {
-		Vector2 gridPoint = new Vector2();
-		
-		int hor = (int) (x / this.deltaHorizontal);
-		int ver = (int) (y / this.deltaVertical);
-		gridPoint.x = hor * this.deltaHorizontal;
-		gridPoint.y = ver * this.deltaVertical;
-		
-		return gridPoint;
+	/**
+	 * Maps vector on grid
+	 * @param v Vector that should be mapped. Note that v will be changed.
+	 */
+	public void map(Vector2 v) {
+		int hor = (int) (v.x / this.deltaHorizontal);
+		int ver = (int) (v.y / this.deltaVertical);
+		v.x = hor * this.deltaHorizontal;
+		v.y = ver * this.deltaVertical;
 	}
 }
