@@ -3,6 +3,7 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -90,6 +91,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
+		
 		return body;
 	}
 
@@ -160,8 +162,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 		}
-		
-//		drawBoundingBox(batch);
 	}
 
 	@Override

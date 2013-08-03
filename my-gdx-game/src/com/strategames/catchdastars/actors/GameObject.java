@@ -2,7 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -208,6 +208,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
 		Rectangle rec = getBoundingRectangle();
 		this.shapeRenderer.rect(rec.x, rec.y, rec.width, rec.height);
+		this.shapeRenderer.end();
+		batch.begin();
+	}
+	
+	public void drawBodyCenterMass(SpriteBatch batch, Color color) {
+		batch.end();
+		this.shapeRenderer.begin(ShapeType.Point);
+		this.shapeRenderer.setColor(color);
+		Vector2 v = this.body.getWorldCenter();
+		this.shapeRenderer.point(v.x, v.y, 0f);
+		this.shapeRenderer.end();
+		batch.begin();
+	}
+	
+	public void drawBodyPosition(SpriteBatch batch, Color color) {
+		batch.end();
+		this.shapeRenderer.begin(ShapeType.Point);
+		this.shapeRenderer.setColor(color);
+		Vector2 v = this.body.getPosition();
+		this.shapeRenderer.point(v.x, v.y, 0f);
 		this.shapeRenderer.end();
 		batch.begin();
 	}

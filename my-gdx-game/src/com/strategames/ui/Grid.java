@@ -22,8 +22,8 @@ public class Grid extends Image {
 	
 	public Grid() {
 		this.gridPoint = new Sprite(Textures.gridPoint);
-		this.halfWidth = this.gridPoint.getWidth();
-		this.halfHeight = this.gridPoint.getHeight();
+		this.halfWidth = this.gridPoint.getWidth() / 2f;
+		this.halfHeight = this.gridPoint.getHeight() / 2f;
 	}
 	
 	public void calculateGridSize(int screenWidth, int screenHeight) {
