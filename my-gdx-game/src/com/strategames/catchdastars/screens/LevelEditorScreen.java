@@ -313,7 +313,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public void addGameObject(GameObject object) {
 		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
-		Vector2 stageCoords = stage.screenToStageCoordinates(this.longPressPosition);
+		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(this.longPressPosition));
+		Gdx.app.log("LevelEditorScreen", "longPressPosition="+longPressPosition);
 		copy.setPosition(stageCoords.x, stageCoords.y);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
@@ -375,6 +376,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		GameObject gameObject = (GameObject) actor;
 
 		Rectangle rectangle = gameObject.getBoundingRectangle();
+		rectangle.setWidth(rectangle.width - 0.01f);
+		rectangle.setHeight(rectangle.height - 0.01f);
 		float curX = rectangle.x;
 		rectangle.x = x;   // position object at new X coordinate
 		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
@@ -392,13 +395,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	
 	private void displayGrid(boolean display) {
 		if( display ) {
-			if( ! this.grid.isVisible() ) {
-				getStageUIElements().addActor(this.grid);
-			}
+			getStageUIElements().addActor(this.grid);
 		} else {
-			if( this.grid.isVisible() ) {
-				this.grid.remove();
-			}
+			this.grid.remove();
 		}
 	}
 	

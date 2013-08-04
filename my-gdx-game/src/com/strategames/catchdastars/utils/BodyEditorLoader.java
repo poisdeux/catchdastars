@@ -111,7 +111,7 @@ public class BodyEditorLoader {
                         polygonShape.set(polygon.buffer);
                         fd.shape = polygonShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
-                        fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
+                        fixture.setUserData(new Integer(uniqueIdentifier)); // Added to support breakable objects
                 }
 
                 for (int i=0, n=rbModel.circles.size(); i<n; i++) {
@@ -121,7 +121,7 @@ public class BodyEditorLoader {
                         circleShape.setRadius(circle.radiusBuffer);
                         fd.shape = circleShape;
                         Fixture fixture = body.createFixture(fd); // Added to support breakable objects
-                        fixture.setUserData(uniqueIdentifier); // Added to support breakable objects
+                        fixture.setUserData(new Integer(uniqueIdentifier)); // Added to support breakable objects
                 }
         }
 

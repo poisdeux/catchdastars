@@ -4,7 +4,6 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -319,7 +318,6 @@ public class Icecube extends GameObject {
 		}
 
 		int partId = userData.intValue();
-
 		Vector2 v = super.body.getPosition();
 
 		Game game = getGame();
@@ -328,7 +326,7 @@ public class Icecube extends GameObject {
 		Icecube icecube1 = new Icecube();
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
-		icecube1.addPart(availableParts.get(partId));
+		icecube1.addPart(this.parts.get(partId));
 		icecube1.setBroken(true);
 		game.addGameObject(icecube1);
 
@@ -336,10 +334,10 @@ public class Icecube extends GameObject {
 		Icecube icecube2 = new Icecube();
 		icecube2.setPosition(v.x, v.y);
 		icecube2.setRotation(getRotation());
-		int size = availableParts.size();
+		int size = this.parts.size();
 		for( int i = 0; i < size; i++ ) {
 			if( i != partId ) {
-				icecube2.addPart(availableParts.get(i));
+				icecube2.addPart(this.parts.get(i));
 			}
 		}
 		icecube2.setBroken(true);
