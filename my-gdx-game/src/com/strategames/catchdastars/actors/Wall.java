@@ -162,6 +162,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				this.spriteMiddlePart.draw(batch, parentAlpha);
 			}
 		}
+		
+//		drawBoundingBox(batch);
 	}
 
 	@Override

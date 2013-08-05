@@ -65,6 +65,7 @@ public class Star extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
+//		drawBoundingBox(batch);
 	}
 	
 	@Override

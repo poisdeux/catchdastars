@@ -376,18 +376,31 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		GameObject gameObject = (GameObject) actor;
 
 		Rectangle rectangle = gameObject.getBoundingRectangle();
-		rectangle.setWidth(rectangle.width - 0.01f);
-		rectangle.setHeight(rectangle.height - 0.01f);
 		float curX = rectangle.x;
-		rectangle.x = x;   // position object at new X coordinate
+		float curY = rectangle.y;
+		
+		//Make rectangle a bit smaller inside object to allow objects to
+		//be placed adjacent to each other. This is especially a problem
+		//when using snap to grid.
+		rectangle.width -= 0.02f;
+		rectangle.height -= 0.02f;
+		
+		// position object at new X coordinate adding half the amount we
+		// subtracted from the width
+		rectangle.x = x + 0.01f;   
 		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
+		} else {
+			rectangle.x = x;
 		}
 
-		float curY = rectangle.y;
-		rectangle.y = y;   // position object at new Y coordinate
+		// position object at new Y coordinate adding half the amount we
+		// subtracted from the height
+		rectangle.y = y + 0.01f;
 		if( getActor(rectangle) != null ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
+		} else {
+			rectangle.y = y;
 		}
 
 		gameObject.moveTo(rectangle.x, rectangle.y);

@@ -147,6 +147,8 @@ public class Icecube extends GameObject {
 		if( this.breakOnFixture != null ) {
 			splitObject();
 		}
+		
+//		drawBoundingBox(batch);
 	}
 
 	@Override
