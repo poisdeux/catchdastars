@@ -139,7 +139,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	        public void input(String text) {
 	        	level.setName(text);
 	        	button.setText(level.getLevelNumber() + ". "+level.getName());
-	        	Level levelOnDisk = Level.loadLocal(level.getLevelNumber());
+	        	Level levelOnDisk = Level.loadLocalSync(level.getLevelNumber());
 	        	if( levelOnDisk != null ) {
 	        		levelOnDisk.setName(text);
 	        		levelOnDisk.save();

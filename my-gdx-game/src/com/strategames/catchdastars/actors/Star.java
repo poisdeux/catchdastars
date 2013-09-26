@@ -71,7 +71,6 @@ public class Star extends GameObject {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-	
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class Grid extends Image {
 	
 	/**
 	 * Maps vector on grid
-	 * @param v Vector that should be mapped. Note that v will be changed.
+	 * @param v Vector in screen coordinate system that should be mapped. Note that v will be changed.
 	 */
 	public void map(Vector2 v) {
 		int hor = (int) (v.x / this.deltaHorizontal);

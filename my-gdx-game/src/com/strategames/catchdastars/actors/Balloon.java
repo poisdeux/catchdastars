@@ -148,9 +148,11 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	public void act(float delta) {
-		super.act(delta);		
-		Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
-		super.body.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
+		super.act(delta);
+		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
+			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
+			super.body.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
+		}
 	}
 
 	@Override

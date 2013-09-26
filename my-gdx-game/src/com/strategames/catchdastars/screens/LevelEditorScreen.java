@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -21,20 +23,27 @@ import com.strategames.ui.GameObjectConfigurationDialog;
 import com.strategames.ui.GameObjectPickerDialog;
 import com.strategames.ui.Grid;
 import com.strategames.ui.LevelEditorOptionsDialog;
+import com.strategames.ui.RectangleImage;
 import com.strategames.ui.ToolsPickerDialog;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, Dialog.OnClickListener {
 
 	private Vector2 longPressPosition;
-	private Vector2 dragOffset;
-	private Actor actorHit;
+	private Vector2 dragDirection;
 	private float previousZoomDistance;
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
 	private LevelEditorPreferences preferences;
 	private boolean snapToGrid;
+	private Vector2 initialTouchPosition;
 	
+	private Actor actorTouched;
+	
+	private ArrayList<GameObject> selectedGameObjects;
+
+	private RectangleImage rectangleImage;
+
 	private Grid grid;
 
 	private enum States {
@@ -48,6 +57,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		private long tapTime2;
 		private Actor actor;
 
+		private int tapDelay = 200;
+
 		public Tap() {
 		}
 
@@ -57,10 +68,22 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 
 		public boolean doubleTapped() {
-			return ( tapTime2 - tapTime1 ) < 200;
+			return ( tapTime2 - tapTime1 ) < tapDelay;
 		}
 
+		/**
+		 * Set the actor to monitor for double tapping.
+		 * <br/>
+		 * Note that this resets the tap time if the actor being set is different from the one currently being monitored
+		 * @param actor
+		 */
 		public void setActor(Actor actor) {
+			if( actor == this.actor ) {
+				return;
+			}
+
+			tapTime1 = -1 * (tapDelay + 1); // make sure doubleTapped is not true when setting the actor
+			tapTime2 = 0;
 			this.actor = actor;
 		}
 
@@ -84,23 +107,28 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		this.testGame = false;
 
+		this.initialTouchPosition = new Vector2();
 		this.longPressPosition = new Vector2();
-		this.dragOffset = new Vector2();
+		this.dragDirection = new Vector2();
 
-		this.actorHit = null;
+		this.selectedGameObjects = new ArrayList<GameObject>();
 
 		this.preferences = new LevelEditorPreferences();
 		this.snapToGrid = this.preferences.snapToGridEnabled();
-		
+
 		this.grid = new Grid();
 		this.grid.calculateGridSize(Gdx.app.getGraphics().getWidth(), Gdx.app.getGraphics().getHeight());
-		
+
+		this.rectangleImage = new RectangleImage();
+		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
+
 		getMultiplexer().addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
 		displayGrid(this.preferences.displayGridEnabled());
+		stage.addActor(this.rectangleImage);
 	}
 
 	@Override
@@ -133,11 +161,19 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown float");
+		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
 		}
+
+		this.dragDirection.x = x;
+		this.dragDirection.y = y;
+		this.initialTouchPosition.x = x;
+		this.initialTouchPosition.y = y;
+		this.rectangleImage.setPosition(x, y);
+		this.rectangleImage.setWidth(0f);
+		this.rectangleImage.setHeight(0f);
 
 		this.previousZoomDistance = 0f; // reset zoom distance
 		this.state = States.NONE;
@@ -147,45 +183,89 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		Stage stage = getStageUIElements();
 		stage.screenToStageCoordinates(touchPosition);
 		this.uiElementHit = stage.hit(touchPosition.x, touchPosition.y, false);
-
-		touchPosition.set(x, y);   //reset vector
+		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
 		stage = getStageActors();
 		stage.screenToStageCoordinates(touchPosition);
 		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
-
+		
+		tap.setActor(actor);
+		this.actorTouched = actor;
+		
 		if( actor != null ) { // actor selected
-			deselectGameObject((GameObject) this.actorHit);
+//			Vector2 testConversion = new Vector2(touchPosition);
+//			stage.stageToScreenCoordinates(testConversion);
+//			testConversion.y = Gdx.app.getGraphics().getHeight() - testConversion.y;
+//			Gdx.app.log("LevelEditorScreen", "touchDown: this.actorTouched(x,y)=("
+//			+this.actorTouched.getX()+","+this.actorTouched.getY()+"), touchPosition="+touchPosition+
+//			"\ntestConversion="+testConversion);
+			
 			selectGameObject((GameObject) actor);
-			this.actorHit = actor;
-			Vector2 v = new Vector2(this.actorHit.getX(), this.actorHit.getY());
-			stage.stageToScreenCoordinates(v);
-			this.dragOffset.x = x - v.x;
-			this.dragOffset.y = v.y - (Gdx.graphics.getHeight() - y); //Touch event coordinates are y-down coordinated
 		} else if( this.uiElementHit == null ) { // empty space selected
-			deselectGameObject((GameObject) this.actorHit);
-			this.actorHit = null;
+			for( GameObject gameObject : this.selectedGameObjects ) {
+				deselectGameObject(gameObject);
+			}
+			this.selectedGameObjects.clear();
 		}
 
 		return true;
 	}
 
 	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		if( ( this.state == States.DRAG ) || 
-				( this.state == States.NONE ) ) {
-			this.state = States.DRAG;
-
-			if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-				Vector2 v = new Vector2(screenX - this.dragOffset.x, screenY - this.dragOffset.y);
-				if( this.snapToGrid ) {
-					this.grid.map(v);
-				}		
-				getStageActors().screenToStageCoordinates(v);
-				moveActor(this.actorHit, v.x, v.y);
-				return true;
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if( this.rectangleImage.getWidth() > 0 ) { // check if we did a selection
+			Rectangle rectangle = new Rectangle(this.rectangleImage.getX(),
+					this.rectangleImage.getY(), 
+					this.rectangleImage.getWidth(),
+					this.rectangleImage.getHeight());
+			ArrayList<Actor> selection = getActors(rectangle);
+			for( Actor actor : selection ) {
+				selectGameObject((GameObject) actor);
 			}
+			this.rectangleImage.setWidth(0f);
+			this.rectangleImage.setHeight(0f);
+			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		if( ( this.state == States.NONE ) || 
+				( this.state == States.DRAG ) ) {
+
+			this.state = States.DRAG;
+
+			if( this.uiElementHit != null ) {
+				return false;
+			}
+
+			if( this.selectedGameObjects.size() > 0 ) {
+				Vector2 moveDirection = new Vector2(screenX, screenY);
+				Vector2 stageCoords = new Vector2(this.actorTouched.getX(), this.actorTouched.getY());
+				getStageActors().stageToScreenCoordinates(stageCoords);
+				stageCoords.y = super.screenHeight - stageCoords.y;
+				moveDirection.sub(stageCoords);
+				Gdx.app.log("LevelEditorScreen", "touchDragged: after moveDirection="+moveDirection+
+						", stageCoords="+stageCoords);
+//				this.dragDirection.sub(screenX, screenY);
+				
+				for( GameObject gameObject : this.selectedGameObjects ) {
+					moveActor(gameObject, moveDirection);
+				}
+			} else {
+				float width = screenX - this.initialTouchPosition.x;
+				float height = this.initialTouchPosition.y - screenY;
+				this.rectangleImage.setWidth(width);
+				this.rectangleImage.setHeight(height);
+			}
+
+			return true;
+
+		} else {
+
+			return false;
+
+		}
 	}
 
 	@Override
@@ -198,48 +278,17 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			getGame().reset();
 		}
 
-		tap.tap();
+		this.tap.tap();
 
-		if( ( this.actorHit != null ) && ( this.uiElementHit == null ) ){
-			if( tap.doubleTapped() && ( this.actorHit == tap.getActor() ) ) {
-				GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog((GameObject) this.actorHit, getSkin());
-				dialog.addButton("Copy " + this.actorHit.getName(), new OnClickListener() {
+		GameObject gameObject = (GameObject) this.tap.getActor();
 
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						Stage stage = getStageActors();
-						GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
-						Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(x, y));
-						copy.setPosition(stageCoords.x, stageCoords.y);
-						getGame().addGameObject(copy);
-						stage.addActor(copy);
-						deselectGameObject(copy);
-					}
-				});
-				dialog.addButton("Delete " + this.actorHit.getName(), new OnClickListener() {
-
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						((GameObjectConfigurationDialog) dialog).getGameObject().remove();
-						dialog.remove();
-					}
-				});
-
-				dialog.setPositiveButton("Close", new OnClickListener() {
-
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						dialog.remove();
-					}
-				});
-				dialog.show(getStageUIElements());
-
+		if( ( gameObject != null ) && ( this.uiElementHit == null ) ){
+			if( tap.doubleTapped() ) {
+				showGameObjectCongfigurationDialog(gameObject);
 				return true;
 			} 
 
 		}
-
-		tap.setActor(this.actorHit);
 
 		return false;
 	}
@@ -262,7 +311,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			if( this.uiElementHit != null ) return false;
 
 			showMainMenu();
-			
+
 		}
 		return true;
 	}
@@ -290,14 +339,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				this.previousZoomDistance = distance;
 			}
 
-			if( this.actorHit == null ) return false;
+			if( this.selectedGameObjects.size() == 0 ) return false;
 
 			if( distance > this.previousZoomDistance ) {
-				GameObject gameObject = (GameObject) this.actorHit;
-				gameObject.increaseSize();
+				for( GameObject gameObject : this.selectedGameObjects ) {
+					gameObject.increaseSize();
+				}
 			} else if( distance < this.previousZoomDistance ) {
-				GameObject gameObject = (GameObject) this.actorHit;
-				gameObject.decreaseSize();
+				for( GameObject gameObject : this.selectedGameObjects ) {
+					gameObject.decreaseSize();
+				}
 			}
 			return true;
 		}
@@ -314,14 +365,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
 		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(this.longPressPosition));
-		Gdx.app.log("LevelEditorScreen", "longPressPosition="+longPressPosition);
 		copy.setPosition(stageCoords.x, stageCoords.y);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
 		stage.addActor(copy);
 		deselectGameObject(copy);
 	}
-	
+
 	@Override
 	public void onClick(Dialog dialog, int which) {
 		if( dialog instanceof LevelEditorOptionsDialog ) {
@@ -346,6 +396,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		if( gameObject == null) return;
 
 		gameObject.setColor(1f, 1f, 1f, 1.0f);
+		if( ! this.selectedGameObjects.contains(gameObject) ) {
+			this.selectedGameObjects.add(gameObject);
+		}
 	}
 
 	private void deselectGameObject(GameObject gameObject) {
@@ -364,7 +417,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private Actor getActor(Rectangle rectangle) {
 		Array<Actor> actors = getStageActors().getActors();
 		for(Actor actor : actors) {
-			if( actor == this.actorHit ) continue;
+			if( this.selectedGameObjects.contains(actor) ) continue;
 			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
 					actor.getWidth(), actor.getHeight());
 			if( rectangle.overlaps(rectangleActor) ) return actor;
@@ -372,40 +425,70 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		return null;
 	}
 
-	private void moveActor(Actor actor, float x, float y) {
+	private ArrayList<Actor> getActors(Rectangle rectangle) {
+		ArrayList<Actor> actorsInRectangle = new ArrayList<Actor>();
+
+		Array<Actor> actors = getStageActors().getActors();
+		for(Actor actor : actors) {
+			if( this.selectedGameObjects.contains(actor) ) continue;
+			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
+					actor.getWidth(), actor.getHeight());
+			if( rectangle.overlaps(rectangleActor) ) {
+				actorsInRectangle.add(actor);
+			}
+		}
+		return actorsInRectangle;
+	}
+
+	private void moveActor(Actor actor, Vector2 v) {
+		Stage stage = getStageActors();
+		
 		GameObject gameObject = (GameObject) actor;
 
+		Vector2 newPos = new Vector2(gameObject.getX(), gameObject.getY());
+		stage.stageToScreenCoordinates(newPos);
+		newPos.y = super.screenHeight - newPos.y;
+		newPos.add(v);
+		
+//		Gdx.app.log("LevelEditorScreen", "moveActor: gameObject="+gameObject.getName()+", newPos="+newPos);
+		
+		if( this.snapToGrid ) {
+			this.grid.map(newPos);
+		}		
+//		Gdx.app.log("LevelEditorScreen", "moveActor: gameObject="+gameObject.getName()+", snapToGrid v="+v);
+		stage.screenToStageCoordinates(newPos);
+		
 		Rectangle rectangle = gameObject.getBoundingRectangle();
 		float curX = rectangle.x;
 		float curY = rectangle.y;
-		
+
 		//Make rectangle a bit smaller inside object to allow objects to
 		//be placed adjacent to each other. This is especially a problem
 		//when using snap to grid.
 		rectangle.width -= 0.02f;
 		rectangle.height -= 0.02f;
-		
+
 		// position object at new X coordinate adding half the amount we
 		// subtracted from the width
-		rectangle.x = x + 0.01f;   
+		rectangle.x = newPos.x + 0.01f;   
 		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
 		} else {
-			rectangle.x = x;
+			rectangle.x = newPos.x;
 		}
 
 		// position object at new Y coordinate adding half the amount we
 		// subtracted from the height
-		rectangle.y = y + 0.01f;
+		rectangle.y = newPos.y + 0.01f;
 		if( getActor(rectangle) != null ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
 		} else {
-			rectangle.y = y;
+			rectangle.y = newPos.y;
 		}
 
 		gameObject.moveTo(rectangle.x, rectangle.y);
 	}
-	
+
 	private void displayGrid(boolean display) {
 		if( display ) {
 			getStageUIElements().addActor(this.grid);
@@ -413,31 +496,31 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.grid.remove();
 		}
 	}
-	
+
 	private void showMainMenu() {
 		ButtonsDialog dialog = new ButtonsDialog(getGame(), getSkin(), this);
-		
+
 		dialog.add("Add game object", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showGameObjectPickerDialog();
 			}
 		});
-		
+
 		dialog.add("Tools", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showToolsDialog();
 			}
 		});
-		
+
 		dialog.add("Options", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showOptionsDialog();
 			}
 		});
-		
+
 		dialog.setPositiveButton("Close", new OnClickListener() {
 
 			@Override
@@ -456,22 +539,56 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		});
 		dialog.show(getStageUIElements());
 	}
-	
+
 	private void showGameObjectPickerDialog() {
 		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
 		dialog.setPositiveButton("Close", this);
 		dialog.setNegativeButton("Quit", this);
 		dialog.show(getStageUIElements());
 	}
-	
+
 	private void showToolsDialog() {
 		ToolsPickerDialog tDialog = new ToolsPickerDialog(getGame(), getSkin());
 		tDialog.show(getStageUIElements());
 	}
-	
+
 	private void showOptionsDialog() {
 		LevelEditorOptionsDialog tDialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
 		tDialog.show(getStageUIElements());
+	}
+
+	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
+		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(gameObject, getSkin());
+		dialog.addButton("Copy " + gameObject.getName(), new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				Stage stage = getStageActors();
+				GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
+				Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
+				copy.setPosition(stageCoords.x, stageCoords.y);
+				getGame().addGameObject(copy);
+				stage.addActor(copy);
+				deselectGameObject(copy);
+			}
+		});
+		dialog.addButton("Delete " + gameObject.getName(), new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				((GameObjectConfigurationDialog) dialog).getGameObject().remove();
+				dialog.remove();
+			}
+		});
+
+		dialog.setPositiveButton("Close", new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				dialog.remove();
+			}
+		});
+		dialog.show(getStageUIElements());
 	}
 }
 

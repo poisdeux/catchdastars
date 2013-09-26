@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Json;
@@ -18,6 +17,13 @@ public class Level implements Comparable<Level> {
 
 	static private String INTERNAL_PATH = "levels";
 	static private String LOCAL_PATH = "levels";
+	
+	static private Level level;
+	static private LevelLoaded levelLoadedListener;
+	
+	public interface LevelLoaded {
+		public void onLevelLoaded(Level level);
+	}
 	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		this.gameObjects = gameObjects;
@@ -42,23 +48,20 @@ public class Level implements Comparable<Level> {
 	public int getLevelNumber() {
 		return this.number;
 	}
+
+	public static Level getLevel() {
+		return level;
+	}
 	
 	/**
-	 * Loads assets using AssetManager
-	 */
-	public void load(AssetManager manager) {
-		manager.load(Level.getLocalPath(this.number), Level.class);
-	}
-
-	/**
-	 * Loads packaged level files
+	 * Loads packaged level files (synchronous)
 	 * @param level
-	 * @return ArrayList<GameObject>
+	 * @return Level object containing the game objects
 	 */
-	static public Level loadInternal(int level) {
+	static public Level loadInternalSync(int level) {
 		try {
 			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + level);
-			return load(file);
+			return loadSync(file);
 		} catch (Exception e) {
 			return null;
 		}
@@ -66,43 +69,70 @@ public class Level implements Comparable<Level> {
 	}
 
 	/**
-	 * Loads local level files saved using {@link #save(Stage, int)}
-	 * @param level
-	 * @return ArrayList<GameObject>
+	 * Loads local level files (synchronous) saved using {@link #save(Stage, int)}
+	 * @param level levelnumber to load
+	 * @return Level object containing the game objects 
 	 */
-	static public Level loadLocal(int level) {
+	static public Level loadLocalSync(int level) {
 		try {
 			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
-			return load(file);
+			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	/**
+	 * Loads local level files (asynchronous) saved using {@link #save(Stage, int)}
+	 * <br/>
+	 * Use {@link #levelLoaded()} to see if loading has finished. After loading you
+	 * can retrieve the Level object using {@link #getLevel()} 
+	 * @param level levelnumber to load
+	 */
+	static public void loadLocalAsync(int level, LevelLoaded listener) {
+		levelLoadedListener = listener;
+		try {
+			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
+			loadAsync(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
-	 * Loads level file from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternal(int)} or {@link #loadLocal(int)} instead.
-	 * @param level
+	 * Loads level file (synchronous) from FileHandle.
+	 * You should never need to use this. Use {@link #loadInternalSync(int)} or {@link #loadLocalSync(int)} instead.
 	 * @param file
-	 * @return ArrayList<GameObject>
+	 * @return Level object containing the game objects 
 	 */
-	static public Level load(FileHandle file) {
+	static public Level loadSync(FileHandle file) {
 		Json json = new Json();
 		String text = file.readString();
 		Object root =  json.fromJson(Level.class, text);
 		return (Level) root;
 	}
-
-	static public Level load(String filename) {
-		try {
-			FileHandle file = Gdx.files.local(filename);
-			return load(file);
-		} catch (Exception e) {
-			Gdx.app.log("Level", "Error while loading "+filename+"\n"+e.getMessage());
-			e.printStackTrace();
-			return null;
-		}
+	
+	/**
+	 * Loads level file (asynchronous) from FileHandle.
+	 * You should never need to use this. Use {@link #loadInternalAsync(int)} or {@link #loadLocalAsync(int)} instead.
+	* @param file
+	 */
+	static public void loadAsync(final FileHandle file) {
+		Thread thread = new Thread( new Runnable() {
+			
+			@Override
+			public void run() {
+				Json json = new Json();
+				String text = file.readString();
+				Object root =  json.fromJson(Level.class, text);
+				if( levelLoadedListener != null ) {
+					levelLoadedListener.onLevelLoaded((Level) root);
+				}
+			}
+		});
+		
+		thread.run();
 	}
 	
 	static public ArrayList<Level> loadAllLocalLevels() {
@@ -112,7 +142,7 @@ public class Level implements Comparable<Level> {
 		ArrayList<Level> levels = new ArrayList<Level>();
 		
 		for( FileHandle file : files ) {
-			levels.add(load(file));
+			levels.add(loadSync(file));
 		}
 		
 		return levels;
@@ -186,7 +216,7 @@ public class Level implements Comparable<Level> {
 	
 	/**
 	 * Saves the content of stage to a local file.
-	 * These files can be loaded using {@link #loadLocal(int)}
+	 * These files can be loaded using {@link #loadLocalSync(int)}
 	 * @param stage
 	 * @param level
 	 */

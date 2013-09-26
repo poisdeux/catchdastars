@@ -4,6 +4,7 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -51,6 +52,9 @@ public class Icecube extends GameObject {
 	private Fixture breakOnFixture;
 
 	private static long prevPlayRocksRolling;
+	
+	private Color colorActor;
+	
 
 	/**
 	 * New velocity is calculated as follows by Box2D
@@ -93,6 +97,9 @@ public class Icecube extends GameObject {
 			sprite.setSize(Game.convertWorldToBox(sprite.getWidth()), Game.convertWorldToBox(sprite.getHeight()));
 			part.setSprite(sprite);
 		}
+		
+		this.colorActor = getColor();
+		
 		return new TextureRegionDrawable(Textures.icecube);
 	}
 
@@ -141,7 +148,7 @@ public class Icecube extends GameObject {
 			Sprite sprite = part.getSprite();
 			sprite.setPosition(v.x, v.y);
 			sprite.setRotation(rotation);
-			sprite.draw(batch, parentAlpha);
+			sprite.draw(batch, this.colorActor.a);
 		}
 
 		if( this.breakOnFixture != null ) {

@@ -6,16 +6,17 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.screens.AbstractScreen;
+import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.LevelLoader;
+import com.strategames.catchdastars.utils.Level.LevelLoaded;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -44,12 +45,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private World world;
 	
+	public interface GameLoadedListener {
+		public void onGameLoaded();
+	}
+	
 	public Game() {
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
-		
-		this.manager.setLoader(Level.class, new LevelLoader(new InternalFileHandleResolver()));
-		
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 	}
 	
@@ -181,14 +183,26 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	/**
-	 * Loads level using the AssetManager. The level loaded is the level with
+	 * Loads the level synchronously.
+	 * The level loaded is the level with
 	 * level number set by {@link #setLevelNumber(int)}
 	 * <br/>
 	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
 	 */
 	public void loadLevel() {
 //		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
-		this.level = Level.loadLocal(this.levelNumber);
+		this.level = Level.loadLocalSync(this.levelNumber);
+	}
+	
+	public void loadLevelAsync(final GameLoadedListener listener) {
+		Level.loadLocalAsync(this.levelNumber, new LevelLoaded() {
+			
+			@Override
+			public void onLevelLoaded(Level level) {
+				Game.this.level = level;
+				listener.onGameLoaded();
+			}
+		});
 	}
 	
 	/**
@@ -296,12 +310,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	/**
+	 * Resets the game by reloading the level
+	 */
+	public void reset() {
+		setScreen( new LevelScreen(this) );
+	}
+	
+	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
 	 */
 	abstract public ArrayList<GameObject> getAvailableGameObjects();
 
 	abstract public void setupStage(Stage stage);
-
-	abstract public void reset();
 }

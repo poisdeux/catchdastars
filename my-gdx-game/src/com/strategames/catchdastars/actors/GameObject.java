@@ -49,6 +49,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isHit;
 	protected boolean isCollectible;
 	
+	protected Vector2 initialPosition; 
+	
 	protected Game game;
 	
 	public static enum Type {
@@ -76,6 +78,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer = new ShapeRenderer();
 		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
 		this.type = setType();
+		this.initialPosition = new Vector2();
 	}
 	
 	public Game getGame() {
@@ -299,9 +302,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			if ( entry.value instanceof OrderedMap ) {
 				read(json, (OrderedMap<String, Object>) entry.value);
 			} else if ( entry.key.contentEquals("x")) {
-				setX(Float.valueOf(entry.value.toString()));
+				float value = Float.valueOf(entry.value.toString());
+				setX(value);
+				this.initialPosition.x = value;
 			} else if ( entry.key.contentEquals("y")) {
-				setY(Float.valueOf(entry.value.toString()));
+				float value = Float.valueOf(entry.value.toString());
+				setY(value);
+				this.initialPosition.y = value;
 			} else {
 				readValue(entry.key, entry.value);
 			}

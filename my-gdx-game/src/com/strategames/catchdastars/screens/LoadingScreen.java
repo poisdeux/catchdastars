@@ -17,7 +17,6 @@ public class LoadingScreen extends AbstractScreen {
 
 	private Screen screenToLoad;
 	
-	private AssetManager assetManager;
 	private boolean animationFinished = false;
 	
 	private Image loadingImage;
@@ -34,7 +33,6 @@ public class LoadingScreen extends AbstractScreen {
 	public LoadingScreen(Screen screenToLoad, Game game, int levelNumber) {
 		super(game);
 
-		this.assetManager = getGame().getManager();
 		this.screenToLoad = screenToLoad;
 		
 		game.setLevelNumber(levelNumber);
@@ -104,7 +102,7 @@ public class LoadingScreen extends AbstractScreen {
 		this.stageUIActors.act();
 		super.render(delta);
 		
-		if ( this.animationFinished && this.assetManager.update() ) {
+		if ( this.animationFinished ) {
 			
 //			game.setCurrentLevel(this.assetManager.get(Level.getLocalPath(this.levelNumber), Level.class));
 			

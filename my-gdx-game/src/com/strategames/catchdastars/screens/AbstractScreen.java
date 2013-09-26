@@ -1,11 +1,13 @@
 package com.strategames.catchdastars.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -27,7 +29,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private Skin skin;
 	protected final Stage stageActors;
 	protected final Stage stageUIActors;
-
+	
+	protected int screenHeight;
+	protected int screenWidth;
+	
+	protected Camera camera;
+	
 	public AbstractScreen(Game game)
 	{
 		this.game = game;
@@ -40,6 +47,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.multiplexer = new InputMultiplexer();
 		this.multiplexer.addProcessor(this.stageUIActors);
 		this.multiplexer.addProcessor(this);
+		
+		this.screenHeight = Gdx.app.getGraphics().getHeight();
+		this.screenWidth = Gdx.app.getGraphics().getWidth();
 	}
 	
 	@Override
@@ -109,12 +119,13 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
-		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
-			this.stageActors.act();
-		}
+//		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
+			this.stageActors.act(delta);
+//		}
+			
 		this.stageActors.draw();
 		
-		this.stageUIActors.act();
+		this.stageUIActors.act(delta);
 		this.stageUIActors.draw();
 	}
 
@@ -156,32 +167,27 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("AbstractScreen", "touchDown");
 		return false;
 	}
 	
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		Gdx.app.log("AbstractScreen", "touchUp");
 		return false;
 	}
 	
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Gdx.app.log("AbstractScreen", "touchDragged");
 		return false;
 	}
 	
 	@Override
 	public boolean keyDown(int keycode) {
-		Gdx.app.log("AbstractScreen", "keyDown");
 		return false;
 	}
 	
 	@Override
 	public boolean keyUp(int keycode) {
-		Gdx.app.log("AbstractScreen", "keyUp");
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
 			if ( handleBackNavigation() ) {
@@ -193,7 +199,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean keyTyped(char character) {
-		Gdx.app.log("AbstractScreen", "keyTyped");
 		return false;
 	}
 
@@ -205,7 +210,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	
 	@Override
 	public boolean scrolled(int amount) {
-		Gdx.app.log("AbstractScreen", "scrolled");
 		return false;
 	}
 	

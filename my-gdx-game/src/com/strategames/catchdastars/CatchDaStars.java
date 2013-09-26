@@ -59,6 +59,19 @@ public class CatchDaStars extends Game {
 		this.goldCollectables = new Collectable();
 	}
 
+	@Override
+	public void create() {
+		this.gravityVector = new Vector2();
+		this.gravityVector.set(0, -GRAVITY);
+
+		this.world = new World(this.gravityVector, true);
+		setWorld(this.world);
+
+		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+		
+		super.create();
+	}
+	
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
@@ -79,15 +92,10 @@ public class CatchDaStars extends Game {
 	public void setupStage(Stage stage) {
 		this.stageActors = stage;
 
-		System.gc(); //hint the garbage collector that now is a good time to collect
-
-		this.gravityVector = new Vector2();
-		this.gravityVector.set(0, -GRAVITY);
-
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-
-		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+		
+		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		initLevel();
 	}
@@ -114,12 +122,6 @@ public class CatchDaStars extends Game {
 	public void startGame() {
 		super.startGame();
 		darkenActors(1f);
-	}
-
-	@Override
-	public void reset() {
-		initLevel();
-		System.gc(); //hint the garbage collector that now is a good time to collect
 	}
 
 	private void showLevelCompleteDialog() {
@@ -170,7 +172,7 @@ public class CatchDaStars extends Game {
 
 		return this.availableGameObjects;
 	}
-
+	
 	private void initLevel() {
 		Level level = getLevel();
 
@@ -182,13 +184,15 @@ public class CatchDaStars extends Game {
 		int prevGameState = getGameState();
 		setGameState(GAME_STATE_PAUSED);
 		
-		Array<Actor> actors = this.stageActors.getActors();
-		for( Actor actor : actors ) {
-			GameObject gameObject = (GameObject) actor;
-			gameObject.deleteBody();
-			gameObject.remove();
-//			deleteGameObject(gameObject);
-		}
+//		//Remove any current actors to make sure we are not left with
+//		//any broken parts from breakable objects
+//		Array<Actor> actors = this.stageActors.getActors();
+//		for( Actor actor : actors ) {
+//			GameObject gameObject = (GameObject) actor;
+//			gameObject.deleteBody();
+//			gameObject.remove();
+////			deleteGameObject(gameObject);
+//		}
 
 		this.stageActors.clear();
 

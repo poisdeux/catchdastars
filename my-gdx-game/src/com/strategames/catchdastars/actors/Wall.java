@@ -24,12 +24,13 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private Sprite spriteMiddlePart;
 	private Sprite spriteLeftPart;
 	private Sprite spriteRightPart;
+	private Color colorActor;
 	private Orientation orientation;
 	private float length;
 	private float drawLength;
 	private float increaseDecreaseSizeAccumulatedDelta;
 	private float stepSize;
-	
+
 	public enum Orientation {
 		HORIZONTAL, VERTICAL
 	}
@@ -37,7 +38,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public Wall() {
 		super();
 	}
-	
+
 	public Wall(Game game, float x, float y, float length, Orientation type) {
 		super();
 		setGame(game);
@@ -65,6 +66,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 					Game.convertWorldToBox(this.spriteMiddlePart.getHeight()));
 		}
 
+		this.colorActor = getColor();
+
 		setDrawable(new TextureRegionDrawable(this.spriteMiddlePart));
 		setScaling(Scaling.stretch);
 		setLength(this.length);
@@ -91,7 +94,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
-		
+
 		return body;
 	}
 
@@ -102,7 +105,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public float getStepSize() {
 		return stepSize;
 	}
-	
+
 	/**
 	 * Sets the length of this object. This can only be called after {@link #setup()} has been called.
 	 * @param length in Box2D
@@ -110,13 +113,13 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public void setLength(float length) {
 		float width = this.spriteMiddlePart.getWidth();
 		float height = this.spriteMiddlePart.getHeight();
-		
+
 		if( orientation == Orientation.HORIZONTAL ) {
 			this.length = length < width ? width : length; //Make sure length is not smaller than a single block
 			setWidth(this.length);
 			setHeight(height);
 			this.stepSize = width;		
-			this.drawLength = this.length - (this.stepSize * 1.9f);
+			this.drawLength = this.length - (this.stepSize * 2f);
 		} else {
 			this.length = length < height ? height : length; //Make sure length is not smaller than a single block
 			setHeight(this.length);
@@ -130,40 +133,44 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		this.orientation = type;
 		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
-	
-	
+
+
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		Vector2 v = super.body.getPosition();
 		float x = v.x;
 		float y = v.y;
 		setPosition(x, y);
-		
+
+
 		if ( orientation == Orientation.HORIZONTAL ) {
 			this.spriteLeftPart.setPosition(x, y);
-			this.spriteLeftPart.draw(batch, parentAlpha);
+			this.spriteLeftPart.draw(batch, this.colorActor.a);
 
 			float middlePartEndPosition = x + this.drawLength;
 
-			float xd;
-			for(xd = x + stepSize; 
-					xd < middlePartEndPosition; 
-					xd += stepSize ) {
-				this.spriteMiddlePart.setPosition(xd, y);
-				this.spriteMiddlePart.draw(batch, parentAlpha);
+			float xd = x + stepSize;
+			if( xd < middlePartEndPosition ) {
+				for(; 
+						xd < middlePartEndPosition; 
+						xd += stepSize ) {
+					this.spriteMiddlePart.setPosition(xd, y);
+					this.spriteMiddlePart.draw(batch, this.colorActor.a);		
+				}
+				this.spriteRightPart.setPosition(xd, y);
+			} else {
+				this.spriteRightPart.setPosition(x, y);
 			}
-
-			this.spriteRightPart.setPosition(xd, y);
 			this.spriteRightPart.draw(batch, parentAlpha);
 		} else {
 			float middlePartEndPosition = y + this.drawLength;
 			for( float yd = y; yd < middlePartEndPosition; yd += stepSize ) {
 				this.spriteMiddlePart.setPosition(x, yd);
-				this.spriteMiddlePart.draw(batch, parentAlpha);
+				this.spriteMiddlePart.draw(batch, this.colorActor.a);
 			}
 		}
-		
-//		drawBoundingBox(batch);
+
+		//		drawBoundingBox(batch);
 	}
 
 	@Override
@@ -203,7 +210,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 		item.setMinValue(this.stepSize);
 		item.setStepSize(this.stepSize);
-		
+
 		items.add(item);
 
 		return items;
@@ -223,21 +230,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void decreaseSize() {
 		this.increaseDecreaseSizeAccumulatedDelta -= this.stepSize;
-		
+
 		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.stepSize ) {
 			this.increaseDecreaseSizeAccumulatedDelta = 0;
 
 			setLength(this.length - this.stepSize);
-		}
-	}
-
-	@Override
-	public void setColor(float r, float g, float b, float a) {
-		super.setColor(r, g, b, a);
-		this.spriteMiddlePart.setColor(r, g, b, a);
-		if( orientation == Orientation.HORIZONTAL ) {
-			this.spriteLeftPart.setColor(r, g, b, a);
-			this.spriteRightPart.setColor(r, g, b, a);
 		}
 	}
 
