@@ -47,6 +47,8 @@ public class Textures {
 	public static TextureRegion digit9;
 	public static TextureRegion gridPoint;
 	
+	private static String atlasFilename;
+	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
@@ -55,14 +57,23 @@ public class Textures {
 	 * Loads assets asynchronous
 	 */
 	static public void load(AssetManager manager) {
-		manager.load("packed/pack.atlas", TextureAtlas.class);
+		float factor = Gdx.graphics.getDensity();
+		if( factor >= 3 ) {
+			atlasFilename = "packed/xxhdpi.atlas";
+		} else if ( factor >= 2 ) {
+			atlasFilename = "packed/xhdpi.atlas";
+		} else {
+			atlasFilename = "packed/mdpi.atlas";
+		}
+		manager.load(atlasFilename, TextureAtlas.class);
+		Gdx.app.log("Textures", "load: factor="+factor+", atlasFilename="+atlasFilename);
 	}
 	
 	/**
 	 * Unloads all loaded assets
 	 */
 	static public void dispose(AssetManager manager) {
-		manager.unload("packed/pack.atlas");
+		manager.unload(atlasFilename);
 	}
 	
 	/**
@@ -73,7 +84,7 @@ public class Textures {
 	 */
 	public static void setup(AssetManager manager) {
 		Gdx.app.log("Textures", "setup:");
-		TextureAtlas atlas = manager.get("packed/pack.atlas", TextureAtlas.class);
+		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
 		redBalloon = atlas.findRegion("aj_balloon_red");

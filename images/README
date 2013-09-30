@@ -6,4 +6,6 @@ Create texture map
 ==================
 
 export CLASSPATH=../libgdx/gdx.jar:../libgdx/extensions/gdx-tools/gdx-tools.jar
-java com.badlogic.gdx.tools.imagepacker.TexturePacker2 ~/projects/gdx/PopDaBalloons/images/gameobjects-32px ~/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/
+java com.badlogic.gdx.tools.imagepacker.TexturePacker2 ~/projects/gdx/PopDaBalloons/images/gameobjects/mdpi ~/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/ mdpi
+java com.badlogic.gdx.tools.imagepacker.TexturePacker2 ~/projects/gdx/PopDaBalloons/images/gameobjects/xhdpi ~/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/ xhdpi
+java com.badlogic.gdx.tools.imagepacker.TexturePacker2 ~/projects/gdx/PopDaBalloons/images/gameobjects/xxhdpi ~/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/ xxhdpi
