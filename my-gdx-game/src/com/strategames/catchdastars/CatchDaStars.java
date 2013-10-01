@@ -4,9 +4,14 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -53,6 +58,8 @@ public class CatchDaStars extends Game {
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
 
+	private Box2DDebugRenderer debugRenderer;
+	
 	public CatchDaStars() {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -69,6 +76,8 @@ public class CatchDaStars extends Game {
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 		
+		this.debugRenderer = new Box2DDebugRenderer();
+		
 		super.create();
 	}
 	
@@ -79,9 +88,8 @@ public class CatchDaStars extends Game {
 			this.gravityVector.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
 			this.world.setGravity(gravityVector);
 		}
-
-		//		this.debugRenderer.render(world, this.camera.combined);
-
+		
+		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getCamera().combined);
 
 		Icecube.playRocksHitSound();
 
@@ -91,7 +99,7 @@ public class CatchDaStars extends Game {
 	@Override
 	public void setupStage(Stage stage) {
 		this.stageActors = stage;
-
+		
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
 		

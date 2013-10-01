@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 public class Textures {
 
@@ -49,6 +50,10 @@ public class Textures {
 	
 	private static String atlasFilename;
 	
+	private static final Vector2[] availableTextureResolutions = {
+			new Vector2(800, 480), new Vector2(960, 640), new Vector2(1440, 960)
+	};
+	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
@@ -62,11 +67,21 @@ public class Textures {
 			atlasFilename = "packed/xxhdpi.atlas";
 		} else if ( factor >= 2 ) {
 			atlasFilename = "packed/xhdpi.atlas";
+		} else if ( factor >= 1.5 ) {
+			atlasFilename = "packed/hdpi.atlas";
 		} else {
 			atlasFilename = "packed/mdpi.atlas";
 		}
 		manager.load(atlasFilename, TextureAtlas.class);
 		Gdx.app.log("Textures", "load: factor="+factor+", atlasFilename="+atlasFilename);
+	}
+	
+	/**
+	 * Use this to get a list of screen resolutions for which textures are available
+	 * @return Vector2 array
+	 */
+	public static Vector2[] getAvailabletextureresolutions() {
+		return availableTextureResolutions;
 	}
 	
 	/**
@@ -83,7 +98,6 @@ public class Textures {
 	 * @param manager
 	 */
 	public static void setup(AssetManager manager) {
-		Gdx.app.log("Textures", "setup:");
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");

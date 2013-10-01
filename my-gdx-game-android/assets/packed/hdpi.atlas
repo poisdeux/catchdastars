@@ -1,0 +1,194 @@
+
+hdpi.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+cash_register
+  rotate: false
+  xy: 1, 53
+  size: 192, 202
+  orig: 192, 202
+  offset: 0, 0
+  index: -1
+aj_balloon_blue
+  rotate: false
+  xy: 195, 188
+  size: 48, 67
+  orig: 48, 67
+  offset: 0, 0
+  index: -1
+aj_balloon_red
+  rotate: false
+  xy: 195, 119
+  size: 48, 67
+  orig: 48, 67
+  offset: 0, 0
+  index: -1
+icecube-part1
+  rotate: false
+  xy: 1, 2
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part10
+  rotate: false
+  xy: 245, 206
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part2
+  rotate: false
+  xy: 195, 68
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part3
+  rotate: false
+  xy: 51, 2
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part4
+  rotate: false
+  xy: 245, 155
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part5
+  rotate: false
+  xy: 295, 206
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part6
+  rotate: false
+  xy: 101, 2
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part7
+  rotate: false
+  xy: 245, 104
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part8
+  rotate: false
+  xy: 295, 155
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part9
+  rotate: false
+  xy: 345, 206
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube
+  rotate: false
+  xy: 295, 104
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-left-end
+  rotate: false
+  xy: 345, 156
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-right-end
+  rotate: false
+  xy: 395, 207
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal
+  rotate: false
+  xy: 345, 106
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-vertical
+  rotate: false
+  xy: 395, 157
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 445, 207
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 395, 107
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 445, 157
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Chalk-01
+  rotate: false
+  xy: 151, 27
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-02
+  rotate: false
+  xy: 151, 1
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-03
+  rotate: false
+  xy: 245, 78
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-04
+  rotate: false
+  xy: 445, 131
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-05
+  rotate: false
+  xy: 271, 78
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gridpoint
+  rotate: false
+  xy: 297, 78
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1

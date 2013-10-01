@@ -83,7 +83,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	}
 
 	public void setLiftFactor(float liftFactor) {
-		Gdx.app.log("Balloon", "setLiftFactor:");
 		if( liftFactor > MAX_LIFTFACTOR ) {
 			liftFactor = MAX_LIFTFACTOR;
 		} else if( liftFactor < MIN_LIFTFACTOR ) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -33,7 +34,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected int screenHeight;
 	protected int screenWidth;
 	
-	protected Camera camera;
+	private Camera camera;
 	
 	public AbstractScreen(Game game)
 	{
@@ -48,8 +49,19 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.multiplexer.addProcessor(this.stageUIActors);
 		this.multiplexer.addProcessor(this);
 		
-		this.screenHeight = Gdx.app.getGraphics().getHeight();
-		this.screenWidth = Gdx.app.getGraphics().getWidth();
+		this.screenWidth = 800;
+		this.screenHeight = 480;
+		
+		this.camera = new OrthographicCamera(800, 480);
+		this.camera.position.set(800/2, 480/2, 0f); 
+		this.camera.update();
+		
+		this.stageActors.setCamera(this.camera);
+		this.stageUIActors.setCamera(this.camera);
+		
+		this.stageActors.setViewport( this.screenWidth * Game.WORLD_TO_BOX, this.screenHeight * Game.WORLD_TO_BOX, true );
+		this.stageUIActors.setViewport( this.screenWidth, this.screenHeight, true );
+		
 	}
 	
 	@Override
@@ -60,6 +72,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void resume() {
 	}
 
+	public Camera getCamera() {
+		return camera;
+	}
+	
 	public InputMultiplexer getMultiplexer() {
 		return this.multiplexer;
 	}
@@ -71,22 +87,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected String getName()
 	{
 		return getClass().getSimpleName();
-	}
-
-	public BitmapFont getFont()
-	{
-		if( font == null ) {
-			font = new BitmapFont();
-		}
-		return font;
-	}
-
-	public SpriteBatch getBatch()
-	{
-		if( batch == null ) {
-			batch = new SpriteBatch();
-		}
-		return batch;
 	}
 
 	public Skin getSkin()
@@ -115,10 +115,13 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void render(
 			float delta )
-	{		
+	{	
+		this.camera.update();
+		
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
+		
 //		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
 			this.stageActors.act(delta);
 //		}
@@ -138,8 +141,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void resize(int width, int height) {
-		this.stageActors.setViewport( width * Game.WORLD_TO_BOX, height * Game.WORLD_TO_BOX, true );
-		this.stageUIActors.setViewport( width, height, true );
+
+		Gdx.app.log("AbstractScreen", "resize: width="+width+", height="+height);
 	}
 
 	@Override
@@ -151,7 +154,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		if( batch != null ) batch.dispose();
 		if( skin != null ) skin.dispose();
 	}
-
+	
 	public Stage getStageActors() {
 		return this.stageActors;
 	}
