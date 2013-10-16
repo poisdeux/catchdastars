@@ -31,8 +31,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected final Stage stageActors;
 	protected final Stage stageUIActors;
 	
-	protected int screenHeight;
-	protected int screenWidth;
+	protected float screenHeight;
+	protected float screenWidth;
 	
 	private Camera camera;
 	
@@ -48,20 +48,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.multiplexer = new InputMultiplexer();
 		this.multiplexer.addProcessor(this.stageUIActors);
 		this.multiplexer.addProcessor(this);
-		
-		this.screenWidth = 800;
-		this.screenHeight = 480;
-		
-		this.camera = new OrthographicCamera(800, 480);
-		this.camera.position.set(800/2, 480/2, 0f); 
-		this.camera.update();
-		
-		this.stageActors.setCamera(this.camera);
-		this.stageUIActors.setCamera(this.camera);
-		
-		this.stageActors.setViewport( this.screenWidth * Game.WORLD_TO_BOX, this.screenHeight * Game.WORLD_TO_BOX, true );
-		this.stageUIActors.setViewport( this.screenWidth, this.screenHeight, true );
-		
 	}
 	
 	@Override
@@ -141,8 +127,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void resize(int width, int height) {
-
-		Gdx.app.log("AbstractScreen", "resize: width="+width+", height="+height);
+		float aspectRatio = (float) height / (float) width;
+		this.screenWidth = 800f;
+		this.screenHeight = this.screenWidth * aspectRatio;
+		this.camera = new OrthographicCamera(this.screenWidth, this.screenHeight);
+		this.camera.position.x = this.screenWidth/2f;
+		this.camera.position.y = this.screenHeight/2f;
+		this.stageActors.setCamera(this.camera);
+		this.stageUIActors.setCamera(this.camera);
 	}
 
 	@Override
