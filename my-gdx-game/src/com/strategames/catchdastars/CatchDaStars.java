@@ -85,11 +85,11 @@ public class CatchDaStars extends Game {
 			this.world.setGravity(gravityVector);
 		}
 		
-		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getCamera().combined);
-
 		Icecube.playRocksHitSound();
 
 		super.update(delta, stage);
+		
+		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override

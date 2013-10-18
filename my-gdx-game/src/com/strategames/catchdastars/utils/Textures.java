@@ -72,6 +72,8 @@ public class Textures {
 		} else {
 			atlasFilename = "packed/mdpi.atlas";
 		}
+		
+		atlasFilename = "packed/mdpi.atlas";
 		manager.load(atlasFilename, TextureAtlas.class);
 		Gdx.app.log("Textures", "load: factor="+factor+", atlasFilename="+atlasFilename);
 	}

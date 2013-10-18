@@ -110,8 +110,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	@Override
 	Body setupBox2D() {
 		World world = getGame().getWorld();
-//		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
-		float balloonWidth = getPrefWidth() * getScaleX();
+		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
 		
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 		loader.setupVertices("Balloon", balloonWidth);

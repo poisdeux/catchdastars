@@ -32,8 +32,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	
 	protected float screenHeight;
 	protected float screenWidth;
+	protected float gameHeight;
+	protected float gameWidth;
 	
-	private Camera camera;
+	private Camera menuCamera;
+	private Camera gameCamera;
 	
 	public AbstractScreen(Game game)
 	{
@@ -57,8 +60,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void resume() {
 	}
 
-	public Camera getCamera() {
-		return camera;
+	public Camera getGameCamera() {
+		return gameCamera;
+	}
+	
+	public Camera getMenuCamera() {
+		return menuCamera;
 	}
 	
 	public InputMultiplexer getMultiplexer() {
@@ -105,12 +112,18 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return screenHeight;
 	}
 	
+	public float getGameWidth() {
+		return gameWidth;
+	}
+	
+	public float getGameHeight() {
+		return gameHeight;
+	}
+	
 	@Override
 	public void render(
 			float delta )
 	{	
-		this.camera.update();
-		
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
@@ -134,20 +147,19 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void resize(int width, int height) {
-		float aspectRatio = (float) height / (float) width;
 		this.screenWidth = 800f;
-		this.screenHeight = this.screenWidth * aspectRatio;
-		this.camera = new OrthographicCamera(this.screenWidth, this.screenHeight);
-		this.camera.position.x = this.screenWidth/2f;
-		this.camera.position.y = this.screenHeight/2f;
+		this.screenHeight = 480f;
+		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
+		this.menuCamera.position.x = width/2f;
+		this.menuCamera.position.y = height/2f;
+		this.stageUIActors.setCamera(this.menuCamera);
 		
-		this.stageActors.setCamera(this.camera);
-		this.stageUIActors.setCamera(this.camera);
-		
-		this.stageUIActors.setViewport(this.screenWidth, this.screenHeight, true);
-		this.stageActors.setViewport(this.screenWidth, this.screenHeight, true);
-//		this.stageActors.setViewport(Game.convertWorldToBox(this.screenWidth) , 
-//				Game.convertWorldToBox(this.screenHeight), true);
+		this.gameWidth = Game.convertWorldToBox(this.screenWidth); 
+		this.gameHeight = Game.convertWorldToBox(this.screenHeight);
+		this.gameCamera = new OrthographicCamera(gameWidth, gameHeight);
+		this.gameCamera.position.x = width/2f;
+		this.gameCamera.position.y = height/2f;
+		this.stageActors.setCamera(this.gameCamera);
 	}
 
 	@Override

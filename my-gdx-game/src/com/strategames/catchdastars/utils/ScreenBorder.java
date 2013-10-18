@@ -14,8 +14,8 @@ public class ScreenBorder {
 		float height;
 		if( screen instanceof AbstractScreen ) {
 			AbstractScreen abstractScreen = (AbstractScreen) screen;
-			width = abstractScreen.getScreenWidth();
-			height = abstractScreen.getScreenHeight();
+			width = abstractScreen.getGameWidth();
+			height = abstractScreen.getGameHeight();
 		} else {
 			width = Gdx.graphics.getWidth();
 			height = Gdx.graphics.getHeight();
