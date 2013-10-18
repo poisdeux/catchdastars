@@ -1,14 +1,29 @@
 package com.strategames.catchdastars.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.Wall;
+import com.strategames.catchdastars.screens.AbstractScreen;
 
 public class ScreenBorder {
 
 	static public void create(Game game) {
-		float boxWidth = Game.convertWorldToBox(Gdx.graphics.getWidth());
-		float boxHeight = Game.convertWorldToBox(Gdx.graphics.getHeight());
+		Screen screen = game.getScreen();
+		float width;
+		float height;
+		if( screen instanceof AbstractScreen ) {
+			AbstractScreen abstractScreen = (AbstractScreen) screen;
+			width = abstractScreen.getScreenWidth();
+			height = abstractScreen.getScreenHeight();
+		} else {
+			width = Gdx.graphics.getWidth();
+			height = Gdx.graphics.getHeight();
+		}
+//		float boxWidth = Game.convertWorldToBox(width);
+//		float boxHeight = Game.convertWorldToBox(height);
+		float boxWidth = width;
+		float boxHeight = height;
 		
 		Wall wTop = new Wall(game, 0, 0, boxWidth, Wall.Orientation.HORIZONTAL);
 		wTop.increaseSize();

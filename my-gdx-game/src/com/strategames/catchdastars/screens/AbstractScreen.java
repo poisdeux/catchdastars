@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -98,6 +97,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		setupActors(this.stageActors);
 	}
 
+	public float getScreenWidth() {
+		return screenWidth;
+	}
+	
+	public float getScreenHeight() {
+		return screenHeight;
+	}
+	
 	@Override
 	public void render(
 			float delta )
@@ -133,8 +140,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.camera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.camera.position.x = this.screenWidth/2f;
 		this.camera.position.y = this.screenHeight/2f;
+		
 		this.stageActors.setCamera(this.camera);
 		this.stageUIActors.setCamera(this.camera);
+		
+		this.stageUIActors.setViewport(this.screenWidth, this.screenHeight, true);
+		this.stageActors.setViewport(this.screenWidth, this.screenHeight, true);
+//		this.stageActors.setViewport(Game.convertWorldToBox(this.screenWidth) , 
+//				Game.convertWorldToBox(this.screenHeight), true);
 	}
 
 	@Override
