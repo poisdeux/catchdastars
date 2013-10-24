@@ -60,6 +60,8 @@ public class CatchDaStars extends Game {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
+		
+		setWorldSize(new Vector2(8f, 5f)); //Widescreen aspect ratio
 	}
 
 	@Override

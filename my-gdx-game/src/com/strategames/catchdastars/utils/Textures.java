@@ -3,6 +3,7 @@ package com.strategames.catchdastars.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -14,10 +15,10 @@ public class Textures {
 	public static TextureRegion starBlue;
 	public static TextureRegion starYellow;
 	public static TextureRegion starRed;
-	public static TextureRegion bricksHorizontal;
-	public static TextureRegion bricksHorizontalEndLeft;
-	public static TextureRegion bricksHorizontalEndRight;
-	public static TextureRegion bricksVertical;
+	public static Texture 		bricksHorizontal;
+	public static Texture 		bricksHorizontalEndLeft;
+	public static Texture 		bricksHorizontalEndRight;
+	public static Texture 		bricksVertical;
 	public static TextureRegion chalk1;
 	public static TextureRegion chalk2;
 	public static TextureRegion chalk3;
@@ -47,12 +48,11 @@ public class Textures {
 	public static TextureRegion digit8;
 	public static TextureRegion digit9;
 	public static TextureRegion gridPoint;
+	public static Texture		Loading;
+	public static Texture		dot;
 	
 	private static String atlasFilename;
-	
-	private static final Vector2[] availableTextureResolutions = {
-			new Vector2(800, 480), new Vector2(960, 640), new Vector2(1440, 960)
-	};
+	private static String screenDensity;
 	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
@@ -62,28 +62,12 @@ public class Textures {
 	 * Loads assets asynchronous
 	 */
 	static public void load(AssetManager manager) {
-		float factor = Gdx.graphics.getDensity();
-		if( factor >= 3 ) {
-			atlasFilename = "packed/xxhdpi.atlas";
-		} else if ( factor >= 2 ) {
-			atlasFilename = "packed/xhdpi.atlas";
-		} else if ( factor >= 1.5 ) {
-			atlasFilename = "packed/hdpi.atlas";
-		} else {
-			atlasFilename = "packed/mdpi.atlas";
+		if( screenDensity == null ) {
+			screenDensity = getScreenDensity();
 		}
 		
-		atlasFilename = "packed/mdpi.atlas";
+		atlasFilename = "packed/"+screenDensity+".atlas";
 		manager.load(atlasFilename, TextureAtlas.class);
-		Gdx.app.log("Textures", "load: factor="+factor+", atlasFilename="+atlasFilename);
-	}
-	
-	/**
-	 * Use this to get a list of screen resolutions for which textures are available
-	 * @return Vector2 array
-	 */
-	public static Vector2[] getAvailabletextureresolutions() {
-		return availableTextureResolutions;
 	}
 	
 	/**
@@ -100,6 +84,18 @@ public class Textures {
 	 * @param manager
 	 */
 	public static void setup(AssetManager manager) {
+		if( atlasFilename == null ) {
+			load(manager);
+		}
+		
+		String path = "images/"+screenDensity;
+		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
+		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
+		bricksHorizontalEndLeft = new Texture(path+"/bricks-texture-horizontal-left-end.png");
+		bricksVertical = new Texture(path+"/bricks-texture-vertical.png");
+		dot = new Texture(path+"/dot.png");
+		Loading = new Texture(path+"/Loading.png");
+		
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 		
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
@@ -107,10 +103,6 @@ public class Textures {
 		starBlue = atlas.findRegion("star_blue");
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");
-		bricksHorizontal = atlas.findRegion("bricks-texture-horizontal");
-		bricksHorizontalEndRight = atlas.findRegion("bricks-texture-horizontal-right-end");
-		bricksHorizontalEndLeft = atlas.findRegion("bricks-texture-horizontal-left-end");
-		bricksVertical = atlas.findRegion("bricks-texture-vertical");
 		chalk1 = atlas.findRegion("Chalk-01");
 		chalk2 = atlas.findRegion("Chalk-02");
 		chalk3 = atlas.findRegion("Chalk-03");
@@ -140,5 +132,27 @@ public class Textures {
 		digit8 = atlas.findRegion("8");
 		digit9 = atlas.findRegion("9");
 		gridPoint = atlas.findRegion("gridpoint");
+	}
+	
+	public static Texture getSplashScreen() {
+		if( screenDensity == null ) {
+			screenDensity = getScreenDensity();
+		}
+		
+		return new Texture( "images/"+screenDensity+"/splashscreen.png" );
+	}
+	
+	private static String getScreenDensity() {
+		String density = "mdpi";
+		float factor = Gdx.graphics.getDensity();
+		if( factor >= 3 ) {
+			density = "xxhdpi";
+		} else if ( factor >= 2 ) {
+			density = "xhdpi";
+		} else if ( factor >= 1.5 ) {
+			density = "hdpi";
+		}
+//		return density;
+		return "mdpi";
 	}
 }

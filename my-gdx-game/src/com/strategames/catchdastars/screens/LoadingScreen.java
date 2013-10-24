@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.utils.Textures;
 
 public class LoadingScreen extends AbstractScreen {
 
@@ -45,10 +46,10 @@ public class LoadingScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.loadingImage = new Image(new Texture( "images/Loading.png" ));
-		this.dotImage1 = new Image(new Texture( "images/dot.png" ));
-		this.dotImage2 = new Image(new Texture( "images/dot.png" ));
-		this.dotImage3 = new Image(new Texture( "images/dot.png" ));
+		this.loadingImage = new Image(Textures.Loading);
+		this.dotImage1 = new Image(Textures.dot);
+		this.dotImage2 = new Image(Textures.dot);
+		this.dotImage3 = new Image(Textures.dot);
 		
 		float x = (stage.getWidth() - (this.loadingImage.getWidth() + ( 3 * this.dotImage1.getWidth() ) ) ) / 2f;
 		float y = (stage.getHeight() - this.loadingImage.getHeight()) / 2f;

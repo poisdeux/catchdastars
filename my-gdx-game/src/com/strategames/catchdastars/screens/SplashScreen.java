@@ -37,7 +37,7 @@ public class SplashScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-		Texture texture = new Texture( "images/splashscreen.png" );
+		Texture texture = Textures.getSplashScreen();
 
 		this.splashImage = new Image(texture);
 

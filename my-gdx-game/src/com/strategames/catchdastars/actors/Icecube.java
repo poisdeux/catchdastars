@@ -32,7 +32,7 @@ import com.strategames.catchdastars.utils.Textures;
  *      We might want to reuse fixtures of parent object.
  */
 public class Icecube extends GameObject {
-	private final static float WIDTH = Game.convertWorldToBox(32f); 
+	private final static float WIDTH = 0.30f; 
 	private static BodyEditorLoader loader;
 
 	private static int rocksHit;
@@ -69,7 +69,7 @@ public class Icecube extends GameObject {
 	public static float maxVelocitySquared = 90f * 90f;
 
 	public Icecube() {
-		super();
+		super(new Vector2(WIDTH, -1f));
 
 		if( availableParts == null ) {
 			setupStaticResources();
@@ -94,7 +94,7 @@ public class Icecube extends GameObject {
 	TextureRegionDrawable createTexture() {
 		for(Part part : this.parts) {
 			Sprite sprite = new Sprite(part.getTexture());
-			sprite.setSize(Game.convertWorldToBox(sprite.getWidth()), Game.convertWorldToBox(sprite.getHeight()));
+			sprite.setSize(Game.convertScreenToWorld(sprite.getWidth()), Game.convertScreenToWorld(sprite.getHeight()));
 			part.setSprite(sprite);
 		}
 		

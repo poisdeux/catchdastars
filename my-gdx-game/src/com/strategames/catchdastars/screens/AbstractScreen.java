@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.catchdastars.Game;
@@ -32,8 +33,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	
 	protected float screenHeight;
 	protected float screenWidth;
-	protected float gameHeight;
-	protected float gameWidth;
 	
 	private Camera menuCamera;
 	private Camera gameCamera;
@@ -112,14 +111,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return screenHeight;
 	}
 	
-	public float getGameWidth() {
-		return gameWidth;
-	}
-	
-	public float getGameHeight() {
-		return gameHeight;
-	}
-	
 	@Override
 	public void render(
 			float delta )
@@ -147,18 +138,17 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void resize(int width, int height) {
-		this.screenWidth = 800f;
-		this.screenHeight = 480f;
+		this.screenWidth = width;
+		this.screenHeight = height;
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.x = width/2f;
 		this.menuCamera.position.y = height/2f;
 		this.stageUIActors.setCamera(this.menuCamera);
 		
-		this.gameWidth = Game.convertWorldToBox(this.screenWidth); 
-		this.gameHeight = Game.convertWorldToBox(this.screenHeight);
-		this.gameCamera = new OrthographicCamera(gameWidth, gameHeight);
-		this.gameCamera.position.x = width/2f;
-		this.gameCamera.position.y = height/2f;
+		Vector2 worldSize = this.game.getWorldSize(); 
+		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
+		this.gameCamera.position.x = worldSize.x/2f;
+		this.gameCamera.position.y = worldSize.y/2f;
 		this.stageActors.setCamera(this.gameCamera);
 	}
 

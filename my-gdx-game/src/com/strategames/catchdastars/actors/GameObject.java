@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -53,13 +54,20 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	protected Game game;
 	
+	protected Vector2 size;
+	
 	public static enum Type {
 		WALL, BALLOON, STAR, ROCK
 	}
 	
 	public Type type;
 	
-	public GameObject() {
+	/**
+	 * Constructor for creating a game object
+	 * @param size in meters. size.x = width, size.y = height. If size.y < 0 height of the game object is calculated using size.x and image size. 
+	 */
+	public GameObject(Vector2 size) {
+		this.size = size;
 		init();
 	}
 	
@@ -172,10 +180,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		if( trd != null ) {
 			setDrawable(trd);
 			setScaling(Scaling.stretch);
-			float width = Game.convertWorldToBox(trd.getRegion().getRegionWidth());
-			float height = Game.convertWorldToBox(trd.getRegion().getRegionHeight());
-			setWidth(width);
-			setHeight(height);
+			if( this.size.y < 0 ) {
+				double aspectRatio = trd.getRegion().getRegionHeight() / (double) trd.getRegion().getRegionWidth();
+				this.size.y = (float) (this.size.x * aspectRatio);
+			}
+			setWidth(this.size.x);
+			setHeight(this.size.y);
 		}
 
 		if( this.world != null ) {

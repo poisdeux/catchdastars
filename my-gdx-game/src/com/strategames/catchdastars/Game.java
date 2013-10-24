@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -43,6 +44,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private Level level; 
 	
 	private World world;
+	
+	private Vector2 worldSize;
 	
 	public interface GameLoadedListener {
 		public void onGameLoaded();
@@ -127,11 +130,28 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	/**
+	 * 
+	 * @return size of the world in meters
+	 */
+	public Vector2 getWorldSize() {
+		return worldSize;
+	}
+	
+	/**
+	 * Note that world size is not the same as screen size
+	 * It is the size of the world as used by Box2D
+	 * @param worldSize in meters
+	 */
+	public void setWorldSize(Vector2 worldSize) {
+		this.worldSize = worldSize;
+	}
+	
+	/**
 	 * Use this to convert screen pixel sizes to Box2D sizes
 	 * @param x size in screen pixels
 	 * @return size in Box2D 
 	 */
-	static public float convertWorldToBox(float x) {
+	static public float convertScreenToWorld(float x) {
 		return x * WORLD_TO_BOX;
 	}
 	

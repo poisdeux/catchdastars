@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -27,6 +28,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 4f;
 	private static final float DEFAULT_LIFTFACTOR = 1.6f;
+
+	private static final float WIDTH = 0.30f;
 	
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
@@ -51,12 +54,12 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	private ColorType colorType;
 
-	public Balloon() { 
-		super();
+	public Balloon() {
+		super(new Vector2(WIDTH, -1f));
 	}
 
 	public Balloon(Game game, float x, float y, ColorType type) {
-		super();
+		this();
 		setGame(game);
 		setColorType(type);
 		setPosition(x, y);
@@ -110,10 +113,10 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	@Override
 	Body setupBox2D() {
 		World world = getGame().getWorld();
-		float balloonWidth = Game.convertWorldToBox(getPrefWidth() * getScaleX());
+//		float balloonWidth = Game.convertScreenToWorld(getPrefWidth() * getScaleX());
 		
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
-		loader.setupVertices("Balloon", balloonWidth);
+		loader.setupVertices("Balloon", WIDTH);
 		
 		//Balloon body
 		BodyDef bd = new BodyDef();
@@ -130,7 +133,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		loader.attachFixture(body, "Balloon", 0, fixtureBalloon);
 
 		this.upwardLiftPosition = body.getLocalCenter();
-		this.upwardLiftPosition.y += 0.3f;
+		this.upwardLiftPosition.y += 0.03f;
  		
 		this.upwardLift = -body.getMass() * this.liftFactor;
 		
