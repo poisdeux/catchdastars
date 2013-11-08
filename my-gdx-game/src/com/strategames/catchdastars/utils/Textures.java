@@ -153,6 +153,6 @@ public class Textures {
 			density = "hdpi";
 		}
 //		return density;
-		return "mdpi";
+		return "hdpi";
 	}
 }

@@ -5,190 +5,162 @@ filter: Nearest,Nearest
 repeat: none
 cash_register
   rotate: false
-  xy: 1, 229
-  size: 256, 270
-  orig: 256, 270
+  xy: 1, 62
+  size: 169, 178
+  orig: 169, 178
   offset: 0, 0
   index: -1
 aj_balloon_blue
   rotate: false
-  xy: 1, 137
-  size: 64, 90
-  orig: 64, 90
+  xy: 1, 1
+  size: 42, 59
+  orig: 42, 59
   offset: 0, 0
   index: -1
 aj_balloon_red
   rotate: false
-  xy: 259, 409
-  size: 64, 90
-  orig: 64, 90
+  xy: 172, 181
+  size: 42, 59
+  orig: 42, 59
   offset: 0, 0
   index: -1
 icecube-part1
   rotate: false
-  xy: 1, 69
-  size: 64, 66
-  orig: 64, 66
+  xy: 45, 17
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part10
   rotate: false
-  xy: 67, 161
-  size: 64, 66
-  orig: 64, 66
+  xy: 172, 136
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part2
   rotate: false
-  xy: 259, 341
-  size: 64, 66
-  orig: 64, 66
+  xy: 216, 197
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part3
   rotate: false
-  xy: 325, 433
-  size: 64, 66
-  orig: 64, 66
+  xy: 89, 17
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part4
   rotate: false
-  xy: 1, 1
-  size: 64, 66
-  orig: 64, 66
+  xy: 172, 91
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part5
   rotate: false
-  xy: 67, 93
-  size: 64, 66
-  orig: 64, 66
+  xy: 216, 152
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part6
   rotate: false
-  xy: 133, 161
-  size: 64, 66
-  orig: 64, 66
+  xy: 260, 197
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part7
   rotate: false
-  xy: 259, 273
-  size: 64, 66
-  orig: 64, 66
+  xy: 216, 107
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part8
   rotate: false
-  xy: 325, 365
-  size: 64, 66
-  orig: 64, 66
+  xy: 260, 152
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube-part9
   rotate: false
-  xy: 391, 433
-  size: 64, 66
-  orig: 64, 66
+  xy: 304, 197
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 icecube
   rotate: false
-  xy: 67, 25
-  size: 64, 66
-  orig: 64, 66
-  offset: 0, 0
-  index: -1
-bricks-texture-horizontal-left-end
-  rotate: false
-  xy: 133, 95
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-bricks-texture-horizontal-right-end
-  rotate: false
-  xy: 325, 299
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-bricks-texture-horizontal
-  rotate: false
-  xy: 391, 367
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-bricks-texture-vertical
-  rotate: false
-  xy: 133, 29
-  size: 64, 64
-  orig: 64, 64
+  xy: 260, 107
+  size: 42, 43
+  orig: 42, 43
   offset: 0, 0
   index: -1
 star_blue
   rotate: false
-  xy: 391, 301
-  size: 64, 64
-  orig: 64, 64
+  xy: 304, 153
+  size: 42, 42
+  orig: 42, 42
   offset: 0, 0
   index: -1
 star_red
   rotate: false
-  xy: 199, 163
-  size: 64, 64
-  orig: 64, 64
+  xy: 348, 198
+  size: 42, 42
+  orig: 42, 42
   offset: 0, 0
   index: -1
 star_yellow
   rotate: false
-  xy: 199, 97
-  size: 64, 64
-  orig: 64, 64
+  xy: 304, 109
+  size: 42, 42
+  orig: 42, 42
   offset: 0, 0
   index: -1
 Chalk-01
   rotate: false
-  xy: 457, 467
-  size: 32, 32
-  orig: 32, 32
+  xy: 133, 39
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 259, 239
-  size: 32, 32
-  orig: 32, 32
+  xy: 172, 68
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 199, 63
-  size: 32, 32
-  orig: 32, 32
+  xy: 348, 175
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 457, 433
-  size: 32, 32
-  orig: 32, 32
+  xy: 392, 219
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 199, 29
-  size: 32, 32
-  orig: 32, 32
+  xy: 348, 152
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
 gridpoint
   rotate: false
-  xy: 457, 399
-  size: 32, 32
-  orig: 32, 32
+  xy: 415, 219
+  size: 21, 21
+  orig: 21, 21
   offset: 0, 0
   index: -1
