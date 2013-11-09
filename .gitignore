@@ -4,4 +4,15 @@ bin/
 libs/
 libgdx/
 tools/
-images/ice_cube/part*.png
+images/gameobjects/*/packed/
+images/originals/ice_cube/icecube-part*.png
+images/originals/aj_balloon_blue.png
+images/originals/aj_balloon_red.png
+images/originals/cash_register.png
+images/originals/gridpoint.png
+images/originals/ice_cube/icecube.png
+images/originals/splashscreen.png
+images/originals/star_blue.png
+images/originals/star_red.png
+images/originals/star_yellow.png
+popdaballoons-gdx.tgz

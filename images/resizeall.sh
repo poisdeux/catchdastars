@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./resizeimages.sh 433 149 originals/Loading.png
+./resizeimages.sh 41 149 originals/dot.png
 ./resizeimages.sh 32 45 originals/aj_balloon_*.png
 ./resizeimages.sh 32 32 originals/bricks-texture-*.png originals/star_*.png
 ./resizeimages.sh 127 134 originals/cash_register.png

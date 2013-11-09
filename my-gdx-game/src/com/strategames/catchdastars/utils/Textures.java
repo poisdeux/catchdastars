@@ -152,7 +152,8 @@ public class Textures {
 		} else if ( factor >= 1.5 ) {
 			density = "hdpi";
 		}
-//		return density;
-		return "hdpi";
+		Gdx.app.log("Textures", "getScreenDensity(): factor="+factor+", density="+density);
+		return density;
+//		return "xhdpi";
 	}
 }
