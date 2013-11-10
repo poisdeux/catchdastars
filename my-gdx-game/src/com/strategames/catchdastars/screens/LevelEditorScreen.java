@@ -116,9 +116,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.preferences = new LevelEditorPreferences();
 		this.snapToGrid = this.preferences.snapToGridEnabled();
 
-		Vector2 worldSize = game.getWorldSize();
-		this.grid = new Grid();
-		this.grid.calculateGridSize(worldSize.x, worldSize.y);
+		this.grid = new Grid(game);
 
 		this.rectangleImage = new RectangleImage();
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
@@ -493,6 +491,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private void displayGrid(boolean display) {
 		if( display ) {
 			getStageUIElements().addActor(this.grid);
+//			getStageActors().addActor(this.grid);
 		} else {
 			this.grid.remove();
 		}
