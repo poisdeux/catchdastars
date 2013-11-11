@@ -101,7 +101,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	public LevelEditorScreen(Game game) {
 		super(game);
-		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
+//		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
 
 		this.game = game;
 
@@ -160,7 +160,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -244,8 +244,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				getStageActors().stageToScreenCoordinates(stageCoords);
 				stageCoords.y = super.screenHeight - stageCoords.y;
 				moveDirection.sub(stageCoords);
-				Gdx.app.log("LevelEditorScreen", "touchDragged: after moveDirection="+moveDirection+
-						", stageCoords="+stageCoords);
+//				Gdx.app.log("LevelEditorScreen", "touchDragged: after moveDirection="+moveDirection+
+//						", stageCoords="+stageCoords);
 //				this.dragDirection.sub(screenX, screenY);
 				
 				for( GameObject gameObject : this.selectedGameObjects ) {

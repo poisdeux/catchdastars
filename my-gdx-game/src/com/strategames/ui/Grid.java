@@ -36,9 +36,9 @@ public class Grid extends Image {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		for( float y = 0; y < this.screenHeight; y += this.deltaVertical) {
-			for( float x = 0; x < this.screenWidth; x += this.deltaHorizontal) {
-				batch.draw(Textures.gridPoint, x - this.halfWidth, y - this.halfHeight, GRIDSIZE*2f, GRIDSIZE*2f);
+		for( float y = 0; y < this.screenHeight; y += GRIDSIZE) {
+			for( float x = 0; x < this.screenWidth; x += GRIDSIZE) {
+				batch.draw(Textures.gridPoint, x - this.halfWidth, y - this.halfHeight, GRIDSIZE, GRIDSIZE);
 			}
 		}
 	}
@@ -48,9 +48,9 @@ public class Grid extends Image {
 	 * @param v Vector in screen coordinate system that should be mapped. Note that v will be changed.
 	 */
 	public void map(Vector2 v) {
-		int hor = (int) (v.x / this.deltaHorizontal);
-		int ver = (int) (v.y / this.deltaVertical);
-		v.x = hor * this.deltaHorizontal;
-		v.y = ver * this.deltaVertical;
+		int hor = (int) (v.x / GRIDSIZE);
+		int ver = (int) (v.y / GRIDSIZE);
+		v.x = hor * GRIDSIZE;
+		v.y = ver * GRIDSIZE;
 	}
 }
