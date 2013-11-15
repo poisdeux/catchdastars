@@ -44,6 +44,26 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.stageActors = new Stage();
 		this.stageUIActors = new Stage();
 
+		Vector2 worldSize = this.game.getWorldSize(); 
+
+		this.screenWidth = Game.convertBoxToWorld(worldSize.x);
+		this.screenHeight = Game.convertBoxToWorld(worldSize.y);
+		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
+		this.menuCamera.position.x = this.screenWidth/2f;
+		this.menuCamera.position.y = this.screenHeight/2f;
+		this.stageUIActors.setCamera(this.menuCamera);
+		this.stageUIActors.setViewport(screenWidth, screenHeight, true);
+		
+		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
+		this.gameCamera.position.x = worldSize.x/2f;
+		this.gameCamera.position.y = worldSize.y/2f;
+		this.stageActors.setCamera(this.gameCamera);
+		
+		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
+				+stageUIActors.getHeight());
+		Gdx.app.log("AbstractScreen", "AbstractScreen: stageActors.getWidth="+stageActors.getWidth()+", stageActors.getHeight()="
+				+stageActors.getHeight());
+		
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
@@ -138,18 +158,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void resize(int width, int height) {
-		this.screenWidth = width;
-		this.screenHeight = height;
-		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
-		this.menuCamera.position.x = width/2f;
-		this.menuCamera.position.y = height/2f;
-		this.stageUIActors.setCamera(this.menuCamera);
 		
-		Vector2 worldSize = this.game.getWorldSize(); 
-		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
-		this.gameCamera.position.x = worldSize.x/2f;
-		this.gameCamera.position.y = worldSize.y/2f;
-		this.stageActors.setCamera(this.gameCamera);
 	}
 
 	@Override

@@ -29,7 +29,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 
-	public static final float BOX_TO_WORLD = 50f;
+	public static final float BOX_TO_WORLD = 100f;
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 	
 	public static final float GRAVITY = 9.81f;

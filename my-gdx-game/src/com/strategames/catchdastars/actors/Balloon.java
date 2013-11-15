@@ -26,8 +26,8 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
-	private static final float MAX_LIFTFACTOR = 4f;
-	private static final float DEFAULT_LIFTFACTOR = 1.6f;
+	private static final float MAX_LIFTFACTOR = 2f;
+	private static final float DEFAULT_LIFTFACTOR = 1.3f;
 
 	private static final float WIDTH = 0.30f;
 	
@@ -133,7 +133,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		loader.attachFixture(body, "Balloon", 0, fixtureBalloon);
 
 		this.upwardLiftPosition = body.getLocalCenter();
-		this.upwardLiftPosition.y += 0.03f;
+		this.upwardLiftPosition.y += 0.1f;
  		
 		this.upwardLift = -body.getMass() * this.liftFactor;
 		
@@ -190,9 +190,9 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		item.setName("lift");
 		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
 		item.setValueNumeric(this.liftFactor);
-		item.setMaxValue(4f);
+		item.setMaxValue(MAX_LIFTFACTOR);
 
-		item.setMinValue(1f);
+		item.setMinValue(MIN_LIFTFACTOR);
 		item.setStepSize(0.1f);
 		
 		items.add(item);
