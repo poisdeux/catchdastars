@@ -9,16 +9,12 @@ import com.strategames.catchdastars.Game;
 
 public class ButtonsDialog extends Dialog {
 	private final Skin skin;
-	private final Dialog.OnClickListener listener;
-	private final Game game;
 	private ArrayList<TextButton> textButtons;
 	
 	public ButtonsDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
 		super("", skin);
 		this.skin = skin;
 		this.textButtons = new ArrayList<TextButton>();
-		this.listener = listener;
-		this.game = game;
 	}
 
 	public void add(String text, EventListener listener) {

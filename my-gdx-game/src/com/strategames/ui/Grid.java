@@ -11,9 +11,6 @@ public class Grid extends Image {
 
 	private float GRIDSIZE = Game.convertBoxToWorld(0.30f);
 
-	private float deltaHorizontal = GRIDSIZE;
-	private float deltaVertical = GRIDSIZE;
-
 	private float screenWidth;
 	private float screenHeight;
 
@@ -29,9 +26,6 @@ public class Grid extends Image {
 		AbstractScreen screen = (AbstractScreen) game.getScreen();
 		this.screenWidth = screen.getScreenWidth();
 		this.screenHeight = screen.getScreenHeight();
-		
-		this.deltaHorizontal= this.screenWidth / GRIDSIZE;
-		this.deltaVertical = this.screenHeight / GRIDSIZE;
 	}
 	
 	@Override

@@ -3,10 +3,8 @@ package com.strategames.catchdastars.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 
 public class Textures {
 
@@ -163,7 +161,7 @@ public class Textures {
 		} else if ( screenWidth >= 799 ) {
 			density = "hdpi";
 		}
-		Gdx.app.log("Textures", "getScreenDensity(): density="+density);
+		Gdx.app.log("Textures", "getScreenDensity(): density="+density+", screenWidth="+screenWidth);
 		return density;
 //		return "xhdpi";
 	}

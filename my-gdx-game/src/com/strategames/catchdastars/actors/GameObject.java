@@ -2,7 +2,6 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -281,6 +280,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			position.x = getX();
 			position.y = getY();
 		}
+		
 		json.writeValue("x", position.x);
 		json.writeValue("y", position.y);
 		
