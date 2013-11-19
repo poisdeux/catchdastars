@@ -66,7 +66,7 @@ public class Icecube extends GameObject {
 	 * Following value of 28.77593 was determined empirically by checking maximum speed of icecube
 	 * in game
 	 */
-	public static float maxVelocitySquared = 90f * 90f;
+	public static float maxVelocitySquared = 828.05414f;
 
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
@@ -94,7 +94,7 @@ public class Icecube extends GameObject {
 	TextureRegionDrawable createTexture() {
 		for(Part part : this.parts) {
 			Sprite sprite = new Sprite(part.getTexture());
-			sprite.setSize(Game.convertScreenToWorld(sprite.getWidth()), Game.convertScreenToWorld(sprite.getHeight()));
+			sprite.setSize(WIDTH, WIDTH);
 			part.setSprite(sprite);
 		}
 		
@@ -214,10 +214,11 @@ public class Icecube extends GameObject {
 			}
 		}
 
-		//		Gdx.app.log("Icecube", "handleCollisiong: maxVelocitySquared="+this.maxVelocitySquared+", maxImpulse="+maxImpulse);
-		if( maxImpulse > 500 ) { // prevent adding rocks hitting when they are lying on top of eachother
+		if( maxImpulse > 100 ) { // prevent counting rocks hitting when they are lying on top of eachother
 			//			game.rockHit(maxImpulse);
-			if( maxImpulse > 1000 ) { // break object
+			if( maxImpulse > 500 ) { // break object
+				Gdx.app.log("Icecube", "handleCollisiong: maxVelocitySquared="+maxVelocitySquared+", maxImpulse="+maxImpulse);
+				
 				//Get colliding fixture for this object
 				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
 					this.breakOnFixture = contact.getFixtureA();

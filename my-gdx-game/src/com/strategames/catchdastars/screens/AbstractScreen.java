@@ -60,10 +60,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.stageActors.setCamera(this.gameCamera);
 		this.stageActors.setViewport(worldSize.x, worldSize.y, true);
 		
-		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
-				+stageUIActors.getHeight());
-		Gdx.app.log("AbstractScreen", "AbstractScreen: stageActors.getWidth="+stageActors.getWidth()+", stageActors.getHeight()="
-				+stageActors.getHeight());
+//		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
+//				+stageUIActors.getHeight());
+//		Gdx.app.log("AbstractScreen", "AbstractScreen: stageActors.getWidth="+stageActors.getWidth()+", stageActors.getHeight()="
+//				+stageActors.getHeight());
 		
 		Gdx.input.setCatchBackKey(true);
 
