@@ -2,6 +2,7 @@ package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
@@ -44,7 +45,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private RectangleImage rectangleImage;
 
 	private Grid grid;
-
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -125,7 +126,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	protected void setupUI(Stage stage) {
-		displayGrid(this.preferences.displayGridEnabled());
 		stage.addActor(this.rectangleImage);
 	}
 
@@ -140,6 +140,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			object.initializeConfigurationItems();
 			deselectGameObject(object);
 		}
+		
+		displayGrid(this.preferences.displayGridEnabled());
 	}
 
 	@Override
@@ -153,7 +155,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
-			this.game.update(delta, stageActors);
+			this.game.update(delta, super.stageActors);
 		}
 	}
 
@@ -178,25 +180,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		Vector2 touchPosition = new Vector2(x, y);
 
-		Stage stage = getStageUIElements();
-		stage.screenToStageCoordinates(touchPosition);
-		this.uiElementHit = stage.hit(touchPosition.x, touchPosition.y, false);
+		super.stageUIActors.screenToStageCoordinates(touchPosition);
+		this.uiElementHit = super.stageUIActors.hit(touchPosition.x, touchPosition.y, false);
 		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
-		stage = getStageActors();
-		stage.screenToStageCoordinates(touchPosition);
-		Actor actor = stage.hit(touchPosition.x, touchPosition.y, false);
+		super.stageActors.screenToStageCoordinates(touchPosition);
+		Actor actor = super.stageActors.hit(touchPosition.x, touchPosition.y, false);
 		
 		tap.setActor(actor);
 		this.actorTouched = actor;
 		
 		if( actor != null ) { // actor selected
-//			Vector2 testConversion = new Vector2(touchPosition);
-//			stage.stageToScreenCoordinates(testConversion);
-//			testConversion.y = Gdx.app.getGraphics().getHeight() - testConversion.y;
-//			Gdx.app.log("LevelEditorScreen", "touchDown: this.actorTouched(x,y)=("
-//			+this.actorTouched.getX()+","+this.actorTouched.getY()+"), touchPosition="+touchPosition+
-//			"\ntestConversion="+testConversion);
-			
 			selectGameObject((GameObject) actor);
 		} else if( this.uiElementHit == null ) { // empty space selected
 			for( GameObject gameObject : this.selectedGameObjects ) {
@@ -239,13 +232,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 			if( this.selectedGameObjects.size() > 0 ) {
 				Vector2 moveDirection = new Vector2(screenX, screenY);
-				Vector2 stageCoords = new Vector2(this.actorTouched.getX(), this.actorTouched.getY());
-				getStageActors().stageToScreenCoordinates(stageCoords);
-				stageCoords.y = super.screenHeight - stageCoords.y;
-				moveDirection.sub(stageCoords);
+				Vector2 actorCoords = new Vector2(this.actorTouched.getX(), this.actorTouched.getY());
+				super.stageActors.screenToStageCoordinates(moveDirection);
+				moveDirection.sub(actorCoords);
+				
 //				Gdx.app.log("LevelEditorScreen", "touchDragged: after moveDirection="+moveDirection+
 //						", stageCoords="+stageCoords);
-//				this.dragDirection.sub(screenX, screenY);
 				
 				for( GameObject gameObject : this.selectedGameObjects ) {
 					moveActor(gameObject, moveDirection);
@@ -360,13 +352,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	public void addGameObject(GameObject object) {
-		Stage stage = getStageActors();
 		GameObject copy = object.createCopy();
-		Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(this.longPressPosition));
+		Vector2 stageCoords = super.stageActors.screenToStageCoordinates(new Vector2(this.longPressPosition));
 		copy.setPosition(stageCoords.x, stageCoords.y);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
-		stage.addActor(copy);
+		super.stageActors.addActor(copy);
 		deselectGameObject(copy);
 	}
 
@@ -413,7 +404,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	private Actor getActor(Rectangle rectangle) {
-		Array<Actor> actors = getStageActors().getActors();
+		Array<Actor> actors = super.stageActors.getActors();
 		for(Actor actor : actors) {
 			if( this.selectedGameObjects.contains(actor) ) continue;
 			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
@@ -426,7 +417,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private ArrayList<Actor> getActors(Rectangle rectangle) {
 		ArrayList<Actor> actorsInRectangle = new ArrayList<Actor>();
 
-		Array<Actor> actors = getStageActors().getActors();
+		Array<Actor> actors = super.stageActors.getActors();
 		for(Actor actor : actors) {
 			if( this.selectedGameObjects.contains(actor) ) continue;
 			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
@@ -439,22 +430,25 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	private void moveActor(Actor actor, Vector2 v) {
-		Stage stage = getStageActors();
-		
 		GameObject gameObject = (GameObject) actor;
 
 		Vector2 newPos = new Vector2(gameObject.getX(), gameObject.getY());
-		stage.stageToScreenCoordinates(newPos);
-		newPos.y = super.screenHeight - newPos.y;
+		Gdx.app.log("LevelEditorScreen", "moveActor: before stageToScreenCoordinates: newPos="+newPos);
+//		stage.stageToScreenCoordinates(newPos);
+		Gdx.app.log("LevelEditorScreen", "moveActor: after stageToScreenCoordinates: newPos="+newPos);
+		
+//		newPos.y = stage.getHeight() - newPos.y;
 		newPos.add(v);
 		
-//		Gdx.app.log("LevelEditorScreen", "moveActor: gameObject="+gameObject.getName()+", newPos="+newPos);
+		Gdx.app.log("LevelEditorScreen", "moveActor: before map gameObject="+gameObject.getName()+", newPos="+newPos);
 		
 		if( this.snapToGrid ) {
 			this.grid.map(newPos);
 		}		
+		Gdx.app.log("LevelEditorScreen", "moveActor: after map gameObject="+gameObject.getName()+", newPos="+newPos);
+		
 //		Gdx.app.log("LevelEditorScreen", "moveActor: gameObject="+gameObject.getName()+", snapToGrid v="+v);
-		stage.screenToStageCoordinates(newPos);
+//		stage.screenToStageCoordinates(newPos);
 		
 		Rectangle rectangle = gameObject.getBoundingRectangle();
 		float curX = rectangle.x;
@@ -489,8 +483,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private void displayGrid(boolean display) {
 		if( display ) {
-			getStageUIElements().addActor(this.grid);
-//			getStageActors().addActor(this.grid);
+			super.stageActors.addActor(this.grid);
 		} else {
 			this.grid.remove();
 		}
@@ -562,12 +555,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 			@Override
 			public void onClick(Dialog dialog, int which) {
-				Stage stage = getStageActors();
 				GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
-				Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
+				Vector2 stageCoords = stageActors.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
 				copy.setPosition(stageCoords.x, stageCoords.y);
 				getGame().addGameObject(copy);
-				stage.addActor(copy);
+				stageActors.addActor(copy);
 				deselectGameObject(copy);
 			}
 		});

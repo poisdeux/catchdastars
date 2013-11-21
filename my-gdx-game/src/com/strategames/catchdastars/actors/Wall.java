@@ -153,11 +153,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 				batch.draw(Textures.bricksHorizontalEndLeft, pos.x, pos.y, WIDTH, HEIGHT);
 				batch.draw(Textures.bricksHorizontal, this.startHorizontalMiddlePart, pos.y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
 				batch.draw(Textures.bricksHorizontalEndRight, this.startHorizontalEndPart, pos.y, WIDTH, HEIGHT);
-			} else {
-				//draw single brick
+			} else { // draw single brick
+				batch.draw(Textures.bricksVertical, pos.x, pos.y, WIDTH, HEIGHT);
 			}
 		} else {
-			batch.draw(Textures.bricksVertical, pos.x, pos.y, getWidth(), this.length, 0, 0, -1, this.amountOfParts);
+			batch.draw(Textures.bricksVertical, pos.x, pos.y, WIDTH, this.length, 0, 0, -1, this.amountOfParts);
 		}
 
 		batch.getColor().a = prevAlpha;

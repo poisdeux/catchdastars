@@ -269,7 +269,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		for( Actor actor : screen.getStageActors().getActors() ) {
-			gameObjects.add((GameObject) actor);
+			if( actor instanceof GameObject ) {
+				gameObjects.add((GameObject) actor);
+			}
 		}
 		return gameObjects;
 	}
