@@ -2,7 +2,6 @@ package com.strategames.ui;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -19,7 +18,7 @@ public class GameObjectPickerDialog extends Dialog {
 	private final Dialog.OnClickListener listener;
 	private final Game game;
 	private GameObject selectedGameObject;
-	private float IMAGEWIDTH = 30f;
+	private float IMAGEWIDTH = Game.convertBoxToWorld(0.30f);
 	
 	public GameObjectPickerDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
 		super("Select a game object", skin);

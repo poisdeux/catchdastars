@@ -49,14 +49,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.screenWidth = Game.convertBoxToWorld(worldSize.x);
 		this.screenHeight = Game.convertBoxToWorld(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
-		this.menuCamera.position.x = this.screenWidth/2f;
-		this.menuCamera.position.y = this.screenHeight/2f;
+		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
+		this.menuCamera.update();
 		this.stageUIActors.setCamera(this.menuCamera);
 		this.stageUIActors.setViewport(screenWidth, screenHeight, true);
 		
 		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
-		this.gameCamera.position.x = worldSize.x/2f;
-		this.gameCamera.position.y = worldSize.y/2f;
+		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
+		this.gameCamera.update();
 		this.stageActors.setCamera(this.gameCamera);
 		this.stageActors.setViewport(worldSize.x, worldSize.y, true);
 		

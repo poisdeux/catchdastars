@@ -61,7 +61,12 @@ public class CatchDaStars extends Game {
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
 		
-		setWorldSize(new Vector2(8f, 5f)); //Widescreen aspect ratio
+		/**
+		 * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
+		 * 8.1/0.3 = 27 (crosses horizontally)
+		 * 5.1/0.3 = 17 (crosses vertically)
+		 */
+		setWorldSize(new Vector2(5.1f, 8.1f));
 	}
 
 	@Override
@@ -83,7 +88,7 @@ public class CatchDaStars extends Game {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
 			//normalize and then multiply the vector with gravity for performance sake
-			this.gravityVector.set(Gdx.input.getAccelerometerY(), -Gdx.input.getAccelerometerX());
+			this.gravityVector.set(-Gdx.input.getAccelerometerX(), -Gdx.input.getAccelerometerY());
 			this.world.setGravity(gravityVector);
 		}
 		

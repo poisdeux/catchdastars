@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.ChalkLine;
 import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
@@ -38,7 +39,8 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
 	private float rowHeight;
-	private int top;
+	private float imageHeight;
+	private float top;
 	private final int padding = 10;
 	private int count;
 	private int delay = 10;
@@ -47,10 +49,12 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private int totalScore;
 	private Label totalScoreLabel;
 	private Table cashRegister;
-
+	
 	private int animationPhase;
 	private Vector2 animPosition;
 
+	private float IMAGEHEIGHT = Game.convertBoxToWorld(0.60f);
+	
 	/**
 	 * Shows a scoreboard animation
 	 * @param game
@@ -77,7 +81,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
-		ScoreItem item = new ScoreItem(new ImageButton(image.getDrawable()), amount, scorePerGameObject);
+		ScoreItem item = new ScoreItem(image.getDrawable(), amount, scorePerGameObject);
 		this.scoreItems.add(item);
 		float height = image.getHeight();
 		if( height > this.maxRowHeight ) {
@@ -87,13 +91,25 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 	public void show(Stage stage) {
 		this.stage = stage;
-		this.rowHeight = this.maxRowHeight + this.padding;
+
 		this.animationPhase = -1;
+		
 		setupUI();
 		animationController();
 	}
-
+	
+	private void measure() {
+		int amountOfItems = this.scoreItems.size();
+		float availableScreenHeight = this.stage.getHeight() - (this.padding * amountOfItems);
+		float height = availableScreenHeight / (amountOfItems + 2);
+		
+		this.imageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
+		this.rowHeight = this.imageHeight + this.padding;
+	}
+	
 	private void setupUI() {
+		measure();
+		
 		final Table table = new Table();
 		table.setFillParent(true);
 		table.bottom();
@@ -149,7 +165,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		switch(this.animationPhase) {
 		case 0:
 			if( scoreItems.size() > 0 ) {
-				this.top = Gdx.graphics.getHeight() - (int) ( this.rowHeight );
+				this.top = this.stage.getHeight() - (int) this.rowHeight;
 				showScoreItem(0);
 			}
 			break;
@@ -203,7 +219,13 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 		Table scoreItemTable = new Table();
 		scoreItemTable.setHeight(this.maxRowHeight);
-		scoreItemTable.add(scoreItem.getImageButton());
+		
+		Drawable drawable = this.scoreItems.get(number).getDrawable();
+		ImageButton iButton = new ImageButton(drawable);
+		Image image = iButton.getImage();
+		image.setScale(IMAGEHEIGHT / drawable.getMinHeight());
+		
+		scoreItemTable.add(iButton);
 
 		final Label label = new Label("", skin);
 		scoreItemTable.add(label).width(50);
@@ -316,8 +338,8 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	}
 
 	private void showTotalScore() {
-		float x = (Gdx.graphics.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
-		float y = (Gdx.graphics.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
+		float x = (this.stage.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
+		float y = (this.stage.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
 		
 		final Table hiresCashRegister = new Table();
 		ImageButton imageButton = new ImageButton(new Image(Textures.cashRegister).getDrawable());
@@ -359,14 +381,13 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private class ScoreItem {
 		private int amount;
 		private int scorePerGameObject;
-		private ImageButton button;
 		private Actor actor;
-
-		public ScoreItem(ImageButton button, int amount, int scorePerGameObject) {
+		private Drawable drawable;
+		
+		public ScoreItem(Drawable drawable, int amount, int scorePerGameObject) {
 			this.amount = amount;
 			this.scorePerGameObject = scorePerGameObject;
-			this.button = button;
-			this.button.pad(10);
+			this.drawable = drawable;
 		}
 
 		public int getAmount() {
@@ -377,10 +398,10 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 			return scorePerGameObject;
 		}
 
-		public ImageButton getImageButton() {
-			return button;
+		public Drawable getDrawable() {
+			return drawable;
 		}
-
+		
 		public Actor getActor() {
 			return actor;
 		}

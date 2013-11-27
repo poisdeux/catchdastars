@@ -3,6 +3,10 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
@@ -38,6 +42,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private boolean snapToGrid;
 	private Vector2 initialTouchPosition;
 	
+	private ShapeRenderer shapeRenderer;
+	
 	private Actor actorTouched;
 	
 	private ArrayList<GameObject> selectedGameObjects;
@@ -45,6 +51,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private RectangleImage rectangleImage;
 
 	private Grid grid;
+	
+	private Vector2 worldSize;
 	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
@@ -113,15 +121,31 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		this.selectedGameObjects = new ArrayList<GameObject>();
 
+		this.worldSize = this.game.getWorldSize(); 
+		
 		this.preferences = new LevelEditorPreferences();
 		this.snapToGrid = this.preferences.snapToGridEnabled();
 
-		this.grid = new Grid(game);
+		
+		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 
 		this.rectangleImage = new RectangleImage();
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 
 		getMultiplexer().addProcessor(new GestureDetector(this));
+		
+		Camera camera = getGameCamera();
+		camera.update();
+		
+		this.shapeRenderer = new ShapeRenderer();
+		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
+		this.shapeRenderer.setProjectionMatrix(camera.combined);
+		
+		Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Stage stage = getStageActors();
+		stage.screenToStageCoordinates(screenSize);
+		Gdx.app.log("LevelEditorScreen", "screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
+		
 	}
 
 	@Override
@@ -157,6 +181,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		if( testGame ) {
 			this.game.update(delta, super.stageActors);
 		}
+		
+		drawGameBorder(super.stageActors.getSpriteBatch());
 	}
 
 	@Override
@@ -433,22 +459,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		GameObject gameObject = (GameObject) actor;
 
 		Vector2 newPos = new Vector2(gameObject.getX(), gameObject.getY());
-		Gdx.app.log("LevelEditorScreen", "moveActor: before stageToScreenCoordinates: newPos="+newPos);
-//		stage.stageToScreenCoordinates(newPos);
-		Gdx.app.log("LevelEditorScreen", "moveActor: after stageToScreenCoordinates: newPos="+newPos);
-		
-//		newPos.y = stage.getHeight() - newPos.y;
 		newPos.add(v);
-		
-		Gdx.app.log("LevelEditorScreen", "moveActor: before map gameObject="+gameObject.getName()+", newPos="+newPos);
 		
 		if( this.snapToGrid ) {
 			this.grid.map(newPos);
 		}		
-		Gdx.app.log("LevelEditorScreen", "moveActor: after map gameObject="+gameObject.getName()+", newPos="+newPos);
-		
-//		Gdx.app.log("LevelEditorScreen", "moveActor: gameObject="+gameObject.getName()+", snapToGrid v="+v);
-//		stage.screenToStageCoordinates(newPos);
 		
 		Rectangle rectangle = gameObject.getBoundingRectangle();
 		float curX = rectangle.x;
@@ -580,6 +595,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			}
 		});
 		dialog.show(getStageUIElements());
+	}
+	
+	private void drawGameBorder(SpriteBatch batch) {
+//		batch.end();
+		this.shapeRenderer.begin(ShapeType.Rectangle);
+		this.shapeRenderer.rect(0, 0, this.worldSize.x, this.worldSize.y);
+		this.shapeRenderer.end();
+//		batch.begin();
 	}
 }
 

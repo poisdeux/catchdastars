@@ -12,7 +12,7 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Textures;
 
 public class ChalkLine extends Image {
-	private Sprite[] chalks;
+	private static Sprite[] chalks;
 	private ArrayList<Sprite> chalkLine; 
 	private float length;
 	private float lengthPerStep;
@@ -23,32 +23,38 @@ public class ChalkLine extends Image {
 	private Vector2 start;
 	private Vector2 end;
 	private Vector2 increments;
-	
+
 	public interface ChalkLineAnimationListener {
 		public void onLineDrawEnd(ChalkLine line);
 	}
-	
+
 	private ChalkLineAnimationListener listener;
-	
+
 	public ChalkLine() {
 		super();
-		
+
 		this.start = new Vector2();
 		this.end = new Vector2();
-		
-		this.chalks = new Sprite[5];
-		this.chalks[0] = new Sprite(Textures.chalk1);
-		this.chalks[1] = new Sprite(Textures.chalk2);
-		this.chalks[2] = new Sprite(Textures.chalk3);
-		this.chalks[3] = new Sprite(Textures.chalk4);
-		this.chalks[4] = new Sprite(Textures.chalk5);
+
+		if( chalks == null ) {
+			chalks = new Sprite[5];
+			chalks[0] = new Sprite(Textures.chalk1);
+			chalks[1] = new Sprite(Textures.chalk2);
+			chalks[2] = new Sprite(Textures.chalk3);
+			chalks[3] = new Sprite(Textures.chalk4);
+			chalks[4] = new Sprite(Textures.chalk5);
+			
+			for( int i = 0; i < chalks.length; i++ ) {
+				chalks[i].setScale(0.5f);
+			}
+		}
 		
 		this.randomNumberGenerator = new Random();
-		
+
 		this.chalkLine = new ArrayList<Sprite>();
-		
-		setScaling(Scaling.none);
-		
+
+		setScaling(Scaling.stretch);
+
 		this.listener = null;
 	}
 
@@ -60,21 +66,21 @@ public class ChalkLine extends Image {
 		setListener(listener);
 		init();
 	}
-	
-//	public static ChalkLine create(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
-//		ChalkLine line = new ChalkLine();
-//		line.setStart(xStart, yStart);
-//		line.setEnd(xEnd, yEnd);
-//		line.setDuration(milliseconds);
-//		line.setListener(listener);
-//		line.init();
-//		return line;
-//	}
+
+	//	public static ChalkLine create(float xStart, float yStart, float xEnd, float yEnd, int milliseconds, ChalkLineAnimationListener listener) {
+	//		ChalkLine line = new ChalkLine();
+	//		line.setStart(xStart, yStart);
+	//		line.setEnd(xEnd, yEnd);
+	//		line.setDuration(milliseconds);
+	//		line.setListener(listener);
+	//		line.init();
+	//		return line;
+	//	}
 
 	public void setListener(ChalkLineAnimationListener listener) {
 		this.listener = listener;
 	}
-	
+
 	/**
 	 * Sets the start position of this line
 	 * @param x
@@ -84,11 +90,11 @@ public class ChalkLine extends Image {
 		this.start.x = x;
 		this.start.y = y;
 	}
-	
+
 	public Vector2 getStart() {
 		return start;
 	}
-	
+
 	public void setEnd(float x, float y) {
 		this.end.x = x;
 		this.end.y = y;
@@ -97,39 +103,39 @@ public class ChalkLine extends Image {
 	public Vector2 getEnd() {
 		return end;
 	}
-	
+
 	public void setDuration(int milliseconds) {
 		this.duration = milliseconds;
 	}
-	
+
 	public float getLength() {
 		return length;
 	}
-	
+
 	public void init() {
 		this.length = this.start.dst(this.end);
-		
+
 		this.steps = (int) (this.duration / Game.UPDATE_FREQUENCY_MILLISECONDS);
-		
+
 		if( this.steps < 1 ) { 
 			this.steps = 1;
 		}
-		
+
 		this.lengthPerStep = this.length / this.steps;
-		
+
 		this.increments = this.end.cpy(); 
 		this.increments.sub(this.start);
 		this.increments.div(this.steps * this.lengthPerStep);
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-//		Gdx.app.log("ChalkLine", "draw: getColor().a="+getColor().a);
-		
+		//		Gdx.app.log("ChalkLine", "draw: getColor().a="+getColor().a);
+
 		if( this.steps > 0 ) {
 			//add chalk points
 			for(int i = 0; i < this.lengthPerStep; i += this.stepSize) {
-				this.chalkLine.add(this.chalks[this.randomNumberGenerator.nextInt(5)]);
+				this.chalkLine.add(chalks[this.randomNumberGenerator.nextInt(5)]);
 			}
 			this.steps--;
 		} else if( this.steps == 0 ) {
@@ -138,9 +144,9 @@ public class ChalkLine extends Image {
 			}
 			this.steps--;
 		}
-		
+
 		int lineSize = this.chalkLine.size();
-		
+
 		float x = this.start.x;
 		float y = this.start.y;
 		for(int i = 0; i < lineSize; i++) {

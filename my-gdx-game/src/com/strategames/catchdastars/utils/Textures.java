@@ -142,8 +142,6 @@ public class Textures {
 	
 	private static String getScreenDensity() {
 		String density = "mdpi";
-//		float mdpiScreenWidth = (float) (800.0 * (2.0/3.0)); 
-//		float factor = Gdx.graphics.getDensity() * mdpiScreenWidth;
 		
 		/**
 		 *  we originally designed the game for a 800x480 hdpi screen
@@ -152,17 +150,17 @@ public class Textures {
 		 *  xhdpi	1066.66666
 		 *  xxhdpi	1600	
 		 */
-		
-		float screenWidth = Gdx.graphics.getWidth();
-		if( screenWidth >= 1599 ) {
+		float width = Gdx.graphics.getWidth();
+		float height = Gdx.graphics.getHeight();
+		float size = width > height ? width : height;
+		if( size >= 1599 ) {
 			density = "xxhdpi";
-		} else if ( screenWidth >= 1066 ) {
+		} else if ( size >= 1066 ) {
 			density = "xhdpi";
-		} else if ( screenWidth >= 799 ) {
+		} else if ( size >= 799 ) {
 			density = "hdpi";
 		}
-		Gdx.app.log("Textures", "getScreenDensity(): density="+density+", screenWidth="+screenWidth);
+		Gdx.app.log("Textures", "getScreenDensity(): density="+density+", screenWidth="+size);
 		return density;
-//		return "xhdpi";
 	}
 }
