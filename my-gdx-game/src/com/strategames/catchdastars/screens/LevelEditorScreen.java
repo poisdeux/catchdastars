@@ -380,7 +380,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	public void addGameObject(GameObject object) {
 		GameObject copy = object.createCopy();
 		Vector2 stageCoords = super.stageActors.screenToStageCoordinates(new Vector2(this.longPressPosition));
-		copy.setPosition(stageCoords.x, stageCoords.y);
+		copy.moveTo(stageCoords.x, stageCoords.y);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
 		super.stageActors.addActor(copy);

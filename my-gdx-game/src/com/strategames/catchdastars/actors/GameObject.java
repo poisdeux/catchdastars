@@ -199,9 +199,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void moveTo(float x, float y) {
 		if( this.body != null ) {
 			this.body.setTransform(x, y, this.body.getAngle());
-		} else {
-			setPosition(x, y);
-		}
+		} 
+		setPosition(x, y);
 	}
 
 	/**

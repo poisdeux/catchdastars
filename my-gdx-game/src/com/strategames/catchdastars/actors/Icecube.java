@@ -44,6 +44,8 @@ public class Icecube extends GameObject {
 
 	private static BodyDef bodyDef;
 	
+	private static TextureRegionDrawable drawable;
+	
 	private ArrayList<Part> parts;
 	private int amountOfParts;
 
@@ -92,15 +94,13 @@ public class Icecube extends GameObject {
 
 	@Override
 	TextureRegionDrawable createTexture() {
-		for(Part part : this.parts) {
-			Sprite sprite = new Sprite(part.getTexture());
-			sprite.setSize(WIDTH, WIDTH);
-			part.setSprite(sprite);
-		}
-		
 		this.colorActor = getColor();
 		
-		return new TextureRegionDrawable(Textures.icecube);
+		if( drawable == null ) {
+			drawable = new TextureRegionDrawable(Textures.icecube);
+		}
+		
+		return drawable; 
 	}
 
 	public void addPart(Part part) {
@@ -143,6 +143,7 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		setRotation(rotation);
+		
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -166,10 +167,15 @@ public class Icecube extends GameObject {
 
 	@Override
 	public GameObject createCopy() {
-		GameObject object = new Icecube(getGame(), 
+		Icecube cube = new Icecube(getGame(), 
 				getX(), 
 				getY());
-		return object;
+		
+		for( Part part : availableParts ) {
+			cube.addPart(part);
+		}
+		
+		return cube;
 	}
 
 	@Override
@@ -216,9 +222,7 @@ public class Icecube extends GameObject {
 
 		if( maxImpulse > 100 ) { // prevent counting rocks hitting when they are lying on top of eachother
 			//			game.rockHit(maxImpulse);
-			if( maxImpulse > 500 ) { // break object
-				Gdx.app.log("Icecube", "handleCollisiong: maxVelocitySquared="+maxVelocitySquared+", maxImpulse="+maxImpulse);
-				
+			if( maxImpulse > 300 ) { // break object
 				//Get colliding fixture for this object
 				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
 					this.breakOnFixture = contact.getFixtureA();
@@ -359,23 +363,15 @@ public class Icecube extends GameObject {
 	private class Part {
 		String name;
 		Sprite sprite;
-		TextureRegion texture;
 
 		public Part(String name, TextureRegion texture) {
 			this.name = name;
-			this.texture = texture;
-		}
-
-		public void setSprite(Sprite sprite) {
-			this.sprite = sprite;
+			this.sprite = new Sprite(texture);
+			this.sprite.setSize(WIDTH, WIDTH);
 		}
 
 		public Sprite getSprite() {
 			return sprite;
-		}
-
-		public TextureRegion getTexture() {
-			return texture;
 		}
 
 		public String getName() {
