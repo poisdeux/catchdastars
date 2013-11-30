@@ -3,7 +3,7 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -20,6 +20,7 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
+import com.strategames.catchdastars.utils.ScreenBorder;
 import com.strategames.ui.ButtonsDialog;
 import com.strategames.ui.Dialog;
 import com.strategames.ui.Dialog.OnClickListener;
@@ -133,19 +134,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 
 		getMultiplexer().addProcessor(new GestureDetector(this));
-		
-		Camera camera = getGameCamera();
-		camera.update();
-		
+			
+		OrthographicCamera camera = getGameCamera();
 		this.shapeRenderer = new ShapeRenderer();
 		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
 		this.shapeRenderer.setProjectionMatrix(camera.combined);
 		
-		Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Stage stage = getStageActors();
-		stage.screenToStageCoordinates(screenSize);
-		Gdx.app.log("LevelEditorScreen", "screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
-		
+		setCamera();
 	}
 
 	@Override
@@ -159,6 +154,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		getMultiplexer().addProcessor(stage);
 
 		Array<Actor> actors = stage.getActors();
+		if( actors.size == 0 ) {
+			ScreenBorder.create(this.game);
+		}
+		
 		for( Actor actor : actors ) {
 			GameObject object = (GameObject) actor;
 			object.initializeConfigurationItems();
@@ -416,6 +415,22 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 	}
 
+	private void setCamera() {
+		Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Stage stage = getStageActors();
+		stage.screenToStageCoordinates(screenSize);
+		Gdx.app.log("LevelEditorScreen", "Before screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
+		
+		OrthographicCamera camera = getGameCamera();
+		camera.zoom += 0.5; 
+		camera.update();
+		
+		screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		stage.screenToStageCoordinates(screenSize);
+		Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));	
+	}
+	
+	
 	private void deselectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 

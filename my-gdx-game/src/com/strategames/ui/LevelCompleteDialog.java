@@ -9,7 +9,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -41,7 +40,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private float rowHeight;
 	private float imageHeight;
 	private float top;
-	private final int padding = 10;
+	private final int padding = 30;
 	private int count;
 	private int delay = 10;
 	private int delayCount;
@@ -100,7 +99,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	
 	private void measure() {
 		int amountOfItems = this.scoreItems.size();
-		float availableScreenHeight = this.stage.getHeight() - (this.padding * amountOfItems);
+		float availableScreenHeight = this.stage.getHeight() - (this.padding * (amountOfItems + 2));
 		float height = availableScreenHeight / (amountOfItems + 2);
 		
 		this.imageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
@@ -218,17 +217,14 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		final Sound sound = Sounds.getSoundForIncrement(increment);
 
 		Table scoreItemTable = new Table();
-		scoreItemTable.setHeight(this.maxRowHeight);
+		scoreItemTable.setHeight(this.rowHeight);
 		
 		Drawable drawable = this.scoreItems.get(number).getDrawable();
 		ImageButton iButton = new ImageButton(drawable);
-		Image image = iButton.getImage();
-		image.setScale(IMAGEHEIGHT / drawable.getMinHeight());
-		
-		scoreItemTable.add(iButton);
+		scoreItemTable.add(iButton).padRight(20f);
 
 		final Label label = new Label("", skin);
-		scoreItemTable.add(label).width(50);
+		scoreItemTable.add(label).width(50f);
 
 		this.animPosition.x = 100f;
 		this.animPosition.y = this.top - (this.rowHeight * number);

@@ -34,8 +34,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected float screenHeight;
 	protected float screenWidth;
 	
-	private Camera menuCamera;
-	private Camera gameCamera;
+	private OrthographicCamera menuCamera;
+	private OrthographicCamera gameCamera;
 	
 	public AbstractScreen(Game game)
 	{
@@ -80,11 +80,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void resume() {
 	}
 
-	public Camera getGameCamera() {
+	public OrthographicCamera getGameCamera() {
 		return gameCamera;
 	}
 	
-	public Camera getMenuCamera() {
+	public OrthographicCamera getMenuCamera() {
 		return menuCamera;
 	}
 	

@@ -245,11 +245,9 @@ public class Icecube extends GameObject {
 	void readValue(String key, Object value) {
 		if( key.contentEquals("parts") && 
 				(value.toString()).contentEquals("all") ) {
-			if( this.parts.size() < 1 ) {
-				//Initial object contains all parts
-				for( Part part : availableParts ) {
-					addPart(part);
-				}
+			//Initial object contains all parts
+			for( Part part : availableParts ) {
+				addPart(part);
 			}
 		}
 	}
