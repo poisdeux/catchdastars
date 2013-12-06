@@ -55,6 +55,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	protected Vector2 size;
 	
+	private boolean saveToFile = true;
+	
 	public static enum Type {
 		WALL, BALLOON, STAR, ROCK
 	}
@@ -97,6 +99,19 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		if( game != null ) {
 			this.world = game.getWorld();
 		}
+	}
+	
+	/**
+	 * Set to false to prevent saving this game object
+	 * to a level file
+	 * @param save
+	 */
+	public void setSaveToFile(boolean save) {
+		this.saveToFile = save;
+	}
+	
+	public boolean getSaveToFile() {
+		return this.saveToFile;
 	}
 	
 	public Type getType() {

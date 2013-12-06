@@ -26,7 +26,12 @@ public class Level implements Comparable<Level> {
 	}
 	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
-		this.gameObjects = gameObjects;
+		this.gameObjects = new ArrayList<GameObject>();
+		for( GameObject object : gameObjects ) {
+			if( object.getSaveToFile() ){
+				this.gameObjects.add(object);
+			}
+		}
 	}
 
 	public ArrayList<GameObject> getGameObjects() {

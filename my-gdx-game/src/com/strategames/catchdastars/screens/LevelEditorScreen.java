@@ -1,6 +1,7 @@
 package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -44,11 +45,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private LevelEditorPreferences preferences;
 	private boolean snapToGrid;
 	private Vector2 initialTouchPosition;
-
+	
 	private Actor actorTouched;
 
 	private ArrayList<GameObject> selectedGameObjects;
-
+	private ArrayList<GameObject> menuGameObjects; 
+	
 	private RectangleImage rectangleImage;
 
 	private Grid grid;
@@ -209,16 +211,17 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		tap.setActor(actor);
 		this.actorTouched = actor;
-
+		
 		if( actor != null ) { // actor selected
-			selectGameObject((GameObject) actor);
-		} else if( this.uiElementHit == null ) { // empty space selected
-			for( GameObject gameObject : this.selectedGameObjects ) {
-				deselectGameObject(gameObject);
+			if( this.menuGameObjects.contains(this.actorTouched) ) {
+				this.actorTouched = addGameObject((GameObject) actor, x, y);
 			}
-			this.selectedGameObjects.clear();
+			deselectAllGameObjects();
+			selectGameObject((GameObject) this.actorTouched);
+		} else if( this.uiElementHit == null ) { // empty space selected
+			deselectAllGameObjects();
 		}
-
+		
 		return true;
 	}
 
@@ -236,6 +239,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.rectangleImage.setWidth(0f);
 			this.rectangleImage.setHeight(0f);
 			return true;
+		} else if( this.actorTouched != null ) {
+			//Check if object is in game area
 		}
 		return false;
 	}
@@ -372,14 +377,19 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		return true;
 	}
 
-	public void addGameObject(GameObject object) {
+	/**
+	 * Adds a game object to the game
+	 * @param object
+	 * @param x screen coordinate
+	 * @param y screen coordinate
+	 */
+	public GameObject addGameObject(GameObject object, float xStage, float yStage) {
 		GameObject copy = object.createCopy();
-		Vector2 stageCoords = super.stageActors.screenToStageCoordinates(new Vector2(this.longPressPosition));
-		copy.moveTo(stageCoords.x, stageCoords.y);
+		copy.moveTo(xStage, yStage);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
-		super.stageActors.addActor(copy);
-		deselectGameObject(copy);
+//		super.stageActors.addActor(copy);
+		return copy;
 	}
 
 	@Override
@@ -396,18 +406,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		} else if( dialog instanceof GameObjectPickerDialog ) {
 			switch( which ) {
 			case GameObjectPickerDialog.BUTTON_GAMEOBJECTSELECTED:
-				addGameObject(((GameObjectPickerDialog) dialog).getSelectedGameObject());
+				addGameObject(((GameObjectPickerDialog) dialog).getSelectedGameObject(), this.longPressPosition.x, this.longPressPosition.y);
 				break;
 			}
-		}
-	}
-
-	private void selectGameObject(GameObject gameObject) {
-		if( gameObject == null) return;
-
-		gameObject.setColor(1f, 1f, 1f, 1.0f);
-		if( ! this.selectedGameObjects.contains(gameObject) ) {
-			this.selectedGameObjects.add(gameObject);
 		}
 	}
 
@@ -433,13 +434,31 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 	}
 
+	private void selectGameObject(GameObject gameObject) {
+		if( gameObject == null) return;
 
+		gameObject.setColor(1f, 1f, 1f, 1.0f);
+		this.selectedGameObjects.add(gameObject);
+	}
+	
 	private void deselectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
+		this.selectedGameObjects.remove(gameObject);
+		
 		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 
+	private void deselectAllGameObjects() {
+		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
+		while(itr.hasNext()) {
+			GameObject object = (GameObject) itr.next();
+			itr.remove();
+			deselectGameObject(object);
+		}
+		this.selectedGameObjects.clear();
+	}
+	
 	private void saveLevel() {
 		Game game = getGame();
 		Level level = game.getLevel();
@@ -616,31 +635,38 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 	
 	private void setupMenu(Stage stage) {
+		this.menuGameObjects = new ArrayList<GameObject>();
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+		Vector2 worldSize = this.game.getWorldSize();
 		
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / gameObjects.size();
-			float xPos = 0.1f;
-			float yPos = stage.getHeight();
+			float x = 0.1f;
+			float y = worldSize.y;
 			
 			for(GameObject object : gameObjects ) {
-				GameObject gameObject = object.createCopy();
-				gameObject.moveTo(xPos, yPos);
-				stage.addActor(gameObject);
-				xPos += delta;
+				addGameObjectToMenu(stage, object, x, y);
+				x += delta;
 			}
 		} else {
 			float delta = stage.getHeight() / gameObjects.size();
-			float yPos = 0.1f;
-			float xPos = stage.getWidth();
+			float x = worldSize.x;
+			float y = 0.1f;
 			
 			for(GameObject object : gameObjects ) {
-				GameObject gameObject = object.createCopy();
-				gameObject.moveTo(xPos, yPos);
-				stage.addActor(gameObject);
-				yPos += delta;
+				addGameObjectToMenu(stage, object, x, y);
+				y += delta;
 			}
 		}
+	}
+	
+	private void addGameObjectToMenu(Stage stage, GameObject object, float x, float y) {
+		GameObject gameObject = object.createCopy();
+		gameObject.setSaveToFile(false);
+		deselectGameObject(gameObject);
+		gameObject.moveTo(x, y);
+		stage.addActor(gameObject);
+		this.menuGameObjects.add(gameObject);
 	}
 }
 
