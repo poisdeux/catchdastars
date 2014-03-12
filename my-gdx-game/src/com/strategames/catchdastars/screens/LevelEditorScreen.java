@@ -31,12 +31,10 @@ import com.strategames.ui.RectangleImage;
 import com.strategames.ui.ToolsPickerDialog;
 
 public class LevelEditorScreen extends AbstractScreen implements GestureListener, Dialog.OnClickListener {
-	private final float OBJECT_WIDTH = 0.6f;
-	private final float OBJECT_HEIGHT = 0.9f;
-	
+
 	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
 	private MenuPosition menuPosition;
-	
+
 	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
@@ -46,12 +44,11 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private LevelEditorPreferences preferences;
 	private boolean snapToGrid;
 	private Vector2 initialTouchPosition;
-	
+
 	private Actor actorTouched;
 
 	private ArrayList<GameObject> selectedGameObjects;
-	private ArrayList<GameObject> menuGameObjects; 
-	
+
 	private RectangleImage rectangleImage;
 
 	private Grid grid;
@@ -130,7 +127,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		this.preferences = new LevelEditorPreferences();
 		this.snapToGrid = this.preferences.snapToGridEnabled();
 
-
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 
 		this.rectangleImage = new RectangleImage();
@@ -163,9 +159,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 
 		displayGrid(this.preferences.displayGridEnabled());
-		
+
 		setupMenu(stage);
-		
+
 	}
 
 	@Override
@@ -212,17 +208,14 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 		tap.setActor(actor);
 		this.actorTouched = actor;
-		
+
 		if( actor != null ) { // actor selected
-			if( this.menuGameObjects.contains(this.actorTouched) ) {
-				this.actorTouched = addGameObject((GameObject) actor, x, y);
-			}
 			deselectAllGameObjects();
 			selectGameObject((GameObject) this.actorTouched);
 		} else if( this.uiElementHit == null ) { // empty space selected
 			deselectAllGameObjects();
 		}
-		
+
 		return true;
 	}
 
@@ -241,7 +234,16 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			this.rectangleImage.setHeight(0f);
 			return true;
 		} else if( this.actorTouched != null ) {
+			GameObject gameObject = (GameObject) this.actorTouched;
 			//Check if object is in game area
+
+			//If menu item create new menu item at initial position
+			if( gameObject.isMenuItem() ) {
+				gameObject.setMenuItem(false);
+				gameObject.setSaveToFile(true);
+				Vector2 v = gameObject.getInitialPosition();
+				addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
+			}
 		}
 		return false;
 	}
@@ -379,17 +381,20 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	/**
-	 * Adds a game object to the game
+	 * Creates a copy of object and adds the copy to the game
 	 * @param object
-	 * @param x screen coordinate
-	 * @param y screen coordinate
+	 * @param xStage
+	 * @param yStage
+	 * @return game object added to the game
 	 */
 	public GameObject addGameObject(GameObject object, float xStage, float yStage) {
 		GameObject copy = object.createCopy();
+		copy.setMenuItem(false);
+		copy.setInitialPosition(new Vector2(xStage, yStage));
 		copy.moveTo(xStage, yStage);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
-//		super.stageActors.addActor(copy);
+		//		super.stageActors.addActor(copy);
 		return copy;
 	}
 
@@ -416,10 +421,10 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private void setCamera() {		
 		Stage stage = getStageActors();
 
-		
-		
-		
-		
+
+
+
+
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			OrthographicCamera camera = getGameCamera();
@@ -427,17 +432,17 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			camera.update();
 
 			Vector2 maxObjectSize = getMaxObjectSize();
-			
+
 			//Add screenborder Wall as this is placed halfway the actual screenborder
 			maxObjectSize.x += 0.5*Wall.WIDTH;
 			maxObjectSize.y += 0.5*Wall.HEIGHT;
-			
+
 			Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), 0f);
 			stage.screenToStageCoordinates(screenSize);
 			screenSize.sub(worldSize); //screenSize will hold the difference
-			
-//			Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
-			
+
+			//			Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
+
 			if(Math.abs(screenSize.x) > maxObjectSize.x ) {
 				this.menuPosition = MenuPosition.RIGHT;
 				screenOK = true;
@@ -450,34 +455,34 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private Vector2 getMaxObjectSize() {
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
-		
+
 		Vector2 maxObjectSize = new Vector2(0, 0);
-		
+
 		for( GameObject object : gameObjects ) {
 			if( object.getWidth() > maxObjectSize.x ) {
 				maxObjectSize.x = object.getWidth();
 			}
-			
+
 			if( object.getHeight() > maxObjectSize.y ) {
 				maxObjectSize.y = object.getHeight();
 			}
 		}
-		
+
 		return maxObjectSize;
 	}
-	
+
 	private void selectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
 		gameObject.setColor(1f, 1f, 1f, 1.0f);
 		this.selectedGameObjects.add(gameObject);
 	}
-	
+
 	private void deselectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
 		this.selectedGameObjects.remove(gameObject);
-		
+
 		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
 	}
 
@@ -490,7 +495,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 		this.selectedGameObjects.clear();
 	}
-	
+
 	private void saveLevel() {
 		Game game = getGame();
 		Level level = game.getLevel();
@@ -665,17 +670,17 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		});
 		dialog.show(getStageUIElements());
 	}
-	
+
 	private void setupMenu(Stage stage) {
-		this.menuGameObjects = new ArrayList<GameObject>();
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+
 		Vector2 worldSize = this.game.getWorldSize();
-		
+
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / gameObjects.size();
 			float x = 0.1f;
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
-			
+
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				x += delta;
@@ -684,21 +689,29 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float delta = stage.getHeight() / gameObjects.size();
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
-			
+
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				y += delta;
 			}
 		}
 	}
-	
+
+	/**
+	 * Creates a copy of object and adds copy as menu item at position x,y
+	 * @param stage
+	 * @param object
+	 * @param x
+	 * @param y
+	 */
 	private void addGameObjectToMenu(Stage stage, GameObject object, float x, float y) {
 		GameObject gameObject = object.createCopy();
 		gameObject.setSaveToFile(false);
+		gameObject.setMenuItem(true);
 		deselectGameObject(gameObject);
 		gameObject.moveTo(x, y);
+		gameObject.setInitialPosition(new Vector2(x, y));
 		stage.addActor(gameObject);
-		this.menuGameObjects.add(gameObject);
 	}
 }
 

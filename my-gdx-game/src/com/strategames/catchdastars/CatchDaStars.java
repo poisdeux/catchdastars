@@ -162,6 +162,11 @@ public class CatchDaStars extends Game {
 		}
 	}
 
+	/**
+	 * Beware that you do not change the returned array.
+	 * It is created only the first time getAvailableGameObjects
+	 * is called!
+	 */
 	@Override
 	public ArrayList<GameObject> getAvailableGameObjects() {
 		if( this.availableGameObjects != null ) {

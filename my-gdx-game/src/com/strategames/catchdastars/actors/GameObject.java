@@ -51,6 +51,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	protected Vector2 initialPosition; 
 	
+	private boolean isMenuItem;
+	
 	protected Game game;
 	
 	protected Vector2 size;
@@ -136,6 +138,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setWidth(float width) {
 		super.setWidth(width);
 		this.halfWidth = width/2f;
+	}
+	
+	/**
+	 * Specify this gameobject as menu item
+	 * @param isMenuItem true if object is part of a menu
+	 */
+	public void setMenuItem(boolean isMenuItem) {
+		this.isMenuItem = isMenuItem;
+	}
+	
+	public boolean isMenuItem() {
+		return isMenuItem;
+	}
+	
+	public Vector2 getInitialPosition() {
+		return initialPosition;
+	}
+	
+	public void setInitialPosition(Vector2 initialPosition) {
+		this.initialPosition = initialPosition;
 	}
 	
 	public void setWorld(World world) {
