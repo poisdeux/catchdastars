@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
 import com.strategames.catchdastars.utils.ScreenBorder;
@@ -415,25 +416,56 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private void setCamera() {		
 		Stage stage = getStageActors();
 
+		
+		
+		
+		
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			OrthographicCamera camera = getGameCamera();
 			camera.zoom += 0.02; 
 			camera.update();
 
+			Vector2 maxObjectSize = getMaxObjectSize();
+			
+			//Add screenborder Wall as this is placed halfway the actual screenborder
+			maxObjectSize.x += 0.5*Wall.WIDTH;
+			maxObjectSize.y += 0.5*Wall.HEIGHT;
+			
 			Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), 0f);
 			stage.screenToStageCoordinates(screenSize);
-			Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
-			if(Math.abs(screenSize.x) > OBJECT_WIDTH ) {
+			screenSize.sub(worldSize); //screenSize will hold the difference
+			
+//			Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
+			
+			if(Math.abs(screenSize.x) > maxObjectSize.x ) {
 				this.menuPosition = MenuPosition.RIGHT;
 				screenOK = true;
-			} else if( Math.abs(screenSize.y) > OBJECT_HEIGHT ) {
+			} else if( Math.abs(screenSize.y) > maxObjectSize.y ) {
 				this.menuPosition = MenuPosition.TOP;
 				screenOK = true;
 			}
 		}
 	}
 
+	private Vector2 getMaxObjectSize() {
+		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+		
+		Vector2 maxObjectSize = new Vector2(0, 0);
+		
+		for( GameObject object : gameObjects ) {
+			if( object.getWidth() > maxObjectSize.x ) {
+				maxObjectSize.x = object.getWidth();
+			}
+			
+			if( object.getHeight() > maxObjectSize.y ) {
+				maxObjectSize.y = object.getHeight();
+			}
+		}
+		
+		return maxObjectSize;
+	}
+	
 	private void selectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
@@ -642,7 +674,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / gameObjects.size();
 			float x = 0.1f;
-			float y = worldSize.y;
+			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 			
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
@@ -650,7 +682,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			}
 		} else {
 			float delta = stage.getHeight() / gameObjects.size();
-			float x = worldSize.x;
+			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 			
 			for(GameObject object : gameObjects ) {

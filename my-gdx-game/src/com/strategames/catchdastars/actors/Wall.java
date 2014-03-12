@@ -22,8 +22,8 @@ import com.strategames.catchdastars.utils.ConfigurationItem.OnConfigurationItemC
 import com.strategames.catchdastars.utils.Textures;
 
 public class Wall extends GameObject implements OnConfigurationItemChangedListener {
-	private final static float WIDTH = 0.30f;
-	private final static float HEIGHT = 0.30f;
+	public final static float WIDTH = 0.30f;
+	public final static float HEIGHT = 0.30f;
 
 	private Color colorActor;
 	private Orientation orientation;
