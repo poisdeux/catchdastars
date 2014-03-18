@@ -141,7 +141,7 @@ public class Textures {
 	}
 	
 	private static String getScreenDensity() {
-		String density = "mdpi";
+		String densityModifier = "mdpi";
 		
 		/**
 		 *  we originally designed the game for a 800x480 hdpi screen
@@ -150,17 +150,26 @@ public class Textures {
 		 *  xhdpi	1066.66666
 		 *  xxhdpi	1600	
 		 */
+		float density = Gdx.graphics.getDensity();
 		float width = Gdx.graphics.getWidth();
 		float height = Gdx.graphics.getHeight();
 		float size = width > height ? width : height;
-		if( size >= 1599 ) {
-			density = "xxhdpi";
-		} else if ( size >= 1066 ) {
-			density = "xhdpi";
-		} else if ( size >= 799 ) {
-			density = "hdpi";
+//		if( size >= 1599 ) {
+//			densityModifier = "xxhdpi";
+//		} else if ( size >= 1066 ) {
+//			densityModifier = "xhdpi";
+//		} else if ( size >= 799 ) {
+//			densityModifier = "hdpi";
+//		}
+		if( density >= 3 ) {
+			densityModifier = "xxhdpi";
+		} else if ( density >= 2 ) {
+			densityModifier = "xhdpi";
+		} else if ( density >= 1.5 ) {
+			densityModifier = "hdpi";
 		}
-		Gdx.app.log("Textures", "getScreenDensity(): density="+density+", screenWidth="+size);
-		return density;
+		Gdx.app.log("Textures", "getScreenDensity(): density="+densityModifier+", screenWidth="+size+
+				", density="+density);
+		return densityModifier;
 	}
 }

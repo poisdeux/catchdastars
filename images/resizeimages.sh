@@ -5,8 +5,8 @@ FLOATSCALE=6
 function usage
 {
 	echo "usage: ${0} width height filename..."
-	echo "width: width of image in hdpi"
-  echo "height: height of image in hdpi"
+	echo "width: width of image in mdpi"
+  echo "height: height of image in mdpi"
 	exit 1
 }
 
@@ -40,20 +40,20 @@ EOF
 
 for FILENAME in "${@}"
 do
-	SWIDTH=$(scale $WIDTH "2/3")
-	SHEIGHT=$(scale $HEIGHT "2/3")
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/mdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
-
 	SWIDTH=$WIDTH
 	SHEIGHT=$HEIGHT
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/hdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/mdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
 
-	SWIDTH=$(scale $WIDTH "4/3")
-	SHEIGHT=$(scale $HEIGHT "4/3")
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/xhdpi/$(basename ${FILENAME})\"  ${SWIDTH} ${SHEIGHT})"
+	SWIDTH=$(scale $WIDTH "3/2")
+	SHEIGHT=$(scale $HEIGHT "3/2")
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/hdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
 
 	SWIDTH=$(scale $WIDTH "2")
 	SHEIGHT=$(scale $HEIGHT "2")
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/xhdpi/$(basename ${FILENAME})\"  ${SWIDTH} ${SHEIGHT})"
+
+	SWIDTH=$(scale $WIDTH "3")
+	SHEIGHT=$(scale $HEIGHT "3")
 	echo "(scale-image \"${FILENAME}\" \"gameobjects/xxhdpi/$(basename ${FILENAME})\"  ${SWIDTH} ${SHEIGHT})"
 done  >> ${TMPFILE}
 
