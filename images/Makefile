@@ -1,11 +1,5 @@
 SHELL = /bin/sh
 
-setup:
-	@mkdir -p gameobjects/mdpi/pack
-	@mkdir -p gameobjects/hdpi/pack
-	@mkdir -p gameobjects/xhdpi/pack
-	@mkdir -p gameobjects/xxhdpi/pack
-
 all:
 	make setup
 	./resizeall.sh
@@ -18,6 +12,12 @@ all:
 	done
 	make pack
 
+setup:
+	@mkdir -p gameobjects/mdpi/pack
+	@mkdir -p gameobjects/hdpi/pack
+	@mkdir -p gameobjects/xhdpi/pack
+	@mkdir -p gameobjects/xxhdpi/pack
+
 pack:
 	./pack.sh mdpi		
 	./pack.sh hdpi		
@@ -29,3 +29,6 @@ install:
 		cp -r /home/mbrekhof/projects/gdx/PopDaBalloons/images/gameobjects/$$density/packed/* /home/mbrekhof/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/; \
 		cp /home/mbrekhof/projects/gdx/PopDaBalloons/images/gameobjects/$$density/*.png /home/mbrekhof/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/images/$$density/; \
 	done
+
+clean:
+	rm -rf gameobjects

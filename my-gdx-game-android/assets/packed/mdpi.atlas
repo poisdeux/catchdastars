@@ -3,379 +3,164 @@ mdpi.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Loading
-  rotate: false
-  xy: 1, 153
-  size: 315, 99
-  orig: 315, 99
-  offset: 0, 0
-  index: -1
-splashscreen
-  rotate: false
-  xy: 1, 120
-  size: 320, 31
-  orig: 320, 31
-  offset: 0, 0
-  index: -1
 cash_register
   rotate: false
-  xy: 323, 118
+  xy: 1, 118
   size: 127, 134
   orig: 127, 134
   offset: 0, 0
   index: -1
-dot
-  rotate: false
-  xy: 1, 19
-  size: 27, 99
-  orig: 27, 99
-  offset: 0, 0
-  index: -1
 aj_balloon_blue
   rotate: false
-  xy: 452, 207
+  xy: 1, 71
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 aj_balloon_red
   rotate: false
-  xy: 30, 73
+  xy: 130, 207
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
 icecube-part01
   rotate: false
-  xy: 452, 172
+  xy: 1, 36
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube
   rotate: false
-  xy: 452, 172
+  xy: 1, 36
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part02
   rotate: false
-  xy: 30, 38
+  xy: 35, 83
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part03
   rotate: false
-  xy: 64, 85
+  xy: 130, 172
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part04
   rotate: false
-  xy: 452, 137
+  xy: 164, 219
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part05
   rotate: false
-  xy: 64, 50
+  xy: 1, 1
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part06
   rotate: false
-  xy: 98, 85
+  xy: 35, 48
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part07
   rotate: false
-  xy: 98, 50
+  xy: 69, 83
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part08
   rotate: false
-  xy: 132, 85
+  xy: 130, 137
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part09
   rotate: false
-  xy: 132, 50
+  xy: 164, 184
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 icecube-part10
   rotate: false
-  xy: 166, 85
+  xy: 198, 219
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-bricks-texture-horizontal-left-end
-  rotate: false
-  xy: 166, 51
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-bricks-texture-horizontal-right-end
-  rotate: false
-  xy: 200, 86
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-bricks-texture-horizontal
-  rotate: false
-  xy: 200, 52
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-bricks-texture-vertical
-  rotate: false
-  xy: 234, 86
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
 star_blue
   rotate: false
-  xy: 234, 52
+  xy: 35, 14
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_red
   rotate: false
-  xy: 268, 86
+  xy: 69, 49
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star_yellow
   rotate: false
-  xy: 268, 52
+  xy: 164, 150
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 Chalk-01
   rotate: false
-  xy: 1, 1
+  xy: 103, 100
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 486, 236
+  xy: 130, 119
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 30, 20
+  xy: 198, 201
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 452, 119
+  xy: 232, 236
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 302, 102
+  xy: 69, 31
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 gridpoint
   rotate: false
-  xy: 486, 218
+  xy: 103, 82
   size: 16, 16
   orig: 16, 16
-  offset: 0, 0
-  index: -1
-
-mdpi2.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-pack/cash_register
-  rotate: false
-  xy: 1, 32
-  size: 84, 89
-  orig: 84, 89
-  offset: 0, 0
-  index: -1
-pack/aj_balloon_blue
-  rotate: false
-  xy: 1, 1
-  size: 21, 29
-  orig: 21, 29
-  offset: 0, 0
-  index: -1
-pack/aj_balloon_red
-  rotate: false
-  xy: 87, 92
-  size: 21, 29
-  orig: 21, 29
-  offset: 0, 0
-  index: -1
-pack/icecube-part1
-  rotate: false
-  xy: 24, 9
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part10
-  rotate: false
-  xy: 87, 69
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part2
-  rotate: false
-  xy: 110, 100
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part3
-  rotate: false
-  xy: 47, 9
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part4
-  rotate: false
-  xy: 87, 46
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part5
-  rotate: false
-  xy: 110, 77
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part6
-  rotate: false
-  xy: 133, 100
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part7
-  rotate: false
-  xy: 110, 54
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part8
-  rotate: false
-  xy: 133, 77
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube-part9
-  rotate: false
-  xy: 156, 100
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/icecube
-  rotate: false
-  xy: 133, 54
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/star_blue
-  rotate: false
-  xy: 156, 77
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/star_red
-  rotate: false
-  xy: 179, 100
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/star_yellow
-  rotate: false
-  xy: 156, 54
-  size: 21, 21
-  orig: 21, 21
-  offset: 0, 0
-  index: -1
-pack/Chalk-01
-  rotate: false
-  xy: 70, 20
-  size: 10, 10
-  orig: 10, 10
-  offset: 0, 0
-  index: -1
-pack/Chalk-02
-  rotate: false
-  xy: 87, 34
-  size: 10, 10
-  orig: 10, 10
-  offset: 0, 0
-  index: -1
-pack/Chalk-03
-  rotate: false
-  xy: 179, 88
-  size: 10, 10
-  orig: 10, 10
-  offset: 0, 0
-  index: -1
-pack/Chalk-04
-  rotate: false
-  xy: 202, 111
-  size: 10, 10
-  orig: 10, 10
-  offset: 0, 0
-  index: -1
-pack/Chalk-05
-  rotate: false
-  xy: 179, 76
-  size: 10, 10
-  orig: 10, 10
-  offset: 0, 0
-  index: -1
-pack/gridpoint
-  rotate: false
-  xy: 214, 111
-  size: 10, 10
-  orig: 10, 10
   offset: 0, 0
   index: -1
