@@ -1,6 +1,13 @@
 SHELL = /bin/sh
 
+setup:
+	@mkdir -p gameobjects/mdpi/pack
+	@mkdir -p gameobjects/hdpi/pack
+	@mkdir -p gameobjects/xhdpi/pack
+	@mkdir -p gameobjects/xxhdpi/pack
+
 all:
+	make setup
 	./resizeall.sh
 	for density in mdpi hdpi xhdpi xxhdpi ; do \
 		mv gameobjects/$$density/*.png gameobjects/$$density/pack; \
