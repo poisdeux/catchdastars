@@ -43,9 +43,11 @@ public class Icecube extends GameObject {
 	private static FixtureDef fixtureDef;
 
 	private static BodyDef bodyDef;
-	
+
+	private static final Object mutex = new Object();
+
 	private static TextureRegionDrawable drawable;
-	
+
 	private ArrayList<Part> parts;
 	private int amountOfParts;
 
@@ -54,9 +56,9 @@ public class Icecube extends GameObject {
 	private Fixture breakOnFixture;
 
 	private static long prevPlayRocksRolling;
-	
+
 	private Color colorActor;
-	
+
 
 	/**
 	 * New velocity is calculated as follows by Box2D
@@ -73,10 +75,14 @@ public class Icecube extends GameObject {
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
-		if( availableParts == null ) {
-			setupStaticResources();
+		synchronized (mutex) {
+			if( availableParts == null ) {
+				Gdx.app.log("Icecube","setupStaticResources starting: "+mutex);
+				setupStaticResources();
+				Gdx.app.log("Icecube","setupStaticResources finished");
+			}
 		}
-		
+
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 
@@ -95,11 +101,11 @@ public class Icecube extends GameObject {
 	@Override
 	TextureRegionDrawable createTexture() {
 		this.colorActor = getColor();
-		
+
 		if( drawable == null ) {
 			drawable = new TextureRegionDrawable(Textures.icecube);
 		}
-		
+
 		return drawable; 
 	}
 
@@ -118,6 +124,7 @@ public class Icecube extends GameObject {
 
 	@Override
 	Body setupBox2D() {
+		Gdx.app.log("Icecube","setupBox2D");
 		World world = getWorld();
 
 		bodyDef.position.set(getX(), getY());
@@ -134,6 +141,7 @@ public class Icecube extends GameObject {
 
 		body.setSleepingAllowed(false);
 
+
 		return body;
 	}
 
@@ -143,7 +151,7 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		setRotation(rotation);
-		
+
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -155,8 +163,8 @@ public class Icecube extends GameObject {
 		if( this.breakOnFixture != null ) {
 			splitObject();
 		}
-		
-//		drawBoundingBox(batch);
+
+		//		drawBoundingBox(batch);
 	}
 
 	@Override
@@ -170,11 +178,11 @@ public class Icecube extends GameObject {
 		Icecube cube = new Icecube(getGame(), 
 				getX(), 
 				getY());
-		
+
 		for( Part part : availableParts ) {
 			cube.addPart(part);
 		}
-		
+
 		return cube;
 	}
 
@@ -290,29 +298,29 @@ public class Icecube extends GameObject {
 
 	private void setupStaticResources() {
 		availableParts = new ArrayList<Icecube.Part>();
-		availableParts.add(new Part("icecube-part1.png", Textures.icecubePart1));
-		availableParts.add(new Part("icecube-part2.png", Textures.icecubePart2));
-		availableParts.add(new Part("icecube-part3.png", Textures.icecubePart3));
-		availableParts.add(new Part("icecube-part4.png", Textures.icecubePart4));
-		availableParts.add(new Part("icecube-part5.png", Textures.icecubePart5));
-		availableParts.add(new Part("icecube-part6.png", Textures.icecubePart6));
-		availableParts.add(new Part("icecube-part7.png", Textures.icecubePart7));
-		availableParts.add(new Part("icecube-part8.png", Textures.icecubePart8));
-		availableParts.add(new Part("icecube-part9.png", Textures.icecubePart9));
+		availableParts.add(new Part("icecube-part01.png", Textures.icecubePart1));
+		availableParts.add(new Part("icecube-part02.png", Textures.icecubePart2));
+		availableParts.add(new Part("icecube-part03.png", Textures.icecubePart3));
+		availableParts.add(new Part("icecube-part04.png", Textures.icecubePart4));
+		availableParts.add(new Part("icecube-part05.png", Textures.icecubePart5));
+		availableParts.add(new Part("icecube-part06.png", Textures.icecubePart6));
+		availableParts.add(new Part("icecube-part07.png", Textures.icecubePart7));
+		availableParts.add(new Part("icecube-part08.png", Textures.icecubePart8));
+		availableParts.add(new Part("icecube-part09.png", Textures.icecubePart9));
 		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
-		
+
 		loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
 		int size = availableParts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = availableParts.get(i);
 			loader.setupVertices(part.name, WIDTH);
 		}
-		
+
 		fixtureDef = new FixtureDef();
 		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixtureDef.friction = 0.8f;
 		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
-		
+
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.angularDamping = 0.1f;
