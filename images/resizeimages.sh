@@ -40,21 +40,22 @@ EOF
 
 for FILENAME in "${@}"
 do
+	PNGFILENAME="${FILENAME%.*}.png"
 	SWIDTH=$WIDTH
 	SHEIGHT=$HEIGHT
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/mdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/mdpi/$(basename ${PNGFILENAME})\" ${SWIDTH} ${SHEIGHT})"
 
 	SWIDTH=$(scale $WIDTH "3/2")
 	SHEIGHT=$(scale $HEIGHT "3/2")
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/hdpi/$(basename ${FILENAME})\" ${SWIDTH} ${SHEIGHT})"
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/hdpi/$(basename ${PNGFILENAME})\" ${SWIDTH} ${SHEIGHT})"
 
 	SWIDTH=$(scale $WIDTH "2")
 	SHEIGHT=$(scale $HEIGHT "2")
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/xhdpi/$(basename ${FILENAME})\"  ${SWIDTH} ${SHEIGHT})"
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/xhdpi/$(basename ${PNGFILENAME})\"  ${SWIDTH} ${SHEIGHT})"
 
 	SWIDTH=$(scale $WIDTH "3")
 	SHEIGHT=$(scale $HEIGHT "3")
-	echo "(scale-image \"${FILENAME}\" \"gameobjects/xxhdpi/$(basename ${FILENAME})\"  ${SWIDTH} ${SHEIGHT})"
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/xxhdpi/$(basename ${PNGFILENAME})\"  ${SWIDTH} ${SHEIGHT})"
 done  >> ${TMPFILE}
 
 echo "(gimp-quit 0)" >> ${TMPFILE}

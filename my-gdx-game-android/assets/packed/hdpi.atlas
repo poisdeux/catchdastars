@@ -3,161 +3,376 @@ hdpi.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Loading
+  rotate: false
+  xy: 1, 102
+  size: 472, 148
+  orig: 472, 148
+  offset: 0, 0
+  index: -1
+splashscreen
+  rotate: false
+  xy: 475, 204
+  size: 480, 46
+  orig: 480, 46
+  offset: 0, 0
+  index: -1
 cash_register
+  rotate: false
+  xy: 475, 1
+  size: 190, 201
+  orig: 190, 201
+  offset: 0, 0
+  index: -1
+dot
+  rotate: false
+  xy: 667, 54
+  size: 40, 148
+  orig: 40, 148
+  offset: 0, 0
+  index: -1
+aj_balloon_blue
+  rotate: false
+  xy: 1, 33
+  size: 48, 67
+  orig: 48, 67
+  offset: 0, 0
+  index: -1
+aj_balloon_red
+  rotate: false
+  xy: 709, 135
+  size: 48, 67
+  orig: 48, 67
+  offset: 0, 0
+  index: -1
+icecube-part01
+  rotate: false
+  xy: 51, 51
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube
+  rotate: false
+  xy: 51, 51
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part02
+  rotate: false
+  xy: 709, 84
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part03
+  rotate: false
+  xy: 759, 153
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part04
+  rotate: false
+  xy: 101, 51
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part05
+  rotate: false
+  xy: 759, 102
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part06
+  rotate: false
+  xy: 809, 153
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part07
+  rotate: false
+  xy: 151, 51
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part08
+  rotate: false
+  xy: 809, 102
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part09
+  rotate: false
+  xy: 859, 153
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+icecube-part10
+  rotate: false
+  xy: 201, 51
+  size: 48, 49
+  orig: 48, 49
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-left-end
+  rotate: false
+  xy: 859, 103
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal-right-end
+  rotate: false
+  xy: 251, 52
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-horizontal
+  rotate: false
+  xy: 301, 52
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+bricks-texture-vertical
+  rotate: false
+  xy: 351, 52
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 401, 52
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 957, 202
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 667, 4
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Chalk-01
+  rotate: false
+  xy: 1, 7
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-02
+  rotate: false
+  xy: 909, 178
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-03
+  rotate: false
+  xy: 709, 58
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-04
+  rotate: false
+  xy: 909, 152
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+Chalk-05
+  rotate: false
+  xy: 909, 126
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+gridpoint
+  rotate: false
+  xy: 27, 7
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+
+hdpi2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+pack/cash_register
   rotate: false
   xy: 1, 118
   size: 127, 134
   orig: 127, 134
   offset: 0, 0
   index: -1
-aj_balloon_blue
+pack/aj_balloon_blue
   rotate: false
   xy: 1, 71
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
-aj_balloon_red
+pack/aj_balloon_red
   rotate: false
   xy: 130, 207
   size: 32, 45
   orig: 32, 45
   offset: 0, 0
   index: -1
-icecube-part1
+pack/icecube-part1
   rotate: false
   xy: 1, 36
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part10
+pack/icecube-part10
   rotate: false
   xy: 35, 83
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part2
+pack/icecube-part2
   rotate: false
   xy: 130, 172
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part3
+pack/icecube-part3
   rotate: false
   xy: 164, 219
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part4
+pack/icecube-part4
   rotate: false
   xy: 1, 1
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part5
+pack/icecube-part5
   rotate: false
   xy: 35, 48
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part6
+pack/icecube-part6
   rotate: false
   xy: 69, 83
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part7
+pack/icecube-part7
   rotate: false
   xy: 130, 137
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part8
+pack/icecube-part8
   rotate: false
   xy: 164, 184
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube-part9
+pack/icecube-part9
   rotate: false
   xy: 198, 219
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-icecube
+pack/icecube
   rotate: false
   xy: 35, 13
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
-star_blue
+pack/star_blue
   rotate: false
   xy: 69, 49
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-star_red
+pack/star_red
   rotate: false
   xy: 164, 150
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-star_yellow
+pack/star_yellow
   rotate: false
   xy: 198, 185
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-Chalk-01
+pack/Chalk-01
   rotate: false
   xy: 103, 100
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-Chalk-02
+pack/Chalk-02
   rotate: false
   xy: 130, 119
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-Chalk-03
+pack/Chalk-03
   rotate: false
   xy: 232, 236
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-Chalk-04
+pack/Chalk-04
   rotate: false
   xy: 69, 31
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-Chalk-05
+pack/Chalk-05
   rotate: false
   xy: 198, 167
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-gridpoint
+pack/gridpoint
   rotate: false
   xy: 103, 82
   size: 16, 16
