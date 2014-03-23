@@ -56,14 +56,13 @@ public class BodyEditorLoader {
         // Public API
         // -------------------------------------------------------------------------
 
-        public void setupVertices(String name, float scale) {
-        	Gdx.app.log("BodyEditorLoader", "setupVertices 1: name="+name);
+        public void setupVertices(String name, float scale) throws RuntimeException {
         	RigidBodyModel rbModel = model.rigidBodies.get(name);
-            if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
-
+        	if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
+            
             Vector2 origin = vec.set(rbModel.origin).mul(scale);
 
-            Gdx.app.log("BodyEditorLoader", "setupVertices 2: name="+name);
+           
             for (int i=0, n=rbModel.polygons.size(); i<n; i++) {
                     PolygonModel polygon = rbModel.polygons.get(i);
                     Vector2[] vertices = polygon.buffer;
@@ -74,7 +73,6 @@ public class BodyEditorLoader {
                     }                    
             }
 
-            Gdx.app.log("BodyEditorLoader", "setupVertices 3: name="+name);
             for (int i=0, n=rbModel.circles.size(); i<n; i++) {
                     CircleModel circle = rbModel.circles.get(i);
                     circle.centerBuffer = newVec().set(circle.center).mul(scale);
@@ -106,7 +104,7 @@ public class BodyEditorLoader {
          * @param uniqueIdentifier will be added to the fixture. Retrieve using fixture.getUserData()
          * @param fd The fixture parameters to apply to the created body fixture.
          */
-        public void attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd) {
+        public void attachFixture(Body body, String name, int uniqueIdentifier, FixtureDef fd) throws RuntimeException {
                 RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
@@ -132,7 +130,7 @@ public class BodyEditorLoader {
         /**
          * Gets the image path attached to the given name.
          */
-        public String getImagePath(String name) {
+        public String getImagePath(String name) throws RuntimeException {
                 RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 

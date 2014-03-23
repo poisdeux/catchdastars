@@ -5,162 +5,162 @@ filter: Nearest,Nearest
 repeat: none
 cash_register
   rotate: false
-  xy: 1, 118
-  size: 127, 134
-  orig: 127, 134
+  xy: 1, 52
+  size: 190, 201
+  orig: 190, 201
   offset: 0, 0
   index: -1
 aj_balloon_blue
   rotate: false
-  xy: 1, 71
-  size: 32, 45
-  orig: 32, 45
+  xy: 193, 186
+  size: 48, 67
+  orig: 48, 67
   offset: 0, 0
   index: -1
 aj_balloon_red
   rotate: false
-  xy: 130, 207
-  size: 32, 45
-  orig: 32, 45
+  xy: 193, 117
+  size: 48, 67
+  orig: 48, 67
   offset: 0, 0
   index: -1
 icecube-part01
   rotate: false
-  xy: 1, 36
-  size: 32, 33
-  orig: 32, 33
+  xy: 1, 1
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube
   rotate: false
-  xy: 1, 36
-  size: 32, 33
-  orig: 32, 33
+  xy: 1, 1
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part02
   rotate: false
-  xy: 35, 83
-  size: 32, 33
-  orig: 32, 33
+  xy: 243, 204
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part03
   rotate: false
-  xy: 130, 172
-  size: 32, 33
-  orig: 32, 33
+  xy: 193, 66
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part04
   rotate: false
-  xy: 164, 219
-  size: 32, 33
-  orig: 32, 33
+  xy: 51, 1
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part05
   rotate: false
-  xy: 1, 1
-  size: 32, 33
-  orig: 32, 33
+  xy: 243, 153
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part06
   rotate: false
-  xy: 35, 48
-  size: 32, 33
-  orig: 32, 33
+  xy: 293, 204
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part07
   rotate: false
-  xy: 69, 83
-  size: 32, 33
-  orig: 32, 33
+  xy: 101, 1
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part08
   rotate: false
-  xy: 130, 137
-  size: 32, 33
-  orig: 32, 33
+  xy: 243, 102
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part09
   rotate: false
-  xy: 164, 184
-  size: 32, 33
-  orig: 32, 33
+  xy: 293, 153
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 icecube-part10
   rotate: false
-  xy: 198, 219
-  size: 32, 33
-  orig: 32, 33
+  xy: 343, 204
+  size: 48, 49
+  orig: 48, 49
   offset: 0, 0
   index: -1
 star_blue
   rotate: false
-  xy: 35, 14
-  size: 32, 32
-  orig: 32, 32
+  xy: 293, 103
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
 star_red
   rotate: false
-  xy: 69, 49
-  size: 32, 32
-  orig: 32, 32
+  xy: 343, 154
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
 star_yellow
   rotate: false
-  xy: 164, 150
-  size: 32, 32
-  orig: 32, 32
+  xy: 393, 205
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1
 Chalk-01
   rotate: false
-  xy: 103, 100
-  size: 16, 16
-  orig: 16, 16
+  xy: 151, 26
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 130, 119
-  size: 16, 16
-  orig: 16, 16
+  xy: 243, 76
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 198, 201
-  size: 16, 16
-  orig: 16, 16
+  xy: 343, 128
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 232, 236
-  size: 16, 16
-  orig: 16, 16
+  xy: 393, 179
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 69, 31
-  size: 16, 16
-  orig: 16, 16
+  xy: 443, 229
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
 gridpoint
   rotate: false
-  xy: 103, 82
-  size: 16, 16
-  orig: 16, 16
+  xy: 469, 229
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1
