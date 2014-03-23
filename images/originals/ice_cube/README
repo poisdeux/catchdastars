@@ -3,3 +3,9 @@ To add the save all layers functionality copy the script to the
 scripts directory for GIMP. Usually /usr/share/gimp/scripts.
 THe location can be found in GIMP under 
 "Edit"->"Preferences"->"Folders"->"Scripts"
+
+Make sure when saving all layers you set name template to:
+
+icecube-part~~
+
+
