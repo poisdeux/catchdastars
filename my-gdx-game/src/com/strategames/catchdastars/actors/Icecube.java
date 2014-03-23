@@ -3,6 +3,8 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import sun.security.action.GetLongAction;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -23,6 +25,7 @@ import com.badlogic.gdx.utils.Json;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.catchdastars.utils.Mutex;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -33,20 +36,7 @@ import com.strategames.catchdastars.utils.Textures;
  */
 public class Icecube extends GameObject {
 	private final static float WIDTH = 0.30f; 
-	private static BodyEditorLoader loader;
 
-	private static int rocksHit;
-	private static float rocksHitTotalImpulse;
-
-	private static ArrayList<Part> availableParts;
-
-	private static FixtureDef fixtureDef;
-
-	private static BodyDef bodyDef;
-
-	private static final Object mutex = new Object();
-
-	private static TextureRegionDrawable drawable;
 
 	private ArrayList<Part> parts;
 	private int amountOfParts;
@@ -55,10 +45,9 @@ public class Icecube extends GameObject {
 
 	private Fixture breakOnFixture;
 
-	private static long prevPlayRocksRolling;
-
 	private Color colorActor;
 
+	private static SharedResources staticResources;
 
 	/**
 	 * New velocity is calculated as follows by Box2D
@@ -75,12 +64,9 @@ public class Icecube extends GameObject {
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
-		synchronized (mutex) {
-			if( availableParts == null ) {
-				Gdx.app.log("Icecube","setupStaticResources starting: "+mutex);
-				setupStaticResources();
-				Gdx.app.log("Icecube","setupStaticResources finished");
-			}
+		if( staticResources == null ) {
+			staticResources = new SharedResources();
+			staticResources.setupResources();
 		}
 
 		this.parts = new ArrayList<Icecube.Part>();
@@ -102,11 +88,7 @@ public class Icecube extends GameObject {
 	TextureRegionDrawable createTexture() {
 		this.colorActor = getColor();
 
-		if( drawable == null ) {
-			drawable = new TextureRegionDrawable(Textures.icecube);
-		}
-
-		return drawable; 
+		return staticResources.drawable; 
 	}
 
 	public void addPart(Part part) {
@@ -127,16 +109,16 @@ public class Icecube extends GameObject {
 		Gdx.app.log("Icecube","setupBox2D");
 		World world = getWorld();
 
-		bodyDef.position.set(getX(), getY());
-		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
+		BodyDef bodyDef = staticResources.getBodyDef(getX(), getY(), getRotation() * MathUtils.degreesToRadians);
+
 		Body body = world.createBody(bodyDef);
 
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
 			String name = part.getName();
-			loader.attachFixture(body, name, i, fixtureDef);
-			part.setOrigin(loader.getOrigin(name, WIDTH).cpy());
+			staticResources.loader.attachFixture(body, name, i, staticResources.fixtureDef);
+			part.setOrigin(staticResources.loader.getOrigin(name, WIDTH).cpy());
 		}
 
 		body.setSleepingAllowed(false);
@@ -179,7 +161,7 @@ public class Icecube extends GameObject {
 				getX(), 
 				getY());
 
-		for( Part part : availableParts ) {
+		for( Part part : staticResources.availableParts ) {
 			cube.addPart(part);
 		}
 
@@ -237,10 +219,10 @@ public class Icecube extends GameObject {
 				} else {
 					this.breakOnFixture = contact.getFixtureB();
 				}
-				Icecube.rocksHit++;
+				staticResources.rocksHit++;
 			}
-			Icecube.rocksHit++;
-			Icecube.rocksHitTotalImpulse += maxImpulse;
+			staticResources.rocksHit++;
+			staticResources.rocksHitTotalImpulse += maxImpulse;
 		}
 	}
 
@@ -254,36 +236,36 @@ public class Icecube extends GameObject {
 		if( key.contentEquals("parts") && 
 				(value.toString()).contentEquals("all") ) {
 			//Initial object contains all parts
-			for( Part part : availableParts ) {
+			for( Part part : staticResources.availableParts ) {
 				addPart(part);
 			}
 		}
 	}
 
 	public static void playRocksHitSound() {
-		if( rocksHit == 0 ) {
+		if( staticResources.rocksHit == 0 ) {
 			return;
 		}
 
 		long epoch = System.currentTimeMillis();
-		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
+		if( ( staticResources.prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
 			return;
 		}
-		prevPlayRocksRolling = epoch;
+		staticResources.prevPlayRocksRolling = epoch;
 
-		float volume = rocksHitTotalImpulse / (maxVelocitySquared * rocksHit);
-		if( rocksHit > 10 ) {
+		float volume = staticResources.rocksHitTotalImpulse / (maxVelocitySquared * staticResources.rocksHit);
+		if( staticResources.rocksHit > 10 ) {
 			Sounds.rockHit.play(volume);
 			Sounds.rockBreak.play(volume);
-		} else if( rocksHit > 2 ) {
+		} else if( staticResources.rocksHit > 2 ) {
 			Sounds.rockHit.play(volume);
 			Sounds.rockBreak.play(volume);
 		} else {
 			Sounds.rockHit.play(volume);
 		}
 
-		rocksHit = 0;
-		rocksHitTotalImpulse = 0;
+		staticResources.rocksHit = 0;
+		staticResources.rocksHitTotalImpulse = 0;
 	}
 
 	@Override
@@ -296,35 +278,7 @@ public class Icecube extends GameObject {
 		}
 	}
 
-	private void setupStaticResources() {
-		availableParts = new ArrayList<Icecube.Part>();
-		availableParts.add(new Part("icecube-part01.png", Textures.icecubePart1));
-		availableParts.add(new Part("icecube-part02.png", Textures.icecubePart2));
-		availableParts.add(new Part("icecube-part03.png", Textures.icecubePart3));
-		availableParts.add(new Part("icecube-part04.png", Textures.icecubePart4));
-		availableParts.add(new Part("icecube-part05.png", Textures.icecubePart5));
-		availableParts.add(new Part("icecube-part06.png", Textures.icecubePart6));
-		availableParts.add(new Part("icecube-part07.png", Textures.icecubePart7));
-		availableParts.add(new Part("icecube-part08.png", Textures.icecubePart8));
-		availableParts.add(new Part("icecube-part09.png", Textures.icecubePart9));
-		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
 
-		loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
-		int size = availableParts.size();
-		for(int i = 0; i < size; i++) {
-			Part part = availableParts.get(i);
-			loader.setupVertices(part.name, WIDTH);
-		}
-
-		fixtureDef = new FixtureDef();
-		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
-		fixtureDef.friction = 0.8f;
-		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
-
-		bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.angularDamping = 0.1f;
-	}
 
 	private void splitObject() {
 		// Do not break if object consists of a single part
@@ -388,6 +342,86 @@ public class Icecube extends GameObject {
 			if( sprite != null ) {
 				sprite.setOrigin(origin.x, origin.y);
 			}
+		}
+	}
+
+	private class SharedResources {
+		private final Mutex mutex = new Mutex();
+
+		public BodyEditorLoader loader;
+
+		public int rocksHit;
+		public float rocksHitTotalImpulse;
+
+		public ArrayList<Part> availableParts;
+
+		public FixtureDef fixtureDef;
+
+		public BodyDef bodyDef;
+
+		public TextureRegionDrawable drawable;
+
+		public long prevPlayRocksRolling;
+
+		public void setupResources() {
+			try {
+				mutex.getLockWait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return;
+			}
+			Gdx.app.log("Icecube", "setupResources start 1");
+			availableParts = new ArrayList<Icecube.Part>();
+			availableParts.add(new Part("icecube-part01.png", Textures.icecubePart1));
+			availableParts.add(new Part("icecube-part02.png", Textures.icecubePart2));
+			availableParts.add(new Part("icecube-part03.png", Textures.icecubePart3));
+			availableParts.add(new Part("icecube-part04.png", Textures.icecubePart4));
+			availableParts.add(new Part("icecube-part05.png", Textures.icecubePart5));
+			availableParts.add(new Part("icecube-part06.png", Textures.icecubePart6));
+			availableParts.add(new Part("icecube-part07.png", Textures.icecubePart7));
+			availableParts.add(new Part("icecube-part08.png", Textures.icecubePart8));
+			availableParts.add(new Part("icecube-part09.png", Textures.icecubePart9));
+			availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
+
+			Gdx.app.log("Icecube", "setupResources start 2");
+			
+			loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
+			int size = availableParts.size();
+			for(int i = 0; i < size; i++) {
+				Part part = availableParts.get(i);
+				loader.setupVertices(part.name, WIDTH);
+			}
+
+			Gdx.app.log("Icecube", "setupResources start 3");
+			fixtureDef = new FixtureDef();
+			fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
+			fixtureDef.friction = 0.8f;
+			fixtureDef.restitution = 0.01f; // Make it bounce a little bit
+
+			Gdx.app.log("Icecube", "setupResources start 4");
+			bodyDef = new BodyDef();
+			bodyDef.type = BodyType.DynamicBody;
+			bodyDef.angularDamping = 0.1f;
+
+			Gdx.app.log("Icecube", "setupResources start 5");
+			drawable = new TextureRegionDrawable(Textures.icecube);
+			Gdx.app.log("Icecube", "setupResources end");
+			mutex.releaseLock();
+		}
+
+		public BodyDef getBodyDef(float x, float y, float angle) {
+			try {
+				mutex.getLockWait();
+				Gdx.app.log("Icecube", "getBodyDef start");
+				bodyDef.position.set(x, y);
+				bodyDef.angle = angle;
+				mutex.releaseLock();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			Gdx.app.log("Icecube", "getBodyDef end");
+			return bodyDef;
 		}
 	}
 }
