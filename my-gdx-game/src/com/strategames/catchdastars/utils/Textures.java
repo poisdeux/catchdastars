@@ -1,5 +1,6 @@
 package com.strategames.catchdastars.utils;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,12 +47,13 @@ public class Textures {
 	public static TextureRegion digit8;
 	public static TextureRegion digit9;
 	public static TextureRegion gridPoint;
+	public static TextureRegion	menu;
 	public static Texture		Loading;
 	public static Texture		dot;
 	
 	private static String atlasFilename;
 	private static String screenDensity;
-	
+
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
@@ -63,18 +65,18 @@ public class Textures {
 		if( screenDensity == null ) {
 			screenDensity = getScreenDensity();
 		}
-		
+
 		atlasFilename = "packed/"+screenDensity+".atlas";
 		manager.load(atlasFilename, TextureAtlas.class);
 	}
-	
+
 	/**
 	 * Unloads all loaded assets
 	 */
 	static public void dispose(AssetManager manager) {
 		manager.unload(atlasFilename);
 	}
-	
+
 	/**
 	 * Call this to fill the different textures from the AssetManager
 	 * <br/>
@@ -85,7 +87,7 @@ public class Textures {
 		if( atlasFilename == null ) {
 			load(manager);
 		}
-		
+
 		String path = "images/"+screenDensity;
 		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
 		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
@@ -93,9 +95,9 @@ public class Textures {
 		bricksVertical = new Texture(path+"/bricks-texture-vertical.png");
 		dot = new Texture(path+"/dot.png");
 		Loading = new Texture(path+"/Loading.png");
-		
+
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
-		
+
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
 		redBalloon = atlas.findRegion("aj_balloon_red");
 		starBlue = atlas.findRegion("star_blue");
@@ -130,18 +132,21 @@ public class Textures {
 		digit8 = atlas.findRegion("8");
 		digit9 = atlas.findRegion("9");
 		gridPoint = atlas.findRegion("gridpoint");
+		menu = atlas.findRegion("icon-menu");
 	}
-	
+
 	public static Texture getSplashScreen() {
 		if( screenDensity == null ) {
 			screenDensity = getScreenDensity();
 		}
-		
+
 		return new Texture( "images/"+screenDensity+"/splashscreen.png" );
 	}
-	
+
 	private static String getScreenDensity() {
 		String densityModifier = "mdpi";
+
+		float density = Gdx.graphics.getDensity();
 		
 		/**
 		 *  we originally designed the game for a 800x480 hdpi screen
@@ -150,17 +155,17 @@ public class Textures {
 		 *  xhdpi	1066.66666
 		 *  xxhdpi	1600	
 		 */
-		float density = Gdx.graphics.getDensity();
+
 		float width = Gdx.graphics.getWidth();
 		float height = Gdx.graphics.getHeight();
 		float size = width > height ? width : height;
-//		if( size >= 1599 ) {
-//			densityModifier = "xxhdpi";
-//		} else if ( size >= 1066 ) {
-//			densityModifier = "xhdpi";
-//		} else if ( size >= 799 ) {
-//			densityModifier = "hdpi";
-//		}
+		//		if( size >= 1599 ) {
+		//			densityModifier = "xxhdpi";
+		//		} else if ( size >= 1066 ) {
+		//			densityModifier = "xhdpi";
+		//		} else if ( size >= 799 ) {
+		//			densityModifier = "hdpi";
+		//		}
 		if( density >= 3 ) {
 			densityModifier = "xxhdpi";
 		} else if ( density >= 2 ) {

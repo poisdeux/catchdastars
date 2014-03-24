@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.catchdastars.actors.IconMenu;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
@@ -672,24 +673,36 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	private void setupMenu(Stage stage) {
+		IconMenu menuIcon = new IconMenu();
+		
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
 		Vector2 worldSize = this.game.getWorldSize();
 
 		if( this.menuPosition == MenuPosition.TOP ) {
-			float delta = stage.getWidth() / gameObjects.size();
+			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
 			float x = 0.1f;
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 
+			menuIcon.setSaveToFile(false);
+			menuIcon.setMenuItem(true);
+			menuIcon.setPosition(x, y);
+			x+=delta;
+			
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				x += delta;
 			}
 		} else {
-			float delta = stage.getHeight() / gameObjects.size();
+			float delta = stage.getHeight() / ( gameObjects.size() + 1 );
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 
+			menuIcon.setSaveToFile(false);
+			menuIcon.setMenuItem(true);
+			menuIcon.setPosition(x, y);
+			y+=delta;
+			
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				y += delta;

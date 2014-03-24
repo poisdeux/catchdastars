@@ -164,3 +164,10 @@ gridpoint
   orig: 48, 48
   offset: 0, 0
   index: -1
+icon-menu
+  rotate: false
+  xy: 677, 207
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
