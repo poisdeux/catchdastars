@@ -27,6 +27,8 @@ public class IconMenu extends GameObject {
 	
 	public IconMenu() {
 		super(new Vector2(WIDTH, -1f));
+		setMenuItem(true);
+		setSaveToFile(false);
 	}
 	
 	

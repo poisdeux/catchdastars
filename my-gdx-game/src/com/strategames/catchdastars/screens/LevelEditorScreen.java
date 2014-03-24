@@ -684,8 +684,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float x = 0.1f;
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 
-			menuIcon.setSaveToFile(false);
-			menuIcon.setMenuItem(true);
+			
 			menuIcon.setPosition(x, y);
 			x+=delta;
 			
@@ -698,8 +697,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 
-			menuIcon.setSaveToFile(false);
-			menuIcon.setMenuItem(true);
 			menuIcon.setPosition(x, y);
 			y+=delta;
 			
