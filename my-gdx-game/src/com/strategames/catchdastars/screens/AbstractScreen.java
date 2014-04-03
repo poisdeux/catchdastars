@@ -68,8 +68,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(this.stageUIActors);
 		this.multiplexer.addProcessor(this);
+		this.multiplexer.addProcessor(this.stageUIActors);
 	}
 	
 	@Override

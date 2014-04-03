@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -27,14 +28,16 @@ public class IconMenu extends GameObject {
 	
 	public IconMenu() {
 		super(new Vector2(WIDTH, -1f));
-		setMenuItem(true);
 		setSaveToFile(false);
+		setup();
 	}
 	
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+		Gdx.app.debug("IconMenu", "draw: getWidth="+getWidth()+", getHeight="+getHeight());
 		super.draw(batch, parentAlpha);
+		super.drawBoundingBox(batch);
 	}
 	
 	@Override
@@ -44,6 +47,7 @@ public class IconMenu extends GameObject {
 	
 	@Override
 	TextureRegionDrawable createTexture() {
+		Gdx.app.debug("IconMenu", "createTexture");
 		return new TextureRegionDrawable(Textures.menu);
 	}
 	
@@ -93,12 +97,6 @@ public class IconMenu extends GameObject {
 
 	@Override
 	public void destroy() {
-		if(remove()) {
-			Sounds.glass.play();
-			if(deleteBody()) {
-				setDeleted(true);
-			}
-		}
 	}
 
 	@Override
