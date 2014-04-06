@@ -674,6 +674,8 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	private void setupMenu(Stage stage) {
 		IconMenu menuIcon = new IconMenu();
+		menuIcon.setup();
+		super.stageActors.addActor(menuIcon);
 		
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
@@ -685,7 +687,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 
 			
-			menuIcon.setPosition(x, y);
+			menuIcon.moveTo(x, y);
 			x+=delta;
 			
 			for(GameObject object : gameObjects ) {
@@ -697,7 +699,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 
-			menuIcon.setPosition(x, y);
+			menuIcon.moveTo(x, y);
 			y+=delta;
 			
 			for(GameObject object : gameObjects ) {
