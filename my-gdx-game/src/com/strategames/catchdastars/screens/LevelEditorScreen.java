@@ -255,12 +255,13 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		Gdx.app.log("LevelEditorScreen", "touchDragged int: (x,y)="+screenX+","+screenY+")");
 		if( ( this.state == States.NONE ) || 
 				( this.state == States.DRAG ) ) {
 
 			this.state = States.DRAG;
 
-			if( this.selectedGameObjects.size() > 0 ) {
+			if( ( this.actorTouched != null ) &&  ( this.selectedGameObjects.size() > 0 ) ) {
 				Vector2 moveDirection = new Vector2(screenX, screenY);
 				Vector2 actorCoords = new Vector2(this.actorTouched.getX(), this.actorTouched.getY());
 				super.stageActors.screenToStageCoordinates(moveDirection);
@@ -382,6 +383,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 
 	@Override
 	public void onClick(Dialog dialog, int which) {
+		Gdx.app.log("LevelEditorScreen", "onClick");
 		if( dialog instanceof LevelEditorOptionsDialog ) {
 			switch( which ) {
 			case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
@@ -392,6 +394,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				break;
 			}
 		} else if ( dialog instanceof GameObjectPickerDialog ) {
+			Gdx.app.log("LevelEditorScreen", "onClick GameObjectPickerDialog");
 			GameObject gameObject = ((GameObjectPickerDialog) dialog).getSelectedGameObject();
 			deselectAllGameObjects();
 			selectGameObject(gameObject);
