@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.catchdastars.Game;
+import com.strategames.ui.widgets.TextButton;
 
 public class ButtonsDialog extends Dialog {
 	private final Skin skin;

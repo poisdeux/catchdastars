@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;

@@ -15,7 +15,7 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.Game.GameLoadedListener;
 import com.strategames.catchdastars.actors.Text;
 import com.strategames.catchdastars.utils.Animations;
-import com.strategames.ui.LevelPauseDialog;
+import com.strategames.ui.dialogs.LevelPauseDialog;
 
 
 public class LevelScreen extends AbstractScreen implements InputProcessor, GameLoadedListener

@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectPickerDialog extends Dialog {
 	public static final int BUTTON_GAMEOBJECTSELECTED = 1;

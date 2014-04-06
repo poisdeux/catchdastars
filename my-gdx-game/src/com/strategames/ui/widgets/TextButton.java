@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.widgets;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -6,17 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import com.strategames.interfaces.ButtonListener;
 
 public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton implements EventListener {
 	private Timer timer;
 	private boolean longPress;
-	private TextButtonListener listener = null;
+	private ButtonListener listener = null;
 	private Object tag;
-	
-	public interface TextButtonListener {
-		public void onTap(TextButton button);
-		public void onLongPress(TextButton button);
-	}
 	
 	public TextButton(String text, Skin skin) {
 		super(text, skin);
@@ -42,7 +38,7 @@ public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton im
 		}
 	}
 
-	public void setListener(TextButtonListener listener) {
+	public void setListener(ButtonListener listener) {
 			this.listener = listener;
 	}
 	

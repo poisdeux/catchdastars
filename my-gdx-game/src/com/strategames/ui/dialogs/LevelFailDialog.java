@@ -1,16 +1,18 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.screens.MainMenuScreen;
-import com.strategames.ui.TextButton.TextButtonListener;
+import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.widgets.TextButton;
 
 public class LevelFailDialog extends Dialog {
 	private Skin skin;
@@ -39,10 +41,10 @@ public class LevelFailDialog extends Dialog {
 		table.bottom();
 		
 		TextButton retryButton = new TextButton("Retry", skin);
-		retryButton.setListener(new TextButtonListener() {
+		retryButton.setListener(new ButtonListener() {
 			
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 //				gameOverLabel.clear();
 				gameOverLabel.remove();
 				table.clear();
@@ -51,7 +53,7 @@ public class LevelFailDialog extends Dialog {
 			}
 			
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 				
 			}
 		});
@@ -61,15 +63,15 @@ public class LevelFailDialog extends Dialog {
 		table.add(retryButton).expandX().fillX().left();
 		
 		TextButton mainMenuButton = new TextButton("Main menu", skin);
-		mainMenuButton.setListener(new TextButtonListener() {
+		mainMenuButton.setListener(new ButtonListener() {
 			
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 				game.setScreen(new MainMenuScreen(game));
 			}
 			
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 				
 			}
 		});

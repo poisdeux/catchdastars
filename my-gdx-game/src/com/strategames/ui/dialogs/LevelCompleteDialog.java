@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -29,7 +30,8 @@ import com.strategames.catchdastars.screens.LoadingScreen;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
-import com.strategames.ui.TextButton.TextButtonListener;
+import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.widgets.TextButton;
 
 public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationListener {
 	private Skin skin;
@@ -114,15 +116,15 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		table.bottom();
 
 		TextButton mainMenuButton = new TextButton("Main menu", skin);
-		mainMenuButton.setListener(new TextButtonListener() {
+		mainMenuButton.setListener(new ButtonListener() {
 
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 				game.setScreen(new MainMenuScreen(game));
 			}
 
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 
 			}
 		});
@@ -131,16 +133,16 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		table.add(mainMenuButton).expandX().fillX().left();
 		
 		TextButton nextLevelButton = new TextButton("Next level", skin);
-		nextLevelButton.setListener(new TextButtonListener() {
+		nextLevelButton.setListener(new ButtonListener() {
 
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 				LevelScreen screen = new LevelScreen(game);
 				game.setScreen(new LoadingScreen(screen, game, game.getLevelNumber() + 1));
 			}
 
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 
 			}
 		});

@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
@@ -21,17 +22,19 @@ import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
 import com.strategames.catchdastars.utils.ScreenBorder;
-import com.strategames.ui.ButtonsDialog;
-import com.strategames.ui.Dialog;
-import com.strategames.ui.Dialog.OnClickListener;
-import com.strategames.ui.GameObjectConfigurationDialog;
-import com.strategames.ui.GameObjectPickerDialog;
+import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.Grid;
-import com.strategames.ui.LevelEditorOptionsDialog;
-import com.strategames.ui.RectangleImage;
-import com.strategames.ui.ToolsPickerDialog;
+import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
+import com.strategames.ui.dialogs.GameObjectPickerDialog;
+import com.strategames.ui.dialogs.LevelEditorOptionsDialog;
+import com.strategames.ui.dialogs.ToolsPickerDialog;
+import com.strategames.ui.widgets.MenuButton;
+import com.strategames.ui.widgets.RectangleImage;
 
-public class LevelEditorScreen extends AbstractScreen implements GestureListener, Dialog.OnClickListener {
+public class LevelEditorScreen extends AbstractScreen implements ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
 	private MenuPosition menuPosition;
@@ -673,9 +676,9 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	}
 
 	private void setupMenu(Stage stage) {
-		IconMenu menuIcon = new IconMenu();
-		menuIcon.setup();
-		super.stageActors.addActor(menuIcon);
+		MenuButton menuButton = new MenuButton();
+		menuButton.setListener(this);
+		super.stageUIActors.addActor(menuButton);
 		
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
@@ -686,8 +689,12 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float x = 0.1f;
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 
-			
-			menuIcon.moveTo(x, y);
+			/**
+			 * MenuButton's pivot is positioned in the image's center.
+			 * Therefore we need to add 0.5 * Wall.HEIGHT to the y-coordinate
+			 */
+			Vector2 stageCoords = stageActors.stageToScreenCoordinates(new Vector2(x,y + (float) (0.5 * Wall.HEIGHT)));
+			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			x+=delta;
 			
 			for(GameObject object : gameObjects ) {
@@ -699,7 +706,7 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 
-			menuIcon.moveTo(x, y);
+			menuButton.setPosition(x, y);
 			y+=delta;
 			
 			for(GameObject object : gameObjects ) {
@@ -724,6 +731,20 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		gameObject.moveTo(x, y);
 		gameObject.setInitialPosition(new Vector2(x, y));
 		stage.addActor(gameObject);
+	}
+
+	@Override
+	public void onTap(Button button) {
+		if( button instanceof MenuButton ) {
+			Gdx.app.log("LevelEditorScreen", "MenuButton pressed");
+			//show menu
+		}
+	}
+
+	@Override
+	public void onLongPress(Button button) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

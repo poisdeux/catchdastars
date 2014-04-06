@@ -26,8 +26,8 @@ import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
-import com.strategames.ui.LevelCompleteDialog;
-import com.strategames.ui.LevelFailDialog;
+import com.strategames.ui.dialogs.LevelCompleteDialog;
+import com.strategames.ui.dialogs.LevelFailDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravityVector;

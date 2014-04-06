@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ScreenBorder;
+import com.strategames.ui.widgets.TextButton;
 
 public class ToolsPickerDialog extends Dialog {
 	private final Skin skin;
