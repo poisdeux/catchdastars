@@ -25,7 +25,7 @@ public class LevelFailDialog extends Dialog {
 	}
 	
 	@Override
-	public void show(Stage stage) {
+	public void create() {
 		
 		final Label gameOverLabel = new Label("Game Over", skin);
 		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gameOverLabel.getWidth() / 2);
@@ -34,7 +34,7 @@ public class LevelFailDialog extends Dialog {
 		
 		gameOverLabel.getColor().a = 0f;
 		
-		stage.addActor(gameOverLabel);
+		addActor(gameOverLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
@@ -80,7 +80,7 @@ public class LevelFailDialog extends Dialog {
 		
 		table.add(mainMenuButton).expandX().fillX().right();
 		
-		stage.addActor(table);
+		addActor(table);
 	}
 
 }

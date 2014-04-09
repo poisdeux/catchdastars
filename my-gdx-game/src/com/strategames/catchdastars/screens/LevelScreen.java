@@ -112,6 +112,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 			Game game = getGame();
 			game.pauseGame();
 			LevelPauseDialog dialog = new LevelPauseDialog(game, getSkin());
+			dialog.create();
 			dialog.show(getStageUIElements());
 			return true;
 		}

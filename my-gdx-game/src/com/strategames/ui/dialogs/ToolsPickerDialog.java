@@ -22,7 +22,7 @@ public class ToolsPickerDialog extends Dialog {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void show(Stage stage) {
+	public void create() {
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
@@ -38,7 +38,7 @@ public class ToolsPickerDialog extends Dialog {
 		});
 		pack();
 		
-		super.show(stage);
+		super.create();
 	}
 	
 	private void createScreenBorderTool() {

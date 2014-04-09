@@ -31,7 +31,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 	}
 	
 	@Override
-	public void show(final Stage stage) {
+	public void create() {
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
@@ -108,7 +108,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 			row();
 		}
 
-		super.show(stage);
+		super.create();
 	}
 	
 	

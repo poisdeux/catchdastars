@@ -29,6 +29,7 @@ abstract public class Dialog extends Window {
 		super(title, skin);
 		this.skin = skin;
 		this.buttons = new Array<TextButton>();
+		setVisible(false);
 	}
 
 	public void setPositiveButton(String text, final Dialog.OnClickListener onClickListener) {
@@ -79,7 +80,7 @@ abstract public class Dialog extends Window {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void show(final Stage stage) {
+	public void create() {
 		
 		for( TextButton button : this.buttons ) {
 			add(button);
@@ -97,7 +98,15 @@ abstract public class Dialog extends Window {
 		row();
 
 		pack();
-
+	}
+	
+	public void show(Stage stage) {
 		stage.addActor(this);
+		setVisible(true);
+	}
+	
+	public void hide() {
+		this.remove();
+		setVisible(false);
 	}
 }

@@ -32,7 +32,7 @@ public class GameObjectPickerDialog extends Dialog {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void show(Stage stage) {
+	public void create() {
 		setPosition(0, 0);
 		defaults().spaceBottom(2);
 		row();
@@ -65,7 +65,7 @@ public class GameObjectPickerDialog extends Dialog {
 		
 		pack();
 		
-		super.show(stage);
+		super.create();
 	}
 	
 	public GameObject getSelectedGameObject() {

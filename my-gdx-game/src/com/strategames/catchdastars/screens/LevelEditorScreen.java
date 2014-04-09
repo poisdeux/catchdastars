@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.actors.IconMenu;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
@@ -38,7 +37,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
 	private MenuPosition menuPosition;
-
+	private boolean menuVisible;
+	private ButtonsDialog mainMenu;
 	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
@@ -333,7 +333,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 			if( this.uiElementHit != null ) return false;
 
-			showMainMenu();
+			setupMainMenu();
 
 		}
 		return true;
@@ -582,64 +582,56 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		}
 	}
 
-	private void showMainMenu() {
-		ButtonsDialog dialog = new ButtonsDialog(getGame(), getSkin(), this);
+	private void setupMainMenu() {
+		this.mainMenu = new ButtonsDialog("Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
-		dialog.add("Add game object", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				showGameObjectPickerDialog();
-			}
-		});
-
-		dialog.add("Tools", new ClickListener() {
+		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showToolsDialog();
+				mainMenu.hide();
 			}
 		});
 
-		dialog.add("Options", new ClickListener() {
+		this.mainMenu.add("Options", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showOptionsDialog();
+				mainMenu.hide();
 			}
 		});
 
-		dialog.setPositiveButton("Close", new OnClickListener() {
+		this.mainMenu.setPositiveButton("Save", new OnClickListener() {
 
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
-				dialog.remove();
+				mainMenu.hide();
 			}
 		});
-		dialog.setNegativeButton("Quit", new OnClickListener() {
+		this.mainMenu.setNegativeButton("Quit", new OnClickListener() {
 
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
+				mainMenu.hide();
 				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 			}
 		});
-		dialog.show(getStageUIElements());
-	}
-
-	private void showGameObjectPickerDialog() {
-		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-		dialog.setPositiveButton("Close", this);
-		dialog.setNegativeButton("Quit", this);
-		dialog.show(getStageUIElements());
+		
+		this.mainMenu.create();
 	}
 
 	private void showToolsDialog() {
-		ToolsPickerDialog tDialog = new ToolsPickerDialog(getGame(), getSkin());
-		tDialog.show(getStageUIElements());
+		ToolsPickerDialog dialog = new ToolsPickerDialog(getGame(), getSkin());
+		dialog.create();
+		dialog.show(getStageUIElements());
 	}
 
 	private void showOptionsDialog() {
-		LevelEditorOptionsDialog tDialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
-		tDialog.show(getStageUIElements());
+		LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
+		dialog.create();
+		dialog.show(getStageUIElements());
 	}
 
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
@@ -672,6 +664,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 				dialog.remove();
 			}
 		});
+		dialog.create();
 		dialog.show(getStageUIElements());
 	}
 
@@ -736,8 +729,16 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	@Override
 	public void onTap(Button button) {
 		if( button instanceof MenuButton ) {
-			Gdx.app.log("LevelEditorScreen", "MenuButton pressed");
-			//show menu
+			if( this.mainMenu == null ) {
+				setupMainMenu();
+				this.mainMenu.setPosition(button.getX(), button.getY());
+			}
+			
+			if( this.mainMenu.isVisible() ) {
+				this.mainMenu.hide();
+			} else {
+				this.mainMenu.show(getStageUIElements());
+			}
 		}
 	}
 

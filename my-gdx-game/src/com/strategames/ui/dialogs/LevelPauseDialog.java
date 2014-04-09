@@ -25,7 +25,7 @@ public class LevelPauseDialog extends Dialog {
 	}
 	
 	@Override
-	public void show(Stage stage) {
+	public void create() {
 		
 		final Label gamePauseLabel = new Label("Game Paused", skin);
 		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
@@ -34,7 +34,7 @@ public class LevelPauseDialog extends Dialog {
 		
 		gamePauseLabel.getColor().a = 0f;
 		
-		stage.addActor(gamePauseLabel);
+		addActor(gamePauseLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
@@ -81,7 +81,7 @@ public class LevelPauseDialog extends Dialog {
 		
 		table.add(resumeButton).expandX().fillX().right();
 		
-		stage.addActor(table);
+		addActor(table);
 	}
 
 }

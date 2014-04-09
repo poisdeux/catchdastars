@@ -90,7 +90,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		}
 	}
 
-	public void show(Stage stage) {
+	public void create(Stage stage) {
 		this.stage = stage;
 
 		this.animationPhase = -1;
