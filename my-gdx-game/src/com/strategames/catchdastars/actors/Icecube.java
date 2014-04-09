@@ -3,8 +3,6 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import sun.security.action.GetLongAction;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
