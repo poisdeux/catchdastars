@@ -1,1 +1,1 @@
-{gameObjects:[{class:com.strategames.catchdastars.actors.Wall,Wall:{x:-0.15,y:7.9500003,type:HORIZONTAL,length:5.4}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:-0.15,y:-0.15,type:HORIZONTAL,length:5.4}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:-0.15,y:0.15,type:VERTICAL,length:7.8}},{class:com.strategames.catchdastars.actors.Wall,Wall:{x:4.95,y:0.15,type:VERTICAL,length:7.8}},{class:com.strategames.catchdastars.actors.Balloon,Balloon:{x:2.4575403,y:4.05,type:BLUE,liftfactor:1.3}}],number:1,name:dasd}
+{number:1,name:svav}

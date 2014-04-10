@@ -37,7 +37,6 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
 	private MenuPosition menuPosition;
-	private boolean menuVisible;
 	private ButtonsDialog mainMenu;
 	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
@@ -685,8 +684,9 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			/**
 			 * MenuButton's pivot is positioned in the image's center.
 			 * Therefore we need to add 0.5 * Wall.HEIGHT to the y-coordinate
+			 * We assume Wall is the largest gameobject
 			 */
-			Vector2 stageCoords = stageActors.stageToScreenCoordinates(new Vector2(x,y + (float) (0.5 * Wall.HEIGHT)));
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x,y + (float) (0.5 * Wall.HEIGHT)));
 			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			x+=delta;
 			
@@ -699,7 +699,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = 0.1f;
 
-			menuButton.setPosition(x, y);
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x + (float) (3 * Wall.WIDTH),y));
+			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			y+=delta;
 			
 			for(GameObject object : gameObjects ) {
