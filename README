@@ -21,3 +21,7 @@ git checkout .
    all three projects my-gdx-game*
 
 6. Edit the properties to fix location of the physics-body-editor library.
+
+7. Edit the properties of catchdastars-desktop and make sure under Java Build 
+   Path the Source folder catchdastars-desktop/assets points to the correct
+   location.
