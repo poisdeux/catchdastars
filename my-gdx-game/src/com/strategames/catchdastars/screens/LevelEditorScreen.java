@@ -424,10 +424,6 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	private void setCamera() {		
 		Stage stage = getStageActors();
 
-
-
-
-
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			OrthographicCamera camera = getGameCamera();
@@ -682,7 +678,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
 
 			/**
-			 * MenuButton's pivot is positioned in the image's center.
+			 * MenuButton's pivot is positioned at (0,0)=(left, bottom)
 			 * Therefore we need to add 0.5 * Wall.HEIGHT to the y-coordinate
 			 * We assume Wall is the largest gameobject
 			 */
@@ -697,15 +693,16 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		} else {
 			float delta = stage.getHeight() / ( gameObjects.size() + 1 );
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
-			float y = 0.1f;
-
-			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x + (float) (3 * Wall.WIDTH),y));
-			menuButton.setPosition(stageCoords.x, stageCoords.y);
-			y+=delta;
+			float y = worldSize.y - Wall.HEIGHT;
+			
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x + Wall.WIDTH, worldSize.y - y));
+			super.stageUIActors.screenToStageCoordinates(stageCoords);
+			menuButton.setPosition(stageCoords.x + 2*menuButton.getWidth(), stageCoords.y);
+			y-=delta;
 			
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
-				y += delta;
+				y -= delta;
 			}
 		}
 	}
@@ -732,7 +729,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		if( button instanceof MenuButton ) {
 			if( this.mainMenu == null ) {
 				setupMainMenu();
-				this.mainMenu.setPosition(button.getX(), button.getY());
+				this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), button.getY());
 			}
 			
 			if( this.mainMenu.isVisible() ) {
