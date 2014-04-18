@@ -671,7 +671,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
 		Vector2 worldSize = this.game.getWorldSize();
-
+		
+//		this.menuPosition = MenuPosition.LEFT;
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
 			float x = 0.1f;
@@ -679,10 +680,9 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 			/**
 			 * MenuButton's pivot is positioned at (0,0)=(left, bottom)
-			 * Therefore we need to add 0.5 * Wall.HEIGHT to the y-coordinate
-			 * We assume Wall is the largest gameobject
 			 */
-			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x,y + (float) (0.5 * Wall.HEIGHT)));
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x,worldSize.y - y));
+			super.stageUIActors.screenToStageCoordinates(stageCoords);
 			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			x+=delta;
 			
@@ -695,9 +695,11 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = worldSize.y - Wall.HEIGHT;
 			
-			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x + Wall.WIDTH, worldSize.y - y));
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x, worldSize.y - y));
 			super.stageUIActors.screenToStageCoordinates(stageCoords);
-			menuButton.setPosition(stageCoords.x + 2*menuButton.getWidth(), stageCoords.y);
+			menuButton.setPosition(stageCoords.x, stageCoords.y);
+			Gdx.app.log("LevelEditorScreen", "stageCoords: "+stageCoords+
+					"stageUIActors=("+stageUIActors.getWidth()+","+stageUIActors.getHeight()+")");
 			y-=delta;
 			
 			for(GameObject object : gameObjects ) {

@@ -18,10 +18,14 @@
 		<link>
 			<name>assets</name>
 			<type>2</type>
-			<location>/home/martijn/Projects/PopDaBalloons/my-gdx-game-android/assets</location>
+			<location>RGL_LOC/projects/PopDaBalloons/my-gdx-game-android/assets</location>
 		</link>
 	</linkedResources>
 	<variableList>
+		<variable>
+			<name>RGL_LOC</name>
+			<value>$%7BPARENT-1-WORKSPACE_LOC%7D</value>
+		</variable>
 		<variable>
 			<name>copy_PARENT</name>
 			<value>file:/home/mbrekhof/projects/gdx/PopDaBalloons</value>

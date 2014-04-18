@@ -79,14 +79,10 @@ public class Icecube extends GameObject {
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
-		Gdx.app.log("Icecube", "Icecube(): starting constructor "+this);
-
 		try {
 			mutex.getLockWait();
 			if( availableParts == null ) {
-				Gdx.app.log("Icecube", "Icecube(): setting up static resources "+this);
 				setupStaticResources();
-				Gdx.app.log("Icecube", "Icecube(): done setting up static resources "+this);
 			}
 			mutex.releaseLock();
 		} catch (InterruptedException e) {
@@ -94,10 +90,6 @@ public class Icecube extends GameObject {
 			return;
 		}
 		
-		
-
-		Gdx.app.log("Icecube", "Icecube(): ending constructor "+this);
-
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 

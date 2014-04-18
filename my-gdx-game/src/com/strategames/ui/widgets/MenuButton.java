@@ -16,7 +16,7 @@ public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implem
 	
 	public MenuButton() {
 		super(drawable);
-		setScale(IMAGEWIDTH / getMinWidth());
+		setSize(IMAGEWIDTH, IMAGEWIDTH);
 		addListener(this);
 	}
 
