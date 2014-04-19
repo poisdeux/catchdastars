@@ -672,7 +672,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 		Vector2 worldSize = this.game.getWorldSize();
 		
-//		this.menuPosition = MenuPosition.LEFT;
+		this.menuPosition = MenuPosition.LEFT;
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
 			float x = 0.1f;
@@ -731,7 +731,13 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		if( button instanceof MenuButton ) {
 			if( this.mainMenu == null ) {
 				setupMainMenu();
-				this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), button.getY());
+				if( this.menuPosition == MenuPosition.TOP ) {
+					this.mainMenu.setPosition(button.getX(), 
+						button.getY() - this.mainMenu.getHeight());
+				} else {
+					this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
+							button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
+				}
 			}
 			
 			if( this.mainMenu.isVisible() ) {
