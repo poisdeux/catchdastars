@@ -238,14 +238,22 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			return true;
 		} else if( this.actorTouched != null ) {
 			GameObject gameObject = (GameObject) this.actorTouched;
-			//Check if object is in game area
-
+			
 			//If menu item create new menu item at initial position
 			if( gameObject.isMenuItem() ) {
-				gameObject.setMenuItem(false);
-				gameObject.setSaveToFile(true);
 				Vector2 v = gameObject.getInitialPosition();
-				addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
+				if( inGameArea(gameObject) ) {
+					gameObject.setMenuItem(false);
+					gameObject.setSaveToFile(true);
+					addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
+				} else {
+					//return menu item to its original position
+					gameObject.moveTo(v.x, v.y);
+				}
+			} else {
+				if( ! inGameArea(gameObject) ) {
+					gameObject.remove();
+				}
 			}
 		}
 		return false;
@@ -613,7 +621,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 			}
 		});
-		
+
 		this.mainMenu.create();
 	}
 
@@ -667,12 +675,12 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		MenuButton menuButton = new MenuButton();
 		menuButton.setListener(this);
 		super.stageUIActors.addActor(menuButton);
-		
+
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
 		Vector2 worldSize = this.game.getWorldSize();
-		
-		this.menuPosition = MenuPosition.LEFT;
+
+		//		this.menuPosition = MenuPosition.LEFT;
 		if( this.menuPosition == MenuPosition.TOP ) {
 			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
 			float x = 0.1f;
@@ -685,7 +693,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			super.stageUIActors.screenToStageCoordinates(stageCoords);
 			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			x+=delta;
-			
+
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				x += delta;
@@ -694,14 +702,14 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			float delta = stage.getHeight() / ( gameObjects.size() + 1 );
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = worldSize.y - Wall.HEIGHT;
-			
+
 			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x, worldSize.y - y));
 			super.stageUIActors.screenToStageCoordinates(stageCoords);
 			menuButton.setPosition(stageCoords.x, stageCoords.y);
 			Gdx.app.log("LevelEditorScreen", "stageCoords: "+stageCoords+
 					"stageUIActors=("+stageUIActors.getWidth()+","+stageUIActors.getHeight()+")");
 			y-=delta;
-			
+
 			for(GameObject object : gameObjects ) {
 				addGameObjectToMenu(stage, object, x, y);
 				y -= delta;
@@ -733,13 +741,13 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 				setupMainMenu();
 				if( this.menuPosition == MenuPosition.TOP ) {
 					this.mainMenu.setPosition(button.getX(), 
-						button.getY() - this.mainMenu.getHeight());
+							button.getY() - this.mainMenu.getHeight());
 				} else {
 					this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
 							button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
 				}
 			}
-			
+
 			if( this.mainMenu.isVisible() ) {
 				this.mainMenu.hide();
 			} else {
@@ -751,7 +759,17 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	@Override
 	public void onLongPress(Button button) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	private boolean inGameArea(GameObject gameObject) {
+		float x = gameObject.getX();
+		float y = gameObject.getY();
+		if( ( x < 0 ) || ( x > worldSize.x ) || 
+				( y < 0 ) || ( y > worldSize.y ) ) {
+			return false;
+		}
+		return true;
 	}
 }
 
