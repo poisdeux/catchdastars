@@ -20,5 +20,3 @@ git checkout .
 
 5. Startup eclipse and select File->Import and select 
    all three projects my-gdx-game*
-
-6. Edit the properties to fix location of the physics-body-editor library.
