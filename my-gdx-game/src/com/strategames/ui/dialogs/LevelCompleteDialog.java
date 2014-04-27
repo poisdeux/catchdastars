@@ -54,7 +54,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private int animationPhase;
 	private Vector2 animPosition;
 
-	private float IMAGEHEIGHT = Game.convertBoxToWorld(0.60f);
+	private float IMAGEHEIGHT = Game.convertWorldToScreen(0.60f);
 	
 	/**
 	 * Shows a scoreboard animation

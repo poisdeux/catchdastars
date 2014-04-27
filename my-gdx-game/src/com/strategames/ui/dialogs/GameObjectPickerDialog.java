@@ -19,7 +19,7 @@ public class GameObjectPickerDialog extends Dialog {
 	private final Dialog.OnClickListener listener;
 	private final Game game;
 	private GameObject selectedGameObject;
-	private float IMAGEWIDTH = Game.convertBoxToWorld(0.30f);
+	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
 	
 	public GameObjectPickerDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
 		super("Select a game object", skin);

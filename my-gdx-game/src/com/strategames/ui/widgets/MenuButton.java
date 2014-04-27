@@ -11,7 +11,7 @@ import com.strategames.interfaces.ButtonListener;
 
 public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implements EventListener {
 	private ButtonListener listener = null;
-	private float IMAGEWIDTH = Game.convertBoxToWorld(0.30f);
+	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
 	private static Drawable drawable = new TextureRegionDrawable(Textures.menu);
 	
 	public MenuButton() {

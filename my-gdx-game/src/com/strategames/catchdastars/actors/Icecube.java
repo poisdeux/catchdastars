@@ -3,8 +3,6 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import sun.security.action.GetLongAction;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -140,7 +138,6 @@ public class Icecube extends GameObject {
 			Part part = this.parts.get(i);
 			String name = part.getName();
 			loader.attachFixture(body, name, i, fixtureDef);
-			part.setOrigin(loader.getOrigin(name, WIDTH).cpy());
 		}
 
 		body.setSleepingAllowed(false);
@@ -350,6 +347,7 @@ public class Icecube extends GameObject {
 			this.name = name;
 			this.sprite = new Sprite(texture);
 			this.sprite.setSize(WIDTH, WIDTH);
+			setOrigin(new Vector2(0, 0));
 		}
 
 		public Sprite getSprite() {
@@ -361,6 +359,7 @@ public class Icecube extends GameObject {
 		}
 
 		public void setOrigin(Vector2 origin) {
+			Gdx.app.log("Icecube", "setOrigin: origin="+origin);
 			if( sprite != null ) {
 				sprite.setOrigin(origin.x, origin.y);
 			}

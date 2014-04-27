@@ -703,11 +703,13 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 			float y = worldSize.y - Wall.HEIGHT;
 
-			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x, worldSize.y - y));
-			super.stageUIActors.screenToStageCoordinates(stageCoords);
-			menuButton.setPosition(stageCoords.x, stageCoords.y);
-			Gdx.app.log("LevelEditorScreen", "stageCoords: "+stageCoords+
-					"stageUIActors=("+stageUIActors.getWidth()+","+stageUIActors.getHeight()+")");
+			//Add menu button
+			float stageActorMenuButtonWidth = Game.convertScreenToWorld(menuButton.getWidth());
+			float stageActorMenuButtonHeight = Game.convertScreenToWorld(menuButton.getHeight());
+			Vector2 stageUICoords = new Vector2(Game.convertWorldToScreen(x - stageActorMenuButtonWidth), 
+					Game.convertWorldToScreen(y - stageActorMenuButtonHeight));
+			menuButton.setPosition(stageUICoords.x, stageUICoords.y);
+			
 			y-=delta;
 
 			for(GameObject object : gameObjects ) {

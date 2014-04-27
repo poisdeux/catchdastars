@@ -46,8 +46,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 		Vector2 worldSize = this.game.getWorldSize(); 
 
-		this.screenWidth = Game.convertBoxToWorld(worldSize.x);
-		this.screenHeight = Game.convertBoxToWorld(worldSize.y);
+		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
+		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
 		this.menuCamera.update();
