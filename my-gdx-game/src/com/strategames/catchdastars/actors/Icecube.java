@@ -77,14 +77,10 @@ public class Icecube extends GameObject {
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
-		Gdx.app.log("Icecube", "Icecube(): starting constructor "+this);
-
 		try {
 			mutex.getLockWait();
 			if( availableParts == null ) {
-				Gdx.app.log("Icecube", "Icecube(): setting up static resources "+this);
 				setupStaticResources();
-				Gdx.app.log("Icecube", "Icecube(): done setting up static resources "+this);
 			}
 			mutex.releaseLock();
 		} catch (InterruptedException e) {
@@ -92,10 +88,6 @@ public class Icecube extends GameObject {
 			return;
 		}
 		
-		
-
-		Gdx.app.log("Icecube", "Icecube(): ending constructor "+this);
-
 		this.parts = new ArrayList<Icecube.Part>();
 	}
 
@@ -146,7 +138,6 @@ public class Icecube extends GameObject {
 			Part part = this.parts.get(i);
 			String name = part.getName();
 			loader.attachFixture(body, name, i, fixtureDef);
-			part.setOrigin(loader.getOrigin(name, WIDTH).cpy());
 		}
 
 		body.setSleepingAllowed(false);
@@ -356,6 +347,7 @@ public class Icecube extends GameObject {
 			this.name = name;
 			this.sprite = new Sprite(texture);
 			this.sprite.setSize(WIDTH, WIDTH);
+			setOrigin(new Vector2(0, 0));
 		}
 
 		public Sprite getSprite() {
@@ -367,6 +359,7 @@ public class Icecube extends GameObject {
 		}
 
 		public void setOrigin(Vector2 origin) {
+			Gdx.app.log("Icecube", "setOrigin: origin="+origin);
 			if( sprite != null ) {
 				sprite.setOrigin(origin.x, origin.y);
 			}

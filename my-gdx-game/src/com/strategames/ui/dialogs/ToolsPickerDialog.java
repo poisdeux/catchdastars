@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ScreenBorder;
+import com.strategames.ui.widgets.TextButton;
 
 public class ToolsPickerDialog extends Dialog {
 	private final Skin skin;
@@ -21,7 +22,7 @@ public class ToolsPickerDialog extends Dialog {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void show(Stage stage) {
+	public void create() {
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
@@ -37,7 +38,7 @@ public class ToolsPickerDialog extends Dialog {
 		});
 		pack();
 		
-		super.show(stage);
+		super.create();
 	}
 	
 	private void createScreenBorderTool() {

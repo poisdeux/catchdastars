@@ -2,22 +2,26 @@ package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Formatter.BigDecimalLayoutForm;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.ui.TextButton;
-import com.strategames.ui.TextButton.TextButtonListener;
+import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.widgets.TextButton;
 
-public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonListener {
+
+
+public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListener {
 	private Skin skin;
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
@@ -94,8 +98,12 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	}
 	
 	@Override
-	public void onTap(TextButton button) {
-		Object tag = button.getTag();
+	public void onTap(Button button) {
+		if( ! ( button instanceof TextButton ) ) {
+			return;
+		}
+		
+		Object tag = ((TextButton) button).getTag();
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
@@ -105,31 +113,42 @@ public class LevelEditorMenuScreen extends AbstractScreen implements TextButtonL
 	}
 
 	@Override
-	public void onLongPress(final TextButton button) {
-		Object tag = button.getTag();
+	public void onLongPress(final Button button) {
+		if( ! ( button instanceof TextButton ) ) {
+			return;
+		}
+		
+		Object tag = ((TextButton) button).getTag();
+		
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
+		
 		final Level level = (Level) tag;
-		Dialog dialog = new Dialog("Choose action", skin);
-		TextButton deleteLevelButton = new TextButton("Delete level", this.skin);
-		deleteLevelButton.addListener(new ClickListener() {
+		ButtonsDialog dialog = new ButtonsDialog("Choose action", skin, ButtonsDialog.ORIENTATION.HORIZONTAL);
+		dialog.add("Delete level", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				deleteLevel(level);
 			}
 		});
-		dialog.button(deleteLevelButton);
 		
-		TextButton changeNameButton = new TextButton("Change name", this.skin);
-		changeNameButton.addListener(new ClickListener() {
+		dialog.add("Change name", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				changeLevelName(level, button);
+				changeLevelName(level, (TextButton) button);
 			}
 		});
-		dialog.button(changeNameButton);
 		
+		final ButtonsDialog fDialog = dialog;
+		dialog.add("Cancel", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				fDialog.remove();
+			}
+		});
+		
+		dialog.create();
 		dialog.show(getStageUIElements());
 	}
 	

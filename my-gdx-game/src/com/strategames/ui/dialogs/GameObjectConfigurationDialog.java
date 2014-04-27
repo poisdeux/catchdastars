@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.utils.ConfigurationItem;
+import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectConfigurationDialog extends Dialog {
 	private final GameObject gameObject;
@@ -30,7 +31,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 	}
 	
 	@Override
-	public void show(final Stage stage) {
+	public void create() {
 		setPosition(0, 0);
 		defaults().spaceBottom(10);
 		row().fill().expandX();
@@ -107,7 +108,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 			row();
 		}
 
-		super.show(stage);
+		super.create();
 	}
 	
 	

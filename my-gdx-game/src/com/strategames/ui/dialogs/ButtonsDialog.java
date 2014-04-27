@@ -1,0 +1,51 @@
+package com.strategames.ui.dialogs;
+
+import java.util.ArrayList;
+
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.strategames.ui.widgets.TextButton;
+
+public class ButtonsDialog extends Dialog {
+	public static enum ORIENTATION {HORIZONTAL, VERTICAL};
+	private ORIENTATION orientation;
+	private final Skin skin;
+	private ArrayList<TextButton> textButtons;
+
+	public ButtonsDialog(String title, Skin skin, ORIENTATION orientation) {
+		super(title, skin);
+		this.skin = skin;
+		this.textButtons = new ArrayList<TextButton>();
+		this.orientation = orientation;
+	}
+
+	public void add(String text, EventListener listener) {
+		TextButton tButton = new TextButton(text, skin);
+		tButton.addListener(listener);
+		this.textButtons.add(tButton);
+	}
+
+	/**
+	 * Use this to create the actual dialog.
+	 * Note that this needs to be called before {@link #
+	 */
+	public void create() {
+		defaults().spaceBottom(10);
+		defaults().spaceTop(10);
+
+		if( this.orientation == ORIENTATION.VERTICAL ) { 
+			row().fill().expandX();
+
+			for( TextButton button : this.textButtons ) {
+				add(button);
+				row().fill().expandX();
+			}
+		} else {
+			for( TextButton button : this.textButtons ) {
+				add(button);
+			}
+		}
+		pack();
+		super.create();
+	}
+}

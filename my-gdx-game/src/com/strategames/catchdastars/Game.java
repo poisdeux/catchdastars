@@ -160,7 +160,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * @param x size in Box2D
 	 * @return size in pixels
 	 */
-	static public float convertBoxToWorld(float x) {
+	static public float convertWorldToScreen(float x) {
 		return x * BOX_TO_WORLD;
 	}
 	

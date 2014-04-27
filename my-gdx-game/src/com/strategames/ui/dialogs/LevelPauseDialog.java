@@ -1,16 +1,18 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.screens.MainMenuScreen;
-import com.strategames.ui.TextButton.TextButtonListener;
+import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.widgets.TextButton;
 
 public class LevelPauseDialog extends Dialog {
 	private Skin skin;
@@ -23,7 +25,7 @@ public class LevelPauseDialog extends Dialog {
 	}
 	
 	@Override
-	public void show(Stage stage) {
+	public void create() {
 		
 		final Label gamePauseLabel = new Label("Game Paused", skin);
 		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
@@ -32,24 +34,24 @@ public class LevelPauseDialog extends Dialog {
 		
 		gamePauseLabel.getColor().a = 0f;
 		
-		stage.addActor(gamePauseLabel);
+		addActor(gamePauseLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
 		table.bottom();
 		
 		TextButton quitButton = new TextButton("Quit", skin);
-		quitButton.setListener(new TextButtonListener() {
+		quitButton.setListener(new ButtonListener() {
 			
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 				table.clear();
 				table.remove();
 				game.setScreen(new MainMenuScreen(game));
 			}
 			
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 				
 			}
 		});
@@ -59,10 +61,10 @@ public class LevelPauseDialog extends Dialog {
 		table.add(quitButton).expandX().fillX().left();
 		
 		TextButton resumeButton = new TextButton("Resume", skin);
-		resumeButton.setListener(new TextButtonListener() {
+		resumeButton.setListener(new ButtonListener() {
 			
 			@Override
-			public void onTap(TextButton button) {
+			public void onTap(Button button) {
 				gamePauseLabel.remove();
 				table.clear();
 				table.remove();
@@ -70,7 +72,7 @@ public class LevelPauseDialog extends Dialog {
 			}
 			
 			@Override
-			public void onLongPress(TextButton button) {
+			public void onLongPress(Button button) {
 				
 			}
 		});
@@ -79,7 +81,7 @@ public class LevelPauseDialog extends Dialog {
 		
 		table.add(resumeButton).expandX().fillX().right();
 		
-		stage.addActor(table);
+		addActor(table);
 	}
 
 }

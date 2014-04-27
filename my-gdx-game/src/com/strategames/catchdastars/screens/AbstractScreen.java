@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.catchdastars.Game;
-import com.strategames.ui.Dialog;
+import com.strategames.ui.dialogs.Dialog;
 
 /**
  * TODO create a screen manager to reduce the amount of new objects created when a new screen must be shown
@@ -45,8 +45,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 		Vector2 worldSize = this.game.getWorldSize(); 
 
-		this.screenWidth = Game.convertBoxToWorld(worldSize.x);
-		this.screenHeight = Game.convertBoxToWorld(worldSize.y);
+		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
+		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
 		this.menuCamera.update();

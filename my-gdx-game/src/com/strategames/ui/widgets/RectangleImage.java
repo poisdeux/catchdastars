@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

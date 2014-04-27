@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.Game;
@@ -20,21 +21,24 @@ import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
 import com.strategames.catchdastars.utils.ScreenBorder;
-import com.strategames.ui.ButtonsDialog;
-import com.strategames.ui.Dialog;
-import com.strategames.ui.Dialog.OnClickListener;
-import com.strategames.ui.GameObjectConfigurationDialog;
-import com.strategames.ui.GameObjectPickerDialog;
+import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.Grid;
-import com.strategames.ui.LevelEditorOptionsDialog;
-import com.strategames.ui.RectangleImage;
-import com.strategames.ui.ToolsPickerDialog;
+import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
+import com.strategames.ui.dialogs.GameObjectPickerDialog;
+import com.strategames.ui.dialogs.LevelEditorOptionsDialog;
+import com.strategames.ui.dialogs.ToolsPickerDialog;
+import com.strategames.ui.widgets.MenuButton;
+import com.strategames.ui.widgets.RectangleImage;
 
-public class LevelEditorScreen extends AbstractScreen implements GestureListener, Dialog.OnClickListener {
+public class LevelEditorScreen extends AbstractScreen implements ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
 	private MenuPosition menuPosition;
-
+	private ButtonsDialog mainMenu;
+	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
 	private Game game;
@@ -245,9 +249,23 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 			return true;
 		} else if( this.actorTouched != null ) {
 			GameObject gameObject = (GameObject) this.actorTouched;
-			//Check if object is in game area
-
-
+			
+			//If menu item create new menu item at initial position
+			if( gameObject.isMenuItem() ) {
+				Vector2 v = gameObject.getInitialPosition();
+				if( inGameArea(gameObject) ) {
+					gameObject.setMenuItem(false);
+					gameObject.setSaveToFile(true);
+					addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
+				} else {
+					//return menu item to its original position
+					gameObject.moveTo(v.x, v.y);
+				}
+			} else {
+				if( ! inGameArea(gameObject) ) {
+					gameObject.remove();
+				}
+			}
 		}
 		return false;
 	}
@@ -408,10 +426,6 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 	private void setCamera() {		
 		Stage stage = getStageActors();
 
-
-
-
-
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			OrthographicCamera camera = getGameCamera();
@@ -563,51 +577,56 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 		}
 	}
 
-	private void showMainMenu() {
-		ButtonsDialog dialog = new ButtonsDialog(getGame(), getSkin(), this);
+	private void setupMainMenu() {
+		this.mainMenu = new ButtonsDialog("Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
-
-		dialog.add("Tools", new ClickListener() {
+		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showToolsDialog();
+				mainMenu.hide();
 			}
 		});
 
-		dialog.add("Options", new ClickListener() {
+		this.mainMenu.add("Options", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				showOptionsDialog();
+				mainMenu.hide();
 			}
 		});
 
-		dialog.setPositiveButton("Close", new OnClickListener() {
+		this.mainMenu.setPositiveButton("Save", new OnClickListener() {
 
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
-				dialog.remove();
+				mainMenu.hide();
 			}
 		});
-		dialog.setNegativeButton("Quit", new OnClickListener() {
+		this.mainMenu.setNegativeButton("Quit", new OnClickListener() {
 
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
+				mainMenu.hide();
 				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
 			}
 		});
-		dialog.show(getStageUIElements());
+
+		this.mainMenu.create();
 	}
 
 	private void showToolsDialog() {
-		ToolsPickerDialog tDialog = new ToolsPickerDialog(getGame(), getSkin());
-		tDialog.show(getStageUIElements());
+		ToolsPickerDialog dialog = new ToolsPickerDialog(getGame(), getSkin());
+		dialog.create();
+		dialog.show(getStageUIElements());
 	}
 
 	private void showOptionsDialog() {
-		LevelEditorOptionsDialog tDialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
-		tDialog.show(getStageUIElements());
+		LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
+		dialog.create();
+		dialog.show(getStageUIElements());
 	}
 
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
@@ -640,13 +659,111 @@ public class LevelEditorScreen extends AbstractScreen implements GestureListener
 				dialog.remove();
 			}
 		});
+		dialog.create();
 		dialog.show(getStageUIElements());
 	}
 
 	private void setupMenu(Stage stage) {
-		GameObjectPickerDialog dialog = new GameObjectPickerDialog(getGame(), getSkin(), this);
-		dialog.setPosition(0, 0);
-		dialog.show(stage);
+		MenuButton menuButton = new MenuButton();
+		menuButton.setListener(this);
+		super.stageUIActors.addActor(menuButton);
+
+		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+
+		Vector2 worldSize = this.game.getWorldSize();
+
+		//		this.menuPosition = MenuPosition.LEFT;
+		if( this.menuPosition == MenuPosition.TOP ) {
+			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
+			float x = 0.1f;
+			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
+
+			/**
+			 * MenuButton's pivot is positioned at (0,0)=(left, bottom)
+			 */
+			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x,worldSize.y - y));
+			super.stageUIActors.screenToStageCoordinates(stageCoords);
+			menuButton.setPosition(stageCoords.x, stageCoords.y);
+			x+=delta;
+
+			for(GameObject object : gameObjects ) {
+				addGameObjectToMenu(stage, object, x, y);
+				x += delta;
+			}
+		} else {
+			float delta = stage.getHeight() / ( gameObjects.size() + 1 );
+			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
+			float y = worldSize.y - Wall.HEIGHT;
+
+			//Add menu button
+			float stageActorMenuButtonWidth = Game.convertScreenToWorld(menuButton.getWidth());
+			float stageActorMenuButtonHeight = Game.convertScreenToWorld(menuButton.getHeight());
+			Vector2 stageUICoords = new Vector2(Game.convertWorldToScreen(x - stageActorMenuButtonWidth), 
+					Game.convertWorldToScreen(y - stageActorMenuButtonHeight));
+			menuButton.setPosition(stageUICoords.x, stageUICoords.y);
+			
+			y-=delta;
+
+			for(GameObject object : gameObjects ) {
+				addGameObjectToMenu(stage, object, x, y);
+				y -= delta;
+			}
+		}
+	}
+
+	/**
+	 * Creates a copy of object and adds copy as menu item at position x,y
+	 * @param stage
+	 * @param object
+	 * @param x
+	 * @param y
+	 */
+	private void addGameObjectToMenu(Stage stage, GameObject object, float x, float y) {
+		GameObject gameObject = object.createCopy();
+		gameObject.setSaveToFile(false);
+		gameObject.setMenuItem(true);
+		deselectGameObject(gameObject);
+		gameObject.moveTo(x, y);
+		gameObject.setInitialPosition(new Vector2(x, y));
+		stage.addActor(gameObject);
+	}
+
+	@Override
+	public void onTap(Button button) {
+		if( button instanceof MenuButton ) {
+			if( this.mainMenu == null ) {
+				setupMainMenu();
+				if( this.menuPosition == MenuPosition.TOP ) {
+					this.mainMenu.setPosition(button.getX(), 
+							button.getY() - this.mainMenu.getHeight());
+				} else {
+					this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
+							button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
+				}
+			}
+
+			if( this.mainMenu.isVisible() ) {
+				this.mainMenu.hide();
+			} else {
+				this.mainMenu.show(getStageUIElements());
+			}
+		}
+	}
+
+	@Override
+	public void onLongPress(Button button) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private boolean inGameArea(GameObject gameObject) {
+		float x = gameObject.getX();
+		float y = gameObject.getY();
+		if( ( x < 0 ) || ( x > worldSize.x ) || 
+				( y < 0 ) || ( y > worldSize.y ) ) {
+			return false;
+		}
+		return true;
 	}
 }
 

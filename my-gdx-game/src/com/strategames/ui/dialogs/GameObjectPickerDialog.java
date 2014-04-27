@@ -1,4 +1,4 @@
-package com.strategames.ui;
+package com.strategames.ui.dialogs;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectPickerDialog extends Dialog {
 	public static final int BUTTON_GAMEOBJECTSELECTED = 1;
@@ -18,8 +19,8 @@ public class GameObjectPickerDialog extends Dialog {
 	private final Dialog.OnClickListener listener;
 	private final Game game;
 	private GameObject selectedGameObject;
-	private float IMAGEWIDTH = Game.convertBoxToWorld(0.30f);
-
+	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
+	
 	public GameObjectPickerDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
 		super("Select a game object", skin);
 		this.textButtons = new ArrayList<TextButton>();
@@ -31,9 +32,11 @@ public class GameObjectPickerDialog extends Dialog {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void show(Stage stage) {
-		defaults().space(2);
-
+	public void create() {
+		setPosition(0, 0);
+		defaults().spaceBottom(2);
+		row();
+		
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
 		for(GameObject object : gameObjects ) {
@@ -61,8 +64,8 @@ public class GameObjectPickerDialog extends Dialog {
 		}
 		
 		pack();
-
-		super.show(stage);
+		
+		super.create();
 	}
 
 	public GameObject getSelectedGameObject() {
