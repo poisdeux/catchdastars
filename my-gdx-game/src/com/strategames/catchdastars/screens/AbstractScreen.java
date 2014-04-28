@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -67,8 +68,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(this);
 		this.multiplexer.addProcessor(this.stageUIActors);
+		this.multiplexer.addProcessor(this);
 	}
 	
 	@Override

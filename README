@@ -1,3 +1,4 @@
+RESTORE FROM BACKUP TARBALL
 ===========================
 
 1. Create a directory for the project:

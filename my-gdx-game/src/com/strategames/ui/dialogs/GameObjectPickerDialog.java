@@ -27,7 +27,7 @@ public class GameObjectPickerDialog extends Dialog {
 		this.listener = listener;
 		this.game = game;
 	}
-
+	
 	/**
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
@@ -38,7 +38,7 @@ public class GameObjectPickerDialog extends Dialog {
 		row();
 		
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
-
+		
 		for(GameObject object : gameObjects ) {
 			final GameObject gameObject = object;
 			Drawable drawable = gameObject.getDrawable();
@@ -50,24 +50,24 @@ public class GameObjectPickerDialog extends Dialog {
 				public void clicked(InputEvent event, float x, float y) {
 					selectedGameObject = gameObject;
 					listener.onClick(GameObjectPickerDialog.this, BUTTON_GAMEOBJECTSELECTED);
+					GameObjectPickerDialog.this.remove();
 				}
 			});
 			add(iButton);
-		}
 
-		if( this.textButtons.size() > 0 ) {
 			row();
-			for( TextButton button : this.textButtons ) {
-				add(button);
-				row();
-			}
+		}
+		
+		for( TextButton button : this.textButtons ) {
+			add(button);
+			row();
 		}
 		
 		pack();
 		
 		super.create();
 	}
-
+	
 	public GameObject getSelectedGameObject() {
 		return this.selectedGameObject;
 	}
