@@ -58,12 +58,14 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	
 	/**
 	 * Shows a scoreboard animation
+	 * @param stage the stage to use to show the score
 	 * @param game
 	 * @param skin
 	 * @param currentScore the total score minus the score of the completed level
 	 */
-	public LevelCompleteDialog(Game game, Skin skin, int currentScore) {
+	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
 		super("", skin);
+		this.stage = stage;
 		this.skin = skin;
 		this.game = game;
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
@@ -81,6 +83,11 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		this.cashRegister.setScale(0.5f);
 	}
 
+	@Override
+	public void show(Stage stage) {
+		setVisible(true);
+	}
+	
 	public void add(Image image, int amount, int scorePerGameObject) {
 		ScoreItem item = new ScoreItem(image.getDrawable(), amount, scorePerGameObject);
 		this.scoreItems.add(item);
@@ -90,13 +97,13 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		}
 	}
 
-	public void create(Stage stage) {
-		this.stage = stage;
-
+	public void create() {
 		this.animationPhase = -1;
 		
 		setupUI();
 		animationController();
+		
+		super.create();
 	}
 	
 	private void measure() {
@@ -156,7 +163,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 
 		table.add(nextLevelButton).expandX().fillX().right();
 
-		stage.addActor(table);
+		this.stage.addActor(table);
 		
 //		Gdx.input.setInputProcessor(stage);
 	}

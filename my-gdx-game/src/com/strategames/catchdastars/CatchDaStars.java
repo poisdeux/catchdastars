@@ -138,7 +138,9 @@ public class CatchDaStars extends Game {
 	private void showLevelCompleteDialog() {
 		darkenActors(0.4f);
 
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(this, ((AbstractScreen) getScreen()).getSkin(), 0);
+		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
+		
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), 0);
 
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
@@ -146,7 +148,10 @@ public class CatchDaStars extends Game {
 		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected(), this.scorePerRedStar);
 		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
 
-		((AbstractScreen) getScreen()).showDialog(levelCompleteDialog);
+		levelCompleteDialog.create();
+		
+		levelCompleteDialog.show(stage);
+		
 	}
 
 	private void darkenActors(float factor) {
