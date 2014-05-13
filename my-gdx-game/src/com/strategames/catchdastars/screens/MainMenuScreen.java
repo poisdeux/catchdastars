@@ -21,10 +21,6 @@ public class MainMenuScreen extends AbstractScreen {
 	protected void setupUI(Stage stage) {
 		final Game game = getGame();
 
-		// retrieve the default table actor
-		//		Table table = super.getTable();
-		Gdx.app.log("MainMenuScreen", "setupUI: stage.getWidth="+stage.getWidth()+", stage.getHeight()="
-				+stage.getHeight());
 		Table table = new Table( getSkin() );
 		table.setFillParent(true);
 		table.add( "Welcome to Catch Da Stars!" ).spaceBottom( 50 );
@@ -34,8 +30,6 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-//				AbstractScreen screen = new LevelScreen(game);
-//				game.setScreen( new LoadingScreen(screen, game, 1) );
 				game.setLevelNumber(1);
 				game.setScreen(new LevelScreen(game));
 			}
@@ -48,10 +42,6 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.log("MenuScreen", "touch done at (" +x+ ", " +y+ ")");
-				//				super.touchUp( event, x, y, pointer, button );
-				//				game.getSoundManager().play( TyrianSound.CLICK );
-				//				game.setScreen( new OptionsScreen( game ) );
 			}
 		});
 		table.add( button ).uniform().fill().spaceBottom( 10 );
@@ -81,9 +71,6 @@ public class MainMenuScreen extends AbstractScreen {
 	
 	@Override
 	protected void setupActors(Stage stage) {
-		// TODO Auto-generated method stub
-		Gdx.app.log("MainMenuScreen", "setupActors: stage.getWidth="+stage.getWidth()+", stage.getHeight()="
-				+stage.getHeight());
 	}
 	
 	@Override

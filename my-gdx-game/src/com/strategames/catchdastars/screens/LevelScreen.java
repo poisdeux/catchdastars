@@ -1,11 +1,11 @@
 package com.strategames.catchdastars.screens;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -45,17 +45,16 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	protected void setupUI(Stage stage) {
-		float scale = 2f;
 		
 		this.levelImage = new Text("Level " + this.game.getLevelNumber());
-		this.levelImage.setScale(scale);
+		this.levelImage.setScale(2f);
 		
-		float imageWidth = this.levelImage.getWidth() * scale;
-		float imageHeight = this.levelImage.getHeight() * scale;
+		float imageWidth = this.levelImage.getWidth();
+		float imageHeight = this.levelImage.getHeight();
 		
 		float x = (stage.getWidth() - imageWidth) / 2f;
 		float y = (stage.getHeight() + imageHeight) / 2f;
-
+		
 		this.levelImage.setX(x);
 		this.levelImage.setY(-imageHeight);
 		this.levelImage.addAction(sequence( moveTo(x, y, 0.5f, Interpolation.circleOut),
@@ -77,11 +76,10 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 					}
 				}, 
 				fadeOut(0.5f, Interpolation.circleIn),
-//				moveTo(x, stage.getHeight() + imageHeight, 0.5f, Interpolation.circleIn),
+
 				new Action() {
 					@Override
 					public boolean act(float arg0) {
-						Gdx.app.log("LevelScreen", "getGame().getGameState()="+getGame().getGameState());
 						if( ! getGame().isPaused() ) { 
 							getGame().startGame();
 						}
@@ -110,10 +108,13 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 		if( ( keycode == Keys.BACK ) ||
 				( keycode == Keys.ESCAPE ) ) {
 			Game game = getGame();
+			if( game.isPaused() ) {
+				return false;
+			}
 			game.pauseGame();
-			LevelPauseDialog dialog = new LevelPauseDialog(game, getSkin());
+			LevelPauseDialog dialog = new LevelPauseDialog(super.stageUIActors, game, getSkin());
 			dialog.create();
-			dialog.show(getStageUIElements());
+			dialog.show();
 			return true;
 		}
 		return false;

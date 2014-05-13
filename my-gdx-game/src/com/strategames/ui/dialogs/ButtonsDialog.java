@@ -3,18 +3,17 @@ package com.strategames.ui.dialogs;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.ui.widgets.TextButton;
 
 public class ButtonsDialog extends Dialog {
 	public static enum ORIENTATION {HORIZONTAL, VERTICAL};
 	private ORIENTATION orientation;
-	private final Skin skin;
 	private ArrayList<TextButton> textButtons;
 
-	public ButtonsDialog(String title, Skin skin, ORIENTATION orientation) {
-		super(title, skin);
-		this.skin = skin;
+	public ButtonsDialog(Stage stage, String title, Skin skin, ORIENTATION orientation) {
+		super(stage, title, skin);
 		this.textButtons = new ArrayList<TextButton>();
 		this.orientation = orientation;
 	}

@@ -359,7 +359,6 @@ public class Icecube extends GameObject {
 		}
 
 		public void setOrigin(Vector2 origin) {
-			Gdx.app.log("Icecube", "setOrigin: origin="+origin);
 			if( sprite != null ) {
 				sprite.setOrigin(origin.x, origin.y);
 			}

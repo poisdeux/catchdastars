@@ -156,9 +156,9 @@ public class Textures {
 		 *  xxhdpi	1600	
 		 */
 
-		float width = Gdx.graphics.getWidth();
-		float height = Gdx.graphics.getHeight();
-		float size = width > height ? width : height;
+//		float width = Gdx.graphics.getWidth();
+//		float height = Gdx.graphics.getHeight();
+//		float size = width > height ? width : height;
 		//		if( size >= 1599 ) {
 		//			densityModifier = "xxhdpi";
 		//		} else if ( size >= 1066 ) {
@@ -173,8 +173,6 @@ public class Textures {
 		} else if ( density >= 1.5 ) {
 			densityModifier = "hdpi";
 		}
-		Gdx.app.log("Textures", "getScreenDensity(): density="+densityModifier+", screenWidth="+size+
-				", density="+density);
 		return densityModifier;
 	}
 }

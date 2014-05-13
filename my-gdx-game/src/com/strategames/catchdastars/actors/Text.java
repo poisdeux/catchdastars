@@ -13,12 +13,12 @@ public class Text extends Image {
 
 	private static BitmapFont font;
 	private static ShaderProgram fontShader;
-	
+
 	private String text;
-	
+
 	public Text(String text) {
 		super();
-		
+
 		if( font == null ) {
 			Texture texture = new Texture(Gdx.files.internal("fonts/vSHandprinted_distancefield.png"), true);
 			texture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
@@ -31,30 +31,37 @@ public class Text extends Image {
 				Gdx.app.error("fontShader", "compilation failed:\n" + fontShader.getLog());
 			}
 		}
-		
+
 		this.text = text;
 
-		TextBounds bounds = font.getBounds(text);
-		setWidth(bounds.width);
-		setHeight(bounds.height);
+		updateActorSize();
 	}
-	
+
 	@Override
 	public void scale(float scale) {
 		super.scale(scale);
 		font.scale(scale);
+		updateActorSize();
 	}
-	
+
 	@Override
 	public void setScale(float scale) {
 		super.setScale(scale);
 		font.setScale(scale);
+		updateActorSize();
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		batch.setShader(fontShader);
 		font.draw(batch, text, getX(), getY());
 		batch.setShader(null);
+	}
+
+	private void updateActorSize() {
+		// Make sure actor's size is updated properly
+		TextBounds bounds = font.getBounds(text);
+		setWidth(bounds.width);
+		setHeight(bounds.height);
 	}
 }

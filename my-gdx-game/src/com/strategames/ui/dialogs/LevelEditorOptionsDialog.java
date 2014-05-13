@@ -11,13 +11,11 @@ public class LevelEditorOptionsDialog extends Dialog {
 	public static final int CHECKBOX_SNAPTOGRID = 1;
 	public static final int CHECKBOX_DISPLAYGRID = 2;
 	
-	private final Skin skin;
 	private LevelEditorPreferences preferences;
 	private Dialog.OnClickListener listener;
 	
-	public LevelEditorOptionsDialog(Skin skin, LevelEditorPreferences preferences, Dialog.OnClickListener listener) {
-		super("Options", skin);
-		this.skin = skin;
+	public LevelEditorOptionsDialog(Stage stage, Skin skin, LevelEditorPreferences preferences, Dialog.OnClickListener listener) {
+		super(stage, "Options", skin);
 		this.preferences = preferences;
 		this.listener = listener;
 	}

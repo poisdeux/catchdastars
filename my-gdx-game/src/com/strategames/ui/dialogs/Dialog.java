@@ -24,11 +24,13 @@ abstract public class Dialog extends Window {
 	
 	protected Array<TextButton> buttons;
 	protected final Skin skin;
+	protected Stage stage;
 	
-	public Dialog(String title, Skin skin) {
+	public Dialog(Stage stage, String title, Skin skin) {
 		super(title, skin);
 		this.skin = skin;
 		this.buttons = new Array<TextButton>();
+		this.stage = stage;
 		setVisible(false);
 	}
 
@@ -100,8 +102,8 @@ abstract public class Dialog extends Window {
 		pack();
 	}
 	
-	public void show(Stage stage) {
-		stage.addActor(this);
+	public void show() {
+		this.stage.addActor(this);
 		setVisible(true);
 	}
 	

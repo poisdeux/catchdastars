@@ -586,7 +586,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	}
 
 	private void setupMainMenu() {
-		this.mainMenu = new ButtonsDialog("Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
+		this.mainMenu = new ButtonsDialog(stageUIActors, "Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
 		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
@@ -626,19 +626,19 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	}
 
 	private void showToolsDialog() {
-		ToolsPickerDialog dialog = new ToolsPickerDialog(getGame(), getSkin());
+		ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
 		dialog.create();
-		dialog.show(getStageUIElements());
+		dialog.show();
 	}
 
 	private void showOptionsDialog() {
-		LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(getSkin(), this.preferences, this);
+		LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), this.preferences, this);
 		dialog.create();
-		dialog.show(getStageUIElements());
+		dialog.show();
 	}
 
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
-		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(gameObject, getSkin());
+		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(stageUIActors, gameObject, getSkin());
 		dialog.addButton("Copy " + gameObject.getName(), new OnClickListener() {
 
 			@Override
@@ -668,7 +668,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			}
 		});
 		dialog.create();
-		dialog.show(getStageUIElements());
+		dialog.show();
 	}
 
 	private void setupMenu(Stage stage) {
@@ -753,7 +753,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			if( this.mainMenu.isVisible() ) {
 				this.mainMenu.hide();
 			} else {
-				this.mainMenu.show(getStageUIElements());
+				this.mainMenu.show();
 			}
 		}
 	}

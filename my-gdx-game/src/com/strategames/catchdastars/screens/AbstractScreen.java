@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.strategames.catchdastars.Game;
-import com.strategames.ui.dialogs.Dialog;
 
 /**
  * TODO create a screen manager to reduce the amount of new objects created when a new screen must be shown
@@ -179,11 +177,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public Stage getStageUIElements() {
 		return this.stageUIActors;
 	}
-
-	public void showDialog(Dialog dialog) {
-		dialog.show(this.stageUIActors);
-	}
-
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {

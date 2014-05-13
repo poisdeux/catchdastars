@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.ChalkLine;
 import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
@@ -39,8 +40,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private ArrayList<ScoreItem> scoreItems;
 	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
-	private float rowHeight;
-	private float imageHeight;
+	private float maxImageHeight;
 	private float top;
 	private final int padding = 30;
 	private int count;
@@ -64,7 +64,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	 * @param currentScore the total score minus the score of the completed level
 	 */
 	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
-		super("", skin);
+		super(stage, "", skin);
 		this.stage = stage;
 		this.skin = skin;
 		this.game = game;
@@ -84,7 +84,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	}
 
 	@Override
-	public void show(Stage stage) {
+	public void show() {
 		setVisible(true);
 	}
 	
@@ -111,8 +111,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		float availableScreenHeight = this.stage.getHeight() - (this.padding * (amountOfItems + 2));
 		float height = availableScreenHeight / (amountOfItems + 2);
 		
-		this.imageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
-		this.rowHeight = this.imageHeight + this.padding;
+		this.maxImageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
 	}
 	
 	private void setupUI() {
@@ -173,7 +172,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		switch(this.animationPhase) {
 		case 0:
 			if( scoreItems.size() > 0 ) {
-				this.top = this.stage.getHeight() - (int) this.rowHeight;
+				this.top = this.stage.getHeight() - this.maxImageHeight;
 				showScoreItem(0);
 			}
 			break;
@@ -206,7 +205,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 			break;
 		case 4:
 			this.animPosition.x = 100f;
-			this.animPosition.y -= this.rowHeight;
+			this.animPosition.y -= (2 * padding ) + this.cashRegister.getHeight();
 			showCashRegistry(this.animPosition.x, this.animPosition.y);
 			break;
 		case 5:
@@ -225,20 +224,24 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		final int amount = scoreItem.getAmount() * increment;
 		final Sound sound = Sounds.getSoundForIncrement(increment);
 
-		Table scoreItemTable = new Table();
-		scoreItemTable.setHeight(this.rowHeight);
-		
 		Drawable drawable = this.scoreItems.get(number).getDrawable();
-		ImageButton iButton = new ImageButton(drawable);
-		scoreItemTable.add(iButton).padRight(20f);
+		Image image = new Image(drawable);
+		image.setScaling(Scaling.stretch);
+		double scaleFactor = this.maxImageHeight / (double) image.getHeight() ;
+		float height = this.maxImageHeight;
+		float width = (float) (image.getWidth() * scaleFactor);
+		
+		Table scoreItemTable = new Table();
+		scoreItemTable.setHeight(height);
+		scoreItemTable.add(image).padRight(20f).width(width);
 
 		final Label label = new Label("", skin);
 		scoreItemTable.add(label).width(50f);
 
 		this.animPosition.x = 100f;
-		this.animPosition.y = this.top - (this.rowHeight * number);
+		this.animPosition.y = this.top - (( this.maxImageHeight + this.padding )  * number);
 
-		scoreItemTable.setPosition(animPosition.x, -this.rowHeight);
+		scoreItemTable.setPosition(animPosition.x, -height);
 
 		this.count = 0;
 		this.delayCount = 0;
@@ -276,7 +279,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	}
 
 	private void showCashRegistry(final float x, final float y) {
-		this.cashRegister.setPosition(x, -this.rowHeight);
+		this.cashRegister.setPosition(x, -this.cashRegister.getHeight());
 
 		this.cashRegister.addAction(sequence(
 				moveTo(x, y, 1f, Interpolation.circleOut),

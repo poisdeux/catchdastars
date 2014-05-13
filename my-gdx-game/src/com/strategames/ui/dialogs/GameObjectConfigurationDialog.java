@@ -20,8 +20,8 @@ public class GameObjectConfigurationDialog extends Dialog {
 	
 	private ArrayList<TextButton> textButtons;
 
-	public GameObjectConfigurationDialog(final GameObject object, Skin skin) {
-		super(object.getName() + " configuration", skin);
+	public GameObjectConfigurationDialog(Stage stage, final GameObject object, Skin skin) {
+		super(stage, object.getName() + " configuration", skin);
 		this.gameObject = object;
 		this.textButtons = new ArrayList<TextButton>();
 	}

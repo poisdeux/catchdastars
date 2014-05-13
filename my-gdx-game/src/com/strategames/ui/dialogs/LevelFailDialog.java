@@ -3,7 +3,6 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,23 +17,28 @@ public class LevelFailDialog extends Dialog {
 	private Skin skin;
 	private Game game;
 	
-	public LevelFailDialog(Game game, Skin skin) {
-		super("", skin);
+	public LevelFailDialog(Stage stage, Game game, Skin skin) {
+		super(stage, "", skin);
 		this.skin = skin;
 		this.game = game;
+	}
+	
+	@Override
+	public void show() {
+		setVisible(true);
 	}
 	
 	@Override
 	public void create() {
 		
 		final Label gameOverLabel = new Label("Game Over", skin);
-		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gameOverLabel.getWidth() / 2);
-		gameOverLabel.setPosition(xMiddle, Gdx.graphics.getHeight() / 2);
+		float xMiddle = (this.stage.getWidth() / 2) - (gameOverLabel.getWidth() / 2);
+		gameOverLabel.setPosition(xMiddle, this.stage.getHeight() / 2);
 		gameOverLabel.addAction( sequence( fadeIn( 0.25f ) ) );
 		
 		gameOverLabel.getColor().a = 0f;
 		
-		addActor(gameOverLabel);
+		this.stage.addActor(gameOverLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
@@ -80,7 +84,7 @@ public class LevelFailDialog extends Dialog {
 		
 		table.add(mainMenuButton).expandX().fillX().right();
 		
-		addActor(table);
+		this.stage.addActor(table);
 	}
 
 }

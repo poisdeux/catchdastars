@@ -18,23 +18,26 @@ public class LevelPauseDialog extends Dialog {
 	private Skin skin;
 	private Game game;
 	
-	public LevelPauseDialog(Game game, Skin skin) {
-		super("", skin);
+	public LevelPauseDialog(Stage stage, Game game, Skin skin) {
+		super(stage, "", skin);
 		this.skin = skin;
 		this.game = game;
+	}
+	
+	@Override
+	public void show() {
+		setVisible(true);
 	}
 	
 	@Override
 	public void create() {
 		
 		final Label gamePauseLabel = new Label("Game Paused", skin);
-		float xMiddle = (Gdx.graphics.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
-		gamePauseLabel.setPosition(xMiddle, Gdx.graphics.getHeight() / 2);
+		float xMiddle = (super.stage.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
+		gamePauseLabel.setPosition(xMiddle, super.stage.getHeight() / 2);
 		gamePauseLabel.addAction( sequence( fadeIn( 0.25f ) ) );
-		
 		gamePauseLabel.getColor().a = 0f;
-		
-		addActor(gamePauseLabel);
+		super.stage.addActor(gamePauseLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
@@ -81,7 +84,9 @@ public class LevelPauseDialog extends Dialog {
 		
 		table.add(resumeButton).expandX().fillX().right();
 		
-		addActor(table);
+		super.stage.addActor(table);
+		
+		super.create();
 	}
 
 }

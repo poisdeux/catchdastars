@@ -2,7 +2,6 @@ package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Formatter.BigDecimalLayoutForm;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
@@ -125,7 +124,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		}
 		
 		final Level level = (Level) tag;
-		ButtonsDialog dialog = new ButtonsDialog("Choose action", skin, ButtonsDialog.ORIENTATION.HORIZONTAL);
+		ButtonsDialog dialog = new ButtonsDialog(stageUIActors, "Choose action", skin, ButtonsDialog.ORIENTATION.HORIZONTAL);
 		dialog.add("Delete level", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -149,7 +148,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		});
 		
 		dialog.create();
-		dialog.show(getStageUIElements());
+		dialog.show();
 	}
 	
 	private void changeLevelName(final Level level, final TextButton button) {

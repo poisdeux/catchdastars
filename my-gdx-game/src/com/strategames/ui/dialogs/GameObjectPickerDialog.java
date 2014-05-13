@@ -21,8 +21,8 @@ public class GameObjectPickerDialog extends Dialog {
 	private GameObject selectedGameObject;
 	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
 	
-	public GameObjectPickerDialog(Game game, Skin skin, final Dialog.OnClickListener listener) {
-		super("Select a game object", skin);
+	public GameObjectPickerDialog(Stage stage, Game game, Skin skin, final Dialog.OnClickListener listener) {
+		super(stage, "Select a game object", skin);
 		this.textButtons = new ArrayList<TextButton>();
 		this.listener = listener;
 		this.game = game;
