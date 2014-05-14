@@ -3,7 +3,6 @@ package com.strategames.catchdastars;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
@@ -12,11 +11,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
+import com.strategames.catchdastars.interfaces.ExportData;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.Level.LevelLoaded;
+import com.strategames.catchdastars.utils.LevelLoader;
+import com.strategames.catchdastars.utils.LevelLoader.LevelLoaded;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -47,14 +48,23 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private Vector2 worldSize;
 	
+	private ExportData exporter;
+	
+	private String title;
+	
 	public interface GameLoadedListener {
 		public void onGameLoaded();
 	}
 	
 	public Game() {
+		this("No name game");
+	}
+	
+	public Game(String title) {
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
+		this.title = title;
 	}
 	
 	@Override
@@ -121,11 +131,27 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return this.gameState;
 	}
 	
+	public String getTitle() {
+		return title;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
 	@Override
 	public void dispose() {
 		super.dispose();
 		Sounds.dispose(getManager());
 		Textures.dispose(getManager());
+	}
+	
+	public void setExporter(ExportData exporter) {
+		this.exporter = exporter;
+	}
+	
+	public ExportData getExporter() {
+		return exporter;
 	}
 	
 	/**
@@ -209,11 +235,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	public void loadLevel() {
 //		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
-		this.level = Level.loadLocalSync(this.levelNumber);
+		this.level = LevelLoader.loadLocalSync(this.levelNumber);
 	}
 	
 	public void loadLevelAsync(final GameLoadedListener listener) {
-		Level.loadLocalAsync(this.levelNumber, new LevelLoaded() {
+		LevelLoader.loadLocalAsync(this.levelNumber, new LevelLoaded() {
 			
 			@Override
 			public void onLevelLoaded(Level level) {
@@ -323,8 +349,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 				|| (keycode == Keys.ESCAPE)) {
 			if( this.gameState == GAME_STATE_RUNNING ) {
 				pauseGame();
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}

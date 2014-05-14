@@ -22,6 +22,7 @@ import com.strategames.catchdastars.actors.GameObject.Type;
 import com.strategames.catchdastars.actors.Icecube;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
+import com.strategames.catchdastars.interfaces.ExportData;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
@@ -57,6 +58,7 @@ public class CatchDaStars extends Game {
 	private Box2DDebugRenderer debugRenderer;
 	
 	public CatchDaStars() {
+		setTitle("Catch Da Stars");
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
@@ -68,7 +70,7 @@ public class CatchDaStars extends Game {
 		 */
 		setWorldSize(new Vector2(5.1f, 8.1f));
 	}
-
+	
 	@Override
 	public void create() {
 		this.gravityVector = new Vector2();

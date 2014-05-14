@@ -18,7 +18,7 @@
 		<link>
 			<name>assets</name>
 			<type>2</type>
-			<location>RGL_LOC/projects/PopDaBalloons/my-gdx-game-android/assets</location>
+			<locationURI>RGL_LOC/projects/PopDaBalloons/my-gdx-game-android/assets</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>

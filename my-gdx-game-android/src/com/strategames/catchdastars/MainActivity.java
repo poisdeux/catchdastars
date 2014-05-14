@@ -15,6 +15,9 @@ public class MainActivity extends AndroidApplication {
         cfg.useAccelerometer = true;
         cfg.useCompass = false;
         
-        initialize(new CatchDaStars(), cfg);
+        CatchDaStars game = new CatchDaStars();
+        game.setExporter(new SharingDataAndroid(game, this));
+        
+        initialize(game, cfg);
     }
 }

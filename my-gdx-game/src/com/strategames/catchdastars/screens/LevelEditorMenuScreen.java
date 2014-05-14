@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.widgets.TextButton;
@@ -76,6 +77,21 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		}); 
 
 		this.table.add( addLevel ).fillX().expand().bottom();
+		
+		TextButton export = new TextButton("export", skin);
+		export.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
+				ArrayList<String> jsonLevels = new ArrayList<String>();
+				for(Level level : levels) {
+					jsonLevels.add(level.getJson());
+				}
+				getGame().getExporter().export(jsonLevels);
+			}
+		});
+		
+		this.table.add( export ).fillX().expand().bottom();
 		
 		TextButton mainMenu = new TextButton( "Main menu", skin);
 		mainMenu.addListener(new ClickListener() {
@@ -157,7 +173,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 	        public void input(String text) {
 	        	level.setName(text);
 	        	button.setText(level.getLevelNumber() + ". "+level.getName());
-	        	Level levelOnDisk = Level.loadLocalSync(level.getLevelNumber());
+	        	Level levelOnDisk = LevelLoader.loadLocalSync(level.getLevelNumber());
 	        	if( levelOnDisk != null ) {
 	        		levelOnDisk.setName(text);
 	        		levelOnDisk.save();
@@ -174,7 +190,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 	}
 	
 	private void deleteLevel(Level level) {
-		Level.deleteLocal(level.getLevelNumber());
+		LevelLoader.deleteLocal(level.getLevelNumber());
 		fillLevelButtonsTable();
 	}
 	
@@ -187,7 +203,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		
 		this.lastLevelNumber = 0;
 		
-		ArrayList<Level> levels = Level.loadAllLocalLevels();
+		ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
 		if( levels.isEmpty() ) {
 			return;
 		}
@@ -202,5 +218,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 			levelButtonsTable.add(button).expand();
 			levelButtonsTable.row();
 		}
+	}
+	
+	@Override
+	protected boolean handleBackNavigation() {
+		getGame().setScreen(new MainMenuScreen(getGame()));
+		return true;
 	}
 }
