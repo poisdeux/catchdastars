@@ -22,7 +22,7 @@ import com.strategames.catchdastars.actors.GameObject.Type;
 import com.strategames.catchdastars.actors.Icecube;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
-import com.strategames.catchdastars.interfaces.ExportData;
+import com.strategames.catchdastars.interfaces.Exporter;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;

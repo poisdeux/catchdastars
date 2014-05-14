@@ -11,7 +11,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.interfaces.ExportData;
+import com.strategames.catchdastars.interfaces.Exporter;
+import com.strategames.catchdastars.interfaces.Importer;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
@@ -48,7 +49,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private Vector2 worldSize;
 	
-	private ExportData exporter;
+	private Exporter exporter;
+	private Importer importer;
 	
 	private String title;
 	
@@ -146,12 +148,20 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		Textures.dispose(getManager());
 	}
 	
-	public void setExporter(ExportData exporter) {
+	public void setExporter(Exporter exporter) {
 		this.exporter = exporter;
 	}
 	
-	public ExportData getExporter() {
+	public Exporter getExporter() {
 		return exporter;
+	}
+	
+	public void setImporter(Importer importer) {
+		this.importer = importer;
+	}
+	
+	public Importer getImporter() {
+		return importer;
 	}
 	
 	/**

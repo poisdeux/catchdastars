@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 
-import com.strategames.catchdastars.interfaces.ExportData;
+import com.strategames.catchdastars.interfaces.Exporter;
 
-public class SharingDataAndroid implements ExportData {
+public class ExportAndroid implements Exporter {
 
 	private Context context;
 	private Game game;
 	
-	public SharingDataAndroid(Game game, Context context) {
+	public ExportAndroid(Game game, Context context) {
 		this.context = context;
 		this.game = game;
 	}

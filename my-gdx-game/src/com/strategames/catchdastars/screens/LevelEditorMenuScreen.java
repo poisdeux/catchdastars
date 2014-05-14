@@ -93,6 +93,16 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		
 		this.table.add( export ).fillX().expand().bottom();
 		
+		TextButton importButton = new TextButton("import", skin);
+		importButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				getGame().getImporter().importLevels();
+			}
+		});
+		
+		this.table.add( importButton ).fillX().expand().bottom();
+		
 		TextButton mainMenu = new TextButton( "Main menu", skin);
 		mainMenu.addListener(new ClickListener() {
 			@Override
