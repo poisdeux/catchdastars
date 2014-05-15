@@ -102,6 +102,7 @@ GoogleApiClient.OnConnectionFailedListener {
 			this.googleApiClient = new GoogleApiClient.Builder(this)
 			.addApi(Drive.API)
 			.addScope(Drive.SCOPE_FILE)
+			.addScope(Drive.SCOPE_APPFOLDER)
 			.addConnectionCallbacks(this)
 			.addOnConnectionFailedListener(this)
 			.build();
@@ -111,6 +112,8 @@ GoogleApiClient.OnConnectionFailedListener {
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
+		Log.d("ImportAndroidActivity", "onConnected");
+		
 		IntentSender intentSender = Drive.DriveApi
 				.newOpenFileActivityBuilder()
 				.setMimeType(new String[] { "text/plain" })
@@ -126,6 +129,7 @@ GoogleApiClient.OnConnectionFailedListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d("ImportAndroidActivity", "onActivityResult: "+requestCode);
 		switch (requestCode) {
 		case REQUEST_CODE_OPENER:
 			if (resultCode == RESULT_OK) {
@@ -143,14 +147,12 @@ GoogleApiClient.OnConnectionFailedListener {
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
-
+		Log.d("ImportAndroidActivity", "onConnectionFailed: "+result);
 	}
 
 	@Override
 	public void onConnectionSuspended(int cause) {
-		// TODO Auto-generated method stub
-
+		Log.d("ImportAndroidActivity", "onConnectionSuspended: "+cause);
 	}
 	
 	/**
