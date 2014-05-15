@@ -20,3 +20,9 @@ git checkout .
 
 5. Startup eclipse and select File->Import and select 
    all three projects my-gdx-game*
+
+6. Install google play services using the Android SDK Manager
+
+7. Import google play services project as "android project from existing source"
+
+8. Edit catchdastars-android properties to include correct google play services library
