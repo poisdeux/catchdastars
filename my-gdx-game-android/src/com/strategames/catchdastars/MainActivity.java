@@ -31,5 +31,4 @@ public class MainActivity extends AndroidApplication implements Importer {
 		Log.d("MainActivity", "importLevels");
 		startActivity(new Intent(this, ImportAndroidActivity.class));
 	}
-    
 }

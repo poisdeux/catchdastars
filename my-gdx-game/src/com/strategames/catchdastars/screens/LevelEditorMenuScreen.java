@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
+import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.widgets.TextButton;
@@ -82,12 +83,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		export.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
-				ArrayList<String> jsonLevels = new ArrayList<String>();
-				for(Level level : levels) {
-					jsonLevels.add(level.getJson());
-				}
-				getGame().getExporter().export(jsonLevels);
+				Levels levels = new Levels();
+				levels.setLevels(LevelLoader.loadAllLocalLevels());
+				getGame().getExporter().export(levels.getJson());
 			}
 		});
 		

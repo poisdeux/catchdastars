@@ -18,10 +18,10 @@ public class ExportAndroid implements Exporter {
 	}
 	
 	@Override
-	public void export(ArrayList<String> text) {
+	public void export(String text) {
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
-		sendIntent.putExtra(Intent.EXTRA_TEXT, text.toString());
+		sendIntent.putExtra(Intent.EXTRA_TEXT, text);
 		sendIntent.putExtra(Intent.EXTRA_SUBJECT, this.game.getTitle());
 		sendIntent.putExtra(Intent.EXTRA_TITLE, this.game.getTitle());
 		sendIntent.setType("application/octet-stream");

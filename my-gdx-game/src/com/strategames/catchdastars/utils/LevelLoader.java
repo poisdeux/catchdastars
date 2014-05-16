@@ -113,6 +113,12 @@ public class LevelLoader {
 		return levels;
 	}
 	
+	static public ArrayList<Level> getLevels(String jsonString) {
+		Json json = new Json();
+		Levels levels = json.fromJson(Levels.class, jsonString);
+		return levels.getLevels();
+	}
+	
 	static public FileHandle getLocalLevelsDir() {
 		try {
 			FileHandle dir = Gdx.files.local(LOCAL_PATH);
