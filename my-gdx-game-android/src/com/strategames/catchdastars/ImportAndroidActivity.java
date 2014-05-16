@@ -14,26 +14,27 @@
 
 package com.strategames.catchdastars;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi.MetadataBufferResult;
+import com.google.android.gms.drive.DriveApi.ContentsResult;
+import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.widget.DataBufferAdapter;
 
 /**
  * An activity to illustrate how to pick a file with the
@@ -44,50 +45,9 @@ GoogleApiClient.ConnectionCallbacks,
 GoogleApiClient.OnConnectionFailedListener {
 
 	private static final int REQUEST_CODE_OPENER = 1;
-	private ListView mListView;
-	private DataBufferAdapter<Metadata> mResultsAdapter;
-	private String mNextPageToken;
-	private boolean mHasMore;
+	private static final int REQUEST_CODE_RESOLUTION = 2;
+
 	private GoogleApiClient googleApiClient;
-
-	@Override
-	protected void onCreate(Bundle b) {
-		super.onCreate(b);
-		setContentView(R.layout.activity_listfiles);
-
-		mHasMore = true; // initial request assumes there are files results.
-
-		mListView = (ListView) findViewById(R.id.listViewResults);
-		mResultsAdapter = new ResultsAdapter(this);
-		mListView.setAdapter(mResultsAdapter);
-		mListView.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-			}
-
-			/**
-			 * Handles onScroll to retrieve next pages of results
-			 * if there are more results items to display.
-			 */
-			@Override
-			public void onScroll(AbsListView view, int first, int visible, int total) {
-				if (mNextPageToken != null && first + visible + 5 < total) {
-					retrieveNextPage();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Clears the result buffer to avoid memory leaks as soon
-	 * as the activity is no longer visible by the user.
-	 */
-	@Override
-	protected void onStop() {
-		super.onStop();
-		mResultsAdapter.clear();
-	}
 
 	/**
 	 * Called when activity gets visible. A connection to Drive services need to
@@ -113,10 +73,10 @@ GoogleApiClient.OnConnectionFailedListener {
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Log.d("ImportAndroidActivity", "onConnected");
-		
+
 		IntentSender intentSender = Drive.DriveApi
 				.newOpenFileActivityBuilder()
-				.setMimeType(new String[] { "text/plain" })
+				.setMimeType(new String[] { "text/plain", "text/html" })
 				.build(this.googleApiClient);
 		try {
 			startIntentSenderForResult(
@@ -124,7 +84,6 @@ GoogleApiClient.OnConnectionFailedListener {
 		} catch (SendIntentException e) {
 			Log.w("ImportAndroid", "Unable to send intent", e);
 		}
-		retrieveNextPage();
 	}
 
 	@Override
@@ -137,9 +96,15 @@ GoogleApiClient.OnConnectionFailedListener {
 						OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
 
 				Log.d("ImportAndroid", "Selected file's ID: " + driveId);
+				RetrieveDriveFileContentsAsyncTask task = new RetrieveDriveFileContentsAsyncTask();
+				task.execute(driveId);
 			}
 			finish();
 			break;
+		case REQUEST_CODE_RESOLUTION:
+			if (resultCode == RESULT_OK) {
+				this.googleApiClient.connect();
+			}
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
 		}
@@ -148,45 +113,62 @@ GoogleApiClient.OnConnectionFailedListener {
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
 		Log.d("ImportAndroidActivity", "onConnectionFailed: "+result);
+
+		if (!result.hasResolution()) {
+			// show the localized error dialog.
+			GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
+			return;
+		}
+		try {
+			result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
+		} catch (SendIntentException e) {
+			Log.e("ImportAndroidActivity", "Exception while starting resolution activity", e);
+		}
 	}
 
 	@Override
 	public void onConnectionSuspended(int cause) {
 		Log.d("ImportAndroidActivity", "onConnectionSuspended: "+cause);
 	}
-	
-	/**
-     * Retrieves results for the next page. For the first run,
-     * it retrieves results for the first page.
-     */
-    private void retrieveNextPage() {
-        // if there are no more results to retrieve,
-        // return silently.
-        if (!mHasMore) {
-            return;
-        }
-        // retrieve the results for the next page.
-        Query query = new Query.Builder()
-            .setPageToken(mNextPageToken)
-            .build();
-        Drive.DriveApi.query(this.googleApiClient, query)
-                .setResultCallback(metadataBufferCallback);
-    }
-    
-    /**
-     * Appends the retrieved results to the result buffer.
-     */
-    private final ResultCallback<MetadataBufferResult> metadataBufferCallback = new
-            ResultCallback<MetadataBufferResult>() {
-        @Override
-        public void onResult(MetadataBufferResult result) {
-            if (!result.getStatus().isSuccess()) {
-                Log.d("ImportAndroidActivity", "Problem while retrieving files");
-                return;
-            }
-            mResultsAdapter.append(result.getMetadataBuffer());
-            mNextPageToken = result.getMetadataBuffer().getNextPageToken();
-            mHasMore = mNextPageToken != null;
-        }
-    };
+
+	final private class RetrieveDriveFileContentsAsyncTask
+	extends AsyncTask<DriveId, Boolean, String> {
+
+		@Override
+		protected String doInBackground(DriveId... params) {
+			String contents = null;
+			DriveFile file = Drive.DriveApi.getFile(googleApiClient, params[0]);
+			ContentsResult contentsResult =
+					file.openContents(googleApiClient, DriveFile.MODE_READ_ONLY, null).await();
+			if (!contentsResult.getStatus().isSuccess()) {
+				return null;
+			}
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(contentsResult.getContents().getInputStream()));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			try {
+				while ((line = reader.readLine()) != null) {
+					builder.append(line);
+				}
+				contents = builder.toString();
+			} catch (IOException e) {
+				Log.e("ImportAndroidActivity", "IOException while reading from the stream", e);
+			}
+
+			file.discardContents(googleApiClient, contentsResult.getContents()).await();
+			return contents;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (result == null) {
+				Toast.makeText(ImportAndroidActivity.this, 
+						"Error while reading from the file", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			Log.d("ImportAndroidActivity", "File contents: " + result);
+		}
+	}
 }
