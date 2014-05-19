@@ -14,27 +14,20 @@
 
 package com.strategames.catchdastars;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi.ContentsResult;
-import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.strategames.catchdastars.RetrieveDriveFileContentsAsyncTask.OnFileReceivedListener;
 
 /**
  * An activity to illustrate how to pick a file with the
@@ -42,13 +35,16 @@ import com.google.android.gms.drive.OpenFileActivityBuilder;
  */
 public class ImportAndroidActivity extends Activity implements
 GoogleApiClient.ConnectionCallbacks,
-GoogleApiClient.OnConnectionFailedListener {
+GoogleApiClient.OnConnectionFailedListener,
+OnFileReceivedListener {
 
+	public static final String BUNDLE_KEY_JSON = "bundle_key_json";
+	
 	private static final int REQUEST_CODE_OPENER = 1;
 	private static final int REQUEST_CODE_RESOLUTION = 2;
 
 	private GoogleApiClient googleApiClient;
-
+	
 	/**
 	 * Called when activity gets visible. A connection to Drive services need to
 	 * be initiated as soon as the activity is visible. Registers
@@ -73,7 +69,6 @@ GoogleApiClient.OnConnectionFailedListener {
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Log.d("ImportAndroidActivity", "onConnected");
-
 		IntentSender intentSender = Drive.DriveApi
 				.newOpenFileActivityBuilder()
 				.setMimeType(new String[] { "text/plain", "text/html" })
@@ -85,21 +80,18 @@ GoogleApiClient.OnConnectionFailedListener {
 			Log.w("ImportAndroid", "Unable to send intent", e);
 		}
 	}
-
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("ImportAndroidActivity", "onActivityResult: "+requestCode);
+		Log.d("ImportAndroidActivity", "onActivityResult: requestCode="+requestCode+", resultCode="+resultCode);
 		switch (requestCode) {
 		case REQUEST_CODE_OPENER:
 			if (resultCode == RESULT_OK) {
 				DriveId driveId = (DriveId) data.getParcelableExtra(
 						OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-
-				Log.d("ImportAndroid", "Selected file's ID: " + driveId);
-				RetrieveDriveFileContentsAsyncTask task = new RetrieveDriveFileContentsAsyncTask();
+				RetrieveDriveFileContentsAsyncTask task = new RetrieveDriveFileContentsAsyncTask(this, this.googleApiClient, this);
 				task.execute(driveId);
 			}
-			finish();
 			break;
 		case REQUEST_CODE_RESOLUTION:
 			if (resultCode == RESULT_OK) {
@@ -131,44 +123,11 @@ GoogleApiClient.OnConnectionFailedListener {
 		Log.d("ImportAndroidActivity", "onConnectionSuspended: "+cause);
 	}
 
-	final private class RetrieveDriveFileContentsAsyncTask
-	extends AsyncTask<DriveId, Boolean, String> {
-
-		@Override
-		protected String doInBackground(DriveId... params) {
-			String contents = null;
-			DriveFile file = Drive.DriveApi.getFile(googleApiClient, params[0]);
-			ContentsResult contentsResult =
-					file.openContents(googleApiClient, DriveFile.MODE_READ_ONLY, null).await();
-			if (!contentsResult.getStatus().isSuccess()) {
-				return null;
-			}
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(contentsResult.getContents().getInputStream()));
-			StringBuilder builder = new StringBuilder();
-			String line;
-			try {
-				while ((line = reader.readLine()) != null) {
-					builder.append(line);
-				}
-				contents = builder.toString();
-			} catch (IOException e) {
-				Log.e("ImportAndroidActivity", "IOException while reading from the stream", e);
-			}
-
-			file.discardContents(googleApiClient, contentsResult.getContents()).await();
-			return contents;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if (result == null) {
-				Toast.makeText(ImportAndroidActivity.this, 
-						"Error while reading from the file", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			Log.d("ImportAndroidActivity", "File contents: " + result);
-		}
+	@Override
+	public void onFileReceived(String json) {
+		Intent resultIntent = new Intent();
+		resultIntent.putExtra(BUNDLE_KEY_JSON, json);
+		setResult(Activity.RESULT_OK, resultIntent);
+		finish();
 	}
 }

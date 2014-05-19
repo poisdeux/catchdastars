@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Levels;
@@ -22,7 +23,8 @@ import com.strategames.ui.widgets.TextButton;
 
 
 
-public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListener {
+public class LevelEditorMenuScreen extends AbstractScreen 
+	implements ButtonListener, OnLevelsReceivedListener {
 	private Skin skin;
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
@@ -95,7 +97,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 		importButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().getImporter().importLevels();
+				getGame().getImporter().importLevels(LevelEditorMenuScreen.this);
 			}
 		});
 		
@@ -232,5 +234,10 @@ public class LevelEditorMenuScreen extends AbstractScreen implements ButtonListe
 	protected boolean handleBackNavigation() {
 		getGame().setScreen(new MainMenuScreen(getGame()));
 		return true;
+	}
+
+	@Override
+	public void levelsReceived(String json) {
+		Gdx.app.log("LevelEditorMenuScreen", "levelsReceived: "+json);
 	}
 }
