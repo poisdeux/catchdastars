@@ -22,9 +22,13 @@ abstract public class Dialog extends Window {
 	private TextButton buttonNeutral;
 	private TextButton buttonPositive;
 	
+	private String message;
+	
 	protected Array<TextButton> buttons;
 	protected final Skin skin;
 	protected Stage stage;
+	
+	private boolean center;
 	
 	public Dialog(Stage stage, String title, Skin skin) {
 		super(title, skin);
@@ -32,8 +36,21 @@ abstract public class Dialog extends Window {
 		this.buttons = new Array<TextButton>();
 		this.stage = stage;
 		setVisible(false);
+		setCenter(false);
 	}
 
+	public void setCenter(boolean center) {
+		this.center = center;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	
 	public void setPositiveButton(String text, final Dialog.OnClickListener onClickListener) {
 		this.buttonPositive = new TextButton(text, this.skin);
 		this.buttonPositive.addListener(new ClickListener() {
@@ -84,6 +101,10 @@ abstract public class Dialog extends Window {
 	 */
 	public void create() {
 		
+		if( this.message != null ) {
+			add(message);
+		}
+		
 		for( TextButton button : this.buttons ) {
 			add(button);
 		}
@@ -100,6 +121,7 @@ abstract public class Dialog extends Window {
 		row();
 
 		pack();
+		
 	}
 	
 	public void show() {

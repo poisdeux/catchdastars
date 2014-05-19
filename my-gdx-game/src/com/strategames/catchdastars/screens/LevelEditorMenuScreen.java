@@ -19,6 +19,8 @@ import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.widgets.TextButton;
 
 
@@ -45,7 +47,7 @@ public class LevelEditorMenuScreen extends AbstractScreen
 
 		this.levelButtonsTable = new Table(skin);
 		
-		fillLevelButtonsTable();
+		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
 		
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
 		this.table.add(scrollPane).expand().fill().colspan(4);;
@@ -201,22 +203,21 @@ public class LevelEditorMenuScreen extends AbstractScreen
 	
 	private void deleteLevel(Level level) {
 		LevelLoader.deleteLocal(level.getLevelNumber());
-		fillLevelButtonsTable();
+		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
 	}
 	
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level number and name.
 	 */
 	
-	private void fillLevelButtonsTable() {
-		this.levelButtonsTable.clear();
-		
-		this.lastLevelNumber = 0;
-		
-		ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
+	private void fillLevelButtonsTable(ArrayList<Level> levels) {
 		if( levels.isEmpty() ) {
 			return;
 		}
+		
+		this.levelButtonsTable.clear();
+		
+		this.lastLevelNumber = 0;
 		
 		Collections.sort(levels);
 		this.lastLevelNumber = levels.get(levels.size() - 1).getLevelNumber();
@@ -239,5 +240,22 @@ public class LevelEditorMenuScreen extends AbstractScreen
 	@Override
 	public void levelsReceived(String json) {
 		Gdx.app.log("LevelEditorMenuScreen", "levelsReceived: "+json);
+		ArrayList<Level> levels = LevelLoader.getLevels(json);
+		if( levels != null ) {
+			fillLevelButtonsTable(levels);
+		} else {
+			ButtonsDialog dialog = new ButtonsDialog(getStageUIElements(), "Error importing", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
+			dialog.setMessage("Failed to import levels");
+			dialog.setPositiveButton("Close", new OnClickListener() {
+				
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					dialog.remove();
+				}
+			});
+			dialog.setCenter(true);
+			dialog.create();
+			dialog.show();
+		}
 	}
 }

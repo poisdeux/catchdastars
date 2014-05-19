@@ -12,6 +12,13 @@ public class ButtonsDialog extends Dialog {
 	private ORIENTATION orientation;
 	private ArrayList<TextButton> textButtons;
 
+	/**
+	 * Creates a simple buttons dialog with a title
+	 * @param stage
+	 * @param title
+	 * @param skin
+	 * @param orientation if buttons should be layed out vertically or horizontally
+	 */
 	public ButtonsDialog(Stage stage, String title, Skin skin, ORIENTATION orientation) {
 		super(stage, title, skin);
 		this.textButtons = new ArrayList<TextButton>();
