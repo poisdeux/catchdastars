@@ -19,8 +19,7 @@ import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
-import com.strategames.ui.dialogs.Dialog;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.widgets.TextButton;
 
 
@@ -244,15 +243,8 @@ public class LevelEditorMenuScreen extends AbstractScreen
 		if( levels != null ) {
 			fillLevelButtonsTable(levels);
 		} else {
-			ButtonsDialog dialog = new ButtonsDialog(getStageUIElements(), "Error importing", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
+			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error importing", getSkin());
 			dialog.setMessage("Failed to import levels");
-			dialog.setPositiveButton("Close", new OnClickListener() {
-				
-				@Override
-				public void onClick(Dialog dialog, int which) {
-					dialog.remove();
-				}
-			});
 			dialog.setCenter(true);
 			dialog.create();
 			dialog.show();

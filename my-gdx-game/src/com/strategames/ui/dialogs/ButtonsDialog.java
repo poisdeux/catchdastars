@@ -38,7 +38,7 @@ public class ButtonsDialog extends Dialog {
 	public void create() {
 		defaults().spaceBottom(10);
 		defaults().spaceTop(10);
-
+		
 		if( this.orientation == ORIENTATION.VERTICAL ) { 
 			row().fill().expandX();
 

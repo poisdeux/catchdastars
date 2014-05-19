@@ -24,7 +24,6 @@ abstract public class Dialog extends Window {
 	
 	private String message;
 	
-	protected Array<TextButton> buttons;
 	protected final Skin skin;
 	protected Stage stage;
 	
@@ -33,7 +32,6 @@ abstract public class Dialog extends Window {
 	public Dialog(Stage stage, String title, Skin skin) {
 		super(title, skin);
 		this.skin = skin;
-		this.buttons = new Array<TextButton>();
 		this.stage = stage;
 		setVisible(false);
 		setCenter(false);
@@ -81,32 +79,33 @@ abstract public class Dialog extends Window {
 		});
 	}
 	
-	public int addButton(String text, final Dialog.OnClickListener onClickListener) {
-		TextButton button = new TextButton(text, this.skin);
-		this.buttons.add(button);
-		final int index = this.buttons.indexOf(button, true);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				onClickListener.onClick(Dialog.this, index);
-			}
-		});
-		
-		return index;
-	}
+//	public int addButton(String text, final Dialog.OnClickListener onClickListener) {
+//		TextButton button = new TextButton(text, this.skin);
+//		this.buttons.add(button);
+//		final int index = this.buttons.indexOf(button, true);
+//		button.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				onClickListener.onClick(Dialog.this, index);
+//			}
+//		});
+//		
+//		return index;
+//	}
 	
 	/**
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
 	public void create() {
+		if( this.center ) {
+			float x = (float) ((stage.getWidth()/2.0) - getWidth());
+			setPosition(x, stage.getHeight()/2f);
+		}
 		
 		if( this.message != null ) {
 			add(message);
-		}
-		
-		for( TextButton button : this.buttons ) {
-			add(button);
+			row();
 		}
 		
 		if( this.buttonNegative != null ) {
