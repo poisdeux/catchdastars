@@ -1,9 +1,8 @@
 package com.strategames.catchdastars.utils;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.catchdastars.actors.GameObject;
@@ -63,5 +62,10 @@ public class Level implements Comparable<Level> {
 		} else {
 			return -1;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return String.format( Locale.US, "%d %s", this.number, this.name );
 	}
 }

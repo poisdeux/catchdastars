@@ -150,23 +150,6 @@ public class LevelLoader {
 		return null;
 	}
 
-	/**
-	 * Deletes the local file for the given level
-	 * @param level
-	 */
-	static public boolean deleteLocal(int level) {
-		try {
-			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
-			if( file.delete() ) {
-				reorderLevelFiles();
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	static public String getLocalPath() {
 		return LOCAL_PATH;
 	}
@@ -181,21 +164,5 @@ public class LevelLoader {
 	
 	static public String getInternalPath(int level) {
 		return INTERNAL_PATH + "/" + level;
-	}
-	
-	static private void reorderLevelFiles() {
-		ArrayList<Level> levels = loadAllLocalLevels();
-		Collections.sort(levels);
-		
-		if(! LevelWriter.deleteLocalLevelsDir()) {
-			return;
-		}
-		
-		int levelNumber = 1;
-		
-		for(Level level : levels) {
-			level.setLevelNumber(levelNumber++);
-			LevelWriter.save(level);
-		}
 	}
 }

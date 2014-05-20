@@ -1,6 +1,7 @@
 package com.strategames.catchdastars.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -47,6 +48,39 @@ public class LevelWriter {
 		} else {
 			Gdx.app.log("LevelWriter", "deleteLocalLevelsDir: failed to delete directory "+LevelLoader.getLocalPath());
 			return false;
+		}
+	}
+	
+	/**
+	 * Deletes the local file for the given level
+	 * @param level
+	 */
+	static public boolean deleteLocal(int level) {
+		try {
+			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level));
+			if( file.delete() ) {
+				reorderLevelFiles();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	static private void reorderLevelFiles() {
+		ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
+		Collections.sort(levels);
+		
+		if(! LevelWriter.deleteLocalLevelsDir()) {
+			return;
+		}
+		
+		int levelNumber = 1;
+		
+		for(Level level : levels) {
+			level.setLevelNumber(levelNumber++);
+			LevelWriter.save(level);
 		}
 	}
 }

@@ -5,10 +5,13 @@ import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -31,11 +34,15 @@ implements ButtonListener, OnLevelsReceivedListener {
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
 	private Table table;
-
+	private Levels levels;
+	
 	public LevelEditorMenuScreen(Game game) {
 		super(game);
 
 		this.skin = getSkin();
+		
+		this.levels = new Levels(); 
+		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
 	}
 
 	@Override
@@ -46,8 +53,8 @@ implements ButtonListener, OnLevelsReceivedListener {
 		this.table.row();
 
 		this.levelButtonsTable = new Table(skin);
-
-		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
+		
+		fillLevelButtonsTable(this.levels.getLevels());
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
 		this.table.add(scrollPane).expand().fill().colspan(4);;
@@ -87,8 +94,6 @@ implements ButtonListener, OnLevelsReceivedListener {
 		export.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				Levels levels = new Levels();
-				levels.setLevels(LevelLoader.loadAllLocalLevels());
 				getGame().getExporter().export(levels.getJson());
 			}
 		});
@@ -167,6 +172,13 @@ implements ButtonListener, OnLevelsReceivedListener {
 			}
 		});
 
+		dialog.add("Change level number", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				changeLevelNumber(level);
+			}
+		});
+		
 		final ButtonsDialog fDialog = dialog;
 		dialog.add("Cancel", new ClickListener() {
 			@Override
@@ -196,10 +208,33 @@ implements ButtonListener, OnLevelsReceivedListener {
 	}
 
 	private void deleteLevel(Level level) {
-		LevelLoader.deleteLocal(level.getLevelNumber());
-		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
+		LevelWriter.deleteLocal(level.getLevelNumber());
+		this.levels.deleteLevel(level);
+		this.levels.renumberLevels();
+		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
+	private void changeLevelNumber(final Level level) {
+		String[] levelNumbers = new String[this.lastLevelNumber + 1];
+		
+		SelectBox box = new SelectBox(levelNumbers, getSkin());
+		box.setSelection(level.getLevelNumber());
+		box.addListener(new EventListener() {
+			
+			@Override
+			public boolean handle(Event event) {
+				SelectBox box = (SelectBox) event.getListenerActor();
+				level.setLevelNumber(Integer.parseInt(box.getSelection()));
+				box.remove();
+				return true;
+			}
+			
+			
+		});
+		
+		getStageUIElements().addActor(box);
+	}
+	
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level number and name.
 	 */
