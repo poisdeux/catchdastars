@@ -19,16 +19,18 @@ public class Text extends Image {
 	public Text(String text) {
 		super();
 
-		if( font == null ) {
-			Texture texture = new Texture(Gdx.files.internal("fonts/vSHandprinted_distancefield.png"), true);
-			texture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
-			font = new BitmapFont(Gdx.files.internal("fonts/vSHandprinted_distancefield.fnt"), new TextureRegion(texture), false);
-		}
+		synchronized (this) {
+			if( font == null ) {
+				Texture texture = new Texture(Gdx.files.internal("fonts/vSHandprinted_distancefield.png"), true);
+				texture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+				font = new BitmapFont(Gdx.files.internal("fonts/vSHandprinted_distancefield.fnt"), new TextureRegion(texture), false);
+			}
 
-		if( fontShader == null ) {
-			fontShader = new ShaderProgram(Gdx.files.internal("fonts/font.vert"), Gdx.files.internal("fonts/font.frag"));
-			if (!fontShader.isCompiled()) {
-				Gdx.app.error("fontShader", "compilation failed:\n" + fontShader.getLog());
+			if( fontShader == null ) {
+				fontShader = new ShaderProgram(Gdx.files.internal("fonts/font.vert"), Gdx.files.internal("fonts/font.frag"));
+				if (!fontShader.isCompiled()) {
+					Gdx.app.error("fontShader", "compilation failed:\n" + fontShader.getLog());
+				}
 			}
 		}
 

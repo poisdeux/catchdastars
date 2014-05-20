@@ -36,19 +36,21 @@ public class ChalkLine extends Image {
 		this.start = new Vector2();
 		this.end = new Vector2();
 
-		if( chalks == null ) {
-			chalks = new Sprite[5];
-			chalks[0] = new Sprite(Textures.chalk1);
-			chalks[1] = new Sprite(Textures.chalk2);
-			chalks[2] = new Sprite(Textures.chalk3);
-			chalks[3] = new Sprite(Textures.chalk4);
-			chalks[4] = new Sprite(Textures.chalk5);
-			
-			for( int i = 0; i < chalks.length; i++ ) {
-				chalks[i].setScale(0.5f);
+		synchronized (this) {
+			if( chalks == null ) {
+				chalks = new Sprite[5];
+				chalks[0] = new Sprite(Textures.chalk1);
+				chalks[1] = new Sprite(Textures.chalk2);
+				chalks[2] = new Sprite(Textures.chalk3);
+				chalks[3] = new Sprite(Textures.chalk4);
+				chalks[4] = new Sprite(Textures.chalk5);
+
+				for( int i = 0; i < chalks.length; i++ ) {
+					chalks[i].setScale(0.5f);
+				}
 			}
 		}
-		
+
 		this.randomNumberGenerator = new Random();
 
 		this.chalkLine = new ArrayList<Sprite>();

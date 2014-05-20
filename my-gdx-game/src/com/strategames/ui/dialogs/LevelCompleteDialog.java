@@ -72,15 +72,6 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		this.animPosition = new Vector2();
 		this.totalScore = currentScore;
 		this.chalkLines = new ArrayList<ChalkLine>();
-		this.totalScoreLabel = new Label(String.valueOf(this.totalScore), skin);
-		this.totalScoreLabel.setFontScale(2f);
-		this.cashRegister = new Table();
-		this.cashRegister.setHeight(this.maxRowHeight);
-		ImageButton imageButton = new ImageButton(new Image(Textures.cashRegister).getDrawable());
-		this.cashRegister.add(imageButton);
-		this.cashRegister.add(totalScoreLabel).width(50);
-		this.cashRegister.setTransform(true);
-		this.cashRegister.setScale(0.5f);
 	}
 
 	@Override
@@ -279,6 +270,20 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	}
 
 	private void showCashRegistry(final float x, final float y) {
+		this.cashRegister = new Table();
+		
+		Image image = new Image(Textures.cashRegister);
+		image.setScaling(Scaling.stretch);
+		double scaleFactor = this.maxImageHeight / (double) image.getHeight() ;
+		float height = this.maxImageHeight;
+		float width = (float) (image.getWidth() * scaleFactor);
+		this.cashRegister.add(image).padRight(20f).width(width);
+//		ImageButton imageButton = new ImageButton(new Image(Textures.cashRegister).getDrawable());
+//		this.cashRegister.add(imageButton);
+		this.totalScoreLabel = new Label(String.valueOf(this.totalScore), skin);
+		this.cashRegister.add(totalScoreLabel).width(50);
+		this.cashRegister.setTransform(true);
+		this.cashRegister.setHeight(height);
 		this.cashRegister.setPosition(x, -this.cashRegister.getHeight());
 
 		this.cashRegister.addAction(sequence(

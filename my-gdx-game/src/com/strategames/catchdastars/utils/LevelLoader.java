@@ -97,7 +97,7 @@ public class LevelLoader {
 			}
 		});
 		
-		thread.run();
+		thread.start();
 	}
 	
 	static public ArrayList<Level> loadAllLocalLevels() {
