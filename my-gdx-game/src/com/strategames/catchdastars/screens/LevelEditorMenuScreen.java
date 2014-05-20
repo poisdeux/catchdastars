@@ -247,9 +247,12 @@ implements ButtonListener, OnLevelsReceivedListener {
 				dialog.show();
 			}
 			if( levelsFailedToSave != null ) {
-				if( ! levelsFailedToSave.isEmpty() ) {
+				if( levelsFailedToSave.size() == 0 ) {
 					fillLevelButtonsTable(levels);
 				} else {
+					for(Level level : levelsFailedToSave) {
+						Gdx.app.log("LevelEditorMenuScreen", "Failed to save level: "+level);
+					}
 					ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error saving levels", getSkin());
 					dialog.setMessage("Failed to save one or more levels");
 					dialog.setCenter(true);
