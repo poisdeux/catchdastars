@@ -16,6 +16,7 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
+import com.strategames.catchdastars.utils.LevelWriter;
 import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
@@ -25,12 +26,12 @@ import com.strategames.ui.widgets.TextButton;
 
 
 public class LevelEditorMenuScreen extends AbstractScreen 
-	implements ButtonListener, OnLevelsReceivedListener {
+implements ButtonListener, OnLevelsReceivedListener {
 	private Skin skin;
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
 	private Table table;
-	
+
 	public LevelEditorMenuScreen(Game game) {
 		super(game);
 
@@ -45,43 +46,43 @@ public class LevelEditorMenuScreen extends AbstractScreen
 		this.table.row();
 
 		this.levelButtonsTable = new Table(skin);
-		
+
 		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
-		
+
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
 		this.table.add(scrollPane).expand().fill().colspan(4);;
 		this.table.row();
-		
+
 		TextButton addLevel = new TextButton( "New level", skin );
 		addLevel.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
 				Gdx.input.getTextInput(new TextInputListener() {
-			        @Override
-			        public void input(String text) {
-			        	Level level = new Level();
-			        	level.setLevelNumber(++lastLevelNumber);
-			        	level.setName(text);
-			        	level.save();
-			        	TextButton button = new TextButton(lastLevelNumber + ". " +text, skin);
-			        	button.setTag(level);
-			        	button.setListener(LevelEditorMenuScreen.this);
+					@Override
+					public void input(String text) {
+						Level level = new Level();
+						level.setLevelNumber(++lastLevelNumber);
+						level.setName(text);
+						LevelWriter.save(level);
+						TextButton button = new TextButton(lastLevelNumber + ". " +text, skin);
+						button.setTag(level);
+						button.setListener(LevelEditorMenuScreen.this);
 						levelButtonsTable.add(button).expand();
 						levelButtonsTable.row();
-			        }
-			        
-			        @Override
-			        public void canceled() {
-			        	
-			        }
-			      }, "Enter name for new level", "");
-				
-				
+					}
+
+					@Override
+					public void canceled() {
+
+					}
+				}, "Enter name for new level", "");
+
+
 			}
 		}); 
 
 		this.table.add( addLevel ).fillX().expand().bottom();
-		
+
 		TextButton export = new TextButton("export", skin);
 		export.addListener(new ClickListener() {
 			@Override
@@ -91,9 +92,9 @@ public class LevelEditorMenuScreen extends AbstractScreen
 				getGame().getExporter().export(levels.getJson());
 			}
 		});
-		
+
 		this.table.add( export ).fillX().expand().bottom();
-		
+
 		TextButton importButton = new TextButton("import", skin);
 		importButton.addListener(new ClickListener() {
 			@Override
@@ -101,9 +102,9 @@ public class LevelEditorMenuScreen extends AbstractScreen
 				getGame().getImporter().importLevels(LevelEditorMenuScreen.this);
 			}
 		});
-		
+
 		this.table.add( importButton ).fillX().expand().bottom();
-		
+
 		TextButton mainMenu = new TextButton( "Main menu", skin);
 		mainMenu.addListener(new ClickListener() {
 			@Override
@@ -112,9 +113,9 @@ public class LevelEditorMenuScreen extends AbstractScreen
 			}
 		});
 		this.table.add( mainMenu ).fillX().expand().bottom();
-		
+
 		this.table.row();
-		
+
 		stage.addActor(this.table);
 	}
 
@@ -122,13 +123,13 @@ public class LevelEditorMenuScreen extends AbstractScreen
 	protected void setupActors(Stage stage) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onTap(Button button) {
 		if( ! ( button instanceof TextButton ) ) {
 			return;
 		}
-		
+
 		Object tag = ((TextButton) button).getTag();
 		if( ! (tag instanceof Level) ) {
 			return;
@@ -143,13 +144,13 @@ public class LevelEditorMenuScreen extends AbstractScreen
 		if( ! ( button instanceof TextButton ) ) {
 			return;
 		}
-		
+
 		Object tag = ((TextButton) button).getTag();
-		
+
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
-		
+
 		final Level level = (Level) tag;
 		ButtonsDialog dialog = new ButtonsDialog(stageUIActors, "Choose action", skin, ButtonsDialog.ORIENTATION.HORIZONTAL);
 		dialog.add("Delete level", new ClickListener() {
@@ -158,14 +159,14 @@ public class LevelEditorMenuScreen extends AbstractScreen
 				deleteLevel(level);
 			}
 		});
-		
+
 		dialog.add("Change name", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				changeLevelName(level, (TextButton) button);
 			}
 		});
-		
+
 		final ButtonsDialog fDialog = dialog;
 		dialog.add("Cancel", new ClickListener() {
 			@Override
@@ -173,63 +174,57 @@ public class LevelEditorMenuScreen extends AbstractScreen
 				fDialog.remove();
 			}
 		});
-		
+
 		dialog.create();
 		dialog.show();
 	}
-	
+
 	private void changeLevelName(final Level level, final TextButton button) {
 		Gdx.input.getTextInput(new TextInputListener() {
-	        @Override
-	        public void input(String text) {
-	        	level.setName(text);
-	        	button.setText(level.getLevelNumber() + ". "+level.getName());
-	        	Level levelOnDisk = LevelLoader.loadLocalSync(level.getLevelNumber());
-	        	if( levelOnDisk != null ) {
-	        		levelOnDisk.setName(text);
-	        		levelOnDisk.save();
-	        	} else {
-	        		level.save();
-	        	}
-	        }
-	        
-	        @Override
-	        public void canceled() {
-	        	
-	        }
-	      }, "Enter name", level.getName());
+			@Override
+			public void input(String text) {
+				level.setName(text);
+				button.setText(level.getLevelNumber() + ". "+level.getName());
+				LevelWriter.save(level);
+			}
+
+			@Override
+			public void canceled() {
+
+			}
+		}, "Enter name", level.getName());
 	}
-	
+
 	private void deleteLevel(Level level) {
 		LevelLoader.deleteLocal(level.getLevelNumber());
 		fillLevelButtonsTable(LevelLoader.loadAllLocalLevels());
 	}
-	
+
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level number and name.
 	 */
-	
+
 	private void fillLevelButtonsTable(ArrayList<Level> levels) {
 		if( levels.isEmpty() ) {
 			return;
 		}
-		
+
 		this.levelButtonsTable.clear();
-		
+
 		this.lastLevelNumber = 0;
-		
+
 		Collections.sort(levels);
 		this.lastLevelNumber = levels.get(levels.size() - 1).getLevelNumber();
-		
+
 		for( Level level : levels ) {
 			TextButton button = new TextButton(level.getLevelNumber() + ". " + level.getName(), skin);
 			button.setTag(level);
-        	button.setListener(LevelEditorMenuScreen.this);
+			button.setListener(LevelEditorMenuScreen.this);
 			levelButtonsTable.add(button).expand();
 			levelButtonsTable.row();
 		}
 	}
-	
+
 	@Override
 	protected boolean handleBackNavigation() {
 		getGame().setScreen(new MainMenuScreen(getGame()));
@@ -241,7 +236,33 @@ public class LevelEditorMenuScreen extends AbstractScreen
 		Gdx.app.log("LevelEditorMenuScreen", "levelsReceived: "+json);
 		ArrayList<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
-			fillLevelButtonsTable(levels);
+			ArrayList<Level> levelsFailedToSave = null;
+			if( LevelWriter.deleteLocalLevelsDir() ) {
+				levelsFailedToSave = LevelWriter.save(levels);
+			} else {
+				ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error deleting directory", getSkin());
+				dialog.setMessage("Failed to delete directory holding the levels");
+				dialog.setCenter(true);
+				dialog.create();
+				dialog.show();
+			}
+			if( levelsFailedToSave != null ) {
+				if( ! levelsFailedToSave.isEmpty() ) {
+					fillLevelButtonsTable(levels);
+				} else {
+					ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error saving levels", getSkin());
+					dialog.setMessage("Failed to save one or more levels");
+					dialog.setCenter(true);
+					dialog.create();
+					dialog.show();
+				}
+			} else {
+				ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error deleting levels", getSkin());
+				dialog.setMessage("Failed to delete directory that holds the levels");
+				dialog.setCenter(true);
+				dialog.create();
+				dialog.show();
+			}
 		} else {
 			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error importing", getSkin());
 			dialog.setMessage("Failed to import levels");

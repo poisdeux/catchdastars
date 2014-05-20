@@ -47,20 +47,6 @@ public class Level implements Comparable<Level> {
 	public static Level getLevel() {
 		return level;
 	}
-	
-	
-	
-	/**
-	 * Saves the content of stage to a local file.
-	 * These files can be loaded using {@link #loadLocalSync(int)}
-	 * @param stage
-	 * @param level
-	 */
-	public void save() {
-		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(this.number));
-		file.delete();
-		file.writeString(getJson(), true);
-	}
 
 	public String getJson() {
 		Json json = new Json();

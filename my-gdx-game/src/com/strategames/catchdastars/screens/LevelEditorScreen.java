@@ -20,6 +20,7 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
+import com.strategames.catchdastars.utils.LevelWriter;
 import com.strategames.catchdastars.utils.ScreenBorder;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.Grid;
@@ -507,7 +508,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		Game game = getGame();
 		Level level = game.getLevel();
 		level.setGameObjects(game.getGameObjects());
-		level.save();
+		LevelWriter.save(level);
 	}
 
 	private Actor getActor(Rectangle rectangle) {
