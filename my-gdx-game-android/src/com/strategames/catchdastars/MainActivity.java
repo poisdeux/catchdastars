@@ -21,7 +21,6 @@ public class MainActivity extends AndroidApplication implements Importer {
 		super.onCreate(savedInstanceState);
 
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-		cfg.useGL20 = true;
 		cfg.useAccelerometer = true;
 		cfg.useCompass = false;
 

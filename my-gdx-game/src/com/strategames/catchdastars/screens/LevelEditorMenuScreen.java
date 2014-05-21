@@ -25,6 +25,7 @@ import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
+import com.strategames.ui.dialogs.WheelSpinnerDialog;
 import com.strategames.ui.widgets.TextButton;
 
 
@@ -223,25 +224,10 @@ implements ButtonListener, OnLevelsReceivedListener {
 		
 		Gdx.app.log("LevelEditorMenuScreen", "levelNumbers="+levelNumbers+", getSkin()="+this.skin+
 				", level="+level);
-		
-		SelectBox box = new SelectBox(levelNumbers, this.skin);
-		box.setSelection(level.getLevelNumber());
-		box.addListener(new EventListener() {
-			
-			@Override
-			public boolean handle(Event event) {
-				SelectBox box = (SelectBox) event.getListenerActor();
-				level.setLevelNumber(Integer.parseInt(box.getSelection()));
-				box.remove();
-				return true;
-			}
-			
-			
-		});
-		
-		Window window = new Window("Select number", this.skin);
-		window.add(box);
-		getStageUIElements().addActor(window);
+		WheelSpinnerDialog spinner = new WheelSpinnerDialog("Select a number", levelNumbers, 
+				getStageUIElements(), this.skin);
+		spinner.create();
+		spinner.show();
 	}
 	
 	/**

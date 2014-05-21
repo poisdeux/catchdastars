@@ -4,8 +4,8 @@
 set -x
 mkdir libgdx
 pushd libgdx
-wget -r http://libgdx.googlecode.com/files/libgdx-0.9.8.zip -O libgdx-0.9.8.zip
-unzip libgdx-0.9.8.zip
+wget -r http://libgdx.badlogicgames.com/releases/libgdx-1.0.1.zip
+unzip libgdx-1.0.1.zip
 popd
 mkdir -p tools/physics-body-editor
 pushd tools/physics-body-editor

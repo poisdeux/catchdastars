@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.OrderedMap;
 
 /**
@@ -60,7 +60,7 @@ public class BodyEditorLoader {
         	RigidBodyModel rbModel = model.rigidBodies.get(name);
         	if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
             
-            Vector2 origin = vec.set(rbModel.origin).mul(scale);
+            Vector2 origin = vec.set(rbModel.origin).scl(scale);
 
            
             for (int i=0, n=rbModel.polygons.size(); i<n; i++) {
@@ -68,14 +68,14 @@ public class BodyEditorLoader {
                     Vector2[] vertices = polygon.buffer;
 
                     for (int ii=0, nn=vertices.length; ii<nn; ii++) {
-                            vertices[ii] = new Vector2().set(polygon.vertices.get(ii)).mul(scale);
+                            vertices[ii] = new Vector2().set(polygon.vertices.get(ii)).scl(scale);
                             vertices[ii].sub(origin);
                     }                    
             }
 
             for (int i=0, n=rbModel.circles.size(); i<n; i++) {
                     CircleModel circle = rbModel.circles.get(i);
-                    circle.centerBuffer = newVec().set(circle.center).mul(scale);
+                    circle.centerBuffer = newVec().set(circle.center).scl(scale);
                     circle.radiusBuffer = circle.radius * scale;
             }
         }
@@ -147,7 +147,7 @@ public class BodyEditorLoader {
                 RigidBodyModel rbModel = model.rigidBodies.get(name);
                 if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
-                return vec.set(rbModel.origin).mul(scale);
+                return vec.set(rbModel.origin).scl(scale);
         }
 
         /**
@@ -194,12 +194,12 @@ public class BodyEditorLoader {
         @SuppressWarnings("unchecked")
 		private Model readJson(String str) {
                 Model m = new Model();
-                OrderedMap<String,?> rootElem = (OrderedMap<String,?>) new JsonReader().parse(str);
-
-                Array<?> bodiesElems = (Array<?>) rootElem.get("rigidBodies");
+                JsonValue rootElem = new JsonReader().parse(str);
+                
+                JsonValue bodiesElems = rootElem.get("rigidBodies");
 
                 for (int i=0; i<bodiesElems.size; i++) {
-                        OrderedMap<String,?> bodyElem = (OrderedMap<String,?>) bodiesElems.get(i);
+                		JsonValue bodyElem = bodiesElems.get(i);
                         RigidBodyModel rbModel = readRigidBody(bodyElem);
                         m.rigidBodies.put(rbModel.name, rbModel);
                 }
@@ -208,28 +208,28 @@ public class BodyEditorLoader {
         }
 
         @SuppressWarnings("unchecked")
-		private RigidBodyModel readRigidBody(OrderedMap<String,?> bodyElem) {
+		private RigidBodyModel readRigidBody(JsonValue bodyElem) {
                 RigidBodyModel rbModel = new RigidBodyModel();
-                rbModel.name = (String) bodyElem.get("name");
-                rbModel.imagePath = (String) bodyElem.get("imagePath");
+                rbModel.name = (String) bodyElem.get("name").asString();
+                rbModel.imagePath = (String) bodyElem.get("imagePath").asString();
 
-                OrderedMap<String,?> originElem = (OrderedMap<String,?>) bodyElem.get("origin");
-                rbModel.origin.x = (Float) originElem.get("x");
-                rbModel.origin.y = (Float) originElem.get("y");
+                JsonValue originElem = bodyElem.get("origin");
+                rbModel.origin.x = originElem.get("x").asFloat();
+                rbModel.origin.y = originElem.get("y").asFloat();
 
                 // polygons
 
-                Array<?> polygonsElem = (Array<?>) bodyElem.get("polygons");
+                JsonValue polygonsElem = bodyElem.get("polygons");
 
                 for (int i=0; i<polygonsElem.size; i++) {
                         PolygonModel polygon = new PolygonModel();
                         rbModel.polygons.add(polygon);
 
-                        Array<?> verticesElem = (Array<?>) polygonsElem.get(i);
+                        JsonValue verticesElem = polygonsElem.get(i);
                         for (int ii=0; ii<verticesElem.size; ii++) {
-                                OrderedMap<String,?> vertexElem = (OrderedMap<String,?>) verticesElem.get(ii);
-                                float x = (Float) vertexElem.get("x");
-                                float y = (Float) vertexElem.get("y");
+                                JsonValue vertexElem = verticesElem.get(ii);
+                                float x = vertexElem.get("x").asFloat();
+                                float y = vertexElem.get("y").asFloat();
                                 polygon.vertices.add(new Vector2(x, y));
                         }
 
@@ -238,16 +238,16 @@ public class BodyEditorLoader {
 
                 // circles
 
-                Array<?> circlesElem = (Array<?>) bodyElem.get("circles");
+                JsonValue circlesElem = bodyElem.get("circles");
 
                 for (int i=0; i<circlesElem.size; i++) {
                         CircleModel circle = new CircleModel();
                         rbModel.circles.add(circle);
 
-                        OrderedMap<String,?> circleElem = (OrderedMap<String,?>) circlesElem.get(i);
-                        circle.center.x = (Float) circleElem.get("cx");
-                        circle.center.y = (Float) circleElem.get("cy");
-                        circle.radius = (Float) circleElem.get("r");
+                        JsonValue circleElem = circlesElem.get(i);
+                        circle.center.x = circleElem.get("cx").asFloat();
+                        circle.center.y = circleElem.get("cy").asFloat();
+                        circle.radius = circleElem.get("r").asFloat();
                 }
 
                 return rbModel;

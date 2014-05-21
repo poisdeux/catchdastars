@@ -774,6 +774,12 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		}
 		return true;
 	}
+
+	@Override
+	public boolean panStop(float x, float y, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
 
 

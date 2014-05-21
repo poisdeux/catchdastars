@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
@@ -147,7 +148,7 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		float rotation = MathUtils.radiansToDegrees * this.body.getAngle();
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
@@ -251,9 +252,9 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	void readValue(String key, Object value) {
-		if( key.contentEquals("parts") && 
-				(value.toString()).contentEquals("all") ) {
+	void readValue(JsonValue jsonData) {
+		if( jsonData.child().name().contentEquals("parts") && 
+				(jsonData.child().asString()).contentEquals("all") ) {
 			//Initial object contains all parts
 			for( Part part : availableParts ) {
 				addPart(part);

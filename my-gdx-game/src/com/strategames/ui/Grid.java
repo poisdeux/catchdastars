@@ -1,6 +1,6 @@
 package com.strategames.ui;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.utils.Textures;
@@ -21,7 +21,7 @@ public class Grid extends Image {
 	}
 	
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		for( float y = 0; y < this.height; y += GRIDSIZE) {
 			for( float x = 0; x < this.width; x += GRIDSIZE) {
 				batch.draw(Textures.gridPoint, x - this.halfWidth, y - this.halfHeight, GRIDSIZE, GRIDSIZE);

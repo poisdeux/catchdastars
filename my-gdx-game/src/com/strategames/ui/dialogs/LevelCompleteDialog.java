@@ -370,7 +370,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 		}
 		
 		this.cashRegister.addAction(sequence(
-				parallel(scaleBy(0.5f, 0.5f, 1f, Interpolation.circle),
+				parallel(com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy(0.5f, 0.5f, 1f, Interpolation.circle),
 				moveTo(x, y, 1f, Interpolation.circle)),
 				new Action() {
 

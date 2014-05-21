@@ -3,8 +3,8 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
@@ -127,11 +127,11 @@ public class ChalkLine extends Image {
 
 		this.increments = this.end.cpy(); 
 		this.increments.sub(this.start);
-		this.increments.div(this.steps * this.lengthPerStep);
+		this.increments.scl(1f/(this.steps * this.lengthPerStep));
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		//		Gdx.app.log("ChalkLine", "draw: getColor().a="+getColor().a);
 
 		if( this.steps > 0 ) {

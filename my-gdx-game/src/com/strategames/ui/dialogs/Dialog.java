@@ -79,19 +79,6 @@ abstract public class Dialog extends Window {
 		});
 	}
 	
-//	public int addButton(String text, final Dialog.OnClickListener onClickListener) {
-//		TextButton button = new TextButton(text, this.skin);
-//		this.buttons.add(button);
-//		final int index = this.buttons.indexOf(button, true);
-//		button.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				onClickListener.onClick(Dialog.this, index);
-//			}
-//		});
-//		
-//		return index;
-//	}
 	
 	/**
 	 * Use this to create and add the actual dialog to the stage.

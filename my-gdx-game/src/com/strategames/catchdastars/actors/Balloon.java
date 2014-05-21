@@ -3,7 +3,7 @@ package com.strategames.catchdastars.actors;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.BodyEditorLoader;
 import com.strategames.catchdastars.utils.ConfigurationItem;
@@ -138,9 +139,9 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		
 		return body;
 	}
-
+	
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
@@ -152,7 +153,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		super.act(delta);
 		if( super.game.getGameState() == game.GAME_STATE_RUNNING ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
-			super.body.applyForce(getWorld().getGravity().mul(this.upwardLift), worldPointOfForce);
+			super.body.applyForce(getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
 		}
 	}
 
@@ -163,11 +164,12 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	}
 
 	@Override
-	void readValue(String key, Object value) {
-		if( key.contentEquals("type")) {
-			setColorType(ColorType.valueOf(value.toString()));
-		} else if( key.contentEquals("liftfactor")) {
-			setLiftFactor(Float.valueOf(value.toString()));
+	void readValue(JsonValue jsonData) {
+		String name = jsonData.child().asString();
+		if( name.contentEquals("type")) {
+			setColorType(ColorType.valueOf(jsonData.child().asString()));
+		} else if( name.contentEquals("liftfactor")) {
+			setLiftFactor(Float.valueOf(jsonData.child().asFloat()));
 		}
 	}
 
@@ -229,7 +231,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
-		float bounceVelocity = super.body.getLinearVelocity().mul(normal.x, normal.y).len2();
+		Vector2 linearVelocity = super.body.getLinearVelocity();
+		float bounceVelocity = (linearVelocity.x * normal.x) + (linearVelocity.y * normal.y);
 		if( bounceVelocity > 0.1 ) {
 			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
 		}

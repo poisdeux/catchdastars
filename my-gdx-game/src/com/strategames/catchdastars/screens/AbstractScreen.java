@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.catchdastars.Game;
 
 /**
@@ -49,14 +50,16 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
 		this.menuCamera.update();
-		this.stageUIActors.setCamera(this.menuCamera);
-		this.stageUIActors.setViewport(screenWidth, screenHeight, true);
+		
+//		this.stageUIActors.setCamera(this.menuCamera);
+		
+		this.stageUIActors.getSpriteBatch().setProjectionMatrix(this.menuCamera.combined);
 		
 		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
 		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
 		this.gameCamera.update();
-		this.stageActors.setCamera(this.gameCamera);
-		this.stageActors.setViewport(worldSize.x, worldSize.y, true);
+		
+		this.stageActors.getSpriteBatch().setProjectionMatrix(this.gameCamera.combined);
 		
 //		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
 //				+stageUIActors.getHeight());

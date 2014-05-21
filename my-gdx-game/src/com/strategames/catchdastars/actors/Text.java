@@ -2,9 +2,9 @@ package com.strategames.catchdastars.actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -40,8 +40,8 @@ public class Text extends Image {
 	}
 
 	@Override
-	public void scale(float scale) {
-		super.scale(scale);
+	public void scaleBy(float scale) {
+		super.scaleBy(scale);
 		font.scale(scale);
 		updateActorSize();
 	}
@@ -54,7 +54,7 @@ public class Text extends Image {
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		batch.setShader(fontShader);
 		font.draw(batch, text, getX(), getY());
 		batch.setShader(null);

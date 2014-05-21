@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
@@ -252,7 +253,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	public void drawBoundingBox(SpriteBatch batch) {
 		batch.end();
-		this.shapeRenderer.begin(ShapeType.Rectangle);
+		this.shapeRenderer.begin(ShapeType.Line);
 		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
 		Rectangle rec = getBoundingRectangle();
 		this.shapeRenderer.rect(rec.x, rec.y, rec.width, rec.height);
@@ -336,29 +337,24 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param key	String holding the name you used in json.writeValue(String name, Object value) 
 	 * @param value	The object you set using json.writeValue(String name, Object value)
 	 */
-	abstract void readValue(String key, Object value);
+	abstract void readValue(JsonValue jsonData);
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void read(Json json, OrderedMap<String, Object> jsonData) {
-		Entries<String, Object> entries = jsonData.entries();
-
-		while(entries.hasNext) {
-			Entry<String, Object> entry = entries.next();
-			if ( entry.value instanceof OrderedMap ) {
-				read(json, (OrderedMap<String, Object>) entry.value);
-			} else if ( entry.key.contentEquals("x")) {
-				float value = Float.valueOf(entry.value.toString());
+	public void read(Json json, JsonValue jsonData) {
+		String name = jsonData.child.name();
+		
+			if ( name.contentEquals("x")) {
+				float value = jsonData.child().asFloat();
 				setX(value);
 				this.initialPosition.x = value;
-			} else if ( entry.key.contentEquals("y")) {
-				float value = Float.valueOf(entry.value.toString());
+			} else if ( name.contentEquals("y")) {
+				float value = jsonData.child().asFloat();
 				setY(value);
 				this.initialPosition.y = value;
 			} else {
-				readValue(entry.key, entry.value);
+				readValue(jsonData);
 			}
-		}
 	}
 
 	abstract public GameObject createCopy();

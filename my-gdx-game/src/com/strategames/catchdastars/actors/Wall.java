@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
@@ -144,7 +145,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(Batch batch, float parentAlpha) {
 		float prevAlpha = batch.getColor().a;
 		batch.getColor().a = this.colorActor.a;
 
@@ -172,11 +173,12 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 	@Override
-	void readValue(String key, Object value) {
-		if( key.contentEquals("type")) {
-			this.orientation = Orientation.valueOf(value.toString());
-		} else if( key.contentEquals("length")) {
-			this.length = Float.valueOf(value.toString());
+	void readValue(JsonValue jsonData) {
+		String name = jsonData.child().name();
+		if( name.contentEquals("type")) {
+			this.orientation = Orientation.valueOf(jsonData.child().asString());
+		} else if( name.contentEquals("length")) {
+			this.length = jsonData.child().asFloat();
 		}
 	}
 

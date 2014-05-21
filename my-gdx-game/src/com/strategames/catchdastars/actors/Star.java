@@ -2,7 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.catchdastars.utils.Sounds;
@@ -61,8 +62,8 @@ public class Star extends GameObject {
 	}
 	
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
-		rotate(this.rotationSpeed);
+	public void draw(Batch batch, float parentAlpha) {
+		rotateBy(this.rotationSpeed);
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
@@ -79,13 +80,14 @@ public class Star extends GameObject {
 		json.writeValue("type", this.colorType.name());
 		json.writeValue("rotationSpeed", this.rotationSpeed);
 	}
-
+	
 	@Override
-	void readValue(String key, Object value) {
-		if( key.contentEquals("type")) {
-			this.colorType = ColorType.valueOf(value.toString());
-		} else if( key.contentEquals("rotationSpeed")) {
-			this.rotationSpeed = Float.valueOf(value.toString());
+	void readValue(JsonValue jsonData) {
+		String name = jsonData.child().name();
+		if( name.contentEquals("type")) {
+			this.colorType = ColorType.valueOf(jsonData.child().asString());
+		} else if( name.contentEquals("rotationSpeed")) {
+			this.rotationSpeed = jsonData.child().asFloat();
 		}
 	}
 	
