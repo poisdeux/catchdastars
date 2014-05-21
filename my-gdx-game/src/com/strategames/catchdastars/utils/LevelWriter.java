@@ -43,12 +43,19 @@ public class LevelWriter {
 	
 	static public boolean deleteLocalLevelsDir() {
 		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath());
-		if( file.deleteDirectory() ) {
-			return true;
+		if( file.isDirectory() ) {
+			if( file.deleteDirectory())  {
+				return true;
+			}
+		} else if( file.exists() ) {
+			if( file.delete() ) {
+				return true;
+			}
 		} else {
-			Gdx.app.log("LevelWriter", "deleteLocalLevelsDir: failed to delete directory "+LevelLoader.getLocalPath());
-			return false;
+			return true; // directory does not exist
 		}
+		Gdx.app.log("LevelWriter", "deleteLocalLevelsDir: failed to delete directory "+LevelLoader.getLocalPath());
+		return false;
 	}
 	
 	/**

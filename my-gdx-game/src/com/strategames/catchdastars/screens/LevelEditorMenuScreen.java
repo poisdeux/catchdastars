@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
@@ -216,8 +217,14 @@ implements ButtonListener, OnLevelsReceivedListener {
 
 	private void changeLevelNumber(final Level level) {
 		String[] levelNumbers = new String[this.lastLevelNumber + 1];
+		for(int i = 0; i < this.lastLevelNumber; i++) {
+			levelNumbers[i] = String.valueOf(i);
+		}
 		
-		SelectBox box = new SelectBox(levelNumbers, getSkin());
+		Gdx.app.log("LevelEditorMenuScreen", "levelNumbers="+levelNumbers+", getSkin()="+this.skin+
+				", level="+level);
+		
+		SelectBox box = new SelectBox(levelNumbers, this.skin);
 		box.setSelection(level.getLevelNumber());
 		box.addListener(new EventListener() {
 			
@@ -232,7 +239,9 @@ implements ButtonListener, OnLevelsReceivedListener {
 			
 		});
 		
-		getStageUIElements().addActor(box);
+		Window window = new Window("Select number", this.skin);
+		window.add(box);
+		getStageUIElements().addActor(window);
 	}
 	
 	/**
