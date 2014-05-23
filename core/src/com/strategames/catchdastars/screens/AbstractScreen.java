@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.catchdastars.Game;
 
@@ -50,16 +52,13 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
 		this.menuCamera.update();
+		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
+		this.stageUIActors.setViewport(viewport);
 		
-//		this.stageUIActors.setCamera(this.menuCamera);
-		
-		this.stageUIActors.getSpriteBatch().setProjectionMatrix(this.menuCamera.combined);
-		
-		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
-		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
-		this.gameCamera.update();
-		
-		this.stageActors.getSpriteBatch().setProjectionMatrix(this.gameCamera.combined);
+		this.gameCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
+		this.gameCamera.update(true);
+		viewport = new FitViewport(worldSize.x, worldSize.y, this.gameCamera);
+		this.stageActors.setViewport(viewport);
 		
 //		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
 //				+stageUIActors.getHeight());
@@ -139,7 +138,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	{	
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
-
 		
 //		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
 			this.stageActors.act(delta);
