@@ -9,11 +9,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.catchdastars.Game;
 
@@ -45,21 +44,20 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.stageActors = new Stage();
 		this.stageUIActors = new Stage();
 
-		Vector2 worldSize = this.game.getWorldSize(); 
+		Vector3 worldSize = this.game.getWorldSize(); 
 
 		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
 		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
-		this.menuCamera.update();
-		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
-		this.stageUIActors.setViewport(viewport);
+//		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
+//		this.stageUIActors.setViewport(viewport);
 		
-		this.gameCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
-		this.gameCamera.update(true);
-		viewport = new FitViewport(worldSize.x, worldSize.y, this.gameCamera);
+		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
+		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, worldSize.z);
+		Viewport viewport = new FillViewport(worldSize.x, worldSize.y, this.gameCamera);
 		this.stageActors.setViewport(viewport);
-		
+	
 //		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
 //				+stageUIActors.getHeight());
 //		Gdx.app.log("AbstractScreen", "AbstractScreen: stageActors.getWidth="+stageActors.getWidth()+", stageActors.getHeight()="

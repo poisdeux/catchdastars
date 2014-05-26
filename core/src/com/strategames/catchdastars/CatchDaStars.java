@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -67,7 +68,7 @@ public class CatchDaStars extends Game {
 		 * 8.1/0.3 = 27 (crosses horizontally)
 		 * 5.1/0.3 = 17 (crosses vertically)
 		 */
-		setWorldSize(new Vector2(5.1f, 8.1f));
+		setWorldSize(new Vector3(5.1f, 8.1f, 0f));
 	}
 	
 	@Override

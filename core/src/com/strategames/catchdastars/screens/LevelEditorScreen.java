@@ -9,6 +9,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -57,7 +58,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private Grid grid;
 
-	private Vector2 worldSize;
+	private Vector3 worldSize;
 
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
@@ -432,30 +433,31 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private void setCamera() {		
 		Stage stage = getStageActors();
-
+		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
+		camera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
+		
 		boolean screenOK = false;
 		while( ! screenOK ) {
-			OrthographicCamera camera = getGameCamera();
 			camera.zoom += 0.02; 
 			camera.update();
+			Vector3 screenSize = new Vector3(0f, Gdx.graphics.getHeight(), 0f);
+			camera.unproject(screenSize);
 
 			Vector2 maxObjectSize = getMaxObjectSize();
-
 			//Add screenborder Wall as this is placed halfway the actual screenborder
 			maxObjectSize.x += 0.5*Wall.WIDTH;
 			maxObjectSize.y += 0.5*Wall.HEIGHT;
 
-			Vector2 screenSize = new Vector2(Gdx.graphics.getWidth(), 0f);
-			stage.screenToStageCoordinates(screenSize);
-			screenSize.sub(worldSize); //screenSize will hold the difference
-
-			//			Gdx.app.log("LevelEditorScreen", "After screenSize="+screenSize+", worldSize="+worldSize+", screenSize - worldSize = "+ screenSize.sub(worldSize));
+//			Gdx.app.log("LevelEditorScreen", "After camera.zoom="+camera.zoom+", screenSize="+screenSize+
+//					", maxObjectSize="+maxObjectSize);
 
 			if(Math.abs(screenSize.x) > maxObjectSize.x ) {
 				this.menuPosition = MenuPosition.RIGHT;
 				screenOK = true;
 			} else if( Math.abs(screenSize.y) > maxObjectSize.y ) {
 				this.menuPosition = MenuPosition.TOP;
+				screenOK = true;
+			} else if ( camera.zoom > 3 ) {
 				screenOK = true;
 			}
 		}
@@ -679,7 +681,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
-		Vector2 worldSize = this.game.getWorldSize();
+		Vector3 worldSize = this.game.getWorldSize();
 
 		//		this.menuPosition = MenuPosition.LEFT;
 		if( this.menuPosition == MenuPosition.TOP ) {

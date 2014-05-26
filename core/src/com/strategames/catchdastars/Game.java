@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -47,7 +48,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private World world;
 	
-	private Vector2 worldSize;
+	private Vector3 worldSize;
 	
 	private Exporter exporter;
 	private Importer importer;
@@ -168,7 +169,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * 
 	 * @return size of the world in meters
 	 */
-	public Vector2 getWorldSize() {
+	public Vector3 getWorldSize() {
 		return worldSize;
 	}
 	
@@ -177,7 +178,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * It is the size of the world as used by Box2D
 	 * @param worldSize in meters
 	 */
-	public void setWorldSize(Vector2 worldSize) {
+	public void setWorldSize(Vector3 worldSize) {
 		this.worldSize = worldSize;
 	}
 	
