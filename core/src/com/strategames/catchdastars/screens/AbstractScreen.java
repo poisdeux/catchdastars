@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.catchdastars.Game;
 
@@ -47,12 +47,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
-		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
+		Viewport viewport = new FitViewport(this.screenWidth, this.screenHeight, this.menuCamera);
 		this.stageUIActors = new Stage(viewport);
 		
 		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
 		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, worldSize.z);
-		viewport = new FillViewport(worldSize.x, worldSize.y, this.gameCamera);
+		viewport = new FitViewport(worldSize.x, worldSize.y, this.gameCamera);
 		this.stageActors = new Stage(viewport);
 		
 		Gdx.input.setCatchBackKey(true);

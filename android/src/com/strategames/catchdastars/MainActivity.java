@@ -23,7 +23,7 @@ public class MainActivity extends AndroidApplication implements Importer {
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
 		cfg.useAccelerometer = true;
 		cfg.useCompass = false;
-
+		
 		CatchDaStars game = new CatchDaStars();
 		game.setExporter(new ExportAndroid(game, this));
 		game.setImporter(this);

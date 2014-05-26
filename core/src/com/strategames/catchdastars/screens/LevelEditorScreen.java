@@ -37,8 +37,6 @@ import com.strategames.ui.widgets.RectangleImage;
 
 public class LevelEditorScreen extends AbstractScreen implements ButtonListener, GestureListener, Dialog.OnClickListener {
 
-	private enum MenuPosition { TOP, BOTTOM, LEFT, RIGHT };
-	private MenuPosition menuPosition;
 	private ButtonsDialog mainMenu;
 	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
@@ -186,7 +184,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -210,8 +208,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
 		super.stageActors.screenToStageCoordinates(touchPosition);
 		Actor actor = super.stageActors.hit(touchPosition.x, touchPosition.y, false);
-//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
-		
+		//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
+
 		tap.setActor(actor);
 		this.actorTouched = actor;
 
@@ -241,7 +239,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			return true;
 		} else if( this.actorTouched != null ) {
 			GameObject gameObject = (GameObject) this.actorTouched;
-			
+
 			//If menu item create new menu item at initial position
 			if( gameObject.isMenuItem() ) {
 				Vector2 v = gameObject.getInitialPosition();
@@ -343,7 +341,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 			if( this.uiElementHit != null ) return false;
 
-			setupMainMenu();
+			createMainMenu();
 
 		}
 		return true;
@@ -432,11 +430,14 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		}
 	}
 
+	/**
+	 * Positions camera to make room for menu
+	 */
 	private void setCamera() {		
 		Stage stage = getStageActors();
 		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
 		camera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
-		
+
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			camera.zoom += 0.02; 
@@ -446,20 +447,21 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 			Vector2 maxObjectSize = getMaxObjectSize();
 			//Add screenborder Wall as this is placed halfway the actual screenborder
-			maxObjectSize.x += 0.5*Wall.WIDTH;
-			maxObjectSize.y += 0.5*Wall.HEIGHT;
+			maxObjectSize.x += 0.6*Wall.WIDTH;
+			maxObjectSize.y += 0.6*Wall.HEIGHT;
 
-//			Gdx.app.log("LevelEditorScreen", "After camera.zoom="+camera.zoom+", screenSize="+screenSize+
-//					", maxObjectSize="+maxObjectSize);
+			//			Gdx.app.log("LevelEditorScreen", "After camera.zoom="+camera.zoom+", screenSize="+screenSize+
+			//					", maxObjectSize="+maxObjectSize);
 
+			/**
+			 * We always set menu at the right as on Android the action bar will 
+			 * trigger when trying to pick a game object
+			 */
 			if(Math.abs(screenSize.x) > maxObjectSize.x ) {
-				this.menuPosition = MenuPosition.RIGHT;
-				screenOK = true;
-			} else if( Math.abs(screenSize.y) > maxObjectSize.y ) {
-				this.menuPosition = MenuPosition.TOP;
 				screenOK = true;
 			} else if ( camera.zoom > 3 ) {
 				screenOK = true;
+				//Print error
 			}
 		}
 	}
@@ -589,7 +591,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		}
 	}
 
-	private void setupMainMenu() {
+	private void createMainMenu() {
 		this.mainMenu = new ButtonsDialog(stageUIActors, "Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
 		this.mainMenu.add("Tools", new ClickListener() {
@@ -684,42 +686,24 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 		Vector3 worldSize = this.game.getWorldSize();
 
-		//		this.menuPosition = MenuPosition.LEFT;
-		if( this.menuPosition == MenuPosition.TOP ) {
-			float delta = stage.getWidth() / ( gameObjects.size() + 1 );
-			float x = 0.1f;
-			float y = (float) (worldSize.y + 0.6*Wall.HEIGHT);
+		/**
+		 * We always set menu at the right as on Android the action bar will 
+		 * trigger when trying to pick a game object
+		 */
+		float delta = stage.getHeight() / ( gameObjects.size() + 1 );
+		float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
+		float y = worldSize.y - Wall.HEIGHT;
 
-			/**
-			 * MenuButton's pivot is positioned at (0,0)=(left, bottom)
-			 */
-			Vector2 stageCoords = stage.stageToScreenCoordinates(new Vector2(x,worldSize.y - y));
-			super.stageUIActors.screenToStageCoordinates(stageCoords);
-			menuButton.setPosition(stageCoords.x, stageCoords.y);
-			x+=delta;
+		//Add menu button
+		Vector2 stageUICoords = stageActors.stageToScreenCoordinates(new Vector2(x,y));
+		stageUIActors.screenToStageCoordinates(stageUICoords);
+		menuButton.setPosition(stageUICoords.x, stageUICoords.y);
 
-			for(GameObject object : gameObjects ) {
-				addGameObjectToMenu(stage, object, x, y);
-				x += delta;
-			}
-		} else {
-			float delta = stage.getHeight() / ( gameObjects.size() + 1 );
-			float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
-			float y = worldSize.y - Wall.HEIGHT;
+		y-=delta;
 
-			//Add menu button
-			float stageActorMenuButtonWidth = Game.convertScreenToWorld(menuButton.getWidth());
-			float stageActorMenuButtonHeight = Game.convertScreenToWorld(menuButton.getHeight());
-			Vector2 stageUICoords = new Vector2(Game.convertWorldToScreen(x - stageActorMenuButtonWidth), 
-					Game.convertWorldToScreen(y - stageActorMenuButtonHeight));
-			menuButton.setPosition(stageUICoords.x, stageUICoords.y);
-			
-			y-=delta;
-
-			for(GameObject object : gameObjects ) {
-				addGameObjectToMenu(stage, object, x, y);
-				y -= delta;
-			}
+		for(GameObject object : gameObjects ) {
+			addGameObjectToMenu(stage, object, x, y);
+			y -= delta;
 		}
 	}
 
@@ -744,14 +728,9 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	public void onTap(Button button) {
 		if( button instanceof MenuButton ) {
 			if( this.mainMenu == null ) {
-				setupMainMenu();
-				if( this.menuPosition == MenuPosition.TOP ) {
-					this.mainMenu.setPosition(button.getX(), 
-							button.getY() - this.mainMenu.getHeight());
-				} else {
-					this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
-							button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
-				}
+				createMainMenu();
+				this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
+						button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
 			}
 
 			if( this.mainMenu.isVisible() ) {
