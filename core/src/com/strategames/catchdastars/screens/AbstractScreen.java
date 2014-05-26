@@ -41,27 +41,19 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	{
 		this.game = game;
 
-		this.stageActors = new Stage();
-		this.stageUIActors = new Stage();
-
 		Vector3 worldSize = this.game.getWorldSize(); 
 
 		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
 		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
 		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
 		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
-//		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
-//		this.stageUIActors.setViewport(viewport);
+		Viewport viewport = new FillViewport(this.screenWidth, this.screenHeight, this.menuCamera);
+		this.stageUIActors = new Stage(viewport);
 		
 		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
 		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, worldSize.z);
-		Viewport viewport = new FillViewport(worldSize.x, worldSize.y, this.gameCamera);
-		this.stageActors.setViewport(viewport);
-	
-//		Gdx.app.log("AbstractScreen", "AbstractScreen: stageUIActors.getWidth="+stageUIActors.getWidth()+", stageUIActors.getHeight()="
-//				+stageUIActors.getHeight());
-//		Gdx.app.log("AbstractScreen", "AbstractScreen: stageActors.getWidth="+stageActors.getWidth()+", stageActors.getHeight()="
-//				+stageActors.getHeight());
+		viewport = new FillViewport(worldSize.x, worldSize.y, this.gameCamera);
+		this.stageActors = new Stage(viewport);
 		
 		Gdx.input.setCatchBackKey(true);
 

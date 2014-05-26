@@ -186,7 +186,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -210,7 +210,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
 		super.stageActors.screenToStageCoordinates(touchPosition);
 		Actor actor = super.stageActors.hit(touchPosition.x, touchPosition.y, false);
-
+//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
+		
 		tap.setActor(actor);
 		this.actorTouched = actor;
 
