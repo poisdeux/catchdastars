@@ -253,8 +253,8 @@ public class Icecube extends GameObject {
 
 	@Override
 	void readValue(JsonValue jsonData) {
-		if( jsonData.child().name().contentEquals("parts") && 
-				(jsonData.child().asString()).contentEquals("all") ) {
+		if( jsonData.name().contentEquals("parts") && 
+				(jsonData.asString()).contentEquals("all") ) {
 			//Initial object contains all parts
 			for( Part part : availableParts ) {
 				addPart(part);

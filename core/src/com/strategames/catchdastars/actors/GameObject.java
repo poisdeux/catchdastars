@@ -2,6 +2,7 @@ package com.strategames.catchdastars.actors;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -49,23 +50,23 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isDeleted;
 	protected boolean isHit;
 	protected boolean isCollectible;
-	
+
 	protected Vector2 initialPosition; 
-	
+
 	private boolean isMenuItem;
-	
+
 	protected Game game;
-	
+
 	protected Vector2 size;
-	
+
 	private boolean saveToFile = true;
-	
+
 	public static enum Type {
 		WALL, BALLOON, STAR, ROCK
 	}
-	
+
 	public Type type;
-	
+
 	/**
 	 * Constructor for creating a game object
 	 * @param size in meters. size.x = width, size.y = height. If size.y < 0 height of the game object is calculated using size.x and image size. 
@@ -74,7 +75,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.size = size;
 		init();
 	}
-	
+
 	public GameObject(Game game) {
 		setGame(game);
 		init();
@@ -92,18 +93,18 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.type = setType();
 		this.initialPosition = new Vector2();
 	}
-	
+
 	public Game getGame() {
 		return game;
 	}
-	
+
 	public void setGame(Game game) {
 		this.game = game;
 		if( game != null ) {
 			this.world = game.getWorld();
 		}
 	}
-	
+
 	/**
 	 * Set to false to prevent saving this game object
 	 * to a level file
@@ -112,35 +113,35 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setSaveToFile(boolean save) {
 		this.saveToFile = save;
 	}
-	
+
 	public boolean getSaveToFile() {
 		return this.saveToFile;
 	}
-	
+
 	public Type getType() {
 		return type;
 	}
-	
+
 	public float getHalfHeight() {
 		return halfHeight;
 	}
-	
+
 	public float getHalfWidth() {
 		return halfWidth;
 	}
-	
+
 	@Override
 	public void setHeight(float height) {
 		super.setHeight(height);
 		this.halfHeight = height/2f;
 	}
-	
+
 	@Override
 	public void setWidth(float width) {
 		super.setWidth(width);
 		this.halfWidth = width/2f;
 	}
-	
+
 	/**
 	 * Specify this gameobject as menu item
 	 * @param isMenuItem true if object is part of a menu
@@ -148,19 +149,19 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setMenuItem(boolean isMenuItem) {
 		this.isMenuItem = isMenuItem;
 	}
-	
+
 	public boolean isMenuItem() {
 		return isMenuItem;
 	}
-	
+
 	public Vector2 getInitialPosition() {
 		return initialPosition;
 	}
-	
+
 	public void setInitialPosition(Vector2 initialPosition) {
 		this.initialPosition = initialPosition;
 	}
-	
+
 	public void setWorld(World world) {
 		this.world = world;
 	}
@@ -172,7 +173,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setCollectible(boolean isCollectible) {
 		this.isCollectible = isCollectible;
 	}
-	
+
 	/**
 	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
 	 * not running.
@@ -182,18 +183,18 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		if(this.world.isLocked()) {
 			return false;
 		}
-		
+
 		if( this.body != null ) {
 			this.world.destroyBody(this.body);
 			this.body = null;
 		}
 		return true;
 	}
-	
+
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-	
+
 	public void setBody(Body body) {
 		this.body = body;
 	}
@@ -206,7 +207,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.configurationItems;
 	}
 
-	
+
 	/**
 	 * Setup the image and body for this game object. 
 	 * <br/>
@@ -229,7 +230,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			this.body = setupBox2D();
 			this.body.setUserData(this);
 		}
-		
+
 		this.isDeleted = false;
 		this.isHit = false;
 	}
@@ -250,7 +251,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public Rectangle getBoundingRectangle() {
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
-	
+
 	public void drawBoundingBox(SpriteBatch batch) {
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Line);
@@ -260,7 +261,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.end();
 		batch.begin();
 	}
-	
+
 	public void drawBodyCenterMass(SpriteBatch batch, Color color) {
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Point);
@@ -270,7 +271,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.end();
 		batch.begin();
 	}
-	
+
 	public void drawBodyPosition(SpriteBatch batch, Color color) {
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Point);
@@ -280,7 +281,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.end();
 		batch.begin();
 	}
-	
+
 	/**
 	 * Called to create the image for the game object
 	 */
@@ -309,7 +310,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	@Override
 	public void write(Json json) {
 		json.writeObjectStart(this.getClass().getSimpleName());
-		
+
 		Vector2 position = new Vector2();
 		if( this.body != null ) {
 			position = this.body.getPosition();
@@ -317,10 +318,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			position.x = getX();
 			position.y = getY();
 		}
-		
+
 		json.writeValue("x", position.x);
 		json.writeValue("y", position.y);
-		
+
 		writeValues(json);
 		json.writeObjectEnd();
 	}
@@ -339,22 +340,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract void readValue(JsonValue jsonData);
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void read(Json json, JsonValue jsonData) {
-		String name = jsonData.child.name();
-		
-			if ( name.contentEquals("x")) {
-				float value = jsonData.child().asFloat();
-				setX(value);
-				this.initialPosition.x = value;
-			} else if ( name.contentEquals("y")) {
-				float value = jsonData.child().asFloat();
-				setY(value);
-				this.initialPosition.y = value;
-			} else {
-				readValue(jsonData);
+		for (JsonValue entry = jsonData.child; entry != null; entry = entry.next) {
+			Gdx.app.log("GameObject", "read: entry: "+entry.name + " = " + entry);
+			for(JsonValue element = entry.child; element != null; element = element.next) {
+				Gdx.app.log("GameObject", "read: element: "+element.name + " = " + element);
+				String name = element.name;
+				if ( name.contentEquals("x")) {
+					float value = element.asFloat();
+					setX(value);
+					this.initialPosition.x = value;
+				} else if ( name.contentEquals("y")) {
+					float value = element.asFloat();
+					setY(value);
+					this.initialPosition.y = value;
+				} else {
+					readValue(element);
+				}
 			}
+		}
 	}
 
 	abstract public GameObject createCopy();
@@ -380,27 +385,27 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Should decrease the size of the game object one step
 	 */
 	abstract public void decreaseSize();
-	
+
 	/**
 	 * Called when object must be removed from game
 	 * <br/>
 	 * This should start any remove animation and set object to deleted afterwards using {@link #setDeleted(boolean)}
 	 */
 	abstract public void destroy();
-	
+
 	/**
 	 * Depending on the game engine this gets called when object collides with another object
 	 * @param gameObject object that collided
 	 */
 	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
 
-	
+
 	/**
 	 * Called when object is created and should return the {@linkplain #type} of this object
 	 * @return Type the generic game object type 
 	 */
 	abstract protected Type setType();
-	
+
 	@Override
 	public String toString() {
 		String message = super.toString();

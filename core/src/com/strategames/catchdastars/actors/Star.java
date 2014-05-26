@@ -83,11 +83,11 @@ public class Star extends GameObject {
 	
 	@Override
 	void readValue(JsonValue jsonData) {
-		String name = jsonData.child().name();
+		String name = jsonData.name();
 		if( name.contentEquals("type")) {
-			this.colorType = ColorType.valueOf(jsonData.child().asString());
+			this.colorType = ColorType.valueOf(jsonData.asString());
 		} else if( name.contentEquals("rotationSpeed")) {
-			this.rotationSpeed = jsonData.child().asFloat();
+			this.rotationSpeed = jsonData.asFloat();
 		}
 	}
 	

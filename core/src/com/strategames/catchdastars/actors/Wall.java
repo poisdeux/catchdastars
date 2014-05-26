@@ -174,11 +174,11 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	void readValue(JsonValue jsonData) {
-		String name = jsonData.child().name();
+		String name = jsonData.name();
 		if( name.contentEquals("type")) {
-			this.orientation = Orientation.valueOf(jsonData.child().asString());
+			this.orientation = Orientation.valueOf(jsonData.asString());
 		} else if( name.contentEquals("length")) {
-			this.length = jsonData.child().asFloat();
+			this.length = jsonData.asFloat();
 		}
 	}
 

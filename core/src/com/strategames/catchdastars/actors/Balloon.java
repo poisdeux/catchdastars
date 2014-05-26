@@ -165,11 +165,11 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	void readValue(JsonValue jsonData) {
-		String name = jsonData.child().name();
+		String name = jsonData.name();
 		if( name.contentEquals("type")) {
-			setColorType(ColorType.valueOf(jsonData.child().asString()));
+			setColorType(ColorType.valueOf(jsonData.asString()));
 		} else if( name.contentEquals("liftfactor")) {
-			setLiftFactor(Float.valueOf(jsonData.child().asFloat()));
+			setLiftFactor(Float.valueOf(jsonData.asFloat()));
 		}
 	}
 
