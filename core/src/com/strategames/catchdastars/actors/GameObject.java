@@ -343,9 +343,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	@Override
 	public void read(Json json, JsonValue jsonData) {
 		for (JsonValue entry = jsonData.child; entry != null; entry = entry.next) {
-			Gdx.app.log("GameObject", "read: entry: "+entry.name + " = " + entry);
 			for(JsonValue element = entry.child; element != null; element = element.next) {
-				Gdx.app.log("GameObject", "read: element: "+element.name + " = " + element);
 				String name = element.name;
 				if ( name.contentEquals("x")) {
 					float value = element.asFloat();
