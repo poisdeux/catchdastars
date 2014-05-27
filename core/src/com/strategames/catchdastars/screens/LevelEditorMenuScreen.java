@@ -5,16 +5,13 @@ import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
@@ -24,6 +21,8 @@ import com.strategames.catchdastars.utils.LevelWriter;
 import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.WheelSpinnerDialog;
 import com.strategames.ui.widgets.TextButton;
@@ -158,12 +157,14 @@ implements ButtonListener, OnLevelsReceivedListener {
 			return;
 		}
 
+		final Color currentColor = button.getColor().cpy();
 		final Level level = (Level) tag;
-		ButtonsDialog dialog = new ButtonsDialog(stageUIActors, "Choose action", skin, ButtonsDialog.ORIENTATION.HORIZONTAL);
+		final ButtonsDialog dialog = new ButtonsDialog(stageUIActors, "Choose action", skin, ButtonsDialog.ORIENTATION.VERTICAL);
 		dialog.add("Delete level", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				deleteLevel(level);
+				dialog.remove();
 			}
 		});
 
@@ -171,6 +172,8 @@ implements ButtonListener, OnLevelsReceivedListener {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				changeLevelName(level, (TextButton) button);
+				dialog.remove();
+				button.setColor(currentColor);
 			}
 		});
 
@@ -178,18 +181,27 @@ implements ButtonListener, OnLevelsReceivedListener {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				changeLevelNumber(level);
+				dialog.remove();
+				button.setColor(currentColor);
 			}
 		});
 		
-		final ButtonsDialog fDialog = dialog;
-		dialog.add("Cancel", new ClickListener() {
+		dialog.setNegativeButton("Close", new OnClickListener() {
+			
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				fDialog.remove();
+			public void onClick(Dialog dialog, int which) {
+				dialog.remove();
+				button.setColor(currentColor);
 			}
 		});
 
 		dialog.create();
+		
+		dialog.setPosition(button.getX(), button.getY());
+		
+		Color color = button.getColor();
+		color.g = 100f;
+		button.setColor(color);
 		dialog.show();
 	}
 
