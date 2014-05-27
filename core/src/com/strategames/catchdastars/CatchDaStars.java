@@ -52,6 +52,8 @@ public class CatchDaStars extends Game {
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
 
+	private int totalScore;
+	
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
 
@@ -137,12 +139,22 @@ public class CatchDaStars extends Game {
 		darkenActors(1f);
 	}
 
+	private int calculateScore() {
+		int blueCollectablesScore = this.amountOfBlueBalloons * this.blueCollectables.getCollected() * this.scorePerBlueStar;
+		int redCollectablesScore = this.amountOfRedBalloons * this.redCollectables.getCollected() * this.scorePerRedStar;
+		int goldCollectablesScore = this.goldCollectables.getCollected() * this.scorePerGoldStar;
+		int blueBalloonsScore = this.amountOfBlueBalloons * this.scorePerBalloon;
+		int redBalloonsScore = this.amountOfRedBalloons * this.scorePerBalloon;
+		return blueCollectablesScore + redCollectablesScore + goldCollectablesScore +
+				blueBalloonsScore + redBalloonsScore;
+	}
+	
 	private void showLevelCompleteDialog() {
 		darkenActors(0.4f);
 
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
 		
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), 0);
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), this.totalScore);
 
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
@@ -154,6 +166,7 @@ public class CatchDaStars extends Game {
 		
 		levelCompleteDialog.show();
 		
+		this.totalScore += calculateScore();
 	}
 
 	private void showLevelFailedDialog() {

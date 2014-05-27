@@ -1,7 +1,5 @@
 package com.strategames.catchdastars;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
 
