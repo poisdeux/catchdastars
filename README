@@ -1,0 +1,15 @@
+1. Install gradle plugin for eclipse. See for info
+    https://github.com/spring-projects/eclipse-integration-gradle/
+
+2. Import gradle project and select this directory
+
+3. Click on build model. You might need to edit local.properties to
+   make sdk.dir point to the correct location for the Android SDK
+
+4. Add google play services as Android project from existing source
+
+5. To run desktop version you may need to edit the run configurations and
+   make sure it runs as Java application
+
+6. To run android version you may need to fix library location to google
+   play services
