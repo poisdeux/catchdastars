@@ -88,8 +88,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	private void init() {
 		setName(getClass().getSimpleName());
-		this.shapeRenderer = new ShapeRenderer();
-		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
 		this.type = setType();
 		this.initialPosition = new Vector2();
 	}
@@ -252,7 +250,21 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 
+	/**
+	 * Sets up the shapeRenderes used by {@link GameObject#drawBodyCenterMass(SpriteBatch, Color)}, 
+	 * <br/>{@link GameObject#drawBodyPosition(SpriteBatch, Color)}, and {@link GameObject#drawBoundingBox(SpriteBatch)}
+	 * <br/>You need to run this before using any of the above methods
+	 */
+	public void enableDebugMode() {
+		this.shapeRenderer = new ShapeRenderer();
+		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
+	}
+	
 	public void drawBoundingBox(SpriteBatch batch) {
+		if( this.shapeRenderer == null ) {
+			Gdx.app.log("GameObject", "Run enableDebugMode() on gameobject before using drawBoundingBox(...)"); 
+			return;
+		}
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Line);
 		this.shapeRenderer.setColor(1f, 1f, 1f, 0.5f);
@@ -263,6 +275,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	public void drawBodyCenterMass(SpriteBatch batch, Color color) {
+		if( this.shapeRenderer == null ) {
+			Gdx.app.log("GameObject", "Run enableDebugMode() on gameobject before using drawBodyCenterMass(...)");
+			return;
+		}
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Point);
 		this.shapeRenderer.setColor(color);
@@ -273,6 +289,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	public void drawBodyPosition(SpriteBatch batch, Color color) {
+		if( this.shapeRenderer == null ) {
+			Gdx.app.log("GameObject", "Run enableDebugMode() on gameobject before using drawBodyPosition(...)");
+			return;
+		}
 		batch.end();
 		this.shapeRenderer.begin(ShapeType.Point);
 		this.shapeRenderer.setColor(color);

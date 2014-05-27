@@ -30,6 +30,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 		this.game = game;
 		gameLoaded = false;
 		game.loadLevelAsync(this);
+//		game.loadLevel();
 	}
 
 	@Override

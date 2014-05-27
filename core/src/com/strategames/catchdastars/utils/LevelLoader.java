@@ -90,6 +90,7 @@ public class LevelLoader {
 			public void run() {
 				Json json = new Json();
 				String text = file.readString();
+				Gdx.app.log("LevelLoader", "loadAsync: text="+text);
 				Object root =  json.fromJson(Level.class, text);
 				if( levelLoadedListener != null ) {
 					levelLoadedListener.onLevelLoaded((Level) root);
