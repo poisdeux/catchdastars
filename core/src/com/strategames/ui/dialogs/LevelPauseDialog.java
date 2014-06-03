@@ -19,7 +19,7 @@ public class LevelPauseDialog extends Dialog {
 	private Game game;
 	
 	public LevelPauseDialog(Stage stage, Game game, Skin skin) {
-		super(stage, "", skin);
+		super(stage, skin);
 		this.skin = skin;
 		this.game = game;
 	}

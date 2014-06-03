@@ -15,7 +15,7 @@ public class LevelEditorOptionsDialog extends Dialog {
 	private Dialog.OnClickListener listener;
 	
 	public LevelEditorOptionsDialog(Stage stage, Skin skin, LevelEditorPreferences preferences, Dialog.OnClickListener listener) {
-		super(stage, "Options", skin);
+		super(stage, skin);
 		this.preferences = preferences;
 		this.listener = listener;
 	}

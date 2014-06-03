@@ -63,7 +63,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	 * @param currentScore the total score minus the score of the completed level
 	 */
 	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
-		super(stage, "", skin);
+		super(stage, skin);
 		this.stage = stage;
 		this.skin = skin;
 		this.game = game;

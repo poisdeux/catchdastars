@@ -36,12 +36,12 @@ implements ButtonListener, OnLevelsReceivedListener {
 	private int lastLevelNumber;
 	private Table table;
 	private Levels levels;
-	
+
 	public LevelEditorMenuScreen(Game game) {
 		super(game);
 
 		this.skin = getSkin();
-		
+
 		this.levels = new Levels(); 
 		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
 	}
@@ -54,7 +54,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 		this.table.row();
 
 		this.levelButtonsTable = new Table(skin);
-		
+
 		fillLevelButtonsTable(this.levels.getLevels());
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
@@ -180,14 +180,32 @@ implements ButtonListener, OnLevelsReceivedListener {
 		dialog.add("Change level number", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				changeLevelNumber(level);
+				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
+				levelNumberDialog.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						dialog.remove();
+						reorderLevels(level, which);
+						button.setColor(currentColor);
+					}
+				});
+				levelNumberDialog.setNegativeButton("Cancel", new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						dialog.remove();
+						button.setColor(currentColor);
+					}
+				});
+				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
+				levelNumberDialog.show();
 				dialog.remove();
-				button.setColor(currentColor);
 			}
 		});
-		
+
 		dialog.setNegativeButton("Close", new OnClickListener() {
-			
+
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				dialog.remove();
@@ -196,9 +214,9 @@ implements ButtonListener, OnLevelsReceivedListener {
 		});
 
 		dialog.create();
-		
+
 		dialog.setPosition(button.getX(), button.getY());
-		
+
 		Color color = button.getColor();
 		color.g = 100f;
 		button.setColor(color);
@@ -228,20 +246,21 @@ implements ButtonListener, OnLevelsReceivedListener {
 		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
-	private void changeLevelNumber(final Level level) {
-		String[] levelNumbers = new String[this.lastLevelNumber + 1];
-		for(int i = 0; i < this.lastLevelNumber; i++) {
-			levelNumbers[i] = String.valueOf(i);
+	private WheelSpinnerDialog createChangeLevelNumberDialog(int levelNumber) {
+		String[] levelNumbers = new String[this.lastLevelNumber - 1];
+		int index = 0;
+		for(int i = 1; i <= this.lastLevelNumber; i++) {
+			if( levelNumber != i) {
+				levelNumbers[index++] = String.valueOf(i);
+			}
 		}
-		
-		Gdx.app.log("LevelEditorMenuScreen", "levelNumbers="+levelNumbers+", getSkin()="+this.skin+
-				", level="+level);
+
 		WheelSpinnerDialog spinner = new WheelSpinnerDialog("Select a number", levelNumbers, 
 				getStageUIElements(), this.skin);
 		spinner.create();
-		spinner.show();
+		return spinner;
 	}
-	
+
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level number and name.
 	 */
@@ -315,5 +334,24 @@ implements ButtonListener, OnLevelsReceivedListener {
 			dialog.create();
 			dialog.show();
 		}
+	}
+
+	private void reorderLevels(Level level, int number) {
+		/**
+		 * Special case if level is moved to the end
+		 * of the sequence
+		 */
+		if( number == this.lastLevelNumber ) {
+			level.setLevelNumber(number+1);
+		} else {
+			for( Level l : this.levels.getLevels() ) {
+				if( l.getLevelNumber() >= number ) {
+					l.setLevelNumber(l.getLevelNumber() + 1);
+				}
+			}
+			level.setLevelNumber(number);
+		}
+		this.levels.renumberLevels();
+		fillLevelButtonsTable(this.levels.getLevels());
 	}
 }

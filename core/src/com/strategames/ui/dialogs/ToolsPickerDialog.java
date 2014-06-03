@@ -13,7 +13,7 @@ public class ToolsPickerDialog extends Dialog {
 	private final Game game;
 	
 	public ToolsPickerDialog(Stage stage, Game game, Skin skin) {
-		super(stage, "Select a tool", skin);
+		super(stage, skin);
 		this.skin = skin;
 		this.game = game;
 	}

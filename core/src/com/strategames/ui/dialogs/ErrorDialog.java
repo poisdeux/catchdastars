@@ -12,7 +12,7 @@ public class ErrorDialog extends Dialog {
 	 * @param skin
 	 */
 	public ErrorDialog(Stage stage, String title, Skin skin) {
-		super(stage, title, skin);
+		super(stage, skin);
 		setPositiveButton("Close", new OnClickListener() {
 			
 			@Override
