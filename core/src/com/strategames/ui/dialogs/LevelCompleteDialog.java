@@ -1,6 +1,5 @@
 package com.strategames.ui.dialogs;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,17 +23,11 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.ChalkLine;
 import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
-import com.strategames.catchdastars.screens.LevelScreen;
-import com.strategames.catchdastars.screens.LoadingScreen;
-import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
-import com.strategames.interfaces.ButtonListener;
-import com.strategames.ui.widgets.TextButton;
 
-public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationListener {
-	private Skin skin;
-	private Game game;
+public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
+	
 	private ArrayList<ScoreItem> scoreItems;
 	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
@@ -45,7 +37,6 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	private int count;
 	private int delay = 10;
 	private int delayCount;
-	private Stage stage;
 	private int totalScore;
 	private Label totalScoreLabel;
 	private Table cashRegister;
@@ -63,10 +54,7 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	 * @param currentScore the total score minus the score of the completed level
 	 */
 	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
-		super(stage, skin);
-		this.stage = stage;
-		this.skin = skin;
-		this.game = game;
+		super("Level complete", States.COMPLETE, stage, skin);
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
 		this.animPosition = new Vector2();
 		this.totalScore = currentScore;
@@ -90,71 +78,15 @@ public class LevelCompleteDialog extends Dialog implements ChalkLineAnimationLis
 	public void create() {
 		this.animationPhase = -1;
 		
-		setupUI();
-		animationController();
-		
-		super.create();
-	}
-	
-	private void measure() {
 		int amountOfItems = this.scoreItems.size();
 		float availableScreenHeight = this.stage.getHeight() - (this.padding * (amountOfItems + 2));
 		float height = availableScreenHeight / (amountOfItems + 2);
 		
 		this.maxImageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
-	}
-	
-	private void setupUI() {
-		measure();
 		
-		final Table table = new Table();
-		table.setFillParent(true);
-		table.bottom();
-
-		TextButton mainMenuButton = new TextButton("Main menu", skin);
-		mainMenuButton.setListener(new ButtonListener() {
-
-			@Override
-			public void onTap(Button button) {
-				game.setScreen(new MainMenuScreen(game));
-			}
-
-			@Override
-			public void onLongPress(Button button) {
-
-			}
-		});
-		mainMenuButton.getColor().a = 0f;
-		mainMenuButton.addAction( sequence( fadeIn( 0.25f ) ) );
-		table.add(mainMenuButton).expandX().fillX().left();
+		animationController();
 		
-		TextButton nextLevelButton = new TextButton("Next level", skin);
-		nextLevelButton.setListener(new ButtonListener() {
-
-			@Override
-			public void onTap(Button button) {
-				LevelScreen screen = new LevelScreen(game);
-				game.setScreen(new LoadingScreen(screen, game, game.getLevelNumber() + 1));
-			}
-
-			@Override
-			public void onLongPress(Button button) {
-
-			}
-		});
-		
-//		if( nextLevel == null ) {
-//			nextLevelButton.setDisabled(true);
-//		}
-		
-		nextLevelButton.getColor().a = 0f;
-		nextLevelButton.addAction( sequence( fadeIn( 0.25f ) ) );
-
-		table.add(nextLevelButton).expandX().fillX().right();
-
-		this.stage.addActor(table);
-		
-//		Gdx.input.setInputProcessor(stage);
+		super.create();
 	}
 
 	private void animationController() {

@@ -29,8 +29,8 @@ public class LoadingScreen extends AbstractScreen {
 	 * @param game
 	 * @param levelNumber
 	 */
-	public LoadingScreen(Screen screenToLoad, Game game, int levelNumber) {
-		super(game);
+	public LoadingScreen(AbstractScreen previousScreen, Screen screenToLoad, Game game, int levelNumber) {
+		super(previousScreen, game);
 
 		this.screenToLoad = screenToLoad;
 		

@@ -37,8 +37,8 @@ implements ButtonListener, OnLevelsReceivedListener {
 	private Table table;
 	private Levels levels;
 
-	public LevelEditorMenuScreen(Game game) {
-		super(game);
+	public LevelEditorMenuScreen(AbstractScreen previousScreen, Game game) {
+		super(previousScreen, game);
 
 		this.skin = getSkin();
 
@@ -115,7 +115,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 		mainMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new MainMenuScreen(getGame()));
+				getGame().setScreen(new MainMenuScreen(LevelEditorMenuScreen.this, getGame()));
 			}
 		});
 		this.table.add( mainMenu ).fillX().expand().bottom();
@@ -141,7 +141,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 			return;
 		}
 		Game game = getGame();
-		LoadingScreen screen = new LoadingScreen(new LevelEditorScreen(game), game, ((Level) tag).getLevelNumber());
+		LoadingScreen screen = new LoadingScreen(LevelEditorMenuScreen.this, new LevelEditorScreen(LevelEditorMenuScreen.this, game), game, ((Level) tag).getLevelNumber());
 		game.setScreen(screen);
 	}
 
@@ -288,7 +288,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 
 	@Override
 	protected boolean handleBackNavigation() {
-		getGame().setScreen(new MainMenuScreen(getGame()));
+		getGame().setScreen(new MainMenuScreen(LevelEditorMenuScreen.this, getGame()));
 		return true;
 	}
 

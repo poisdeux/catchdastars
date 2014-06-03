@@ -28,7 +28,7 @@ import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
-import com.strategames.ui.dialogs.LevelFailDialog;
+import com.strategames.ui.dialogs.LevelFailedDialog;
 
 public class CatchDaStars extends Game {
 	private Vector2 gravityVector;
@@ -115,11 +115,11 @@ public class CatchDaStars extends Game {
 		initLevel();
 	}
 
-	@Override
-	public void stopGame() {
-		super.stopGame();
-		darkenActors(0.5f);
-	}
+//	@Override
+//	public void stopGame() {
+//		super.stopGame();
+//		darkenActors(0.5f);
+//	}
 	
 	@Override
 	public void pauseGame() {
@@ -172,7 +172,7 @@ public class CatchDaStars extends Game {
 	private void showLevelFailedDialog() {
 		AbstractScreen screen = (AbstractScreen) getScreen();
 		
-		LevelFailDialog dialog = new LevelFailDialog(screen.getStageUIElements(), this, screen.getSkin());
+		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIElements(), screen.getSkin());
 		dialog.create();
 		dialog.show();
 	}
@@ -330,12 +330,12 @@ public class CatchDaStars extends Game {
 
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
-			stopGame();
+			pauseGame();
 			showLevelFailedDialog();
 		}
 
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
-			stopGame();
+			pauseGame();
 			showLevelFailedDialog();
 		}
 
@@ -343,7 +343,7 @@ public class CatchDaStars extends Game {
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
-			stopGame();
+			pauseGame();
 			showLevelCompleteDialog();
 		}
 	}

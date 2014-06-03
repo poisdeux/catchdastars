@@ -20,8 +20,7 @@ public class WheelSpinnerDialog extends Dialog {
 	private String[] items;
 	private Skin skin;
 	private String title;
-	private OnClickListener listener;
-	
+
 	public WheelSpinnerDialog(String title, String[] items, Stage stage, Skin skin) {
 		super(stage, skin);
 		this.stage = stage;
@@ -32,48 +31,47 @@ public class WheelSpinnerDialog extends Dialog {
 		setWidth(150);
 		setHeight(200);
 	}
-	
-	public void setOnClickListener(OnClickListener listener) {
-		this.listener = listener;
-	}
-	
+
 	public void create() {
-		
+
 		if( this.title != null ) {
 			Label label = new Label(this.title, this.skin);
 			add(label).top();
 			row();
 		}
-		
+
 		Table buttonTable = new Table(this.skin);
 		for(int i = 0; i < items.length; i++) {
 			final TextButton button = new TextButton(items[i], this.skin);
 			button.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					listener.onClick(WheelSpinnerDialog.this, Integer.parseInt(button.getText().toString()));
+					OnClickListener listener = getOnClickListener();
+					if( listener != null ) {
+						getOnClickListener().onClick(WheelSpinnerDialog.this, Integer.parseInt(button.getText().toString()));
+					}
 				}
 			});
 			buttonTable.add(button).width(50);
 			buttonTable.row();
 		}
-		
+
 		ScrollPane scrollPane = new ScrollPane(buttonTable, this.skin);
 		add(scrollPane).maxHeight(150);
 		row();
-		
+
 		super.create();
 	}
-	
+
 	public void show() {
 		setVisible(true);
 		this.stage.addActor(this);
 	}
-	
+
 	public void hide() {
 		setVisible(false);
 		remove();
 	}
-	
-	
+
+
 }

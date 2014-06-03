@@ -3,6 +3,8 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import sun.security.action.GetLongAction;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -111,8 +113,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private Tap tap = new Tap();
 
-	public LevelEditorScreen(Game game) {
-		super(game);
+	public LevelEditorScreen(AbstractScreen previousScreen, Game game) {
+		super(previousScreen, game);
 		//		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
 
 		this.game = game;
@@ -170,7 +172,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	@Override
 	protected boolean handleBackNavigation() {
 		saveLevel();
-		getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+		getGame().setScreen(getPreviousScreen());
 		return true;
 	}
 
@@ -597,7 +599,9 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				showToolsDialog();
+				ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
+				dialog.create();
+				dialog.setPosition(mainMenu.getX(), mainMenu.getY());
 				mainMenu.hide();
 			}
 		});
@@ -605,11 +609,22 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		this.mainMenu.add("Options", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				showOptionsDialog();
+				LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), preferences, LevelEditorScreen.this);
+				dialog.create();
+				dialog.setPosition(mainMenu.getX(), mainMenu.getY());
 				mainMenu.hide();
 			}
 		});
 
+		this.mainMenu.add("Play level", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				saveLevel();
+				game.setScreen(new LevelScreen(LevelEditorScreen.this, game));
+				mainMenu.hide();
+			}
+		});
+		
 		this.mainMenu.setPositiveButton("Save", new OnClickListener() {
 
 			@Override
@@ -624,26 +639,14 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
 				mainMenu.hide();
-				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+				getGame().setScreen(getPreviousScreen());
 			}
 		});
 
 		this.mainMenu.create();
 	}
 
-	private void showToolsDialog() {
-		ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
-		dialog.create();
-		dialog.show();
-	}
-
-	private void showOptionsDialog() {
-		LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), this.preferences, this);
-		dialog.create();
-		dialog.show();
-	}
-
-	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
+	private Dialog showGameObjectCongfigurationDialog(GameObject gameObject) {
 		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(stageUIActors, gameObject, getSkin());
 		dialog.addButton("Copy " + gameObject.getName(), new OnClickListener() {
 
@@ -674,14 +677,10 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			}
 		});
 		dialog.create();
-		dialog.show();
+		return dialog;
 	}
 
 	private void setupMenu(Stage stage) {
-		MenuButton menuButton = new MenuButton();
-		menuButton.setListener(this);
-		super.stageUIActors.addActor(menuButton);
-
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 
 		Vector3 worldSize = this.game.getWorldSize();
@@ -694,11 +693,14 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 		float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 		float y = worldSize.y - Wall.HEIGHT;
 
+		Vector3 screenCoords =  stage.getCamera().project(new Vector3(x, Wall.HEIGHT, 0f));
+		Vector3 stageUICoords = stageUIActors.getCamera().unproject(screenCoords);
 		//Add menu button
-		Vector2 stageUICoords = stageActors.stageToScreenCoordinates(new Vector2(x,y));
-		stageUIActors.screenToStageCoordinates(stageUICoords);
+		MenuButton menuButton = new MenuButton();
+		menuButton.setListener(this);
 		menuButton.setPosition(stageUICoords.x, stageUICoords.y);
-
+		stageUIActors.addActor(menuButton);
+		
 		y-=delta;
 
 		for(GameObject object : gameObjects ) {

@@ -34,13 +34,16 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected float screenHeight;
 	protected float screenWidth;
 	
+	private AbstractScreen previousScreen;
+	
 	private OrthographicCamera menuCamera;
 	private OrthographicCamera gameCamera;
 	
-	public AbstractScreen(Game game)
+	public AbstractScreen(AbstractScreen previousScreen, Game game)
 	{
 		this.game = game;
-
+		this.previousScreen = previousScreen;
+		
 		Vector3 worldSize = this.game.getWorldSize(); 
 
 		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
@@ -120,6 +123,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	
 	public float getScreenHeight() {
 		return screenHeight;
+	}
+	
+	public void setPreviousScreen(AbstractScreen previousScreen) {
+		this.previousScreen = previousScreen;
+	}
+	
+	public AbstractScreen getPreviousScreen() {
+		return previousScreen;
 	}
 	
 	@Override

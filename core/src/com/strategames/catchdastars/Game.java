@@ -3,6 +3,7 @@ package com.strategames.catchdastars;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector3;
@@ -25,8 +26,7 @@ import com.strategames.catchdastars.utils.Textures;
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
-	public final int GAME_STATE_STOP = 2;
-	private int gameState = GAME_STATE_STOP;
+	private int gameState = GAME_STATE_PAUSED;
 	
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
@@ -71,9 +71,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	@Override
 	public void create() {
-		setScreen(new SplashScreen(this));
+		setScreen(new SplashScreen(null, this));
 	}
-
+	
 	@Override
 	public void resume() {
 		super.resume();
@@ -109,16 +109,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		this.gameState = GAME_STATE_RUNNING;
 	}
 	
-	public void stopGame() {
-		this.gameState = GAME_STATE_STOP;
-	}
-	
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE_RUNNING;
-	}
-	
-	public boolean isStopped() {
-		return this.gameState == GAME_STATE_STOP;
 	}
 	
 	public boolean isPaused() {
@@ -369,7 +361,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * Resets the game by reloading the level
 	 */
 	public void reset() {
-		setScreen( new LevelScreen(this) );
+		AbstractScreen prev = ((AbstractScreen) getScreen()).getPreviousScreen();
+		setScreen( new LevelScreen(prev, this) );
 	}
 	
 	/**

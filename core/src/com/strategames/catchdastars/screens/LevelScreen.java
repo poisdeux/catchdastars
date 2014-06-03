@@ -4,8 +4,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -15,22 +13,26 @@ import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.Game.GameLoadedListener;
 import com.strategames.catchdastars.actors.Text;
 import com.strategames.catchdastars.utils.Animations;
-import com.strategames.ui.dialogs.LevelPauseDialog;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.LevelPausedDialog;
+import com.strategames.ui.dialogs.LevelStateDialog;
+import com.strategames.ui.dialogs.LevelStateDialog.States;
 
 
-public class LevelScreen extends AbstractScreen implements InputProcessor, GameLoadedListener
+public class LevelScreen extends AbstractScreen implements InputProcessor, GameLoadedListener, OnClickListener
 {	
 	private Game game;
 	private Image levelImage;
 	private boolean gameLoaded;
 	private Stage stageActors;
 
-	public LevelScreen(Game game ) {
-		super(game);
+	public LevelScreen(AbstractScreen previousScreen, Game game) {
+		super(previousScreen, game);
 		this.game = game;
 		gameLoaded = false;
 		game.loadLevelAsync(this);
-//		game.loadLevel();
+		//		game.loadLevel();
 	}
 
 	@Override
@@ -95,7 +97,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	@Override
 	protected void setupActors(Stage stage) {
 		this.stageActors = stage;
-		this.game.stopGame();
+		this.game.pauseGame();
 	}
 
 	@Override
@@ -105,20 +107,12 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
-		if( ( keycode == Keys.BACK ) ||
-				( keycode == Keys.ESCAPE ) ) {
-
-		}
-		return false;
-	}
-
-	@Override
 	protected boolean handleBackNavigation() {
 		Game game = getGame();
 		if( ! game.isPaused() ) { // prevent showing multiple dialogs when user keeps pressing back
 			game.pauseGame();
-			LevelPauseDialog dialog = new LevelPauseDialog(super.stageUIActors, game, getSkin());
+			LevelPausedDialog dialog = new LevelPausedDialog(super.stageUIActors, getSkin());
+			dialog.setOnClickListener(this);
 			dialog.create();
 			dialog.show();
 		}
@@ -128,5 +122,28 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	@Override
 	public void onGameLoaded() {
 		this.gameLoaded = true;
+	}
+
+	@Override
+	public void onClick(Dialog dialog, int which) {
+		if( dialog instanceof LevelStateDialog ) {
+			switch( which ) {
+			case LevelStateDialog.LEFT_BUTTON_CLICKED:
+				getGame().setScreen(getPreviousScreen());
+				break;
+			case LevelStateDialog.RIGHT_BUTTON_CLICKED:
+				LevelStateDialog.States state = ((LevelStateDialog) dialog).getState();
+				if( state == States.COMPLETE ) {
+					LevelScreen screen = new LevelScreen(getPreviousScreen(), game);
+					game.setScreen(new LoadingScreen(null, screen, game, game.getLevelNumber() + 1));
+				} else if( state == States.PAUSED ) {
+					game.resume();
+				} else if( state == States.FAILED ) {
+					game.setScreen(this);
+				}
+				break;
+			default:
+			}
+		}
 	}
 }

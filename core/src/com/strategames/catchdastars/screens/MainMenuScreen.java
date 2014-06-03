@@ -11,9 +11,9 @@ import com.strategames.catchdastars.Game;
 
 public class MainMenuScreen extends AbstractScreen {
 
-	public MainMenuScreen(Game game )
+	public MainMenuScreen(AbstractScreen previousScreen, Game game )
 	{
-		super(game);
+		super(previousScreen, game);
 	}
 
 
@@ -31,7 +31,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 			public void clicked(InputEvent event, float x, float y) {
 				game.setLevelNumber(1);
-				game.setScreen(new LevelScreen(game));
+				game.setScreen(new LevelScreen(MainMenuScreen.this, game));
 			}
 		}); 
 
@@ -60,7 +60,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().setScreen(new LevelEditorMenuScreen(getGame()));
+				getGame().setScreen(new LevelEditorMenuScreen(MainMenuScreen.this, getGame()));
 			}
 		} );
 		table.add( button ).uniform().fill().spaceBottom( 10 );

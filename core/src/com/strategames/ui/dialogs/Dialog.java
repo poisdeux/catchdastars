@@ -16,6 +16,8 @@ abstract public class Dialog extends Table {
 		public void onClick(Dialog dialog, int which);
 	}
 	
+	private OnClickListener onClickListener;
+	
 	public static final int BUTTON_NEGATIVE = -2;
 	public static final int BUTTON_NEUTRAL = -3;
 	public static final int BUTTON_POSITIVE = -4;
@@ -40,6 +42,14 @@ abstract public class Dialog extends Table {
 		setStyle(skin.get(DialogStyle.class));
 	}
 
+	public void setOnClickListener(OnClickListener listener) {
+		this.onClickListener = listener;
+	}
+	
+	public OnClickListener getOnClickListener() {
+		return onClickListener;
+	}
+	
 	public void setCenter(boolean center) {
 		this.center = center;
 	}
@@ -121,6 +131,13 @@ abstract public class Dialog extends Table {
 	public void hide() {
 		this.remove();
 		setVisible(false);
+	}
+	
+	protected void notifyListener(int which) {
+		OnClickListener listener = getOnClickListener();
+		if( listener != null ) {
+			listener.onClick(this, which);
+		}
 	}
 	
 	public void setStyle (DialogStyle style) {
