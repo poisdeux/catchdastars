@@ -7,7 +7,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -59,13 +58,11 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 		this.animPosition = new Vector2();
 		this.totalScore = currentScore;
 		this.chalkLines = new ArrayList<ChalkLine>();
+		
+		setLeftButton("Quit");
+		setRightButton("Next level");
 	}
 
-	@Override
-	public void show() {
-		setVisible(true);
-	}
-	
 	public void add(Image image, int amount, int scorePerGameObject) {
 		ScoreItem item = new ScoreItem(image.getDrawable(), amount, scorePerGameObject);
 		this.scoreItems.add(item);
@@ -76,17 +73,18 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 	}
 
 	public void create() {
+		super.create();
+		
 		this.animationPhase = -1;
 		
 		int amountOfItems = this.scoreItems.size();
-		float availableScreenHeight = this.stage.getHeight() - (this.padding * (amountOfItems + 2));
+		float availableScreenHeight = super.stage.getHeight() - (this.padding * (amountOfItems + 2));
 		float height = availableScreenHeight / (amountOfItems + 2);
 		
 		this.maxImageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
 		
-		animationController();
 		
-		super.create();
+		animationController();
 	}
 
 	private void animationController() {
@@ -94,7 +92,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 		switch(this.animationPhase) {
 		case 0:
 			if( scoreItems.size() > 0 ) {
-				this.top = this.stage.getHeight() - (this.maxImageHeight * 2);
+				this.top = super.stage.getHeight() - (this.maxImageHeight * 2);
 				showScoreItem(0);
 			}
 			break;
@@ -105,7 +103,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 					this.animPosition.y, 
 					350f, 
 					this.animPosition.y, 420, LevelCompleteDialog.this);
-			stage.addActor(line);
+			super.stage.addActor(line);
 			Sounds.drawChalkLine.play();
 			this.chalkLines.add(line);
 			break;
@@ -113,7 +111,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			this.animPosition.x = 350f + (this.padding * 2);
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y, 
 					this.animPosition.x + 50f, this.animPosition.y, 220, this);
-			this.stage.addActor(line);
+			super.stage.addActor(line);
 			Sounds.drawChalkLineShort2.play();
 			this.chalkLines.add(line);
 			break;
@@ -121,7 +119,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			this.animPosition.x += 25f;
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y + 25f, 
 					this.animPosition.x, this.animPosition.y - 25f, 210, this);
-			this.stage.addActor(line);
+			super.stage.addActor(line);
 			Sounds.drawChalkLineShort1.play();
 			this.chalkLines.add(line);
 			break;
@@ -197,7 +195,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 				}));
 
 		scoreItem.setActor(scoreItemTable);
-		stage.addActor(scoreItemTable);
+		super.stage.addActor(scoreItemTable);
 	}
 
 	private void showCashRegistry(final float x, final float y) {
@@ -229,7 +227,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 					}
 				}));
 
-		stage.addActor(this.cashRegister);
+		super.stage.addActor(this.cashRegister);
 		
 		Sounds.cashRegisterOpen.play();
 	}
@@ -244,8 +242,6 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			@Override
 			public boolean act(float delta) {
 				int amount = scoreItem.getAmount() * scoreItem.getScorePerGameObject();
-				Gdx.app.log("LevelCompleteDialog", "calculateTotalAnimation: number="+number+
-						", amount="+amount);
 				if( amount > 0 ) {
 					Sounds.getSoundForIncrement(amount).play();
 					totalScore += amount;
@@ -286,14 +282,16 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 	}
 
 	private void showTotalScore() {
-		float x = (this.stage.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
-		float y = (this.stage.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
+		float x = (super.stage.getWidth() / 2f) - (this.cashRegister.getWidth() / 2f);
+		float y = (super.stage.getHeight() / 2f) - (this.cashRegister.getHeight() / 2f);
 		
 		int size = this.chalkLines.size();
 		for(int i = 0; i < size; i++) {
 			ChalkLine line = this.chalkLines.get(i);
 			line.addAction(fadeOut(1f, Interpolation.circleOut));
 		}
+		
+		getMessageLabel().addAction(fadeOut(1f, Interpolation.circleOut));
 		
 		this.cashRegister.addAction(sequence(
 				parallel(com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy(0.5f, 0.5f, 1f, Interpolation.circle),

@@ -39,7 +39,7 @@ abstract public class Dialog extends Table {
 		this.stage = stage;
 		setVisible(false);
 		setCenter(false);
-		setStyle(skin.get(DialogStyle.class));
+		setStyle(skin.get(Style.class));
 	}
 
 	public void setOnClickListener(OnClickListener listener) {
@@ -120,7 +120,6 @@ abstract public class Dialog extends Table {
 		row();
 
 		pack();
-		
 	}
 	
 	public void show() {
@@ -140,13 +139,13 @@ abstract public class Dialog extends Table {
 		}
 	}
 	
-	public void setStyle (DialogStyle style) {
+	public void setStyle (Style style) {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		setBackground(style.background);
 		invalidateHierarchy();
 	}
 	
-	static public class DialogStyle {
+	static public class Style {
 		/** Optional. */
 		public Drawable background;
 		public BitmapFont titleFont;
@@ -155,16 +154,16 @@ abstract public class Dialog extends Table {
 		/** Optional. */
 		public Drawable stageBackground;
 
-		public DialogStyle () {
+		public Style () {
 		}
 
-		public DialogStyle (BitmapFont titleFont, Color titleFontColor, Drawable background) {
+		public Style (BitmapFont titleFont, Color titleFontColor, Drawable background) {
 			this.background = background;
 			this.titleFont = titleFont;
 			this.titleFontColor.set(titleFontColor);
 		}
 
-		public DialogStyle (DialogStyle style) {
+		public Style (Style style) {
 			this.background = style.background;
 			this.titleFont = style.titleFont;
 			this.titleFontColor = new Color(style.titleFontColor);

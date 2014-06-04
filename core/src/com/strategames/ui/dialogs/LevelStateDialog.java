@@ -3,11 +3,14 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.strategames.interfaces.ButtonListener;
 import com.strategames.ui.widgets.TextButton;
 
@@ -27,6 +30,7 @@ abstract public class LevelStateDialog extends Dialog {
 	private States state;
 	
 	private String message;
+	private Label messageLabel;
 	private TextButton buttonLeft;
 	private TextButton buttonRight;
 	
@@ -36,13 +40,12 @@ abstract public class LevelStateDialog extends Dialog {
 		this.state = state;
 	}
 	
-	@Override
-	public void show() {
-		setVisible(true);
-	}
-	
 	public States getState() {
 		return state;
+	}
+	
+	public Label getMessageLabel() {
+		return messageLabel;
 	}
 	
 	public void setLeftButton(String text) {
@@ -85,12 +88,12 @@ abstract public class LevelStateDialog extends Dialog {
 	@Override
 	public void create() {
 		
-		final Label gamePauseLabel = new Label(this.message, skin);
-		float xMiddle = (super.stage.getWidth() / 2) - (gamePauseLabel.getWidth() / 2);
-		gamePauseLabel.setPosition(xMiddle, super.stage.getHeight() / 2);
-		gamePauseLabel.addAction( sequence( fadeIn( 0.25f ) ) );
-		gamePauseLabel.getColor().a = 0f;
-		addActor(gamePauseLabel);
+		this.messageLabel = new Label(this.message, skin);
+		float xMiddle = (super.stage.getWidth() / 2) - (this.messageLabel.getWidth() / 2);
+		this.messageLabel.setPosition(xMiddle, super.stage.getHeight() / 2);
+		this.messageLabel.addAction( sequence( fadeIn( 0.25f ) ) );
+		this.messageLabel.getColor().a = 0f;
+		addActor(this.messageLabel);
 		
 		final Table table = new Table();
 		table.setFillParent(true);
@@ -102,7 +105,12 @@ abstract public class LevelStateDialog extends Dialog {
 		
 		addActor(table);
 		
+		setFillParent(true);
 		super.create();
 	}
-
+	
+	@Override
+	public void setStyle(Style style) {
+		//Make sure background is not set by Dialog class
+	}
 }

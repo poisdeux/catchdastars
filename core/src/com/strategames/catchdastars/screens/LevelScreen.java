@@ -26,7 +26,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	private Image levelImage;
 	private boolean gameLoaded;
 	private Stage stageActors;
-
+	private LevelPausedDialog levelPausedDialog;
+	
 	public LevelScreen(AbstractScreen previousScreen, Game game) {
 		super(previousScreen, game);
 		this.game = game;
@@ -83,9 +84,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 		new Action() {
 			@Override
 			public boolean act(float arg0) {
-				if( ! getGame().isPaused() ) { 
-					getGame().startGame();
-				}
+				getGame().startGame();
 				levelImage.remove();
 				return true;
 			}
@@ -108,14 +107,14 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	protected boolean handleBackNavigation() {
-		Game game = getGame();
-		if( ! game.isPaused() ) { // prevent showing multiple dialogs when user keeps pressing back
-			game.pauseGame();
-			LevelPausedDialog dialog = new LevelPausedDialog(super.stageUIActors, getSkin());
-			dialog.setOnClickListener(this);
-			dialog.create();
-			dialog.show();
+		if( this.levelPausedDialog == null  ) {
+			this.levelPausedDialog = new LevelPausedDialog(super.stageUIActors, getSkin());
+			this.levelPausedDialog.setOnClickListener(this);
+			this.levelPausedDialog.create();
 		}
+		this.levelPausedDialog.show();
+		
+		// Make sure key is also sent to game engine as well
 		return false;
 	}
 

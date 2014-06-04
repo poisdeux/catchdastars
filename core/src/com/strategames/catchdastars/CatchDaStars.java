@@ -114,12 +114,6 @@ public class CatchDaStars extends Game {
 
 		initLevel();
 	}
-
-//	@Override
-//	public void stopGame() {
-//		super.stopGame();
-//		darkenActors(0.5f);
-//	}
 	
 	@Override
 	public void pauseGame() {
@@ -228,16 +222,6 @@ public class CatchDaStars extends Game {
 		int prevGameState = getGameState();
 		setGameState(GAME_STATE_PAUSED);
 		
-//		//Remove any current actors to make sure we are not left with
-//		//any broken parts from breakable objects
-//		Array<Actor> actors = this.stageActors.getActors();
-//		for( Actor actor : actors ) {
-//			GameObject gameObject = (GameObject) actor;
-//			gameObject.deleteBody();
-//			gameObject.remove();
-////			deleteGameObject(gameObject);
-//		}
-
 		this.stageActors.clear();
 
 		this.redCollectables = new Collectable();
@@ -350,12 +334,10 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void beginContact(Contact contact) {
-//		Gdx.app.log("CatchDaStars", "beginContact");
 		this.collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
 		this.collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
 		Type type1 = this.collidingGameObject1.getType();
 		Type type2 = this.collidingGameObject2.getType();
-//		Gdx.app.log("CatchDaStars", "beginContact: type1="+type1.name()+", type2="+type2.name());
 		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
 		} else if(( type2 == Type.BALLOON ) && ( type1 != Type.BALLOON )) {
@@ -365,12 +347,10 @@ public class CatchDaStars extends Game {
 
 	@Override
 	public void endContact(Contact contact) {
-		//		Gdx.app.log("CatchDaStars", "endContact");
 	}
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
-		//		Gdx.app.log("CatchDaStars", "preSolve");
 	}
 
 	@Override

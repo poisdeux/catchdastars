@@ -423,12 +423,6 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 				this.snapToGrid = this.preferences.snapToGridEnabled();
 				break;
 			}
-		} else if( dialog instanceof GameObjectPickerDialog ) {
-			switch( which ) {
-			case GameObjectPickerDialog.BUTTON_GAMEOBJECTSELECTED:
-				addGameObject(((GameObjectPickerDialog) dialog).getSelectedGameObject(), this.longPressPosition.x, this.longPressPosition.y);
-				break;
-			}
 		}
 	}
 

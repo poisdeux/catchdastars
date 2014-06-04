@@ -231,7 +231,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	/**
 	 * Implement to override default back navigation handling
 	 * by Game class
-	 * @return true if handled, false otherwise
+	 * @return true if handled, false to pass key to game class as well
 	 */
 	protected boolean handleBackNavigation() {
 		return false;
