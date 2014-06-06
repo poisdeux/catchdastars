@@ -24,13 +24,17 @@ import com.strategames.catchdastars.actors.Icecube;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
+import com.strategames.catchdastars.screens.LevelScreen;
+import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.Textures;
+import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 
-public class CatchDaStars extends Game {
+public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
 
 	private World world;
@@ -53,18 +57,18 @@ public class CatchDaStars extends Game {
 	private final int scorePerGoldStar = 5;
 
 	private int totalScore;
-	
+
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
 
 	private Box2DDebugRenderer debugRenderer;
-	
+
 	public CatchDaStars() {
 		setTitle("Catch Da Stars");
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
-		
+
 		/**
 		 * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
 		 * 8.1/0.3 = 27 (crosses horizontally)
@@ -72,7 +76,7 @@ public class CatchDaStars extends Game {
 		 */
 		setWorldSize(new Vector3(5.1f, 8.1f, 0f));
 	}
-	
+
 	@Override
 	public void create() {
 		this.gravityVector = new Vector2();
@@ -82,12 +86,12 @@ public class CatchDaStars extends Game {
 		setWorld(this.world);
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
-		
+
 		this.debugRenderer = new Box2DDebugRenderer();
-		
+
 		super.create();
 	}
-	
+
 	public void update(float delta, Stage stage) {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
@@ -95,26 +99,26 @@ public class CatchDaStars extends Game {
 			this.gravityVector.set(-Gdx.input.getAccelerometerX(), -Gdx.input.getAccelerometerY());
 			this.world.setGravity(gravityVector);
 		}
-		
+
 		Icecube.playRocksHitSound();
 
 		super.update(delta, stage);
-		
+
 		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
 	public void setupStage(Stage stage) {
 		this.stageActors = stage;
-		
+
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-		
+
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		initLevel();
 	}
-	
+
 	@Override
 	public void pauseGame() {
 		super.pauseGame();
@@ -142,12 +146,12 @@ public class CatchDaStars extends Game {
 		return blueCollectablesScore + redCollectablesScore + goldCollectablesScore +
 				blueBalloonsScore + redBalloonsScore;
 	}
-	
+
 	private void showLevelCompleteDialog() {
 		darkenActors(0.4f);
 
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
-		
+
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), this.totalScore);
 
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
@@ -156,25 +160,27 @@ public class CatchDaStars extends Game {
 		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected(), this.scorePerRedStar);
 		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
 
+		levelCompleteDialog.setOnClickListener(this);
+
 		levelCompleteDialog.create();
-		
+
 		levelCompleteDialog.show();
-		
+
 		this.totalScore += calculateScore();
 	}
 
 	private void showLevelFailedDialog() {
 		AbstractScreen screen = (AbstractScreen) getScreen();
-		
+
 		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIElements(), screen.getSkin());
 		dialog.create();
 		dialog.show();
 	}
-	
+
 	private void darkenActors(float factor) {
 		if ( this.stageActors == null )
 			return;
-		
+
 		Array<Actor> actors = this.stageActors.getActors();
 		int size = actors.size;
 		for(int i = 0; i < size; i++) {
@@ -210,7 +216,7 @@ public class CatchDaStars extends Game {
 
 		return this.availableGameObjects;
 	}
-	
+
 	private void initLevel() {
 		Level level = getLevel();
 
@@ -221,7 +227,7 @@ public class CatchDaStars extends Game {
 		//Make sure Box2D world is not updated while we add and remove objects
 		int prevGameState = getGameState();
 		setGameState(GAME_STATE_PAUSED);
-		
+
 		this.stageActors.clear();
 
 		this.redCollectables = new Collectable();
@@ -258,7 +264,7 @@ public class CatchDaStars extends Game {
 				}
 			}
 		}
-		
+
 		setGameState(prevGameState);
 	}
 
@@ -365,6 +371,37 @@ public class CatchDaStars extends Game {
 		}
 	}
 
-
+	@Override
+	public void onClick(Dialog dialog, int which) {
+		dialog.hide();
+		if( dialog instanceof LevelCompleteDialog ) {
+			switch( which ) {
+			case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
+				if( getLevelNumber() < getAmountOfLevels() ) {
+					setLevelNumber(getLevelNumber() + 1);
+					LevelScreen screen = new LevelScreen(null, this);
+					setScreen(screen);
+				} else {
+					//Ooops. User completed game so we should not
+					//get to this point but Game end animation should
+					//be shown
+					Gdx.app.log("CatchDaStars", "onClick: end of game reached");
+				}
+				break;
+			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
+				setScreen(new MainMenuScreen(null, this));
+				break;
+			}
+		} else if( dialog instanceof LevelFailedDialog ) {
+			switch( which ) {
+			case LevelFailedDialog.BUTTON_RETRY_CLICKED:
+				setScreen(new LevelScreen(null, this));
+				break;
+			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
+				setScreen(new MainMenuScreen(null, this));
+				break;
+			}
+		}
+	}
 }
 

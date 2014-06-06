@@ -4,6 +4,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -16,8 +17,6 @@ import com.strategames.catchdastars.utils.Animations;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelPausedDialog;
-import com.strategames.ui.dialogs.LevelStateDialog;
-import com.strategames.ui.dialogs.LevelStateDialog.States;
 
 
 public class LevelScreen extends AbstractScreen implements InputProcessor, GameLoadedListener, OnClickListener
@@ -27,7 +26,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	private boolean gameLoaded;
 	private Stage stageActors;
 	private LevelPausedDialog levelPausedDialog;
-	
+
 	public LevelScreen(AbstractScreen previousScreen, Game game) {
 		super(previousScreen, game);
 		this.game = game;
@@ -107,13 +106,19 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	protected boolean handleBackNavigation() {
+		if( game.isPaused() ) { // prevent pausing game when game is complete or failed
+			return true;
+		}
+		
 		if( this.levelPausedDialog == null  ) {
 			this.levelPausedDialog = new LevelPausedDialog(super.stageUIActors, getSkin());
 			this.levelPausedDialog.setOnClickListener(this);
 			this.levelPausedDialog.create();
 		}
-		this.levelPausedDialog.show();
-		
+		if( ! this.levelPausedDialog.isVisible() ) {
+			this.levelPausedDialog.show();
+		}
+
 		// Make sure key is also sent to game engine as well
 		return false;
 	}
@@ -125,21 +130,14 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	public void onClick(Dialog dialog, int which) {
-		if( dialog instanceof LevelStateDialog ) {
+		dialog.hide();
+		if( dialog instanceof LevelPausedDialog ) {
 			switch( which ) {
-			case LevelStateDialog.LEFT_BUTTON_CLICKED:
+			case LevelPausedDialog.BUTTON_QUIT_CLICKED:
 				getGame().setScreen(getPreviousScreen());
 				break;
-			case LevelStateDialog.RIGHT_BUTTON_CLICKED:
-				LevelStateDialog.States state = ((LevelStateDialog) dialog).getState();
-				if( state == States.COMPLETE ) {
-					LevelScreen screen = new LevelScreen(getPreviousScreen(), game);
-					game.setScreen(new LoadingScreen(null, screen, game, game.getLevelNumber() + 1));
-				} else if( state == States.PAUSED ) {
-					game.resume();
-				} else if( state == States.FAILED ) {
-					game.setScreen(this);
-				}
+			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
+				game.resumeGame();
 				break;
 			default:
 			}

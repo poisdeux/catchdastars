@@ -20,8 +20,8 @@ import com.strategames.ui.widgets.TextButton;
  *
  */
 abstract public class LevelStateDialog extends Dialog {
-	public final static int LEFT_BUTTON_CLICKED = 0;
-	public final static int RIGHT_BUTTON_CLICKED = 1;
+	public final static int BUTTON_LEFT_CLICKED = 0;
+	public final static int BUTTON_RIGHT_CLICKED = 1;
 	
 	public static enum States {
 		PAUSED, FAILED, COMPLETE
@@ -54,7 +54,7 @@ abstract public class LevelStateDialog extends Dialog {
 			
 			@Override
 			public void onTap(Button button) {
-				notifyListener(LEFT_BUTTON_CLICKED);
+				notifyListener(BUTTON_LEFT_CLICKED);
 			}
 			
 			@Override
@@ -68,12 +68,12 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	
 	public void setRightButton(String text) {
-		this.buttonLeft = new TextButton(text, skin);
-		this.buttonLeft.setListener(new ButtonListener() {
+		this.buttonRight = new TextButton(text, skin);
+		this.buttonRight.setListener(new ButtonListener() {
 			
 			@Override
 			public void onTap(Button button) {
-				notifyListener(LEFT_BUTTON_CLICKED);
+				notifyListener(BUTTON_RIGHT_CLICKED);
 			}
 			
 			@Override
@@ -81,8 +81,8 @@ abstract public class LevelStateDialog extends Dialog {
 				
 			}
 		});
-		this.buttonLeft.getColor().a = 0f;
-		this.buttonLeft.addAction( sequence( fadeIn( 0.25f ) ) );
+		this.buttonRight.getColor().a = 0f;
+		this.buttonRight.addAction( sequence( fadeIn( 0.25f ) ) );
 	}
 	
 	@Override

@@ -10,7 +10,6 @@ public class Levels {
 	private ArrayList<Level> levels;
 	
 	public Levels() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void setLevels(ArrayList<Level> levels) {

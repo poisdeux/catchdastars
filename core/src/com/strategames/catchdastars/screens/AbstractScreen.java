@@ -112,6 +112,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{
+		this.stageActors.clear();
+		this.stageUIActors.clear();
 		Gdx.input.setInputProcessor(this.multiplexer);
 		setupUI(this.stageUIActors);
 		setupActors(this.stageActors);

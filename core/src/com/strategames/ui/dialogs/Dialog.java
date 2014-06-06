@@ -67,7 +67,7 @@ abstract public class Dialog extends Table {
 		this.buttonPositive.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				onClickListener.onClick(Dialog.this, BUTTON_POSITIVE);
+				notifyListener(BUTTON_POSITIVE);
 			}
 		});
 	}
@@ -77,7 +77,7 @@ abstract public class Dialog extends Table {
 		this.buttonNegative.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				onClickListener.onClick(Dialog.this, BUTTON_NEGATIVE);
+				notifyListener(BUTTON_NEGATIVE);
 			}
 		});
 	}
@@ -87,7 +87,7 @@ abstract public class Dialog extends Table {
 		this.buttonNeutral.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				onClickListener.onClick(Dialog.this, BUTTON_NEUTRAL);
+				notifyListener(BUTTON_NEUTRAL);
 			}
 		});
 	}

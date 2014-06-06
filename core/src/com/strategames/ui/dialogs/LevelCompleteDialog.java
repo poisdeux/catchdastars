@@ -27,6 +27,9 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
 	
+	public final static int BUTTON_QUIT_CLICKED = BUTTON_LEFT_CLICKED;
+	public final static int BUTTON_NEXT_CLICKED = BUTTON_RIGHT_CLICKED;
+	
 	private ArrayList<ScoreItem> scoreItems;
 	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
@@ -86,7 +89,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 		
 		animationController();
 	}
-
+	
 	private void animationController() {
 		this.animationPhase++;
 		switch(this.animationPhase) {
