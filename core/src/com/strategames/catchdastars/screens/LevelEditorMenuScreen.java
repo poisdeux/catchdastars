@@ -288,7 +288,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 
 	@Override
 	protected boolean handleBackNavigation() {
-		getGame().setScreen(new MainMenuScreen(LevelEditorMenuScreen.this, getGame()));
+		getGame().setScreen(getPreviousScreen());
 		return true;
 	}
 

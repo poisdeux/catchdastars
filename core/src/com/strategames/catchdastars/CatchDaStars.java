@@ -173,6 +173,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		AbstractScreen screen = (AbstractScreen) getScreen();
 
 		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIElements(), screen.getSkin());
+		dialog.setOnClickListener(this);
 		dialog.create();
 		dialog.show();
 	}

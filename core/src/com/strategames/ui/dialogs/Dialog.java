@@ -67,12 +67,32 @@ abstract public class Dialog extends Table {
 		this.buttonPositive.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				onClickListener.onClick(Dialog.this, BUTTON_POSITIVE);
+			}
+		});
+	}
+
+	public void setPositiveButton(String text) {
+		this.buttonPositive = new TextButton(text, this.skin);
+		this.buttonPositive.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
 				notifyListener(BUTTON_POSITIVE);
 			}
 		});
 	}
 
 	public void setNegativeButton(String text, final Dialog.OnClickListener onClickListener) {
+		this.buttonNegative = new TextButton(text, this.skin);
+		this.buttonNegative.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				onClickListener.onClick(Dialog.this, BUTTON_NEGATIVE);
+			}
+		});
+	}
+	
+	public void setNegativeButton(String text) {
 		this.buttonNegative = new TextButton(text, this.skin);
 		this.buttonNegative.addListener(new ClickListener() {
 			@Override
@@ -87,11 +107,20 @@ abstract public class Dialog extends Table {
 		this.buttonNeutral.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				notifyListener(BUTTON_NEUTRAL);
+				onClickListener.onClick(Dialog.this, BUTTON_NEUTRAL);
 			}
 		});
 	}
 	
+	public void setNeutralButton(String text) {
+		this.buttonNeutral = new TextButton(text, this.skin);
+		this.buttonNeutral.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				notifyListener(BUTTON_NEUTRAL);
+			}
+		});
+	}
 	
 	/**
 	 * Use this to create and add the actual dialog to the stage.

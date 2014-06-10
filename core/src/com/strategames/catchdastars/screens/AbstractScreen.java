@@ -156,7 +156,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void hide()
 	{
 		// dispose the resources by default
-		dispose();
+		//		dispose();
 	}
 
 	@Override
