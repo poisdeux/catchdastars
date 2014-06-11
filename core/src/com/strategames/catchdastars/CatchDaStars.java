@@ -390,7 +390,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
-				setScreen(new MainMenuScreen(null, this));
+				AbstractScreen screen = (AbstractScreen) getScreen();
+				setScreen(screen.getPreviousScreen());
 				break;
 			}
 		} else if( dialog instanceof LevelFailedDialog ) {

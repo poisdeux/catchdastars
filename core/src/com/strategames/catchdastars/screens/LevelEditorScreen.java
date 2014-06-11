@@ -3,8 +3,6 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import sun.security.action.GetLongAction;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -31,7 +29,6 @@ import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
-import com.strategames.ui.dialogs.GameObjectPickerDialog;
 import com.strategames.ui.dialogs.LevelEditorOptionsDialog;
 import com.strategames.ui.dialogs.ToolsPickerDialog;
 import com.strategames.ui.widgets.MenuButton;
