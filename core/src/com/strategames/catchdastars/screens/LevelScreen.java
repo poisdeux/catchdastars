@@ -10,28 +10,21 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
-import com.strategames.catchdastars.Game.GameLoadedListener;
 import com.strategames.catchdastars.actors.Text;
-import com.strategames.catchdastars.utils.Animations;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 
 
-public class LevelScreen extends AbstractScreen implements InputProcessor, GameLoadedListener, OnClickListener
+public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener
 {	
 	private Game game;
 	private Image levelImage;
-	private boolean gameLoaded;
-	private Stage stageActors;
 	private LevelPausedDialog levelPausedDialog;
 
-	public LevelScreen(AbstractScreen previousScreen, Game game) {
-		super(previousScreen, game);
+	public LevelScreen(Game game) {
+		super(game);
 		this.game = game;
-		gameLoaded = false;
-		game.loadLevelAsync(this);
-		//		game.loadLevel();
 	}
 
 	@Override
@@ -60,26 +53,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 		this.levelImage.setX(x);
 		this.levelImage.setY(-imageHeight);
 		this.levelImage.addAction(sequence( moveTo(x, y, 0.5f, Interpolation.circleOut),
+				fadeOut(0.5f, Interpolation.circleIn),
 				new Action() {
-
-			@Override
-			public boolean act(float delta) {
-				while( ! gameLoaded ) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						return false;
-					}
-				}
-				game.setupStage(stageActors);
-				Animations.fadeIn(stageActors, 0.5f, Interpolation.circleIn);
-				return true;
-			}
-		}, 
-		fadeOut(0.5f, Interpolation.circleIn),
-
-		new Action() {
 			@Override
 			public boolean act(float arg0) {
 				getGame().startGame();
@@ -93,7 +68,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	protected void setupActors(Stage stage) {
-		this.stageActors = stage;
 		this.game.pauseGame();
 	}
 
@@ -105,10 +79,10 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 
 	@Override
 	protected boolean handleBackNavigation() {
-		if( game.isPaused() ) { // prevent pausing game when game is complete or failed
+		if( this.game.isPaused() ) { // prevent pausing game when game is complete or failed
 			return true;
 		}
-		
+
 		if( this.levelPausedDialog == null  ) {
 			this.levelPausedDialog = new LevelPausedDialog(super.stageUIActors, getSkin());
 			this.levelPausedDialog.setOnClickListener(this);
@@ -123,20 +97,15 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, GameL
 	}
 
 	@Override
-	public void onGameLoaded() {
-		this.gameLoaded = true;
-	}
-
-	@Override
 	public void onClick(Dialog dialog, int which) {
 		dialog.hide();
 		if( dialog instanceof LevelPausedDialog ) {
 			switch( which ) {
 			case LevelPausedDialog.BUTTON_QUIT_CLICKED:
-				getGame().setScreen(getPreviousScreen());
+				this.game.stopScreen();
 				break;
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
-				game.resumeGame();
+				this.game.resumeGame();
 				break;
 			default:
 			}

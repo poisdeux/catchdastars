@@ -22,8 +22,8 @@ public class SplashScreen extends AbstractScreen {
 	private boolean finishedSetupAssets = false;
 	private Image splashImage;
 
-	public SplashScreen(AbstractScreen previousScreen, Game game) {
-		super(previousScreen, game);
+	public SplashScreen(Game game) {
+		super(game);
 
 		this.assetManager = getGame().getManager();
 
@@ -73,8 +73,7 @@ public class SplashScreen extends AbstractScreen {
 
 						@Override
 						public boolean act(float delta) {
-							Game game = getGame();
-							game.setScreen(new MainMenuScreen(null, game));
+							getGame().showMainMenu();
 							return true;
 						}
 					}));

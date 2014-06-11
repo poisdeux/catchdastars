@@ -2,8 +2,10 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -14,7 +16,10 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.interfaces.Exporter;
 import com.strategames.catchdastars.interfaces.Importer;
 import com.strategames.catchdastars.screens.AbstractScreen;
+import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
+import com.strategames.catchdastars.screens.LevelEditorScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
+import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
@@ -53,24 +58,28 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private String title;
 	
+	private LinkedList<Screen> backStack;
+	
 	public interface GameLoadedListener {
 		public void onGameLoaded();
 	}
 	
 	public Game() {
-		this("No name game");
-	}
-	
-	public Game(String title) {
+		this.title = "No name game";
 		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
+		this.backStack = new LinkedList<Screen>();
+	}
+	
+	public Game(String title) {
+		this();
 		this.title = title;
 	}
 	
 	@Override
 	public void create() {
-		setScreen(new SplashScreen(null, this));
+		showSplashScreen();
 	}
 	
 	@Override
@@ -95,7 +104,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 //			Textures.dispose(manager);
 //		}
 	}
-
+	
 	public void pauseGame() {
 		this.gameState = GAME_STATE_PAUSED;
 	}
@@ -153,6 +162,18 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	public Importer getImporter() {
 		return importer;
+	}
+	
+	public void addToBackstack(Screen screen) {
+		this.backStack.add(screen);
+	}
+	
+	public Screen popBackstack() {
+		return this.backStack.poll();
+	}
+	
+	public Screen peepBackstack() {
+		return this.backStack.peek();
 	}
 	
 	/**
@@ -350,6 +371,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 				|| (keycode == Keys.ESCAPE)) {
 			if( this.gameState == GAME_STATE_RUNNING ) {
 				pauseGame();
+			} else {
+				stopScreen();
 			}
 			return true;
 		}
@@ -360,8 +383,59 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * Resets the game by reloading the level
 	 */
 	public void reset() {
-		AbstractScreen prev = ((AbstractScreen) getScreen()).getPreviousScreen();
-		setScreen( new LevelScreen(prev, this) );
+		setScreen( new LevelScreen(this) );
+	}
+	
+	public void showMainMenu() {
+		Screen screen = new MainMenuScreen(this);
+		setScreen( screen );
+		addToBackstack(screen);
+	}
+	
+	public void showSplashScreen() {
+		setScreen(new SplashScreen(this));
+	}
+	
+	public void startLevel(int level) {
+		setLevelNumber(level);
+		loadLevel();
+		Screen screen = new LevelScreen(this);
+		setScreen( screen );
+		addToBackstack(screen);
+	}
+	
+	public void startLevel(Level level) {
+		setLevel(level);
+		Screen screen = new LevelScreen(this);
+		setScreen( screen );
+		addToBackstack(screen);
+	}
+	
+	/**
+	 * Starts the LevelEditor screen
+	 * TODO remove level argument if it is not really used as 
+	 * level is already available in the game class
+	 * @param level
+	 */
+	public void startLevelEditor(Level level) {
+		setLevel(level);
+		Screen screen = new LevelEditorScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+	
+	public void startLevelEditorMenu() {
+		Screen screen = new LevelEditorMenuScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+	
+	/**
+	 * Hides the current screen and shows the previous screen
+	 */
+	public void stopScreen() {
+		popBackstack();
+		setScreen(peepBackstack());
 	}
 	
 	/**

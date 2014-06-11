@@ -379,9 +379,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			switch( which ) {
 			case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
 				if( getLevelNumber() < getAmountOfLevels() ) {
-					setLevelNumber(getLevelNumber() + 1);
-					LevelScreen screen = new LevelScreen(null, this);
-					setScreen(screen);
+					startLevel(getLevelNumber() + 1);
 				} else {
 					//Ooops. User completed game so we should not
 					//get to this point but Game end animation should
@@ -390,17 +388,16 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
-				AbstractScreen screen = (AbstractScreen) getScreen();
-				setScreen(screen.getPreviousScreen());
+				stopScreen();
 				break;
 			}
 		} else if( dialog instanceof LevelFailedDialog ) {
 			switch( which ) {
 			case LevelFailedDialog.BUTTON_RETRY_CLICKED:
-				setScreen(new LevelScreen(null, this));
+				reset();
 				break;
 			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
-				setScreen(new MainMenuScreen(null, this));
+				stopScreen();
 				break;
 			}
 		}

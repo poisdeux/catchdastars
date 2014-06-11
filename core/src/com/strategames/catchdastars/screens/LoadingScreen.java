@@ -14,27 +14,16 @@ import com.strategames.catchdastars.utils.Textures;
 
 public class LoadingScreen extends AbstractScreen {
 
-	private Screen screenToLoad;
-	
-	private boolean animationFinished = false;
-	
 	private Image loadingImage;
 	private Image dotImage1;
 	private Image dotImage2;
 	private Image dotImage3;
 	
 	/**
-	 * 
-	 * @param screenToLoad Screen that should be started after loading assets
-	 * @param game
-	 * @param levelNumber
+	 * Shows an animation which can be displayed during game loading
 	 */
-	public LoadingScreen(AbstractScreen previousScreen, Screen screenToLoad, Game game, int levelNumber) {
-		super(previousScreen, game);
-
-		this.screenToLoad = screenToLoad;
-		
-		game.setLevelNumber(levelNumber);
+	public LoadingScreen(Game game) {
+		super(game);
 	}
 
 	@Override
@@ -60,35 +49,16 @@ public class LoadingScreen extends AbstractScreen {
 		x += this.loadingImage.getWidth() + padding;
 		this.dotImage1.setX(x);
 		this.dotImage1.setY(y);
-		this.dotImage1.getColor().a = 0f;
-		this.dotImage1.addAction( sequence(
-				fadeIn( 0.5f )));
 		
 		x += this.dotImage1.getWidth() + padding;
 		this.dotImage2.setX(x);
 		this.dotImage2.setY(y);
-		this.dotImage2.getColor().a = 0f;
-		this.dotImage2.addAction( sequence(
-				delay( 0.5f ),
-				fadeIn( 0.5f )));
 		
 		x += this.dotImage1.getWidth() + padding;
 		this.dotImage3.setX(x);
-		this.dotImage3.setY(y);
-		this.dotImage3.getColor().a = 0f;
-		this.dotImage3.addAction( sequence(
-				delay( 1f ),
-				fadeIn( 0.5f ),
-				new Action() {
-
-					@Override
-					public boolean act(float arg0) {
-						animationFinished = true;
-						return true;
-					}
-					
-				}));
+		this.dotImage3.setY(y);		
 		
+		setupDotsAnimation();
 		
 		stage.addActor(this.loadingImage);
 		stage.addActor(this.dotImage1);
@@ -100,15 +70,6 @@ public class LoadingScreen extends AbstractScreen {
 	public void render(float delta) {
 		this.stageUIActors.act();
 		super.render(delta);
-		
-		if ( this.animationFinished ) {
-			
-//			game.setCurrentLevel(this.assetManager.get(Level.getLocalPath(this.levelNumber), Level.class));
-			
-			Game game = getGame();
-			game.loadLevel();
-			game.setScreen(this.screenToLoad);
-		} 
 	}
 
 
@@ -120,5 +81,30 @@ public class LoadingScreen extends AbstractScreen {
 		this.dotImage1.remove();
 		this.dotImage2.remove();
 		this.dotImage3.remove();
+	}
+	
+	private void setupDotsAnimation() {
+		this.dotImage1.getColor().a = 0f;
+		this.dotImage1.addAction( sequence(
+				fadeIn( 0.5f )));
+		
+		this.dotImage2.getColor().a = 0f;
+		this.dotImage2.addAction( sequence(
+				delay( 0.5f ),
+				fadeIn( 0.5f )));
+		
+		this.dotImage3.getColor().a = 0f;
+		this.dotImage3.addAction( sequence(
+				delay( 1f ),
+				fadeIn( 0.5f ),
+				new Action() {
+
+					@Override
+					public boolean act(float arg0) {
+						setupDotsAnimation(); // loop indefinitely
+						return true;
+					}
+					
+				}));
 	}
 }

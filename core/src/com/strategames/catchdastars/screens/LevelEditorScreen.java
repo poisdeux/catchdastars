@@ -110,9 +110,8 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	private Tap tap = new Tap();
 
-	public LevelEditorScreen(AbstractScreen previousScreen, Game game) {
-		super(previousScreen, game);
-		//		Gdx.app.log("LevelEditorScreen", "LevelEditorScreen");
+	public LevelEditorScreen(Game game) {
+		super(game);
 
 		this.game = game;
 
@@ -169,8 +168,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	@Override
 	protected boolean handleBackNavigation() {
 		saveLevel();
-		getGame().setScreen(getPreviousScreen());
-		return true;
+		return false;
 	}
 
 	@Override
@@ -611,7 +609,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				saveLevel();
-				game.setScreen(new LevelScreen(LevelEditorScreen.this, game));
+				game.startLevel(game.getLevel());
 				mainMenu.hide();
 			}
 		});
@@ -630,7 +628,7 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
 				mainMenu.hide();
-				getGame().setScreen(getPreviousScreen());
+				getGame().stopScreen();
 			}
 		});
 
