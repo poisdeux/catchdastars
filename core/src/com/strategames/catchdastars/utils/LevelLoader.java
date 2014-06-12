@@ -1,7 +1,6 @@
 package com.strategames.catchdastars.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -10,11 +9,13 @@ import com.badlogic.gdx.utils.Json;
 
 public class LevelLoader {
 
+	static private int lastLevelNumber = -1;
+	
 	static private final String LOCAL_PATH = "levels";
 	static private final String INTERNAL_PATH = "levels";
-	static private LevelLoaded levelLoadedListener;
+	static private OnLevelLoadedListener levelLoadedListener;
 	
-	public interface LevelLoaded {
+	public interface OnLevelLoadedListener {
 		public void onLevelLoaded(Level level);
 	}
 	
@@ -55,7 +56,7 @@ public class LevelLoader {
 	 * can retrieve the Level object using {@link #getLevel()} 
 	 * @param level levelnumber to load
 	 */
-	static public void loadLocalAsync(int level, LevelLoaded listener) {
+	static public void loadLocalAsync(int level, OnLevelLoadedListener listener) {
 		levelLoadedListener = listener;
 		try {
 			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
@@ -166,4 +167,15 @@ public class LevelLoader {
 	static public String getInternalPath(int level) {
 		return INTERNAL_PATH + "/" + level;
 	}
+	
+	public static int getLastLevelNumber() {
+		if( lastLevelNumber == -1 ) {
+			FileHandle dir = getLocalLevelsDir();
+			FileHandle[] files = dir.list();
+			lastLevelNumber = files.length;
+		}
+		return lastLevelNumber;
+	}
+	
+	
 }

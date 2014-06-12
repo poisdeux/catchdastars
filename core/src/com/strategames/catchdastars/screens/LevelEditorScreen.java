@@ -21,6 +21,7 @@ import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelEditorPreferences;
+import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.catchdastars.utils.LevelWriter;
 import com.strategames.catchdastars.utils.ScreenBorder;
 import com.strategames.interfaces.ButtonListener;
@@ -34,7 +35,7 @@ import com.strategames.ui.dialogs.ToolsPickerDialog;
 import com.strategames.ui.widgets.MenuButton;
 import com.strategames.ui.widgets.RectangleImage;
 
-public class LevelEditorScreen extends AbstractScreen implements ButtonListener, GestureListener, Dialog.OnClickListener {
+public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private ButtonsDialog mainMenu;
 	private Vector2 longPressPosition;
@@ -141,11 +142,11 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 	@Override
 	protected void setupUI(Stage stage) {
 		stage.addActor(this.rectangleImage);
+		displayGrid(this.preferences.displayGridEnabled());
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
-		this.game.setupStage(stage);
 		getMultiplexer().addProcessor(stage);
 
 		Array<Actor> actors = stage.getActors();
@@ -158,13 +159,21 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 			object.initializeConfigurationItems();
 			deselectGameObject(object);
 		}
-
-		displayGrid(this.preferences.displayGridEnabled());
-
+		
+		//This is added to the actor stage as we use
+		//game objects in the menu
 		setupMenu(stage);
-
+		
+		this.game.pauseGame();
 	}
 
+	@Override
+	public void show() {
+		super.show();
+		
+		this.game.loadLevel(this);
+	}
+	
 	@Override
 	protected boolean handleBackNavigation() {
 		saveLevel();
@@ -734,7 +743,6 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	@Override
 	public void onLongPress(Button button) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -750,8 +758,12 @@ public class LevelEditorScreen extends AbstractScreen implements ButtonListener,
 
 	@Override
 	public boolean panStop(float x, float y, int pointer, int button) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void onLevelLoaded(Level level) {
+		this.game.initialize();
 	}
 }
 

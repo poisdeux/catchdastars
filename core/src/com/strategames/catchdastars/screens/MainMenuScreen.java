@@ -58,7 +58,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().startLevelEditorMenu();
+				getGame().showLevelEditorMenu();
 			}
 		} );
 		table.add( button ).uniform().fill().spaceBottom( 10 );

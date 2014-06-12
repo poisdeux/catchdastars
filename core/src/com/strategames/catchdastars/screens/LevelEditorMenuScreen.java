@@ -141,7 +141,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 			return;
 		}
 		
-		getGame().startLevelEditor((Level) tag); 
+		getGame().showLevelEditor((Level) tag); 
 	}
 
 	@Override

@@ -12,8 +12,6 @@ public class Level implements Comparable<Level> {
 	private String name;
 	private ArrayList<GameObject> gameObjects;
 	
-	static private Level level;
-	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		this.gameObjects = new ArrayList<GameObject>();
 		for( GameObject object : gameObjects ) {
@@ -41,10 +39,6 @@ public class Level implements Comparable<Level> {
 
 	public int getLevelNumber() {
 		return this.number;
-	}
-
-	public static Level getLevel() {
-		return level;
 	}
 
 	public String getJson() {

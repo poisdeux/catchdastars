@@ -11,12 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.actors.Text;
+import com.strategames.catchdastars.utils.Animations;
+import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 
 
-public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener
+public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener, OnLevelLoadedListener
 {	
 	private Game game;
 	private Image levelImage;
@@ -25,17 +28,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	public LevelScreen(Game game) {
 		super(game);
 		this.game = game;
-	}
-
-	@Override
-	public void hide() {
-		super.hide();
-	}
-
-	@Override
-	protected boolean isGameScreen()
-	{
-		return true;
 	}
 
 	@Override
@@ -52,18 +44,10 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 		this.levelImage.setX(x);
 		this.levelImage.setY(-imageHeight);
-		this.levelImage.addAction(sequence( moveTo(x, y, 0.5f, Interpolation.circleOut),
-				fadeOut(0.5f, Interpolation.circleIn),
-				new Action() {
-			@Override
-			public boolean act(float arg0) {
-				getGame().startGame();
-				levelImage.remove();
-				return true;
-			}
-		}
-				));
+		this.levelImage.addAction(moveTo(x, y, 0.5f, Interpolation.circleOut));
 		stage.addActor(this.levelImage);
+		
+		this.game.loadLevel(this);
 	}
 
 	@Override
@@ -79,7 +63,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 	@Override
 	protected boolean handleBackNavigation() {
-		if( this.game.isPaused() ) { // prevent pausing game when game is complete or failed
+		if( ! this.game.isRunning() ) { // prevent pausing game when game is complete or failed
 			return true;
 		}
 
@@ -107,8 +91,31 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
 				this.game.resumeGame();
 				break;
-			default:
 			}
 		}
+	}
+
+	@Override
+	public void onLevelLoaded(Level level) {
+		game.initialize();
+		
+		this.levelImage.addAction(sequence(new Action() {
+			
+			@Override
+			public boolean act(float delta) {
+				Animations.fadeIn(stageActors, 0.5f, Interpolation.circleIn);
+				return true;
+			}
+		}, 
+		fadeOut(0.5f),
+		new Action() {
+			
+			@Override
+			public boolean act(float delta) {
+				levelImage.remove();
+				game.startGame();
+				return true;
+			}
+		}));
 	}
 }

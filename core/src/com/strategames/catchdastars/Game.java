@@ -2,7 +2,7 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Stack;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -23,7 +23,7 @@ import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
-import com.strategames.catchdastars.utils.LevelLoader.LevelLoaded;
+import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -44,7 +44,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private AssetManager manager;
 
-	private ArrayList<String> levelNames;
 	private int levelNumber;
 	
 	private Level level; 
@@ -58,18 +57,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private String title;
 	
-	private LinkedList<Screen> backStack;
-	
-	public interface GameLoadedListener {
-		public void onGameLoaded();
-	}
+	private Stack<Screen> backStack;
 	
 	public Game() {
 		this.title = "No name game";
-		this.levelNames = new ArrayList<String>();
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
-		this.backStack = new LinkedList<Screen>();
+		this.backStack = new Stack<Screen>();
 	}
 	
 	public Game(String title) {
@@ -169,7 +163,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	public Screen popBackstack() {
-		return this.backStack.poll();
+		return this.backStack.pop();
 	}
 	
 	public Screen peepBackstack() {
@@ -209,10 +203,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	static public float convertWorldToScreen(float x) {
 		return x * BOX_TO_WORLD;
-	}
-	
-	public int getAmountOfLevels() {
-		return this.levelNames.size();
 	}
 
 	public int getLevelNumber() {
@@ -255,20 +245,29 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * <br/>
 	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
 	 */
-	public void loadLevel() {
+	public void loadLevel(OnLevelLoadedListener listener) {
 //		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
-		this.level = LevelLoader.loadLocalSync(this.levelNumber);
+		loadLevelSync(listener);
 	}
 	
-	public void loadLevelAsync(final GameLoadedListener listener) {
-		LevelLoader.loadLocalAsync(this.levelNumber, new LevelLoaded() {
+	private void loadLevelAsync(final OnLevelLoadedListener listener) {
+		LevelLoader.loadLocalAsync(getLevelNumber(), new OnLevelLoadedListener() {
 			
 			@Override
 			public void onLevelLoaded(Level level) {
-				Game.this.level = level;
-				listener.onGameLoaded();
+				setLevel(level);
+				if( listener != null ) {
+					listener.onLevelLoaded(level);
+				}
 			}
 		});
+	}
+	
+	private void loadLevelSync(final OnLevelLoadedListener listener) {
+		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
+		if( listener != null ) {
+			listener.onLevelLoaded(getLevel());
+		}
 	}
 	
 	/**
@@ -281,15 +280,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		if( filename != null ) {
 			getManager().unload(filename);
 		}
-	}
-	
-	
-	public ArrayList<String> getLevelNames() {
-		return this.levelNames;
-	}
-
-	public void addLevel(String name) {
-		this.levelNames.add(name);
 	}
 
 	public void setWorld(World world) {
@@ -398,17 +388,23 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	public void startLevel(int level) {
 		setLevelNumber(level);
-		loadLevel();
-		Screen screen = new LevelScreen(this);
-		setScreen( screen );
-		addToBackstack(screen);
+		showLevelScreen();
 	}
 	
 	public void startLevel(Level level) {
 		setLevel(level);
-		Screen screen = new LevelScreen(this);
+		showLevelScreen();
+	}
+	
+	private void showLevelScreen() {
+		LevelScreen screen = new LevelScreen(this);
 		setScreen( screen );
-		addToBackstack(screen);
+		
+		//Make sure LevelScreen is only added once to the backstack to prevent
+		//going back to a previous level if user quits level
+		if( ! ( peepBackstack() instanceof LevelScreen ) ) {
+			addToBackstack(screen);
+		}
 	}
 	
 	/**
@@ -417,14 +413,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * level is already available in the game class
 	 * @param level
 	 */
-	public void startLevelEditor(Level level) {
+	public void showLevelEditor(Level level) {
 		setLevel(level);
 		Screen screen = new LevelEditorScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
 	}
 	
-	public void startLevelEditorMenu() {
+	public void showLevelEditorMenu() {
 		Screen screen = new LevelEditorMenuScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
@@ -444,5 +440,5 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	abstract public ArrayList<GameObject> getAvailableGameObjects();
 
-	abstract public void setupStage(Stage stage);
+	abstract public void initialize();
 }

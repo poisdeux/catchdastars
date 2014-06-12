@@ -99,13 +99,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return skin;
 	}
 
-	protected boolean isGameScreen()
-	{
-		return false;
-	}
-
-	// Screen implementation
-
 	@Override
 	public void show()
 	{

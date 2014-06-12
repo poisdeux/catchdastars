@@ -24,15 +24,14 @@ import com.strategames.catchdastars.actors.Icecube;
 import com.strategames.catchdastars.actors.Star;
 import com.strategames.catchdastars.actors.Wall;
 import com.strategames.catchdastars.screens.AbstractScreen;
-import com.strategames.catchdastars.screens.LevelScreen;
-import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.utils.Collectable;
 import com.strategames.catchdastars.utils.Level;
+import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
@@ -82,9 +81,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.gravityVector = new Vector2();
 		this.gravityVector.set(0, -GRAVITY);
 
-		this.world = new World(this.gravityVector, true);
-		setWorld(this.world);
-
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 		this.debugRenderer = new Box2DDebugRenderer();
@@ -108,15 +104,60 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public void setupStage(Stage stage) {
-		this.stageActors = stage;
+	public void initialize() {
+		System.gc(); //hint the garbage collector that now is a good time to collect
+
+		Level level = getLevel();
+
+		if ( level == null ) {
+			return;
+		}
 
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
+		
+		//Make sure Box2D world is not updated while we add and remove objects
+		int prevGameState = getGameState();
+		setGameState(GAME_STATE_PAUSED);
 
-		System.gc(); //hint the garbage collector that now is a good time to collect
+//		this.stageActors.clear();
 
-		initLevel();
+		this.redCollectables = new Collectable();
+		this.blueCollectables = new Collectable();
+		this.goldCollectables = new Collectable();
+
+		this.amountOfBlueBalloons = 0;
+		this.amountOfRedBalloons = 0;
+
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
+
+		if( gameObjects != null ) {
+			for(GameObject gameObject : gameObjects ) {
+				addGameObject(gameObject);
+				GameObject.Type type = gameObject.getType();
+				if( type == GameObject.Type.STAR ) {
+					Star star = (Star) gameObject;
+					Star.ColorType color = star.getColorType();
+					if( color == Star.ColorType.BLUE ) {
+						this.blueCollectables.setTotal(this.blueCollectables.getTotal() + 1);
+					} else if( color == Star.ColorType.RED ) {
+						this.redCollectables.setTotal(this.redCollectables.getTotal() + 1);
+					} else if( color == Star.ColorType.YELLOW ) {
+						this.goldCollectables.setTotal(this.goldCollectables.getTotal() + 1);
+					}
+				} else if( type == GameObject.Type.BALLOON ) {
+					Balloon balloon = (Balloon) gameObject;
+					Balloon.ColorType color = balloon.getColorType();
+					if( color == Balloon.ColorType.BLUE ) {
+						this.amountOfBlueBalloons++;
+					} else if( color == Balloon.ColorType.RED ) {
+						this.amountOfRedBalloons++;
+					}
+				}
+			}
+		}
+
+		setGameState(prevGameState);
 	}
 
 	@Override
@@ -216,57 +257,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.availableGameObjects = objects;
 
 		return this.availableGameObjects;
-	}
-
-	private void initLevel() {
-		Level level = getLevel();
-
-		if ( level == null ) {
-			return;
-		}
-
-		//Make sure Box2D world is not updated while we add and remove objects
-		int prevGameState = getGameState();
-		setGameState(GAME_STATE_PAUSED);
-
-		this.stageActors.clear();
-
-		this.redCollectables = new Collectable();
-		this.blueCollectables = new Collectable();
-		this.goldCollectables = new Collectable();
-
-		this.amountOfBlueBalloons = 0;
-		this.amountOfRedBalloons = 0;
-
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
-
-		if( gameObjects != null ) {
-			for(GameObject gameObject : gameObjects ) {
-				addGameObject(gameObject);
-				GameObject.Type type = gameObject.getType();
-				if( type == GameObject.Type.STAR ) {
-					Star star = (Star) gameObject;
-					Star.ColorType color = star.getColorType();
-					if( color == Star.ColorType.BLUE ) {
-						this.blueCollectables.setTotal(this.blueCollectables.getTotal() + 1);
-					} else if( color == Star.ColorType.RED ) {
-						this.redCollectables.setTotal(this.redCollectables.getTotal() + 1);
-					} else if( color == Star.ColorType.YELLOW ) {
-						this.goldCollectables.setTotal(this.goldCollectables.getTotal() + 1);
-					}
-				} else if( type == GameObject.Type.BALLOON ) {
-					Balloon balloon = (Balloon) gameObject;
-					Balloon.ColorType color = balloon.getColorType();
-					if( color == Balloon.ColorType.BLUE ) {
-						this.amountOfBlueBalloons++;
-					} else if( color == Balloon.ColorType.RED ) {
-						this.amountOfRedBalloons++;
-					}
-				}
-			}
-		}
-
-		setGameState(prevGameState);
 	}
 
 	private void destroyBalloon(Balloon balloon, Balloon.ColorType color) {
@@ -378,7 +368,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( dialog instanceof LevelCompleteDialog ) {
 			switch( which ) {
 			case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
-				if( getLevelNumber() < getAmountOfLevels() ) {
+				if( getLevelNumber() < LevelLoader.getLastLevelNumber() ) {
 					startLevel(getLevelNumber() + 1);
 				} else {
 					//Ooops. User completed game so we should not
@@ -388,6 +378,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
+				Gdx.app.log("CatchDaStars", "onClick: BUTTON_QUIT_CLICKED");
 				stopScreen();
 				break;
 			}
