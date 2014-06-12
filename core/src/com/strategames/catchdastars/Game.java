@@ -31,34 +31,34 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
 	private int gameState = GAME_STATE_PAUSED;
-	
+
 	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
 	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
 
 	public static final float BOX_TO_WORLD = 100f;
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
-	
+
 	public static final float GRAVITY = 9.81f;
-	
+
 	private ArrayList<GameObject> gameObjectsForDeletion;
-	
+
 	private AssetManager manager;
 
 	private int levelNumber;
-	
+
 	private Level level; 
-	
+
 	private World world;
-	
+
 	private Vector3 worldSize;
-	
+
 	private Exporter exporter;
 	private Importer importer;
-	
+
 	private String title;
-	
+
 	private Stack<Screen> backStack;
-	
+
 	private int totalScore;
 
 	public Game() {
@@ -67,119 +67,119 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 		this.backStack = new Stack<Screen>();
 	}
-	
+
 	public Game(String title) {
 		this();
 		this.title = title;
 	}
-	
+
 	@Override
 	public void create() {
 		showSplashScreen();
 	}
-	
+
 	@Override
 	public void resume() {
 		super.resume();
-//		if( Gdx.app.getType() == ApplicationType.Android ) {
-//			AssetManager manager = getManager();
-//			Sounds.load(manager);
-//			Textures.load(manager);
-//			manager.finishLoading();
-//			Sounds.setup(manager);
-//			Textures.setup(manager);
-//		}
+		//		if( Gdx.app.getType() == ApplicationType.Android ) {
+		//			AssetManager manager = getManager();
+		//			Sounds.load(manager);
+		//			Textures.load(manager);
+		//			manager.finishLoading();
+		//			Sounds.setup(manager);
+		//			Textures.setup(manager);
+		//		}
 	}
 
 	@Override
 	public void pause() {
 		super.pause();
-//		if( Gdx.app.getType() == ApplicationType.Android ) {
-//			AssetManager manager = getManager();
-//			Sounds.dispose(manager);
-//			Textures.dispose(manager);
-//		}
+		//		if( Gdx.app.getType() == ApplicationType.Android ) {
+		//			AssetManager manager = getManager();
+		//			Sounds.dispose(manager);
+		//			Textures.dispose(manager);
+		//		}
 	}
-	
+
 	public void pauseGame() {
 		this.gameState = GAME_STATE_PAUSED;
 	}
-	
+
 	public void resumeGame() {
 		this.gameState = GAME_STATE_RUNNING;
 	}
-	
+
 	public void startGame() {
 		this.gameState = GAME_STATE_RUNNING;
 	}
-	
+
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE_RUNNING;
 	}
-	
+
 	public boolean isPaused() {
 		return this.gameState == GAME_STATE_PAUSED;
 	}
-	
+
 	public void setGameState(int gameState) {
 		this.gameState = gameState;
 	}
-	
+
 	public int getGameState() {
 		return this.gameState;
 	}
-	
+
 	public void setTotalScore(int totalScore) {
 		this.totalScore = totalScore;
 	}
-	
+
 	public int getTotalScore() {
 		return totalScore;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		Sounds.dispose(getManager());
 		Textures.dispose(getManager());
 	}
-	
+
 	public void setExporter(Exporter exporter) {
 		this.exporter = exporter;
 	}
-	
+
 	public Exporter getExporter() {
 		return exporter;
 	}
-	
+
 	public void setImporter(Importer importer) {
 		this.importer = importer;
 	}
-	
+
 	public Importer getImporter() {
 		return importer;
 	}
-	
+
 	public void addToBackstack(Screen screen) {
 		this.backStack.add(screen);
 	}
-	
+
 	public Screen popBackstack() {
 		return this.backStack.pop();
 	}
-	
+
 	public Screen peepBackstack() {
 		return this.backStack.peek();
 	}
-	
+
 	/**
 	 * 
 	 * @return size of the world in meters
@@ -187,7 +187,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public Vector3 getWorldSize() {
 		return worldSize;
 	}
-	
+
 	/**
 	 * Note that world size is not the same as screen size
 	 * It is the size of the world as used by Box2D
@@ -196,7 +196,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void setWorldSize(Vector3 worldSize) {
 		this.worldSize = worldSize;
 	}
-	
+
 	/**
 	 * Use this to convert screen pixel sizes to Box2D sizes
 	 * @param x size in screen pixels
@@ -205,7 +205,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	static public float convertScreenToWorld(float x) {
 		return x * WORLD_TO_BOX;
 	}
-	
+
 	/**
 	 * Use this to convert Box2D sizes to screen pixel sizes 
 	 * @param x size in Box2D
@@ -218,37 +218,39 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public int getLevelNumber() {
 		return levelNumber;
 	}
-	
+
 	public void setLevelNumber(int levelNumber) {
 		this.levelNumber = levelNumber;
 	}
 
 	public void setLevel(Level level) {
 		this.level = level;
-		setLevelNumber(level.getLevelNumber());
+		if( level != null ) {
+			setLevelNumber(level.getLevelNumber());
+		}
 	}
-	
+
 	/**
 	 * Tries to get level from AssetManager. If AssetManager has no level available
 	 * the level set through {@link #setLevel(Level)} is returned.
 	 * @return Level or null if not available or set.
 	 */
 	public Level getLevel() {
-//		Level level;
-//		try {
-//			level = getManager().get(Level.getLocalPath(this.levelNumber), Level.class);
-//		} catch( Exception e ) {
-//			level = null;
-//		}
-//		
-//		if( level == null ) {
-//			return this.level;
-//		} else {
-//			return level;
-//		}
+		//		Level level;
+		//		try {
+		//			level = getManager().get(Level.getLocalPath(this.levelNumber), Level.class);
+		//		} catch( Exception e ) {
+		//			level = null;
+		//		}
+		//		
+		//		if( level == null ) {
+		//			return this.level;
+		//		} else {
+		//			return level;
+		//		}
 		return this.level;
 	}
-	
+
 	/**
 	 * Loads the level synchronously.
 	 * The level loaded is the level with
@@ -257,13 +259,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
 	 */
 	public void loadLevel(OnLevelLoadedListener listener) {
-//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
+		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
 		loadLevelSync(listener);
 	}
-	
+
 	private void loadLevelAsync(final OnLevelLoadedListener listener) {
 		LevelLoader.loadLocalAsync(getLevelNumber(), new OnLevelLoadedListener() {
-			
+
 			@Override
 			public void onLevelLoaded(Level level) {
 				setLevel(level);
@@ -273,14 +275,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			}
 		});
 	}
-	
+
 	private void loadLevelSync(final OnLevelLoadedListener listener) {
 		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
 		if( listener != null ) {
 			listener.onLevelLoaded(getLevel());
 		}
 	}
-	
+
 	/**
 	 * Unloads level from AssetManager. The level unloaded is the level
 	 * with level number set by {@link #setLevelNumber(int)}
@@ -323,7 +325,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 		return gameObjects;
 	}
-	
+
 	/**
 	 * Use this to add User interface elements that do not require collision detection nor physics
 	 * Example: score bar, buttons, background images/animations
@@ -337,7 +339,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public AssetManager getManager() {
 		return manager;
 	}
-	
+
 	/**
 	 * Queues a game object for removal. Note that this happens asynchronously.
 	 * @param object the GameObject to be removed
@@ -345,12 +347,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
 	}
-	
+
 	public void update(float delta, Stage stage) {
 		if( this.gameState == GAME_STATE_RUNNING ) {
 			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 		}
-		
+
 		if( ! this.world.isLocked() ) {
 			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
 			while(itr.hasNext()) {
@@ -361,7 +363,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			}
 		}
 	}
-	
+
 	/**
 	 * Called when a key was pressed
 	 * @param keycode one of the constants in Input.Keys
@@ -379,45 +381,45 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Resets the game by reloading the level
 	 */
 	public void reset() {
 		setScreen( new LevelScreen(this) );
 	}
-	
+
 	public void showMainMenu() {
 		Screen screen = new MainMenuScreen(this);
 		setScreen( screen );
 		addToBackstack(screen);
 	}
-	
+
 	public void showSplashScreen() {
 		setScreen(new SplashScreen(this));
 	}
-	
+
 	public void startLevel(int level) {
 		setLevelNumber(level);
 		showLevelScreen();
 	}
-	
+
 	public void startLevel(Level level) {
 		setLevel(level);
 		showLevelScreen();
 	}
-	
+
 	private void showLevelScreen() {
 		LevelScreen screen = new LevelScreen(this);
 		setScreen( screen );
-		
+
 		//Make sure LevelScreen is only added once to the backstack to prevent
 		//going back to a previous level if user quits level
 		if( ! ( peepBackstack() instanceof LevelScreen ) ) {
 			addToBackstack(screen);
 		}
 	}
-	
+
 	/**
 	 * Starts the LevelEditor screen
 	 * TODO remove level argument if it is not really used as 
@@ -429,13 +431,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		setScreen(screen);
 		addToBackstack(screen);
 	}
-	
+
 	public void showLevelEditorMenu() {
 		Screen screen = new LevelEditorMenuScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
 	}
-	
+
 	/**
 	 * Hides the current screen and shows the previous screen
 	 */
@@ -443,7 +445,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		popBackstack();
 		setScreen(peepBackstack());
 	}
-	
+
 	/**
 	 * This should return one game object for each type used in the game.
 	 * @return

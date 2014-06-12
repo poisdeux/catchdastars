@@ -16,6 +16,7 @@ import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 
 
@@ -92,11 +93,25 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 				this.game.resumeGame();
 				break;
 			}
+		} else if( dialog instanceof ErrorDialog ) {
+			switch( which ) {
+			case ErrorDialog.BUTTON_CLOSE:
+				this.game.stopScreen();
+				break;
+			}
 		}
 	}
 
 	@Override
 	public void onLevelLoaded(Level level) {
+		if( level == null ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
+			return;
+		}
+		
 		game.initialize();
 		
 		this.levelImage.addAction(sequence(new Action() {
