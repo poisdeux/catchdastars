@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.strategames.catchdastars.Game;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
@@ -44,15 +45,14 @@ public class SplashScreen extends AbstractScreen {
 		this.splashImage.setPosition(0, 
 				Gdx.graphics.getHeight()/2 - this.splashImage.getHeight()/2);
 
-		this.splashImage.addAction( fadeIn( 0.75f ));
+		this.splashImage.addAction( fadeIn( 0.75f ) );
 
 		this.splashImage.getColor().a = 0f;
 
+		Textures.load(assetManager);
+		Sounds.load(assetManager);
+		
 		stage.addActor( this.splashImage );
-
-		//Now setup assets to load in background
-		Textures.load(this.assetManager);
-		Sounds.load(this.assetManager);
 	}
 
 	@Override

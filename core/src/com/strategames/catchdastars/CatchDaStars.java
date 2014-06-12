@@ -36,10 +36,10 @@ import com.strategames.ui.dialogs.LevelFailedDialog;
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
 
-	private World world;
-
 	private Stage stageActors;
 
+	private World world;
+	
 	private ArrayList<GameObject> availableGameObjects;
 
 	private boolean accelerometerAvailable;
@@ -85,6 +85,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		this.debugRenderer = new Box2DDebugRenderer();
 
+		//We create a dummy world to make sure Box2D library is loaded before
+		//we create any game objects. This might be fixed in a future version
+		//of libgdx.
+		this.world = new World(this.gravityVector, true);
+		setWorld(this.world);
+		
 		super.create();
 	}
 
@@ -113,6 +119,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			return;
 		}
 
+		//Reset world
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
 		

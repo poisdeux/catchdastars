@@ -135,7 +135,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 
 		getMultiplexer().addProcessor(new GestureDetector(this));
-
+		
 		setCamera();
 	}
 

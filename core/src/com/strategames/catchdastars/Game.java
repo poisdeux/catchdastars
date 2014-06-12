@@ -215,6 +215,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public void setLevel(Level level) {
 		this.level = level;
+		setLevelNumber(level.getLevelNumber());
 	}
 	
 	/**
@@ -413,8 +414,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * level is already available in the game class
 	 * @param level
 	 */
-	public void showLevelEditor(Level level) {
-		setLevel(level);
+	public void showLevelEditor() {
 		Screen screen = new LevelEditorScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
