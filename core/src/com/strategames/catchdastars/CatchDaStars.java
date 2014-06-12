@@ -32,11 +32,10 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
-
-	private Stage stageActors;
 
 	private World world;
 	
@@ -54,8 +53,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
-
-	private int totalScore;
 
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
@@ -106,7 +103,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		super.update(delta, stage);
 
-		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -200,7 +197,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
 
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), this.totalScore);
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
@@ -214,7 +211,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		levelCompleteDialog.show();
 
-		this.totalScore += calculateScore();
+		setTotalScore(getTotalScore() + calculateScore());
 	}
 
 	private void showLevelFailedDialog() {
@@ -227,15 +224,17 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	private void darkenActors(float factor) {
-		if ( this.stageActors == null )
+		Level level = getLevel();
+		if( level == null )
+			return;
+		
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
+		if ( gameObjects == null )
 			return;
 
-		Array<Actor> actors = this.stageActors.getActors();
-		int size = actors.size;
-		for(int i = 0; i < size; i++) {
-			Actor actor = actors.get(i);
-			Color color = actor.getColor();
-			actor.setColor(color.r, color.g, color.b, factor);
+		for( GameObject gameObject : gameObjects ) {
+			Color color = gameObject.getColor();
+			gameObject.setColor(color.r, color.g, color.b, factor);
 		}
 	}
 

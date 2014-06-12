@@ -25,10 +25,11 @@ public class MainMenuScreen extends AbstractScreen {
 		table.add( "Welcome to Catch Da Stars!" ).spaceBottom( 50 );
 		table.row();
 
-		TextButton button = new TextButton( "Start game", getSkin() );
+		TextButton button = new TextButton( "New game", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
+				game.setTotalScore(0);
 				game.startLevel(1);
 			}
 		}); 

@@ -59,6 +59,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	private Stack<Screen> backStack;
 	
+	private int totalScore;
+
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -125,6 +127,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	
 	public int getGameState() {
 		return this.gameState;
+	}
+	
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
+	}
+	
+	public int getTotalScore() {
+		return totalScore;
 	}
 	
 	public String getTitle() {
