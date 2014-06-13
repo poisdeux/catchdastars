@@ -10,8 +10,6 @@ public class ScreenBorder {
 	static public void create(Game game) {
 		Vector3 worldSize = game.getWorldSize();	
 		
-		Gdx.app.log("ScreenBorder", "create: worldSize="+worldSize);
-		
 		Wall wTop = new Wall(game, 0, 0, worldSize.x, Wall.Orientation.HORIZONTAL);
 		wTop.increaseSize();
 		wTop.increaseSize();

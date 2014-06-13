@@ -38,7 +38,6 @@ import com.strategames.ui.widgets.RectangleImage;
 public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private ButtonsDialog mainMenu;
-	private Vector2 longPressPosition;
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
 	private Actor uiElementHit;
@@ -119,7 +118,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.testGame = false;
 
 		this.initialTouchPosition = new Vector2();
-		this.longPressPosition = new Vector2();
 		this.dragDirection = new Vector2();
 
 		this.selectedGameObjects = new ArrayList<GameObject>();
@@ -135,7 +133,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 
 		getMultiplexer().addProcessor(new GestureDetector(this));
-		
+
 		setCamera();
 	}
 
@@ -159,21 +157,21 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			object.initializeConfigurationItems();
 			deselectGameObject(object);
 		}
-		
+
 		//This is added to the actor stage as we use
 		//game objects in the menu
 		setupMenu(stage);
-		
+
 		this.game.pauseGame();
 	}
 
 	@Override
 	public void show() {
 		super.show();
-		
+
 		this.game.loadLevel(this);
 	}
-	
+
 	@Override
 	protected boolean handleBackNavigation() {
 		saveLevel();
@@ -190,7 +188,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -216,7 +214,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		Actor actor = super.stageActors.hit(touchPosition.x, touchPosition.y, false);
 		//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
 
-		tap.setActor(actor);
+		this.tap.setActor(actor);
 		this.actorTouched = actor;
 
 		if( actor != null ) { // actor selected
@@ -231,19 +229,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if( this.rectangleImage.getWidth() > 0 ) { // check if we did a selection
-			Rectangle rectangle = new Rectangle(this.rectangleImage.getX(),
-					this.rectangleImage.getY(), 
-					this.rectangleImage.getWidth(),
-					this.rectangleImage.getHeight());
-			ArrayList<Actor> selection = getActors(rectangle);
-			for( Actor actor : selection ) {
-				selectGameObject((GameObject) actor);
-			}
-			this.rectangleImage.setWidth(0f);
-			this.rectangleImage.setHeight(0f);
-			return true;
-		} else if( this.actorTouched != null ) {
+		if( this.actorTouched != null ) {
 			GameObject gameObject = (GameObject) this.actorTouched;
 
 			//If menu item create new menu item at initial position
@@ -277,23 +263,10 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				return false;
 			}
 
-			if( this.selectedGameObjects.size() > 0 ) {
-				Vector2 moveDirection = new Vector2(screenX, screenY);
-				Vector2 actorCoords = new Vector2(this.actorTouched.getX(), this.actorTouched.getY());
-				super.stageActors.screenToStageCoordinates(moveDirection);
-				moveDirection.sub(actorCoords);
-
-				//				Gdx.app.log("LevelEditorScreen", "touchDragged: after moveDirection="+moveDirection+
-				//						", stageCoords="+stageCoords);
-
-				for( GameObject gameObject : this.selectedGameObjects ) {
-					moveActor(gameObject, moveDirection);
-				}
-			} else {
-				float width = screenX - this.initialTouchPosition.x;
-				float height = this.initialTouchPosition.y - screenY;
-				this.rectangleImage.setWidth(width);
-				this.rectangleImage.setHeight(height);
+			if( this.actorTouched != null ) {
+				Vector2 newPos = new Vector2(screenX, screenY);
+				super.stageActors.screenToStageCoordinates(newPos);
+				moveActor(this.actorTouched, newPos);
 			}
 
 			return true;
@@ -304,17 +277,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		}
 	}
-
+	
 	@Override
 	public boolean tap(final float x, final float y, int count, int button) {
-		/**
-		 * Used to show gameobject configuration window when double tapped
-		 */
-		if( this.testGame ) { //return to edit mode
-			this.testGame = false;
-			getGame().reset();
-		}
-
 		this.tap.tap();
 
 		GameObject gameObject = (GameObject) this.tap.getActor();
@@ -331,26 +296,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	@Override
-	public boolean longPress(final float x, final float y) {
-		/**
-		 * Used to show generic configuration window
-		 */
-		if( this.testGame ) {
-			return false;
-		}
-
-		if( this.state == States.NONE ) {
-			this.state = States.LONGPRESS;
-
-			this.longPressPosition.x = x;
-			this.longPressPosition.y = y;
-
-			if( this.uiElementHit != null ) return false;
-
-			createMainMenu();
-
-		}
-		return true;
+	public boolean longPress(float x, float y) {
+		return false;
 	}
 
 	@Override
@@ -425,6 +372,21 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				break;
 			case LevelEditorOptionsDialog.CHECKBOX_SNAPTOGRID:
 				this.snapToGrid = this.preferences.snapToGridEnabled();
+				break;
+			}
+		} else if (dialog instanceof GameObjectConfigurationDialog ) {
+			switch( which ) {
+			case GameObjectConfigurationDialog.BUTTON_COPY_CLICKED:
+				GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
+				Vector2 stageCoords = stageActors.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
+				copy.setPosition(stageCoords.x, stageCoords.y);
+				getGame().addGameObject(copy);
+				stageActors.addActor(copy);
+				deselectGameObject(copy);
+				break;
+			case GameObjectConfigurationDialog.BUTTON_DELETE_CLICKED:
+				((GameObjectConfigurationDialog) dialog).getGameObject().remove();
+				dialog.remove();
 				break;
 			}
 		}
@@ -527,29 +489,18 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		return null;
 	}
 
-	private ArrayList<Actor> getActors(Rectangle rectangle) {
-		ArrayList<Actor> actorsInRectangle = new ArrayList<Actor>();
-
-		Array<Actor> actors = super.stageActors.getActors();
-		for(Actor actor : actors) {
-			if( this.selectedGameObjects.contains(actor) ) continue;
-			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
-					actor.getWidth(), actor.getHeight());
-			if( rectangle.overlaps(rectangleActor) ) {
-				actorsInRectangle.add(actor);
-			}
-		}
-		return actorsInRectangle;
-	}
-
+	/**
+	 * Moves actor to position v.
+	 * @param actor
+	 * @param v new position of actor. Note: v will be changed, 
+	 * so make a copy before calling this method if you wish to keep
+	 * its value
+	 */
 	private void moveActor(Actor actor, Vector2 v) {
 		GameObject gameObject = (GameObject) actor;
 
-		Vector2 newPos = new Vector2(gameObject.getX(), gameObject.getY());
-		newPos.add(v);
-
 		if( this.snapToGrid ) {
-			this.grid.map(newPos);
+			this.grid.map(v);
 		}		
 
 		Rectangle rectangle = gameObject.getBoundingRectangle();
@@ -564,20 +515,20 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		// position object at new X coordinate adding half the amount we
 		// subtracted from the width
-		rectangle.x = newPos.x + 0.01f;   
+		rectangle.x = v.x + 0.01f;   
 		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
 		} else {
-			rectangle.x = newPos.x;
+			rectangle.x = v.x;
 		}
 
 		// position object at new Y coordinate adding half the amount we
 		// subtracted from the height
-		rectangle.y = newPos.y + 0.01f;
+		rectangle.y = v.y + 0.01f;
 		if( getActor(rectangle) != null ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
 		} else {
-			rectangle.y = newPos.y;
+			rectangle.y = v.y;
 		}
 
 		gameObject.moveTo(rectangle.x, rectangle.y);
@@ -622,7 +573,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				mainMenu.hide();
 			}
 		});
-		
+
 		this.mainMenu.setPositiveButton("Save", new OnClickListener() {
 
 			@Override
@@ -644,38 +595,11 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.mainMenu.create();
 	}
 
-	private Dialog showGameObjectCongfigurationDialog(GameObject gameObject) {
+	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
 		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(stageUIActors, gameObject, getSkin());
-		dialog.addButton("Copy " + gameObject.getName(), new OnClickListener() {
-
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
-				Vector2 stageCoords = stageActors.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
-				copy.setPosition(stageCoords.x, stageCoords.y);
-				getGame().addGameObject(copy);
-				stageActors.addActor(copy);
-				deselectGameObject(copy);
-			}
-		});
-		dialog.addButton("Delete " + gameObject.getName(), new OnClickListener() {
-
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				((GameObjectConfigurationDialog) dialog).getGameObject().remove();
-				dialog.remove();
-			}
-		});
-
-		dialog.setPositiveButton("Close", new OnClickListener() {
-
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				dialog.remove();
-			}
-		});
+		dialog.setOnClickListener(this);
 		dialog.create();
-		return dialog;
+		dialog.show();
 	}
 
 	private void setupMenu(Stage stage) {
@@ -698,7 +622,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		menuButton.setListener(this);
 		menuButton.setPosition(stageUICoords.x, stageUICoords.y);
 		stageUIActors.addActor(menuButton);
-		
+
 		y-=delta;
 
 		for(GameObject object : gameObjects ) {

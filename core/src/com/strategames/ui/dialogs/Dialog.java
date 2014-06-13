@@ -32,6 +32,8 @@ abstract public class Dialog extends Table {
 	protected Stage stage;
 	
 	private boolean center;
+	private boolean bottom;
+	private boolean top;
 	
 	public Dialog(Stage stage, Skin skin) {
 		setSkin(skin);
@@ -40,6 +42,7 @@ abstract public class Dialog extends Table {
 		setVisible(false);
 		setCenter(false);
 		setStyle(skin.get(Style.class));
+		setStage(stage);
 	}
 
 	public void setOnClickListener(OnClickListener listener) {
@@ -52,6 +55,14 @@ abstract public class Dialog extends Table {
 	
 	public void setCenter(boolean center) {
 		this.center = center;
+	}
+	
+	public void setTop(boolean top) {
+		this.top = top;
+	}
+	
+	public void setBottom(boolean bottom) {
+		this.bottom = bottom;
 	}
 	
 	public void setMessage(String message) {
@@ -127,11 +138,6 @@ abstract public class Dialog extends Table {
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
 	public void create() {
-		if( this.center ) {
-			float x = (float) ((stage.getWidth()/2.0) - getWidth());
-			setPosition(x, stage.getHeight()/2f);
-		}
-		
 		if( this.message != null ) {
 			add(message);
 			row();
@@ -149,6 +155,8 @@ abstract public class Dialog extends Table {
 		row();
 
 		pack();
+		
+		positionDialog();
 	}
 	
 	public void show() {
@@ -161,6 +169,11 @@ abstract public class Dialog extends Table {
 		setVisible(false);
 	}
 	
+	/**
+	 * Use this to notify caller that used {@link #setOnClickListener(OnClickListener)} 
+	 * to connect a listener, which button was clicked in which dialog.
+	 * @param which
+	 */
 	protected void notifyListener(int which) {
 		OnClickListener listener = getOnClickListener();
 		if( listener != null ) {
@@ -172,6 +185,21 @@ abstract public class Dialog extends Table {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		setBackground(style.background);
 		invalidateHierarchy();
+	}
+	
+	private void positionDialog() {
+		float x = 0;
+		float y = 0;
+		if( this.center ) {
+			x = (float) ((stage.getWidth()/2.0) - (getWidth()/2.0));
+			y = stage.getHeight()/2f;
+		}
+		if( this.bottom ) {
+			y = 0;
+		} else if ( this.top ) {
+			y = stage.getHeight() - getHeight();
+		}
+		setPosition(x, y);
 	}
 	
 	static public class Style {

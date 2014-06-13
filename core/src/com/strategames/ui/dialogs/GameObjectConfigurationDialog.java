@@ -18,14 +18,15 @@ import com.strategames.catchdastars.utils.ConfigurationItem;
 import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectConfigurationDialog extends Dialog {
-	private final GameObject gameObject;
+	public final static int BUTTON_COPY_CLICKED = 1;
+	public final static int BUTTON_DELETE_CLICKED = 2;
+	public final static int BUTTON_CLOSE_CLICKED = BUTTON_POSITIVE;
 	
-	private ArrayList<TextButton> textButtons;
+	private final GameObject gameObject;
 
 	public GameObjectConfigurationDialog(Stage stage, final GameObject object, Skin skin) {
 		super(stage, skin);
 		this.gameObject = object;
-		this.textButtons = new ArrayList<TextButton>();
 	}
 
 	public GameObject getGameObject() {
@@ -34,10 +35,39 @@ public class GameObjectConfigurationDialog extends Dialog {
 	
 	@Override
 	public void create() {
-		setPosition(0, 0);
-		defaults().spaceBottom(10);
+		setCenter(true);
+		setBottom(true);
+		
 		row().fill().expandX();
 
+		setupConfigurationItems();
+
+		addButton("Copy " + gameObject.getName(), BUTTON_COPY_CLICKED);
+		addButton("Delete " + gameObject.getName(), BUTTON_DELETE_CLICKED);
+		
+		setPositiveButton("Close", new OnClickListener() {
+			
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				dialog.remove();
+			}
+		});
+
+		super.create();
+	}
+	
+	private void addButton(String text, final int index) {
+		TextButton button = new TextButton(text, this.skin);
+		button.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				notifyListener(index);
+			}
+		});
+		add(button).fill().expandX();
+	}
+	
+	private void setupConfigurationItems() {
 		gameObject.initializeConfigurationItems();
 
 		ArrayList<ConfigurationItem> configurationItems = gameObject.getConfigurationItems();
@@ -104,30 +134,5 @@ public class GameObjectConfigurationDialog extends Dialog {
 				row();
 			}
 		}
-
-		int count = 0;
-		for( TextButton button : this.textButtons ) {
-			add(button).fill().expandX();
-			if( count++ > 3 ) {
-				row();
-				count = 0;
-			}
-		}
-
-		super.create();
-	}
-	
-	public int addButton(String text, final Dialog.OnClickListener listener) {
-		TextButton button = new TextButton(text, this.skin);
-		this.textButtons.add(button);
-		final int index = this.textButtons.indexOf(button);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				listener.onClick(GameObjectConfigurationDialog.this, index);
-			}
-		});
-		
-		return index;
 	}
 }
