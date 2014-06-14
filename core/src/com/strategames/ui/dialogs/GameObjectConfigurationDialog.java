@@ -22,7 +22,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 	public final static int BUTTON_DELETE_CLICKED = 2;
 	public final static int BUTTON_CLOSE_CLICKED = BUTTON_POSITIVE;
 	
-	private final GameObject gameObject;
+	private GameObject gameObject;
 
 	public GameObjectConfigurationDialog(Stage stage, final GameObject object, Skin skin) {
 		super(stage, skin);
@@ -31,6 +31,17 @@ public class GameObjectConfigurationDialog extends Dialog {
 
 	public GameObject getGameObject() {
 		return gameObject;
+	}
+	
+	/**
+	 * Sets the gameobject the dialog should edit. This can be useful
+	 * if you need to change the gameobject while the dialog is still open.
+	 * For instance when copying an object and you want the copy to receive
+	 * all changes
+	 * @param gameObject
+	 */
+	public void setGameObject(GameObject gameObject) {
+		this.gameObject = gameObject;
 	}
 	
 	@Override
@@ -74,7 +85,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 
 		if( configurationItems != null ) {
 			for( ConfigurationItem item : configurationItems ) {
-				final ConfigurationItem fItem = item;
+				final ConfigurationItem.Type type = item.getType();
 
 				Label label = new Label(item.getName(), super.skin);
 				add(label);
@@ -88,7 +99,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 						public void keyTyped(TextField textField, char key) {
 							if (key == '\n') {
 								textField.getOnscreenKeyboard().show(false);
-								fItem.setValueText(buffer.toString());
+								ConfigurationItem nItem = getConfigurationItemFromSelectedObject(type);
+								if( nItem != null ) {
+									nItem.setValueText(buffer.toString());
+								}
 							}
 							buffer.append(key);
 						}
@@ -110,7 +124,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 						public void keyTyped(TextField textField, char key) {
 							if (key == '\n') {
 								textField.getOnscreenKeyboard().show(false);
-								fItem.setValueNumeric(Float.parseFloat(buffer.toString()));
+								ConfigurationItem nItem = getConfigurationItemFromSelectedObject(type);
+								if( nItem != null ) {
+									nItem.setValueNumeric(Float.parseFloat(buffer.toString()));
+								}
 							}
 							buffer.append(key);
 						}
@@ -125,7 +142,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 						@Override
 						public void changed(ChangeEvent event, Actor actor) {
 							Slider slider = (Slider) actor;
-							fItem.setValueNumeric(slider.getValue());	
+							ConfigurationItem nItem = getConfigurationItemFromSelectedObject(type);
+							if( nItem != null ) {
+								nItem.setValueNumeric(slider.getValue());	
+							}
 						}
 					});
 					add(slider);
@@ -134,5 +154,18 @@ public class GameObjectConfigurationDialog extends Dialog {
 				row();
 			}
 		}
+	}
+	
+	private ConfigurationItem getConfigurationItemFromSelectedObject(ConfigurationItem.Type type) {
+		ArrayList<ConfigurationItem> configurationItems = this.gameObject.getConfigurationItems();
+
+		if( configurationItems != null ) {
+			for( ConfigurationItem item : configurationItems ) {
+				if( item.getType() == type ) {
+					return item;
+				}
+			}
+		}
+		return null;
 	}
 }

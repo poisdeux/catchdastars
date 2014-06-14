@@ -188,7 +188,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -377,12 +377,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		} else if (dialog instanceof GameObjectConfigurationDialog ) {
 			switch( which ) {
 			case GameObjectConfigurationDialog.BUTTON_COPY_CLICKED:
-				GameObject copy = ((GameObjectConfigurationDialog) dialog).getGameObject().createCopy();
-				Vector2 stageCoords = stageActors.screenToStageCoordinates(new Vector2(copy.getX(), copy.getY()));
-				copy.setPosition(stageCoords.x, stageCoords.y);
-				getGame().addGameObject(copy);
-				stageActors.addActor(copy);
-				deselectGameObject(copy);
+				GameObject original = ((GameObjectConfigurationDialog) dialog).getGameObject();
+				GameObject copy = copyGameObject(original);
+				((GameObjectConfigurationDialog) dialog).setGameObject(copy);
 				break;
 			case GameObjectConfigurationDialog.BUTTON_DELETE_CLICKED:
 				((GameObjectConfigurationDialog) dialog).getGameObject().remove();
@@ -392,6 +389,26 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		}
 	}
 
+	private GameObject copyGameObject(GameObject object) {
+		GameObject copy = object.createCopy();
+		float xDelta = 0;
+		float yDelta = 0;
+		float width = copy.getWidth();
+		float height = copy.getHeight();
+		if( width > height ) {
+			yDelta = 0.06f; // empirically determined
+		} else {
+			xDelta = 0.06f; // empirically determined
+		}
+		
+		copy.setPosition(copy.getX() + xDelta, copy.getY() + yDelta);
+		getGame().addGameObject(copy);
+		stageActors.addActor(copy);
+		deselectGameObject(object);
+		selectGameObject(copy);
+		return copy;
+	}
+	
 	/**
 	 * Positions camera to make room for menu
 	 */
