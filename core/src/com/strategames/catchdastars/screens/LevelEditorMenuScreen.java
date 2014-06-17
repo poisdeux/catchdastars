@@ -161,7 +161,83 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Color selectedColor = getSkin().getColor("red");
 		button.setColor(selectedColor);
 	}
+	
+	@Override
+	public void onClick(Dialog dialog, int which) {
+		final Color colorWhite = getSkin().getColor("white");
+		if( dialog instanceof EditLevelDialog ) {
+			final Level level = ((EditLevelDialog) dialog).getLevel();
+			final Button button = (Button) dialog.getTag();
+			switch(which) {
+			case EditLevelDialog.BUTTON_CHANGELEVELNUMBER_CLICKED:
+				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
+				levelNumberDialog.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						int selectedItem = ((WheelSpinnerDialog) dialog).getSelectedItem();
+						switch(which) {
+						case WheelSpinnerDialog.ITEM_SELECTED:
+							reorderLevels(level, selectedItem);
+							break;
+						}
+						dialog.remove();
+						button.setColor(colorWhite);
+					}
+				});
+				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
+				levelNumberDialog.show();
+				dialog.remove();
+				break;
+			case EditLevelDialog.BUTTON_CHANGENAME_CLICKED:
+				changeLevelName(level, (TextButton) button);
+				dialog.remove();
+				button.setColor(colorWhite);
+				break;
+			case EditLevelDialog.BUTTON_COPY_CLICKED:
+				copyLevel(level);
+				dialog.remove();
+				button.setColor(colorWhite);
+				break;
+			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
+				deleteLevel(level);
+				dialog.remove();
+				break;
+			case EditLevelDialog.BUTTON_CLOSE_CLICKED:
+				dialog.remove();
+				button.setColor(colorWhite);
+				break;
+			}
+		}
+	}
 
+	@Override
+	public void levelsReceived(String json) {
+		ArrayList<Level> levels = LevelLoader.getLevels(json);
+		if( levels != null ) {
+			ArrayList<Level> levelsFailedToSave = null;
+			if( LevelWriter.deleteLocalLevelsDir() ) {
+				levelsFailedToSave = LevelWriter.save(levels);
+			} else {
+				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
+			}
+			if( levelsFailedToSave != null ) {
+				if( levelsFailedToSave.size() == 0 ) {
+					fillLevelButtonsTable(levels);
+				} else {
+					for(Level level : levelsFailedToSave) {
+						Gdx.app.log("LevelEditorMenuScreen", "Failed to save level: "+level);
+					}
+					showErrorDialog("Error saving levels", "Failed to save one or more levels");
+				}
+			} else {
+				showErrorDialog("Error deleting levels", "Failed to delete directory that holds the levels");
+			}
+		} else {
+			showErrorDialog("Error importing", "Failed to import levels");
+		}
+	}
+	
 	private void changeLevelName(final Level level, final TextButton button) {
 		Gdx.input.getTextInput(new TextInputListener() {
 			@Override
@@ -178,6 +254,13 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}, "Enter name", level.getName());
 	}
 
+	private void copyLevel(Level level) {
+		Level newLevel = level.copy();
+		newLevel.setName("(copy) "+ newLevel.getName());
+		addLevel(newLevel);
+//		reorderLevels(newLevel, level.getLevelNumber());
+	}
+	
 	private void addLevel(Level level) {
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
@@ -234,33 +317,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 	}
 
-	@Override
-	public void levelsReceived(String json) {
-		ArrayList<Level> levels = LevelLoader.getLevels(json);
-		if( levels != null ) {
-			ArrayList<Level> levelsFailedToSave = null;
-			if( LevelWriter.deleteLocalLevelsDir() ) {
-				levelsFailedToSave = LevelWriter.save(levels);
-			} else {
-				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
-			}
-			if( levelsFailedToSave != null ) {
-				if( levelsFailedToSave.size() == 0 ) {
-					fillLevelButtonsTable(levels);
-				} else {
-					for(Level level : levelsFailedToSave) {
-						Gdx.app.log("LevelEditorMenuScreen", "Failed to save level: "+level);
-					}
-					showErrorDialog("Error saving levels", "Failed to save one or more levels");
-				}
-			} else {
-				showErrorDialog("Error deleting levels", "Failed to delete directory that holds the levels");
-			}
-		} else {
-			showErrorDialog("Error importing", "Failed to import levels");
-		}
-	}
-
 	private void showErrorDialog(String title, String message) {
 		ErrorDialog dialog = new ErrorDialog(getStageUIElements(), title, getSkin());
 		dialog.setMessage(message);
@@ -293,51 +349,5 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		
 		this.levels.renumberLevels();
 		fillLevelButtonsTable(this.levels.getLevels());
-	}
-
-	@Override
-	public void onClick(Dialog dialog, int which) {
-		final Color transparent = new Color(1, 1, 1, 1);
-		if( dialog instanceof EditLevelDialog ) {
-			final Level level = ((EditLevelDialog) dialog).getLevel();
-			final Button button = (Button) dialog.getTag();
-			switch(which) {
-			case EditLevelDialog.BUTTON_CHANGELEVELNUMBER_CLICKED:
-				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
-				levelNumberDialog.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						int selectedItem = ((WheelSpinnerDialog) dialog).getSelectedItem();
-						switch(which) {
-						case WheelSpinnerDialog.ITEM_SELECTED:
-							reorderLevels(level, selectedItem);
-							break;
-						}
-						dialog.remove();
-						button.setColor(transparent);
-					}
-				});
-				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
-				levelNumberDialog.show();
-				dialog.remove();
-				break;
-			case EditLevelDialog.BUTTON_CHANGENAME_CLICKED:
-				changeLevelName(level, (TextButton) button);
-				dialog.remove();
-				button.setColor(transparent);
-				break;
-			case EditLevelDialog.BUTTON_COPY_CLICKED:
-				break;
-			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
-				deleteLevel(level);
-				dialog.remove();
-				break;
-			case EditLevelDialog.BUTTON_CLOSE_CLICKED:
-				dialog.remove();
-				button.setColor(transparent);
-				break;
-			}
-		}
 	}
 }

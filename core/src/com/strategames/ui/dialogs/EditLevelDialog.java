@@ -50,7 +50,12 @@ public class EditLevelDialog extends ButtonsDialog {
 			}
 		});
 
-		add("Copy level", new ClickListener());
+		add("Copy level", new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				notifyListener(BUTTON_COPY_CLICKED);
+			}
+		});
 		
 		setNegativeButton("Close", new OnClickListener() {
 
