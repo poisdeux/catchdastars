@@ -377,7 +377,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		}
 	}
 
-	abstract public GameObject createCopy();
+	abstract public GameObject copy();
 
 	public void initializeConfigurationItems() {
 		this.configurationItems = createConfigurationItems();

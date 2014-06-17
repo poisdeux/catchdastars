@@ -125,7 +125,7 @@ public class Star extends GameObject {
 	
 	
 	@Override
-	public GameObject createCopy() {
+	public GameObject copy() {
 		GameObject object = new Star(getGame(), 
 				getX(), 
 				getY(), 

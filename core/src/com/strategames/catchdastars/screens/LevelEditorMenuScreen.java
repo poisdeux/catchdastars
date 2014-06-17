@@ -257,14 +257,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void copyLevel(Level level) {
 		Level newLevel = level.copy();
 		newLevel.setName("(copy) "+ newLevel.getName());
+		newLevel.setLevelNumber(level.getLevelNumber() + 1);
 		addLevel(newLevel);
-//		reorderLevels(newLevel, level.getLevelNumber());
+		reorderLevels(newLevel, level.getLevelNumber() + 1);
 	}
 	
 	private void addLevel(Level level) {
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
-		TextButton button = new TextButton(lastLevelNumber + ". " +level.getName(), skin);
+		TextButton button = new TextButton(level.getLevelNumber() + ". " +level.getName(), skin);
 		button.setTag(level);
 		button.setListener(LevelEditorMenuScreen.this);
 		levelButtonsTable.add(button).expand();

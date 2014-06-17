@@ -174,7 +174,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	}
 
 	@Override
-	public GameObject createCopy() {
+	public GameObject copy() {
 		Balloon balloon = new Balloon(getGame(), 
 				getX(), 
 				getY(),

@@ -16,7 +16,7 @@ public class ScreenBorder {
 		wTop.setPosition(-wTop.getHalfHeight(), worldSize.y - wTop.getHalfHeight());
 		game.addGameObject(wTop);
 		
-		Wall wBottom = (Wall) wTop.createCopy();
+		Wall wBottom = (Wall) wTop.copy();
 		wBottom.setPosition(wTop.getX(), -wBottom.getHalfHeight());
 		game.addGameObject(wBottom);
 		
@@ -26,7 +26,7 @@ public class ScreenBorder {
 		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getY() + wLeft.getHalfWidth());
 		game.addGameObject(wLeft);
 		
-		Wall wRight = (Wall) wLeft.createCopy();
+		Wall wRight = (Wall) wLeft.copy();
 		wRight.setPosition(worldSize.x - wRight.getHalfWidth(), wLeft.getY());
 		game.addGameObject(wRight);
 	}

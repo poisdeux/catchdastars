@@ -353,7 +353,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	 * @return game object added to the game
 	 */
 	public GameObject addGameObject(GameObject object, float xStage, float yStage) {
-		GameObject copy = object.createCopy();
+		GameObject copy = object.copy();
 		copy.setMenuItem(false);
 		copy.setInitialPosition(new Vector2(xStage, yStage));
 		copy.moveTo(xStage, yStage);
@@ -389,7 +389,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private GameObject copyGameObject(GameObject object) {
-		GameObject copy = object.createCopy();
+		GameObject copy = object.copy();
 		float xDelta = 0;
 		float yDelta = 0;
 		float width = copy.getWidth();
@@ -655,7 +655,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	 * @param y
 	 */
 	private void addGameObjectToMenu(Stage stage, GameObject object, float x, float y) {
-		GameObject gameObject = object.createCopy();
+		GameObject gameObject = object.copy();
 		gameObject.setSaveToFile(false);
 		gameObject.setMenuItem(true);
 		deselectGameObject(gameObject);

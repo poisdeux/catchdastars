@@ -16,7 +16,7 @@ public class LevelWriter {
 	 */
 	static public boolean save(Level level) {
 		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level.getLevelNumber()));
-		try { 
+		try {
 			file.writeString(level.getJson(), false);
 			return true;
 		} catch (Exception e) {

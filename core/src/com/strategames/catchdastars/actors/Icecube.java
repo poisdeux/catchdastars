@@ -176,7 +176,7 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	public GameObject createCopy() {
+	public GameObject copy() {
 		Icecube cube = new Icecube(getGame(), 
 				getX(), 
 				getY());

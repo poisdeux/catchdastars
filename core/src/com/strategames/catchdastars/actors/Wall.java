@@ -183,7 +183,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 	@Override
-	public GameObject createCopy() {
+	public GameObject copy() {
 		GameObject object = new Wall(getGame(), 
 				getX(), 
 				getY(),
