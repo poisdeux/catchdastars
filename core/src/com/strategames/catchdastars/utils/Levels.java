@@ -30,6 +30,14 @@ public class Levels {
 		this.levels.remove(level);
 	}
 	
+	public void addLevel(Level level) {
+		this.levels.add(level);
+	}
+	
+	public Level getLevel(int number) {
+		return this.levels.get(number);
+	}
+	
 	/**
 	 * Renumbers all levels so the numbering is sequential again
 	 * after deleting one or more levels
@@ -39,7 +47,7 @@ public class Levels {
 		
 		int levelNumber = 1;
 		
-		for(Level level : levels) {
+		for(Level level : this.levels) {
 			level.setLevelNumber(levelNumber++);
 			LevelWriter.save(level);
 		}

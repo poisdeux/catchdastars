@@ -21,7 +21,10 @@ abstract public class Dialog extends Table {
 	public static final int BUTTON_NEGATIVE = -2;
 	public static final int BUTTON_NEUTRAL = -3;
 	public static final int BUTTON_POSITIVE = -4;
-
+	public static final int BUTTON_USER1 = -5;
+	public static final int BUTTON_USER2 = -6;
+	public static final int BUTTON_USER3 = -7;
+	
 	private TextButton buttonNegative;
 	private TextButton buttonNeutral;
 	private TextButton buttonPositive;
@@ -34,6 +37,8 @@ abstract public class Dialog extends Table {
 	private boolean center;
 	private boolean bottom;
 	private boolean top;
+	
+	private Object tag;
 	
 	public Dialog(Stage stage, Skin skin) {
 		setSkin(skin);
@@ -51,6 +56,22 @@ abstract public class Dialog extends Table {
 	
 	public OnClickListener getOnClickListener() {
 		return onClickListener;
+	}
+	
+	/**
+	 * Use this to pass along data
+	 * @param tag
+	 */
+	public void setTag(Object tag) {
+		this.tag = tag;
+	}
+	
+	/**
+	 * Use this to get the data set using {{@link #setTag(Object)}
+	 * @return Object set using {{@link #setTag(Object)}
+	 */
+	public Object getTag() {
+		return tag;
 	}
 	
 	public void setCenter(boolean center) {
@@ -83,6 +104,11 @@ abstract public class Dialog extends Table {
 		});
 	}
 
+	/**
+	 * Creates a TextButton and calls listener set using {@link #setOnClickListener(OnClickListener)}
+	 * when clicked
+	 * @param text
+	 */
 	public void setPositiveButton(String text) {
 		this.buttonPositive = new TextButton(text, this.skin);
 		this.buttonPositive.addListener(new ClickListener() {
@@ -103,6 +129,11 @@ abstract public class Dialog extends Table {
 		});
 	}
 	
+	/**
+	 * Creates a TextButton and calls listener set using {@link #setOnClickListener(OnClickListener)}
+	 * when clicked
+	 * @param text
+	 */
 	public void setNegativeButton(String text) {
 		this.buttonNegative = new TextButton(text, this.skin);
 		this.buttonNegative.addListener(new ClickListener() {
@@ -123,6 +154,11 @@ abstract public class Dialog extends Table {
 		});
 	}
 	
+	/**
+	 * Creates a TextButton and calls listener set using {@link #setOnClickListener(OnClickListener)}
+	 * when clicked
+	 * @param text
+	 */
 	public void setNeutralButton(String text) {
 		this.buttonNeutral = new TextButton(text, this.skin);
 		this.buttonNeutral.addListener(new ClickListener() {

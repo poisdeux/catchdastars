@@ -20,17 +20,16 @@ import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.LevelWriter;
 import com.strategames.catchdastars.utils.Levels;
 import com.strategames.interfaces.ButtonListener;
-import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.WheelSpinnerDialog;
 import com.strategames.ui.widgets.TextButton;
 
 
 
-public class LevelEditorMenuScreen extends AbstractScreen 
-implements ButtonListener, OnLevelsReceivedListener {
+public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
 	private Skin skin;
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
@@ -71,12 +70,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 						Level level = new Level();
 						level.setLevelNumber(++lastLevelNumber);
 						level.setName(text);
-						LevelWriter.save(level);
-						TextButton button = new TextButton(lastLevelNumber + ". " +text, skin);
-						button.setTag(level);
-						button.setListener(LevelEditorMenuScreen.this);
-						levelButtonsTable.add(button).expand();
-						levelButtonsTable.row();
+						addLevel(level);
 					}
 
 					@Override
@@ -140,7 +134,7 @@ implements ButtonListener, OnLevelsReceivedListener {
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
-		
+
 		Game game = getGame();
 		game.setLevel((Level) tag);
 		game.showLevelEditor(); 
@@ -153,75 +147,19 @@ implements ButtonListener, OnLevelsReceivedListener {
 		}
 
 		Object tag = ((TextButton) button).getTag();
-
 		if( ! (tag instanceof Level) ) {
 			return;
 		}
 
-		final Color currentColor = button.getColor().cpy();
-		final Level level = (Level) tag;
-		final ButtonsDialog dialog = new ButtonsDialog(stageUIActors, "Choose action", skin, ButtonsDialog.ORIENTATION.VERTICAL);
-		dialog.add("Delete level", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				deleteLevel(level);
-				dialog.remove();
-			}
-		});
-
-		dialog.add("Change name", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				changeLevelName(level, (TextButton) button);
-				dialog.remove();
-				button.setColor(currentColor);
-			}
-		});
-
-		dialog.add("Change level number", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
-				levelNumberDialog.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						dialog.remove();
-						reorderLevels(level, which);
-						button.setColor(currentColor);
-					}
-				});
-				levelNumberDialog.setNegativeButton("Cancel", new OnClickListener() {
-					
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						dialog.remove();
-						button.setColor(currentColor);
-					}
-				});
-				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
-				levelNumberDialog.show();
-				dialog.remove();
-			}
-		});
-
-		dialog.setNegativeButton("Close", new OnClickListener() {
-
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				dialog.remove();
-				button.setColor(currentColor);
-			}
-		});
-
+		Dialog dialog = new EditLevelDialog(getStageUIElements(), getSkin(), (Level) tag);
 		dialog.create();
-
+		dialog.setTag(button);
 		dialog.setPosition(button.getX(), button.getY());
-
-		Color color = button.getColor();
-		color.g = 100f;
-		button.setColor(color);
+		dialog.setOnClickListener(this);
 		dialog.show();
+
+		Color selectedColor = getSkin().getColor("red");
+		button.setColor(selectedColor);
 	}
 
 	private void changeLevelName(final Level level, final TextButton button) {
@@ -240,6 +178,16 @@ implements ButtonListener, OnLevelsReceivedListener {
 		}, "Enter name", level.getName());
 	}
 
+	private void addLevel(Level level) {
+		this.levels.addLevel(level);
+		LevelWriter.save(level);
+		TextButton button = new TextButton(lastLevelNumber + ". " +level.getName(), skin);
+		button.setTag(level);
+		button.setListener(LevelEditorMenuScreen.this);
+		levelButtonsTable.add(button).expand();
+		levelButtonsTable.row();
+	}
+
 	private void deleteLevel(Level level) {
 		LevelWriter.deleteLocal(level.getLevelNumber());
 		this.levels.deleteLevel(level);
@@ -256,8 +204,8 @@ implements ButtonListener, OnLevelsReceivedListener {
 			}
 		}
 
-		WheelSpinnerDialog spinner = new WheelSpinnerDialog("Select a number", levelNumbers, 
-				getStageUIElements(), this.skin);
+		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIElements(), this.skin,
+				"Select a number", levelNumbers);
 		spinner.create();
 		return spinner;
 	}
@@ -267,13 +215,12 @@ implements ButtonListener, OnLevelsReceivedListener {
 	 */
 
 	private void fillLevelButtonsTable(ArrayList<Level> levels) {
+		this.levelButtonsTable.clear();
+		this.lastLevelNumber = 0;
+
 		if( levels.isEmpty() ) {
 			return;
 		}
-
-		this.levelButtonsTable.clear();
-
-		this.lastLevelNumber = 0;
 
 		Collections.sort(levels);
 		this.lastLevelNumber = levels.get(levels.size() - 1).getLevelNumber();
@@ -289,18 +236,13 @@ implements ButtonListener, OnLevelsReceivedListener {
 
 	@Override
 	public void levelsReceived(String json) {
-		Gdx.app.log("LevelEditorMenuScreen", "levelsReceived: "+json);
 		ArrayList<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
 			ArrayList<Level> levelsFailedToSave = null;
 			if( LevelWriter.deleteLocalLevelsDir() ) {
 				levelsFailedToSave = LevelWriter.save(levels);
 			} else {
-				ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error deleting directory", getSkin());
-				dialog.setMessage("Failed to delete directory holding the levels");
-				dialog.setCenter(true);
-				dialog.create();
-				dialog.show();
+				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
 			}
 			if( levelsFailedToSave != null ) {
 				if( levelsFailedToSave.size() == 0 ) {
@@ -309,44 +251,93 @@ implements ButtonListener, OnLevelsReceivedListener {
 					for(Level level : levelsFailedToSave) {
 						Gdx.app.log("LevelEditorMenuScreen", "Failed to save level: "+level);
 					}
-					ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error saving levels", getSkin());
-					dialog.setMessage("Failed to save one or more levels");
-					dialog.setCenter(true);
-					dialog.create();
-					dialog.show();
+					showErrorDialog("Error saving levels", "Failed to save one or more levels");
 				}
 			} else {
-				ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error deleting levels", getSkin());
-				dialog.setMessage("Failed to delete directory that holds the levels");
-				dialog.setCenter(true);
-				dialog.create();
-				dialog.show();
+				showErrorDialog("Error deleting levels", "Failed to delete directory that holds the levels");
 			}
 		} else {
-			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error importing", getSkin());
-			dialog.setMessage("Failed to import levels");
-			dialog.setCenter(true);
-			dialog.create();
-			dialog.show();
+			showErrorDialog("Error importing", "Failed to import levels");
 		}
 	}
 
-	private void reorderLevels(Level level, int number) {
-		/**
-		 * Special case if level is moved to the end
-		 * of the sequence
-		 */
-		if( number == this.lastLevelNumber ) {
-			level.setLevelNumber(number+1);
-		} else {
+	private void showErrorDialog(String title, String message) {
+		ErrorDialog dialog = new ErrorDialog(getStageUIElements(), title, getSkin());
+		dialog.setMessage(message);
+		dialog.setCenter(true);
+		dialog.create();
+		dialog.show();
+	}
+
+	private void reorderLevels(Level level, int newLevelNumber) {
+		int currentLevelNumber = level.getLevelNumber();
+		if( currentLevelNumber > newLevelNumber ) {
+			//moving backwards so we need to move elements forwards to make room
 			for( Level l : this.levels.getLevels() ) {
-				if( l.getLevelNumber() >= number ) {
-					l.setLevelNumber(l.getLevelNumber() + 1);
+				int lNumber = l.getLevelNumber();
+				if( ( lNumber >= newLevelNumber ) && ( lNumber < currentLevelNumber ) ) {
+					l.setLevelNumber(lNumber + 1);
 				}
 			}
-			level.setLevelNumber(number);
+			level.setLevelNumber(newLevelNumber);
+		} else if ( currentLevelNumber < newLevelNumber ) {
+			//moving forward so we need to move elements backwards to make room
+			for( Level l : this.levels.getLevels() ) {
+				int lNumber = l.getLevelNumber();
+				if( ( lNumber <= newLevelNumber ) && ( lNumber > currentLevelNumber ) ) {
+					l.setLevelNumber(lNumber - 1);
+				}
+			}
+			level.setLevelNumber(newLevelNumber);
 		}
+		
 		this.levels.renumberLevels();
 		fillLevelButtonsTable(this.levels.getLevels());
+	}
+
+	@Override
+	public void onClick(Dialog dialog, int which) {
+		final Color transparent = new Color(1, 1, 1, 1);
+		if( dialog instanceof EditLevelDialog ) {
+			final Level level = ((EditLevelDialog) dialog).getLevel();
+			final Button button = (Button) dialog.getTag();
+			switch(which) {
+			case EditLevelDialog.BUTTON_CHANGELEVELNUMBER_CLICKED:
+				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
+				levelNumberDialog.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						int selectedItem = ((WheelSpinnerDialog) dialog).getSelectedItem();
+						switch(which) {
+						case WheelSpinnerDialog.ITEM_SELECTED:
+							reorderLevels(level, selectedItem);
+							break;
+						}
+						dialog.remove();
+						button.setColor(transparent);
+					}
+				});
+				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
+				levelNumberDialog.show();
+				dialog.remove();
+				break;
+			case EditLevelDialog.BUTTON_CHANGENAME_CLICKED:
+				changeLevelName(level, (TextButton) button);
+				dialog.remove();
+				button.setColor(transparent);
+				break;
+			case EditLevelDialog.BUTTON_COPY_CLICKED:
+				break;
+			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
+				deleteLevel(level);
+				dialog.remove();
+				break;
+			case EditLevelDialog.BUTTON_CLOSE_CLICKED:
+				dialog.remove();
+				button.setColor(transparent);
+				break;
+			}
+		}
 	}
 }

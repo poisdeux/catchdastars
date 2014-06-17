@@ -1,7 +1,6 @@
 package com.strategames.ui.dialogs;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,23 +16,30 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  *
  */
 public class WheelSpinnerDialog extends Dialog {
+	public static final int BUTTON_CANCELED_CLICKED = BUTTON_NEGATIVE;
+	public static final int ITEM_SELECTED = BUTTON_USER1;
+	
 	private String[] items;
 	private Skin skin;
 	private String title;
-
-	public WheelSpinnerDialog(String title, String[] items, Stage stage, Skin skin) {
+	private int selectedItem;
+	
+	public WheelSpinnerDialog(Stage stage, Skin skin, String title, String[] items) {
 		super(stage, skin);
 		this.stage = stage;
 		this.items = items;
 		this.skin = skin;
 		this.title = title;
-		setVisible(false);
-		setWidth(150);
-		setHeight(200);
 	}
 
+	public int getSelectedItem() {
+		return selectedItem;
+	}
+	
 	public void create() {
-
+		setWidth(150);
+		setHeight(200);
+		
 		if( this.title != null ) {
 			Label label = new Label(this.title, this.skin);
 			add(label).top();
@@ -46,9 +52,10 @@ public class WheelSpinnerDialog extends Dialog {
 			button.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
+					selectedItem = Integer.parseInt(button.getText().toString());
 					OnClickListener listener = getOnClickListener();
 					if( listener != null ) {
-						getOnClickListener().onClick(WheelSpinnerDialog.this, Integer.parseInt(button.getText().toString()));
+						listener.onClick(WheelSpinnerDialog.this, ITEM_SELECTED);
 					}
 				}
 			});
@@ -60,18 +67,8 @@ public class WheelSpinnerDialog extends Dialog {
 		add(scrollPane).maxHeight(150);
 		row();
 
+		setNegativeButton("Cancel");
+		
 		super.create();
 	}
-
-	public void show() {
-		setVisible(true);
-		this.stage.addActor(this);
-	}
-
-	public void hide() {
-		setVisible(false);
-		remove();
-	}
-
-
 }

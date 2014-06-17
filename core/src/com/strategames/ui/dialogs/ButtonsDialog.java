@@ -19,7 +19,7 @@ public class ButtonsDialog extends Dialog {
 	 * @param skin
 	 * @param orientation if buttons should be layed out vertically or horizontally
 	 */
-	public ButtonsDialog(Stage stage, String title, Skin skin, ORIENTATION orientation) {
+	public ButtonsDialog(Stage stage, Skin skin, ORIENTATION orientation) {
 		super(stage, skin);
 		this.textButtons = new ArrayList<TextButton>();
 		this.orientation = orientation;

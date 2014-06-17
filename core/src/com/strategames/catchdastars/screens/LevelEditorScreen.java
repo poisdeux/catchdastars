@@ -359,7 +359,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		copy.moveTo(xStage, yStage);
 		copy.initializeConfigurationItems();
 		getGame().addGameObject(copy);
-		//		super.stageActors.addActor(copy);
 		return copy;
 	}
 
@@ -560,7 +559,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private void createMainMenu() {
-		this.mainMenu = new ButtonsDialog(stageUIActors, "Main menu", getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
+		this.mainMenu = new ButtonsDialog(stageUIActors, getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
 		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
