@@ -147,15 +147,16 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	protected void setupActors(Stage stage) {
 		getMultiplexer().addProcessor(stage);
 
-		Array<Actor> actors = stage.getActors();
-		if( actors.size == 0 ) {
+		ArrayList<GameObject> gameObjects = getGame().getGameObjects();
+		
+		if( gameObjects.size() == 0 ) {
 			ScreenBorder.create(this.game);
 		}
 
-		for( Actor actor : actors ) {
-			GameObject object = (GameObject) actor;
-			object.initializeConfigurationItems();
-			deselectGameObject(object);
+		for( GameObject gameObject : gameObjects ) {
+			gameObject.initializeConfigurationItems();
+			deselectGameObject(gameObject);
+			stage.addActor(gameObject);
 		}
 
 		//This is added to the actor stage as we use
@@ -167,8 +168,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public void show() {
-		super.show();
-
 		this.game.loadLevel(this);
 	}
 
@@ -704,6 +703,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	@Override
 	public void onLevelLoaded(Level level) {
 		this.game.initialize();
+		super.show();
 	}
 }
 

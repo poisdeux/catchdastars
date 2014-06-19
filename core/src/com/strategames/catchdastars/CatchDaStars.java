@@ -134,7 +134,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfRedBalloons = 0;
 
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
-
+		
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
 				addGameObject(gameObject);

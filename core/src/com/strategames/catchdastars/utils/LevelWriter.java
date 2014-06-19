@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
 
 public class LevelWriter {
 
@@ -17,7 +18,8 @@ public class LevelWriter {
 	static public boolean save(Level level) {
 		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level.getLevelNumber()));
 		try {
-			file.writeString(level.getJson(), false);
+			Json json = new Json();
+			file.writeString(json.prettyPrint(level.getJson()), false);
 			return true;
 		} catch (Exception e) {
 			Gdx.app.log("LevelWriter", "save: could not write level: "+level+"\nError: "+e.getMessage());

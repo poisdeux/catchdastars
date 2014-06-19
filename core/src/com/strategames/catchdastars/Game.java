@@ -311,19 +311,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void addGameObject(GameObject object) {
 		object.setGame(this);
 		object.setup();
-		AbstractScreen screen = (AbstractScreen) getScreen();
-		screen.getStageActors().addActor(object);
 	}
 
 	public ArrayList<GameObject> getGameObjects() {
-		ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
-		AbstractScreen screen = (AbstractScreen) getScreen();
-		for( Actor actor : screen.getStageActors().getActors() ) {
-			if( actor instanceof GameObject ) {
-				gameObjects.add((GameObject) actor);
-			}
-		}
-		return gameObjects;
+		if( this.level == null )
+			return null;
+		
+		return this.level.getGameObjects();
 	}
 
 	/**

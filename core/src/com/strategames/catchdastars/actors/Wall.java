@@ -40,6 +40,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	private Vector2 pos = new Vector2();
 
+	private boolean isBorder;
+	
 	public enum Orientation {
 		HORIZONTAL, VERTICAL
 	}
@@ -57,6 +59,22 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		setLength(length);
 	}
 
+	/**
+	 * Use this to specify this wall as part of the game border
+	 * @param isBorder
+	 */
+	public void setBorder(boolean isBorder) {
+		this.isBorder = isBorder;
+	}
+	
+	/**
+	 * Use this to determine if this wall is part of the game border
+	 * @return true if wall is part of border, false otherwise
+	 */
+	public boolean isBorder() {
+		return this.isBorder;
+	}
+	
 	@Override
 	public void setPosition(float x, float y) {
 		super.setPosition(x, y);
