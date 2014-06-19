@@ -1,3 +1,5 @@
+== Eclipse ==
+
 1. Install gradle plugin for eclipse. See for info
     https://github.com/spring-projects/eclipse-integration-gradle/
 
@@ -13,3 +15,20 @@
 
 6. To run android version you may need to fix library location to google
    play services
+
+
+== Commandline ==
+
+1. Set ANDROID_HOME variable to Android SDK location:
+
+  export ANDROID_HOME=/opt/adt-bundle-linux-latest/sdk/
+
+2. Run project
+
+   On the desktop: 
+   
+     gradlew desktop:run
+
+   On an android device:
+
+     gradlew android:installDebug android:run
