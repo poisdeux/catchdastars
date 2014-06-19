@@ -27,8 +27,20 @@
 
    On the desktop: 
    
-     gradlew desktop:run
+     gradle desktop:run
 
    On an android device:
 
-     gradlew android:installDebug android:run
+     gradle android:installDebug android:run
+
+== VIM ==
+
+1. Install eclimd
+
+2. Run eclimd
+
+   /opt/adt-bundle-linux-latest/eclipse/eclimd
+
+3. Start vim
+
+
