@@ -1,5 +1,7 @@
 package com.strategames.catchdastars;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class SelectMusicActivity extends Activity {
+	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
+	
 	ListView musiclist;
 	Cursor musiccursor;
 	int music_column_index;

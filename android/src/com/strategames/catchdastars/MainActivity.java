@@ -1,21 +1,26 @@
 package com.strategames.catchdastars;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.strategames.catchdastars.interfaces.Importer;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
+import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
+import com.strategames.catchdastars.interfaces.SelectMusic;
 
-public class MainActivity extends AndroidApplication implements Importer {
+public class MainActivity extends AndroidApplication implements Importer, SelectMusic {
 
-	private OnLevelsReceivedListener listener;
-
+	private OnLevelsReceivedListener onLevelsReceivedListener;
+	private OnMusicFilesReceivedListener onMusicFilesReceivedListener;
+	
 	private static final int REQUEST_CODE_IMPORT = 1;
-
+	private static final int REQUEST_CODE_SELECTMUSIC = 2;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,14 +38,12 @@ public class MainActivity extends AndroidApplication implements Importer {
 
 	@Override
 	public void importLevels(OnLevelsReceivedListener listener) {
-		Log.d("MainActivity", "importLevels");
-		this.listener = listener;
+		this.onLevelsReceivedListener = listener;
 		startActivityForResult(new Intent(this, ImportAndroidActivity.class), REQUEST_CODE_IMPORT);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("MainActivity", "onActivityResult: requestCode="+requestCode+", resultCode="+resultCode);
 		switch (requestCode) {
 		case REQUEST_CODE_IMPORT:
 			String json = null;
@@ -52,11 +55,26 @@ public class MainActivity extends AndroidApplication implements Importer {
 				}
 			}
 			
-			if( this.listener != null ) {
-				this.listener.levelsReceived(json);
+			if( this.onLevelsReceivedListener != null ) {
+				this.onLevelsReceivedListener.levelsReceived(json);
+			}
+		case REQUEST_CODE_SELECTMUSIC:
+			if( ( resultCode == Activity.RESULT_OK ) && ( data != null ) ) {
+				ArrayList<String> musicList = null;
+				Bundle b = data.getExtras();
+				if( b != null ) {
+					musicList = b.getStringArrayList(SelectMusicActivity.BUNDLE_KEY_MUSICLIST);
+				}
+				this.onMusicFilesReceivedListener.onMusicFilesReceived(musicList);
 			}
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
 		}
+	}
+
+	@Override
+	public void selectMusic(OnMusicFilesReceivedListener listener) {
+		this.onMusicFilesReceivedListener = listener;
+		startActivityForResult(new Intent(this, SelectMusicActivity.class), REQUEST_CODE_IMPORT);
 	}
 }
