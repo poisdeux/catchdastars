@@ -5,6 +5,8 @@ import com.badlogic.gdx.audio.Sound;
 
 public class Sounds {
 
+	private static float globalVolume = 1f;
+	
 	public static Sound glass;
 	public static Sound balloonPop;
 	public static Sound balloonBounce;
@@ -87,7 +89,30 @@ public class Sounds {
 		} else if ( increment > 9 ) {
 			sound = Sounds.coinsDrop;
 		}
-
+		
 		return sound;
+	}
+	
+	/**
+	 * Plays given sound relative to global volume setting
+	 * @param sound
+	 * @param volume the volume of this sound in relation to the global volume setting
+	 */
+	public static void play(Sound sound, float volume) {
+		sound.play(volume * globalVolume);
+	}
+	
+	public static float getVolume() {
+		return globalVolume * 100;
+	}
+	
+	public static void setVolume(float volume) {
+		if( volume < 0f ) {
+			Sounds.globalVolume = 0f;
+		} else if( volume > 1f ){
+			Sounds.globalVolume = 1f;
+		} else {
+			Sounds.globalVolume = volume;
+		}
 	}
 }

@@ -20,6 +20,7 @@ import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.LevelEditorScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.MainMenuScreen;
+import com.strategames.catchdastars.screens.SettingsScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
@@ -428,6 +429,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public void showLevelEditorMenu() {
 		Screen screen = new LevelEditorMenuScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+	
+	public void showSettings() {
+		Screen screen = new SettingsScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
 	}

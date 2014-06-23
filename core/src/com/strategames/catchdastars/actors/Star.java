@@ -154,7 +154,7 @@ public class Star extends GameObject {
 	@Override
 	public void destroy() {
 		if(remove()) {
-			Sounds.glass.play();
+			Sounds.play(Sounds.glass, 1);
 			if(deleteBody()) {
 				setDeleted(true);
 			}

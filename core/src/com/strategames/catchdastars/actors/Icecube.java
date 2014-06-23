@@ -274,14 +274,11 @@ public class Icecube extends GameObject {
 		prevPlayRocksRolling = epoch;
 
 		float volume = rocksHitTotalImpulse / (maxVelocitySquared * rocksHit);
-		if( rocksHit > 10 ) {
-			Sounds.rockHit.play(volume);
-			Sounds.rockBreak.play(volume);
-		} else if( rocksHit > 2 ) {
-			Sounds.rockHit.play(volume);
-			Sounds.rockBreak.play(volume);
+		if( rocksHit > 2 ) {
+			Sounds.play(Sounds.rockHit, volume);
+			Sounds.play(Sounds.rockBreak, volume);
 		} else {
-			Sounds.rockHit.play(volume);
+			Sounds.play(Sounds.rockHit, volume);
 		}
 
 		rocksHit = 0;

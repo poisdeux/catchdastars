@@ -37,10 +37,11 @@ public class MainMenuScreen extends AbstractScreen {
 		table.add( button ).uniform().fill().spaceBottom( 10 );
 		table.row();
 
-		button = new TextButton( "Options", getSkin() );
+		button = new TextButton( "Settings", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
+				getGame().showSettings();
 			}
 		});
 		table.add( button ).uniform().fill().spaceBottom( 10 );

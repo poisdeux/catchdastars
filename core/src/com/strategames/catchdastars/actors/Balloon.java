@@ -217,7 +217,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	public void destroy() {
 		Gdx.app.log("Balloon", "destroy");
 		if(remove()) {
-			Sounds.balloonPop.play();
+			Sounds.play(Sounds.balloonPop, 1);
 			setDeleted(true);
 		}
 	}
@@ -234,7 +234,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		Vector2 linearVelocity = super.body.getLinearVelocity();
 		float bounceVelocity = (linearVelocity.x * normal.x) + (linearVelocity.y * normal.y);
 		if( bounceVelocity > 0.1 ) {
-			Sounds.balloonBounce.play(bounceVelocity / this.maxVelocitySquared);
+			Sounds.play(Sounds.balloonBounce, bounceVelocity / this.maxVelocitySquared);
 		}
 //		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+
 //				", this.maxVelocitySquared="+this.maxVelocitySquared+

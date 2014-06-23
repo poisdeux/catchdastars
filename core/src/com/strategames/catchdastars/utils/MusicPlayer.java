@@ -7,12 +7,28 @@ import com.badlogic.gdx.audio.Music;
 
 public class MusicPlayer implements Music.OnCompletionListener {
 
-	private ArrayList<String> musicFiles;
+	//We use static class as class loading is thread safe
+	static class SingletonHolder {
+		private static final MusicPlayer INSTANCE = new MusicPlayer();
+	}
+	
+	private ArrayList<String> musicFiles = new ArrayList<String>();
 	private int index;
 	private Music music;
+	private float volume = 0.7f;
 	
-	public MusicPlayer() {
-		this.musicFiles = new ArrayList<String>();
+	private MusicPlayer() {	}
+	
+	public static MusicPlayer getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+	
+	public void setVolume(float volume) {
+		this.volume = volume;
+	}
+	
+	public float getVolume() {
+		return volume;
 	}
 	
 	public void add(String filename) {
@@ -38,6 +54,7 @@ public class MusicPlayer implements Music.OnCompletionListener {
 		}
 		
 		this.music = Gdx.audio.newMusic(Gdx.files.internal(this.musicFiles.get(this.index)));
+		this.music.setVolume(this.volume);
 		this.music.play();
 		this.music.setOnCompletionListener(this);
 	}
