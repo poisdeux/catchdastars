@@ -2,12 +2,14 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,73 +18,51 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SelectMusicActivity extends Activity {
-	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
-	
-	ListView musiclist;
-	Cursor musiccursor;
-	int music_column_index;
-	int count;
-	MediaPlayer mMediaPlayer;
 
+
+public class SelectMusicActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, 
+OnItemClickListener {
+	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
+
+	private MusicAdapter musicAdapter;
+	private ArrayList<String> selectedFiles;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		init_phone_music_grid();
+		setContentView(R.layout.selectmusicactivity);
+		
+		this.selectedFiles = new ArrayList<String>();
+		
+		getSupportLoaderManager().initLoader(0, null, this);
 	}
 
-	private void init_phone_music_grid() {
-		System.gc();
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] proj = { MediaStore.Audio.Media._ID,
 				MediaStore.Audio.Media.DATA,
 				MediaStore.Audio.Media.DISPLAY_NAME,
 				MediaStore.Video.Media.SIZE };
-		musiccursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				proj, null, null, null);
-		count = musiccursor.getCount();
-		musiclist = (ListView) findViewById(R.id.PhoneMusicList);
-		musiclist.setAdapter(new MusicAdapter(getApplicationContext()));
 
-		musiclist.setOnItemClickListener(musicgridlistener);
-		mMediaPlayer = new MediaPlayer();
+		return new CursorLoader(this, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				proj, null, null, null);
 	}
 
-	private OnItemClickListener musicgridlistener = new OnItemClickListener() {
-		public void onItemClick(AdapterView parent, View v, int position,
-				long id) {
-			System.gc();
-			music_column_index = musiccursor
-					.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-			musiccursor.moveToPosition(position);
-			String filename = musiccursor.getString(music_column_index);
-
-			try {
-				if (mMediaPlayer.isPlaying()) {
-					mMediaPlayer.reset();
-				}
-				mMediaPlayer.setDataSource(filename);
-				mMediaPlayer.prepare();
-				mMediaPlayer.start();
-			} catch (Exception e) {
-
-			}
-		}
-	};
-
 	public class MusicAdapter extends BaseAdapter {
-		private Context mContext;
+		private Context context;
+		private Cursor cursor;
 
-		public MusicAdapter(Context c) {
-			mContext = c;
+		public MusicAdapter(Context c, Cursor cursor) {
+			this.context = c;
+			this.cursor = cursor;
 		}
 
 		public int getCount() {
-			return count;
+			return cursor.getCount();
 		}
 
 		public Object getItem(int position) {
-			return position;
+			cursor.moveToPosition(position);
+			return cursor;
 		}
 
 		public long getItemId(int position) {
@@ -90,23 +70,46 @@ public class SelectMusicActivity extends Activity {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			System.gc();
-			TextView tv = new TextView(mContext.getApplicationContext());
+			TextView tv = new TextView(context);
 			String id = null;
 			if (convertView == null) {
-				music_column_index = musiccursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
-				musiccursor.moveToPosition(position);
-				id = musiccursor.getString(music_column_index);
-				music_column_index = musiccursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
-				musiccursor.moveToPosition(position);
-				id += " Size(KB):" + musiccursor.getString(music_column_index);
+				int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
+				cursor.moveToPosition(position);
+				id = cursor.getString(index);
+				index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+				id += " Size(KB):" + cursor.getString(index);
 				tv.setText(id);
 			} else
 				tv = (TextView) convertView;
 			return tv;
 		}
+	}
+
+	@Override
+	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader,
+			Cursor cursor) {
+
+		ListView lv = (ListView) findViewById(R.id.PhoneMusicList);
+
+		this.musicAdapter = new MusicAdapter(this, cursor);
+		
+		lv.setAdapter(this.musicAdapter);
+
+		lv.setOnItemClickListener(this);
+	}
+
+	@Override
+	public void onLoaderReset(android.support.v4.content.Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Cursor cursor = (Cursor) this.musicAdapter.getItem(position);
+		int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+		this.selectedFiles.add(cursor.getString(index));
 	}
 }
 

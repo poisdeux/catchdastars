@@ -11,9 +11,9 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.strategames.catchdastars.interfaces.Importer;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
 import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
-import com.strategames.catchdastars.interfaces.SelectMusic;
+import com.strategames.catchdastars.interfaces.MusicSelector;
 
-public class MainActivity extends AndroidApplication implements Importer, SelectMusic {
+public class MainActivity extends AndroidApplication implements Importer, MusicSelector {
 
 	private OnLevelsReceivedListener onLevelsReceivedListener;
 	private OnMusicFilesReceivedListener onMusicFilesReceivedListener;
@@ -32,7 +32,7 @@ public class MainActivity extends AndroidApplication implements Importer, Select
 		CatchDaStars game = new CatchDaStars();
 		game.setExporter(new ExportAndroid(game, this));
 		game.setImporter(this);
-
+		game.setMusicSelector(this);
 		initialize(game, cfg);
 	}
 

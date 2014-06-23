@@ -71,6 +71,7 @@ public class SettingsScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
+				getGame().selectMusicFiles();
 			}
 		} );
 		table.add( button ).uniform().fill().spaceBottom( 10 );

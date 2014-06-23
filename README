@@ -10,6 +10,19 @@
 
 4. Add google play services as Android project from existing source
 
+5. Add Android Support Library and import android support v7 appcompat
+
+   <sdk>/extras/android/support/v7/appcompat/
+
+6. Configure the support library
+
+   1. Expand the libs/ folder, right-click each .jar file and select Build Path > Add to Build Path. 
+   2. Right-click the support library project folder and select Build Path > Configure Build Path. 
+   3. In the Order and Export tab, check the .jar files you just added to the build path, so they 
+      are available to projects that depend on this library project. 
+   4. Uncheck Android Dependencies.
+   5. Click OK to complete the changes.
+
 5. To run desktop version you may need to edit the run configurations and
    make sure it runs as Java application
 

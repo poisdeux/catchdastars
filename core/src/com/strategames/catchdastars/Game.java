@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
 import com.strategames.catchdastars.interfaces.Exporter;
 import com.strategames.catchdastars.interfaces.Importer;
+import com.strategames.catchdastars.interfaces.MusicSelector;
+import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.catchdastars.screens.AbstractScreen;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.LevelEditorScreen;
@@ -25,10 +27,11 @@ import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.catchdastars.utils.Level;
 import com.strategames.catchdastars.utils.LevelLoader;
 import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
+import com.strategames.catchdastars.utils.MusicPlayer;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
-abstract public class Game extends com.badlogic.gdx.Game implements ContactListener {
+abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
 	private int gameState = GAME_STATE_PAUSED;
@@ -55,7 +58,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private Exporter exporter;
 	private Importer importer;
-
+	private MusicSelector musicSelector;
+	
 	private String title;
 
 	private Stack<Screen> backStack;
@@ -169,6 +173,24 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return importer;
 	}
 
+	public void setMusicSelector(MusicSelector musicSelector) {
+		this.musicSelector = musicSelector;
+	}
+	
+	public void selectMusicFiles() {
+		if( this.musicSelector != null ) {
+			this.musicSelector.selectMusic(this);
+		}
+	}
+	
+	@Override
+	public void onMusicFilesReceived(ArrayList<String> filenames) {
+		MusicPlayer player = MusicPlayer.getInstance();
+		for(String filename : filenames) { 
+			player.add(filename);
+		}
+	}
+	
 	public void addToBackstack(Screen screen) {
 		this.backStack.add(screen);
 	}
