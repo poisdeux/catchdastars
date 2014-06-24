@@ -1,6 +1,7 @@
 package com.strategames.catchdastars;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -51,43 +52,6 @@ OnItemClickListener {
 				proj, null, null, MediaStore.Audio.Media.ARTIST +","+ MediaStore.Audio.Media.TRACK);
 	}
 
-	public class MusicAdapter extends BaseAdapter {
-		private Context context;
-		private Cursor cursor;
-
-		public MusicAdapter(Context c, Cursor cursor) {
-			this.context = c;
-			this.cursor = cursor;
-		}
-
-		public int getCount() {
-			return cursor.getCount();
-		}
-
-		public Object getItem(int position) {
-			cursor.moveToPosition(position);
-			return cursor;
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
-			}
-
-			int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST);
-			cursor.moveToPosition(position);
-			String artist = cursor.getString(index);
-			TextView tv = (TextView) convertView.findViewById(R.id.textview);
-			tv.setText(artist);
-
-			return convertView;
-		}
-	}
-
 	@Override
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader,
 			Cursor cursor) {
@@ -98,7 +62,7 @@ OnItemClickListener {
 		int indexTitle = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
 		int indexTrack = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK);
 
-		HashMap<String, Artist> mediaMap = new HashMap<String, Artist>();
+		HashMap<String, Artist> artistMap = new HashMap<String, Artist>();
 
 		while(cursor.moveToNext()) {
 			String albumTitle = cursor.getString(indexAlbum);
@@ -107,17 +71,17 @@ OnItemClickListener {
 			String trackNumber = cursor.getString(indexTrack);
 
 			String artistName = cursor.getString(indexArtist);
-			if( ! mediaMap.containsKey(artistName) ) {
-				mediaMap.put(artistName, new Artist(artistName));
+			if( ! artistMap.containsKey(artistName) ) {
+				artistMap.put(artistName, new Artist(artistName));
 			}
 
-			Artist artist = mediaMap.get(artistName);
-			artist.addTrack(albumTitle, songTitle, data);
+			Artist artist = artistMap.get(artistName);
+			artist.addTrack(albumTitle, songTitle, trackNumber, data);
 		}
 
 		ListView lv = (ListView) findViewById(R.id.PhoneMusicList);
 
-		this.musicAdapter = new MusicAdapter(this, cursor);
+		this.musicAdapter = new MusicAdapter(this, artistMap);
 
 		lv.setAdapter(this.musicAdapter);
 
@@ -151,12 +115,12 @@ OnItemClickListener {
 			return name;
 		}
 		
-		public void addTrack(String albumTitle, String trackTitle, String data) {
+		public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
 			if( ! this.albums.containsKey(albumTitle) ) {
 				this.albums.put(albumTitle, new Album(albumTitle));
 			}
 			Album album = this.albums.get(albumTitle);
-			album.addTrack(trackTitle, data);
+			album.addTrack(trackTitle, data, trackNumber);
 		}
 		
 		public HashMap<String, Album> getAlbums() {
@@ -177,8 +141,8 @@ OnItemClickListener {
 			return title;
 		}
 		
-		public void addTrack(String title, String data) {
-			this.tracks.add(new Track(title, data));
+		public void addTrack(String title, String data, String number) {
+			this.tracks.add(new Track(title, data, number));
 		}
 		
 		public ArrayList<Track> getTracks() {
@@ -189,10 +153,58 @@ OnItemClickListener {
 	private class Track {
 		private String data;
 		private String title;
+		private String number;
 		
-		public Track(String title, String data) {
+		public Track(String title, String data, String number) {
 			this.title = title;
 			this.data = data;
+			this.number = number;
+		}
+		
+		public String getTitle() {
+			return title;
+		}
+		
+		public String getData() {
+			return data;
+		}
+		
+		public String getNumber() {
+			return number;
+		}
+	}
+	
+	private class MusicAdapter extends BaseAdapter {
+		private Context context;
+		private Artist[] artists;
+		
+		public MusicAdapter(Context c, HashMap<String, Artist> artists) {
+			this.context = c;
+			this.artists = artists.values().toArray(new Artist[artists.size()]);
+		}
+
+		public int getCount() {
+			return this.artists.length;
+		}
+
+		public Object getItem(int position) {
+			return this.artists[position];
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
+			}
+
+			Artist artist = this.artists[position];
+			TextView tv = (TextView) convertView.findViewById(R.id.textview);
+			tv.setText(artist.getName());
+
+			return convertView;
 		}
 	}
 }
