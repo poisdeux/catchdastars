@@ -1,10 +1,8 @@
 package com.strategames.catchdastars;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,24 +10,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 
 
 public class SelectMusicActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, 
-OnItemClickListener {
+SelectMusicFragment.OnItemSelectedListener {
 	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
 
-	private MusicAdapter musicAdapter;
 	private ArrayList<String> selectedFiles;
-
+	private HashMap<String, Artist> artistMap;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,7 +52,7 @@ OnItemClickListener {
 		int indexTitle = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
 		int indexTrack = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TRACK);
 
-		HashMap<String, Artist> artistMap = new HashMap<String, Artist>();
+		this.artistMap = new HashMap<String, Artist>();
 
 		while(cursor.moveToNext()) {
 			String albumTitle = cursor.getString(indexAlbum);
@@ -79,29 +69,20 @@ OnItemClickListener {
 			artist.addTrack(albumTitle, songTitle, trackNumber, data);
 		}
 
-		ListView lv = (ListView) findViewById(R.id.PhoneMusicList);
-
-		this.musicAdapter = new MusicAdapter(this, artistMap);
-
-		lv.setAdapter(this.musicAdapter);
-
-		lv.setOnItemClickListener(this);
-	}
+		SelectMusicFragment fragment = new SelectMusicFragment();
+		Bundle args = new Bundle();
+		args.putStringArray(SelectMusicFragment.BUNDLE_KEY_LIST, artistMap.keySet().toArray(new String[artistMap.size()]));
+		fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+    }
+	
 
 	@Override
 	public void onLoaderReset(android.support.v4.content.Loader<Cursor> arg0) {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		Cursor cursor = (Cursor) this.musicAdapter.getItem(position);
-		int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-		this.selectedFiles.add(cursor.getString(index));
-	}
-
+	
 	private class Artist {
 		private String name;
 		private HashMap<String, Album> albums;
@@ -173,39 +154,20 @@ OnItemClickListener {
 			return number;
 		}
 	}
-	
-	private class MusicAdapter extends BaseAdapter {
-		private Context context;
-		private Artist[] artists;
+
+	@Override
+	public void onCheckBoxChanged(int position, boolean isChecked) {
 		
-		public MusicAdapter(Context c, HashMap<String, Artist> artists) {
-			this.context = c;
-			this.artists = artists.values().toArray(new Artist[artists.size()]);
-		}
+//		if( isChecked ) {
+//			this.selectedFiles.add(position);
+//		} else {
+//			this.selectedFiles.remove(position);
+//		}
+	}
 
-		public int getCount() {
-			return this.artists.length;
-		}
-
-		public Object getItem(int position) {
-			return this.artists[position];
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
-			}
-
-			Artist artist = this.artists[position];
-			TextView tv = (TextView) convertView.findViewById(R.id.textview);
-			tv.setText(artist.getName());
-
-			return convertView;
-		}
+	@Override
+	public void onItemClicked(int position) {
+		//Start new fragment
 	}
 }
 
