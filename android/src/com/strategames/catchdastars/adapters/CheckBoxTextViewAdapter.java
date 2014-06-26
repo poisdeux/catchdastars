@@ -11,7 +11,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.strategames.catchdastars.R;
-import com.strategames.catchdastars.SelectMusicFragment.OnItemSelectedListener;
+import com.strategames.catchdastars.fragments.SelectMusicFragment.OnItemSelectedListener;
 
 public class CheckBoxTextViewAdapter extends BaseAdapter {
 	private Context context;

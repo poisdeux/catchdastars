@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.strategames.catchdastars;
+package com.strategames.catchdastars.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.strategames.catchdastars.RetrieveDriveFileContentsAsyncTask;
 import com.strategames.catchdastars.RetrieveDriveFileContentsAsyncTask.OnFileReceivedListener;
 
 /**
@@ -68,7 +69,6 @@ OnFileReceivedListener {
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		Log.d("ImportAndroidActivity", "onConnected");
 		IntentSender intentSender = Drive.DriveApi
 				.newOpenFileActivityBuilder()
 				.setMimeType(new String[] { "text/plain", "text/html" })
@@ -83,7 +83,6 @@ OnFileReceivedListener {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("ImportAndroidActivity", "onActivityResult: requestCode="+requestCode+", resultCode="+resultCode);
 		switch (requestCode) {
 		case REQUEST_CODE_OPENER:
 			if (resultCode == RESULT_OK) {
@@ -104,8 +103,6 @@ OnFileReceivedListener {
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		Log.d("ImportAndroidActivity", "onConnectionFailed: "+result);
-
 		if (!result.hasResolution()) {
 			// show the localized error dialog.
 			GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
@@ -120,7 +117,7 @@ OnFileReceivedListener {
 
 	@Override
 	public void onConnectionSuspended(int cause) {
-		Log.d("ImportAndroidActivity", "onConnectionSuspended: "+cause);
+		
 	}
 
 	@Override

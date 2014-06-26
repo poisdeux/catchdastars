@@ -1,4 +1,4 @@
-package com.strategames.catchdastars;
+package com.strategames.catchdastars.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
 
 public class SelectMusicFragment extends Fragment implements OnItemClickListener {
@@ -21,7 +22,7 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 		ARTISTS, ALBUMS, TRACKS
 	}
 
-	private STATE state;
+	private STATE state = STATE.ARTISTS;
 	
 	public interface OnItemSelectedListener {
 		public void onCheckBoxChanged(int position, boolean isChecked);

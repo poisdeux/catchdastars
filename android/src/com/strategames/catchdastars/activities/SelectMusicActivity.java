@@ -1,4 +1,4 @@
-package com.strategames.catchdastars;
+package com.strategames.catchdastars.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +12,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
+import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
+import com.strategames.catchdastars.fragments.SelectMusicFragment;
 import com.strategames.catchdastars.music.Album;
 import com.strategames.catchdastars.music.Artist;
 import com.strategames.catchdastars.music.Library;
@@ -109,13 +110,9 @@ SelectMusicFragment.OnItemSelectedListener {
 	@Override
 	public void onItemClicked(String item) {
 		Artist selectedArtist;
-		Log.d("SelectMusicActivity", "onItemClicked: fragment="+this.fragment);
 		
 		switch( this.fragment.getState() ) {
 		case ARTISTS:
-
-			this.fragment.setState(SelectMusicFragment.STATE.ALBUMS);
-			
 			selectedArtist = this.musicLibrary.get(item);
 			this.musicLibrary.setSelectedArtist(selectedArtist);
 			
@@ -123,11 +120,9 @@ SelectMusicFragment.OnItemSelectedListener {
 
 			String[] albumNames = albums.keySet().toArray(new String[albums.size()]);
 			
-			replaceFragment(albumNames);
+			replaceFragment(albumNames, SelectMusicFragment.STATE.ALBUMS);
 			break;
 		case ALBUMS:
-			this.fragment.setState(SelectMusicFragment.STATE.TRACKS);
-
 			selectedArtist = this.musicLibrary.getSelectedArtist();
 			
 			ArrayList<Track> tracks = selectedArtist.getAlbums().get(item).getTracks();
@@ -136,27 +131,24 @@ SelectMusicFragment.OnItemSelectedListener {
 				trackNames[i] = tracks.get(i).getName();
 			}
 			
-			replaceFragment(trackNames);
+			replaceFragment(trackNames, SelectMusicFragment.STATE.TRACKS);
 			break;
 		case TRACKS:
 			// play track as a preview?
-					break;
+			break;
 		}
 	}
 	
 	@Override
 	public void onBackPressed() {
+		super.onBackPressed();
 		FragmentManager manager = getSupportFragmentManager();
 		this.fragment = (SelectMusicFragment) manager.findFragmentById(R.id.fragment_container);
-		Log.d("SelectMusicActivity", "onBackPressed: before fragment="+this.fragment);
-		super.onBackPressed();
-		Log.d("SelectMusicActivity", "onBackPressed: after fragment="+this.fragment);
 	}
 	
-	private void replaceFragment(String[] items) {
+	private void replaceFragment(String[] items, SelectMusicFragment.STATE state) {
 		this.fragment = new SelectMusicFragment();
-		
-		Log.d("SelectMusicActivity", "replaceFragment: fragment="+this.fragment);
+		this.fragment.setState(state);
 		
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, items, this);
 		this.fragment.setAdapter(adapter);

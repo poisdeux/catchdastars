@@ -89,7 +89,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		export.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().getExporter().export(levels.getJson());
+				getGame().getExporterImporter().export(levels.getJson());
 			}
 		});
 
@@ -99,7 +99,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		importButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().getImporter().importLevels(LevelEditorMenuScreen.this);
+				getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
 			}
 		});
 

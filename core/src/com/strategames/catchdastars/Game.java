@@ -13,8 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.interfaces.Exporter;
-import com.strategames.catchdastars.interfaces.Importer;
+import com.strategames.catchdastars.interfaces.ExportImport;
 import com.strategames.catchdastars.interfaces.MusicSelector;
 import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.catchdastars.screens.AbstractScreen;
@@ -56,8 +55,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private Vector3 worldSize;
 
-	private Exporter exporter;
-	private Importer importer;
+	private ExportImport exportimport;
 	private MusicSelector musicSelector;
 	
 	private String title;
@@ -157,20 +155,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		Textures.dispose(getManager());
 	}
 
-	public void setExporter(Exporter exporter) {
-		this.exporter = exporter;
+
+	public void setExporterImporter(ExportImport exportimport) {
+		this.exportimport = exportimport;
 	}
 
-	public Exporter getExporter() {
-		return exporter;
-	}
-
-	public void setImporter(Importer importer) {
-		this.importer = importer;
-	}
-
-	public Importer getImporter() {
-		return importer;
+	public ExportImport getExporterImporter() {
+		return this.exportimport;
 	}
 
 	public void setMusicSelector(MusicSelector musicSelector) {
