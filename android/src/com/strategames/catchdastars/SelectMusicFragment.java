@@ -1,28 +1,31 @@
 package com.strategames.catchdastars;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
 
 public class SelectMusicFragment extends Fragment implements OnItemClickListener {
+	
+	private CheckBoxTextViewAdapter adapter;
+	private ListView listview;
+	
+	public enum STATE {
+		ARTISTS, ALBUMS, TRACKS
+	}
 
-	public final static String BUNDLE_KEY_LIST = "bundle_key_list";
+	private STATE state;
 	
 	public interface OnItemSelectedListener {
 		public void onCheckBoxChanged(int position, boolean isChecked);
-		public void onItemClicked(int position);
+		public void onItemClicked(String item);
 	}
 	
 	private OnItemSelectedListener listener;
@@ -46,63 +49,33 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		String[] items = getArguments().getStringArray(BUNDLE_KEY_LIST);
-		
 		View view = inflater.inflate(R.layout.selectmusicfragment, container, false);
-		ListView lv = (ListView) view.findViewById(R.id.listview);
-		CheckBoxTextViewAdapter ad = new CheckBoxTextViewAdapter(getActivity(), items);
-		lv.setAdapter(ad);
-		lv.setOnItemClickListener(this);
-		
+		this.listview = (ListView) view.findViewById(R.id.listview);
+		this.listview.setOnItemClickListener(this);
+		if( this.adapter != null ) {
+			this.listview.setAdapter(this.adapter);
+		}
 		return view;
 	}
-	
-	private class CheckBoxTextViewAdapter extends BaseAdapter {
-		private Context context;
-		private String[] items;
-		
-		public CheckBoxTextViewAdapter(Context c, String[] items) {
-			this.context = c;
-			this.items = items;
-		}
 
-		public int getCount() {
-			return this.items.length;
-		}
-
-		public Object getItem(int position) {
-			return this.items[position];
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(final int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
-			}
-
-			TextView tv = (TextView) convertView.findViewById(R.id.textview);
-			tv.setText(this.items[position]);
-
-			CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkbox);
-			cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					listener.onCheckBoxChanged(position, isChecked);
-				}
-			});
-			return convertView;
+	public void setAdapter(CheckBoxTextViewAdapter adapter) {
+		this.adapter = adapter;
+		if( this.listview != null ) {
+			this.listview.setAdapter(this.adapter);
 		}
 	}
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		this.listener.onItemClicked(position);
+		this.listener.onItemClicked((String) this.adapter.getItem(position));
 	}
 
+	public void setState(STATE state) {
+		this.state = state;
+	}
 	
+	public STATE getState() {
+		return state;
+	}
 }
