@@ -38,7 +38,7 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
+			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, parent);
 		}
 
 		TextView tv = (TextView) convertView.findViewById(R.id.textview);
@@ -49,7 +49,7 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				listener.onCheckBoxChanged(position, isChecked);
+				listener.onCheckBoxChanged(items[position], isChecked);
 			}
 		});
 		return convertView;

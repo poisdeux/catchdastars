@@ -1,8 +1,10 @@
 package com.strategames.catchdastars.activities;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,7 +29,6 @@ public class SelectMusicActivity extends FragmentActivity implements LoaderCallb
 SelectMusicFragment.OnItemSelectedListener {
 	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
 
-	private ArrayList<String> selectedFiles;
 	private Library musicLibrary;
 	private SelectMusicFragment fragment;
 
@@ -36,7 +37,6 @@ SelectMusicFragment.OnItemSelectedListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selectmusicactivity);
 
-		this.selectedFiles = new ArrayList<String>();
 		this.musicLibrary = new Library();
 		
 		this.fragment = new SelectMusicFragment();
@@ -44,6 +44,13 @@ SelectMusicFragment.OnItemSelectedListener {
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
 		
 		getSupportLoaderManager().initLoader(0, null, this);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		//Sent calling activity that everything is OK
+		setResult(Activity.RESULT_OK);
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -98,13 +105,26 @@ SelectMusicFragment.OnItemSelectedListener {
 
 	
 	@Override
-	public void onCheckBoxChanged(int position, boolean isChecked) {
-
-		//		if( isChecked ) {
-		//			this.selectedFiles.add(position);
-		//		} else {
-		//			this.selectedFiles.remove(position);
-		//		}
+	public void onCheckBoxChanged(String item, boolean isChecked) {
+		Artist artist;
+		Album album;
+		switch( this.fragment.getState() ) {
+		case ARTISTS:
+			artist = this.musicLibrary.get().get(item);
+			selectArtist(artist, isChecked);
+			break;
+		case ALBUMS:
+			artist = this.musicLibrary.getSelectedArtist();
+			album = artist.getAlbums().get(item);
+			selectAlbum(album, isChecked);
+			break;
+		case TRACKS:
+			artist = this.musicLibrary.getSelectedArtist();
+			album = artist.getSelectedAlbum();
+			Track track = album.getTracks().get(item);
+			selectTrack(track, isChecked);
+			break;
+		}
 	}
 
 	@Override
@@ -124,12 +144,13 @@ SelectMusicFragment.OnItemSelectedListener {
 			break;
 		case ALBUMS:
 			selectedArtist = this.musicLibrary.getSelectedArtist();
+			Album album = selectedArtist.getAlbums().get(item);
 			
-			ArrayList<Track> tracks = selectedArtist.getAlbums().get(item).getTracks();
-			String[] trackNames = new String[tracks.size()];
-			for(int i = 0; i < trackNames.length; i++) {
-				trackNames[i] = tracks.get(i).getName();
-			}
+			selectedArtist.setSelectedAlbum(album);
+			
+			HashMap<String, Track> tracks = album.getTracks();
+			
+			String[] trackNames = tracks.keySet().toArray(new String[tracks.size()]);
 			
 			replaceFragment(trackNames, SelectMusicFragment.STATE.TRACKS);
 			break;
@@ -156,6 +177,48 @@ SelectMusicFragment.OnItemSelectedListener {
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		fragmentTransaction.addToBackStack(null);
 		fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
+	}
+	
+	private void selectArtist(Artist artist, boolean select) {
+		Collection<Album> albums = artist.getAlbums().values();
+		if( select ) {
+			artist.setSelected(true);
+			//select all albums
+			for(Album album : albums) {
+				selectAlbum(album, true);
+			}
+		} else {
+			artist.setSelected(false);
+			//deselect all albums
+			for(Album album : albums) {
+				selectAlbum(album, false);
+			}
+		}
+	}
+	
+	private void selectAlbum(Album album, boolean select) {
+		Collection<Track> tracks = album.getTracks().values();
+		if( select ) {
+			album.setSelected(true);
+			//select all tracks
+			for(Track track : tracks) {
+				selectTrack(track, select);
+			}
+		} else {
+			album.setSelected(false);
+			//deselect all tracks
+			for(Track track : tracks) {
+				selectTrack(track, select);
+			}
+		}
+	}
+	
+	private void selectTrack(Track track, boolean select) {
+		if( select ) {
+			track.setSelected(true);
+		} else {
+			track.setSelected(false);
+		}
 	}
 }
 

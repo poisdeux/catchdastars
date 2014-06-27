@@ -25,7 +25,7 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 	private STATE state = STATE.ARTISTS;
 	
 	public interface OnItemSelectedListener {
-		public void onCheckBoxChanged(int position, boolean isChecked);
+		public void onCheckBoxChanged(String item, boolean isChecked);
 		public void onItemClicked(String item);
 	}
 	
