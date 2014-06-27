@@ -4,6 +4,11 @@ import java.util.HashMap;
 
 public class Library {
 
+	public interface library {
+		public boolean isSelected();
+		public String getName();
+	}
+	
 	private HashMap<String, Artist> artists;
 	private Artist selectedArtist;
 

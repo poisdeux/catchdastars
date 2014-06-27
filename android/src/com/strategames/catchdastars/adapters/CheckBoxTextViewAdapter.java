@@ -12,13 +12,14 @@ import android.widget.TextView;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.fragments.SelectMusicFragment.OnItemSelectedListener;
+import com.strategames.catchdastars.music.Media;
 
 public class CheckBoxTextViewAdapter extends BaseAdapter {
 	private Context context;
-	private String[] items;
+	private Media[] items;
 	private OnItemSelectedListener listener;
 	
-	public CheckBoxTextViewAdapter(Context c, String[] items, OnItemSelectedListener listener) {
+	public CheckBoxTextViewAdapter(Context c, Media[] items, OnItemSelectedListener listener) {
 		this.context = c;
 		this.items = items;
 		this.listener = listener;
@@ -36,22 +37,26 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 		return position;
 	}
 
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, parent);
+			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
 		}
 
+		final Media media = this.items[position];
+		
 		TextView tv = (TextView) convertView.findViewById(R.id.textview);
-		tv.setText(this.items[position]);
+		tv.setText(media.getName());
 
 		CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkbox);
 		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				listener.onCheckBoxChanged(items[position], isChecked);
+				listener.onCheckBoxChanged(media, isChecked);
 			}
 		});
+		cb.setChecked(media.isSelected());
+		
 		return convertView;
 	}
 }

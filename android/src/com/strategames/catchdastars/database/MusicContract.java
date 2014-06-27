@@ -12,5 +12,6 @@ public class MusicContract {
         public static final String COLUMN_NAME_ALBUM = "album";
         public static final String COLUMN_NAME_TRACK_TITLE = "track_title";
         public static final String COLUMN_NAME_TRACK_NUMBER = "track_number";
+        public static final String COLUMN_NAME_TRACK_PATH = "track_path";
     }
 }

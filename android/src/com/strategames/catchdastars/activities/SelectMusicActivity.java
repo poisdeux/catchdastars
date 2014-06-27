@@ -3,9 +3,8 @@ package com.strategames.catchdastars.activities;
 import java.util.Collection;
 import java.util.HashMap;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -17,10 +16,12 @@ import android.support.v4.content.Loader;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
+import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.fragments.SelectMusicFragment;
 import com.strategames.catchdastars.music.Album;
 import com.strategames.catchdastars.music.Artist;
 import com.strategames.catchdastars.music.Library;
+import com.strategames.catchdastars.music.Media;
 import com.strategames.catchdastars.music.Track;
 
 
@@ -32,25 +33,34 @@ SelectMusicFragment.OnItemSelectedListener {
 	private Library musicLibrary;
 	private SelectMusicFragment fragment;
 
+	private MusicDbHelper musicDbHelper;
+	private SQLiteDatabase sqliteDatabase;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selectmusicactivity);
 
 		this.musicLibrary = new Library();
-		
+		this.musicDbHelper = new MusicDbHelper(this);
+
 		this.fragment = new SelectMusicFragment();
 		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
-		
+
 		getSupportLoaderManager().initLoader(0, null, this);
 	}
-	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		this.sqliteDatabase = this.musicDbHelper.getWritableDatabase();
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//Sent calling activity that everything is OK
-		setResult(Activity.RESULT_OK);
+		this.sqliteDatabase.close();
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -59,7 +69,7 @@ SelectMusicFragment.OnItemSelectedListener {
 				MediaStore.Audio.Media.ALBUM,
 				MediaStore.Audio.Media.DATA,
 				MediaStore.Audio.Media.TRACK,
-				MediaStore.Audio.Media.TITLE};
+				MediaStore.Audio.Media.TITLE };
 
 		return new CursorLoader(this, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				proj, null, null, MediaStore.Audio.Media.ARTIST +","+ MediaStore.Audio.Media.TRACK);
@@ -82,7 +92,7 @@ SelectMusicFragment.OnItemSelectedListener {
 			String trackNumber = cursor.getString(indexTrack);
 
 			String artistName = cursor.getString(indexArtist);
-			
+
 			Artist artist = this.musicLibrary.get(artistName);
 			if( artist == null ) {
 				artist = new Artist(artistName);
@@ -90,9 +100,9 @@ SelectMusicFragment.OnItemSelectedListener {
 			}
 			artist.addTrack(albumTitle, trackTitle, trackNumber, data);
 		}
-		
+
 		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
-		
+
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, this.musicLibrary.getArtistNames(), this);
 		this.fragment.setAdapter(adapter);
 	}
@@ -103,9 +113,9 @@ SelectMusicFragment.OnItemSelectedListener {
 
 	}
 
-	
+
 	@Override
-	public void onCheckBoxChanged(String item, boolean isChecked) {
+	public void onCheckBoxChanged(Media item, boolean isChecked) {
 		Artist artist;
 		Album album;
 		switch( this.fragment.getState() ) {
@@ -116,13 +126,13 @@ SelectMusicFragment.OnItemSelectedListener {
 		case ALBUMS:
 			artist = this.musicLibrary.getSelectedArtist();
 			album = artist.getAlbums().get(item);
-			selectAlbum(album, isChecked);
+			selectAlbum(album, artist.getName(), isChecked);
 			break;
 		case TRACKS:
 			artist = this.musicLibrary.getSelectedArtist();
 			album = artist.getSelectedAlbum();
 			Track track = album.getTracks().get(item);
-			selectTrack(track, isChecked);
+			selectTrack(track, artist.getName(), album.getName(), isChecked);
 			break;
 		}
 	}
@@ -130,28 +140,28 @@ SelectMusicFragment.OnItemSelectedListener {
 	@Override
 	public void onItemClicked(String item) {
 		Artist selectedArtist;
-		
+
 		switch( this.fragment.getState() ) {
 		case ARTISTS:
 			selectedArtist = this.musicLibrary.get(item);
 			this.musicLibrary.setSelectedArtist(selectedArtist);
-			
+
 			HashMap<String, Album> albums = selectedArtist.getAlbums();
 
 			String[] albumNames = albums.keySet().toArray(new String[albums.size()]);
-			
+
 			replaceFragment(albumNames, SelectMusicFragment.STATE.ALBUMS);
 			break;
 		case ALBUMS:
 			selectedArtist = this.musicLibrary.getSelectedArtist();
 			Album album = selectedArtist.getAlbums().get(item);
-			
+
 			selectedArtist.setSelectedAlbum(album);
-			
+
 			HashMap<String, Track> tracks = album.getTracks();
-			
+
 			String[] trackNames = tracks.keySet().toArray(new String[tracks.size()]);
-			
+
 			replaceFragment(trackNames, SelectMusicFragment.STATE.TRACKS);
 			break;
 		case TRACKS:
@@ -159,18 +169,18 @@ SelectMusicFragment.OnItemSelectedListener {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		FragmentManager manager = getSupportFragmentManager();
 		this.fragment = (SelectMusicFragment) manager.findFragmentById(R.id.fragment_container);
 	}
-	
-	private void replaceFragment(String[] items, SelectMusicFragment.STATE state) {
+
+	private void replaceFragment(Media[] items, SelectMusicFragment.STATE state) {
 		this.fragment = new SelectMusicFragment();
 		this.fragment.setState(state);
-		
+
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, items, this);
 		this.fragment.setAdapter(adapter);
 
@@ -178,46 +188,35 @@ SelectMusicFragment.OnItemSelectedListener {
 		fragmentTransaction.addToBackStack(null);
 		fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
 	}
-	
+
 	private void selectArtist(Artist artist, boolean select) {
 		Collection<Album> albums = artist.getAlbums().values();
-		if( select ) {
-			artist.setSelected(true);
-			//select all albums
-			for(Album album : albums) {
-				selectAlbum(album, true);
-			}
-		} else {
-			artist.setSelected(false);
-			//deselect all albums
-			for(Album album : albums) {
-				selectAlbum(album, false);
-			}
+		String artistName = artist.getName();
+		artist.setSelected(select);
+		//select all albums
+		for(Album album : albums) {
+			selectAlbum(album, artistName, select);
 		}
 	}
-	
-	private void selectAlbum(Album album, boolean select) {
+
+	private void selectAlbum(Album album, String artistName, boolean select) {
 		Collection<Track> tracks = album.getTracks().values();
-		if( select ) {
-			album.setSelected(true);
-			//select all tracks
-			for(Track track : tracks) {
-				selectTrack(track, select);
-			}
-		} else {
-			album.setSelected(false);
-			//deselect all tracks
-			for(Track track : tracks) {
-				selectTrack(track, select);
-			}
+		String albumTitle = album.getName();
+		album.setSelected(select);
+		for(Track track : tracks) {
+			selectTrack(track, artistName, albumTitle, select);
 		}
 	}
-	
-	private void selectTrack(Track track, boolean select) {
+
+	private void selectTrack(Track track, String artistName, String albumTitle, boolean select) {
 		if( select ) {
 			track.setSelected(true);
+			this.musicDbHelper.addSong(this.sqliteDatabase, artistName, albumTitle, 
+					track.getName(), track.getNumber(), track.getData());
 		} else {
 			track.setSelected(false);
+			this.musicDbHelper.deleteSong(this.sqliteDatabase, artistName, albumTitle, 
+					track.getName(), track.getNumber(), track.getData());
 		}
 	}
 }

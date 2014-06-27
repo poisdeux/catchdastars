@@ -2,20 +2,13 @@ package com.strategames.catchdastars.music;
 
 import java.util.HashMap;
 
-public class Artist {
-	private String name;
+public class Artist extends Media {
 	private HashMap<String, Album> albums;
 	private Album selectedAlbum;
 	
-	private boolean selected = false; 
-	
 	public Artist(String name) {
-		this.name = name;
+		super(name);
 		this.albums = new HashMap<String, Album>();
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public void setSelectedAlbum(Album selectedAlbum) {
@@ -24,14 +17,6 @@ public class Artist {
 	
 	public Album getSelectedAlbum() {
 		return selectedAlbum;
-	}
-	
-	public void setSelected(boolean includeAll) {
-		this.selected = includeAll;
-	}
-	
-	public boolean getIncludeAll() {
-		return this.selected;
 	}
 	
 	public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
