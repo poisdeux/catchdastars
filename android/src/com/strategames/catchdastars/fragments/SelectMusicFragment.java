@@ -27,7 +27,7 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 	
 	public interface OnItemSelectedListener {
 		public void onCheckBoxChanged(Media item, boolean isChecked);
-		public void onItemClicked(String item);
+		public void onItemClicked(Media item);
 	}
 	
 	private OnItemSelectedListener listener;
@@ -70,7 +70,7 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		this.listener.onItemClicked((String) this.adapter.getItem(position));
+		this.listener.onItemClicked((Media) this.adapter.getItem(position));
 	}
 
 	public void setState(STATE state) {

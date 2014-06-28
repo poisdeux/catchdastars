@@ -55,6 +55,10 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 				listener.onCheckBoxChanged(media, isChecked);
 			}
 		});
+		/**
+		 * TODO setting checkbox state is really slow. Should find another method to
+		 * speedup UI
+		 */
 		cb.setChecked(media.isSelected());
 		
 		return convertView;

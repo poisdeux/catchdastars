@@ -103,7 +103,10 @@ SelectMusicFragment.OnItemSelectedListener {
 
 		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
 
-		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, this.musicLibrary.getArtistNames(), this);
+		HashMap<String, Artist> artistMap = this.musicLibrary.get();
+		Artist[] artists = artistMap.values().toArray(new Artist[artistMap.size()]);
+		
+		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, artists, this);
 		this.fragment.setAdapter(adapter);
 	}
 
@@ -118,55 +121,46 @@ SelectMusicFragment.OnItemSelectedListener {
 	public void onCheckBoxChanged(Media item, boolean isChecked) {
 		Artist artist;
 		Album album;
-		switch( this.fragment.getState() ) {
-		case ARTISTS:
-			artist = this.musicLibrary.get().get(item);
-			selectArtist(artist, isChecked);
-			break;
-		case ALBUMS:
+		if(item instanceof Artist) {
+			selectArtist((Artist) item, isChecked);
+		} else if(item instanceof Album) {
 			artist = this.musicLibrary.getSelectedArtist();
-			album = artist.getAlbums().get(item);
-			selectAlbum(album, artist.getName(), isChecked);
-			break;
-		case TRACKS:
+			selectAlbum((Album) item, artist.getName(), isChecked);
+		} else if(item instanceof Track) {
 			artist = this.musicLibrary.getSelectedArtist();
 			album = artist.getSelectedAlbum();
-			Track track = album.getTracks().get(item);
-			selectTrack(track, artist.getName(), album.getName(), isChecked);
-			break;
+			selectTrack((Track) item, artist.getName(), album.getName(), isChecked);
 		}
 	}
 
 	@Override
-	public void onItemClicked(String item) {
+	public void onItemClicked(Media item) {
 		Artist selectedArtist;
 
-		switch( this.fragment.getState() ) {
-		case ARTISTS:
-			selectedArtist = this.musicLibrary.get(item);
+		if(item instanceof Artist) {
+			selectedArtist = (Artist) item;
+			
 			this.musicLibrary.setSelectedArtist(selectedArtist);
 
 			HashMap<String, Album> albums = selectedArtist.getAlbums();
 
-			String[] albumNames = albums.keySet().toArray(new String[albums.size()]);
+			Album[] albumNames = albums.values().toArray(new Album[albums.size()]);
 
 			replaceFragment(albumNames, SelectMusicFragment.STATE.ALBUMS);
-			break;
-		case ALBUMS:
+		} else if(item instanceof Album) {
 			selectedArtist = this.musicLibrary.getSelectedArtist();
-			Album album = selectedArtist.getAlbums().get(item);
+			
+			Album album = (Album) item;
 
 			selectedArtist.setSelectedAlbum(album);
 
 			HashMap<String, Track> tracks = album.getTracks();
 
-			String[] trackNames = tracks.keySet().toArray(new String[tracks.size()]);
+			Track[] trackNames = tracks.values().toArray(new Track[tracks.size()]);
 
 			replaceFragment(trackNames, SelectMusicFragment.STATE.TRACKS);
-			break;
-		case TRACKS:
+		}  else if(item instanceof Track) {
 			// play track as a preview?
-			break;
 		}
 	}
 
