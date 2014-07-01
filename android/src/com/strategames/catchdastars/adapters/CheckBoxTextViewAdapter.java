@@ -3,6 +3,7 @@ package com.strategames.catchdastars.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
@@ -11,15 +12,18 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.strategames.catchdastars.R;
-import com.strategames.catchdastars.fragments.SelectMusicFragment.OnItemSelectedListener;
-import com.strategames.catchdastars.music.Media;
+import com.strategames.catchdastars.music.LibraryItem;
 
 public class CheckBoxTextViewAdapter extends BaseAdapter {
 	private Context context;
-	private Media[] items;
-	private OnItemSelectedListener listener;
+	private LibraryItem[] items;
+	private OnCheckboxChangedListener listener;
 	
-	public CheckBoxTextViewAdapter(Context c, Media[] items, OnItemSelectedListener listener) {
+	public interface OnCheckboxChangedListener {
+		public void onCheckBoxChanged(CheckBoxTextViewAdapter adapter, LibraryItem item, boolean isChecked);
+	}
+	
+	public CheckBoxTextViewAdapter(Context c, LibraryItem[] items, OnCheckboxChangedListener listener) {
 		this.context = c;
 		this.items = items;
 		this.listener = listener;
@@ -42,19 +46,20 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
 		}
 
-		final Media media = this.items[position];
+		final LibraryItem media = this.items[position];
 		
 		TextView tv = (TextView) convertView.findViewById(R.id.textview);
 		tv.setText(media.getName());
 
 		CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkbox);
-		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		cb.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				listener.onCheckBoxChanged(media, isChecked);
+			public void onClick(View v) {
+				listener.onCheckBoxChanged(CheckBoxTextViewAdapter.this, media, ((CheckBox) v).isChecked());
 			}
 		});
+		
 		/**
 		 * TODO setting checkbox state is really slow. Should find another method to
 		 * speedup UI
@@ -62,5 +67,9 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 		cb.setChecked(media.isSelected());
 		
 		return convertView;
+	}
+	
+	public LibraryItem[] getItems() {
+		return items;
 	}
 }

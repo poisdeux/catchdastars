@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
-import com.strategames.catchdastars.music.Media;
+import com.strategames.catchdastars.music.LibraryItem;
 
 public class SelectMusicFragment extends Fragment implements OnItemClickListener {
 	
@@ -25,18 +25,17 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 
 	private STATE state = STATE.ARTISTS;
 	
-	public interface OnItemSelectedListener {
-		public void onCheckBoxChanged(Media item, boolean isChecked);
-		public void onItemClicked(Media item);
+	public interface SelectMusicFragmentListener {
+		public void onItemClicked(LibraryItem item);
 	}
 	
-	private OnItemSelectedListener listener;
+	private SelectMusicFragmentListener listener;
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
         try {
-        	this.listener = (OnItemSelectedListener) activity;
+        	this.listener = (SelectMusicFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnItemSelectedListener");
         }
@@ -70,7 +69,7 @@ public class SelectMusicFragment extends Fragment implements OnItemClickListener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		this.listener.onItemClicked((Media) this.adapter.getItem(position));
+		this.listener.onItemClicked((LibraryItem) this.adapter.getItem(position));
 	}
 
 	public void setState(STATE state) {

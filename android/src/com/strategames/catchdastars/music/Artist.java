@@ -2,9 +2,13 @@ package com.strategames.catchdastars.music;
 
 import java.util.HashMap;
 
-public class Artist extends Media {
+public class Artist extends LibraryItem {
 	private HashMap<String, Album> albums;
 	private Album selectedAlbum;
+	
+	private Artist() {
+		super(null);
+	}
 	
 	public Artist(String name) {
 		super(name);
@@ -21,7 +25,7 @@ public class Artist extends Media {
 	
 	public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
 		if( ! this.albums.containsKey(albumTitle) ) {
-			this.albums.put(albumTitle, new Album(albumTitle));
+			this.albums.put(albumTitle, new Album(albumTitle, this));
 		}
 		Album album = this.albums.get(albumTitle);
 		album.addTrack(trackTitle, data, trackNumber);

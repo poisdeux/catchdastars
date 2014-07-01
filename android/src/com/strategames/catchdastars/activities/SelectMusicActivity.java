@@ -13,21 +13,24 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
+import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter.OnCheckboxChangedListener;
 import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.fragments.SelectMusicFragment;
+import com.strategames.catchdastars.fragments.SelectMusicFragment.SelectMusicFragmentListener;
 import com.strategames.catchdastars.music.Album;
 import com.strategames.catchdastars.music.Artist;
 import com.strategames.catchdastars.music.Library;
-import com.strategames.catchdastars.music.Media;
+import com.strategames.catchdastars.music.LibraryItem;
 import com.strategames.catchdastars.music.Track;
 
 
 
 public class SelectMusicActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, 
-SelectMusicFragment.OnItemSelectedListener {
+SelectMusicFragmentListener, OnCheckboxChangedListener {
 	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
 
 	private Library musicLibrary;
@@ -105,7 +108,7 @@ SelectMusicFragment.OnItemSelectedListener {
 
 		HashMap<String, Artist> artistMap = this.musicLibrary.get();
 		Artist[] artists = artistMap.values().toArray(new Artist[artistMap.size()]);
-		
+
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, artists, this);
 		this.fragment.setAdapter(adapter);
 	}
@@ -116,43 +119,65 @@ SelectMusicFragment.OnItemSelectedListener {
 
 	}
 
-
 	@Override
-	public void onCheckBoxChanged(Media item, boolean isChecked) {
+	public void onCheckBoxChanged(CheckBoxTextViewAdapter adapter, LibraryItem item, boolean isChecked) {
 		Artist artist;
 		Album album;
 		if(item instanceof Artist) {
 			selectArtist((Artist) item, isChecked);
 		} else if(item instanceof Album) {
-			artist = this.musicLibrary.getSelectedArtist();
-			selectAlbum((Album) item, artist.getName(), isChecked);
+			album = (Album) item;
+			artist = album.getArtist();
+
+			selectAlbum(album, artist, isChecked);
+
+			//update parent selected state
+			if( isChecked ) {
+				artist.setSelected(isChecked);
+			} else {
+				boolean itemSelected = itemSelected(adapter.getItems());
+				artist.setSelected(itemSelected);
+			}
+
 		} else if(item instanceof Track) {
-			artist = this.musicLibrary.getSelectedArtist();
-			album = artist.getSelectedAlbum();
-			selectTrack((Track) item, artist.getName(), album.getName(), isChecked);
+			album = ((Track) item).getAlbum();
+			artist = album.getArtist();
+			selectTrack((Track) item, artist, album, isChecked);
+
+			//update parent selected state
+			if( isChecked ) {
+				album.setSelected(true);
+				artist.setSelected(true);
+			} else {
+				boolean itemSelected = itemSelected(adapter.getItems());
+				album.setSelected(itemSelected);
+				if( itemSelected ) {
+					artist.setSelected(true);
+				} else {
+					Collection<Album> albums = artist.getAlbums().values();
+					itemSelected = itemSelected(albums.toArray(new LibraryItem[albums.size()]));
+					artist.setSelected(itemSelected);
+				}
+			}
 		}
 	}
 
 	@Override
-	public void onItemClicked(Media item) {
-		Artist selectedArtist;
+	public void onItemClicked(LibraryItem item) {
+		Artist artist;
 
 		if(item instanceof Artist) {
-			selectedArtist = (Artist) item;
-			
-			this.musicLibrary.setSelectedArtist(selectedArtist);
+			artist = (Artist) item;
 
-			HashMap<String, Album> albums = selectedArtist.getAlbums();
+			HashMap<String, Album> albums = artist.getAlbums();
 
 			Album[] albumNames = albums.values().toArray(new Album[albums.size()]);
 
 			replaceFragment(albumNames, SelectMusicFragment.STATE.ALBUMS);
 		} else if(item instanceof Album) {
-			selectedArtist = this.musicLibrary.getSelectedArtist();
-			
-			Album album = (Album) item;
+			artist = ((Album) item).getArtist();
 
-			selectedArtist.setSelectedAlbum(album);
+			Album album = (Album) item;
 
 			HashMap<String, Track> tracks = album.getTracks();
 
@@ -171,7 +196,8 @@ SelectMusicFragment.OnItemSelectedListener {
 		this.fragment = (SelectMusicFragment) manager.findFragmentById(R.id.fragment_container);
 	}
 
-	private void replaceFragment(Media[] items, SelectMusicFragment.STATE state) {
+
+	private void replaceFragment(LibraryItem[] items, SelectMusicFragment.STATE state) {
 		this.fragment = new SelectMusicFragment();
 		this.fragment.setState(state);
 
@@ -183,35 +209,62 @@ SelectMusicFragment.OnItemSelectedListener {
 		fragmentTransaction.replace(R.id.fragment_container, fragment).commit();
 	}
 
+	/**
+	 * Marks the artist as selected and if recursive is set to true will mark
+	 * all albums and tracks as selected as well.
+	 * @param artist artist to select
+	 * @param select true to set selected false to set not-selected
+	 * @param recursive true if all albums and tracks should be set to select as well
+	 */
 	private void selectArtist(Artist artist, boolean select) {
 		Collection<Album> albums = artist.getAlbums().values();
-		String artistName = artist.getName();
 		artist.setSelected(select);
+
 		//select all albums
 		for(Album album : albums) {
-			selectAlbum(album, artistName, select);
+			selectAlbum(album, artist, select);
 		}
 	}
 
-	private void selectAlbum(Album album, String artistName, boolean select) {
+	/**
+	 * Marks the album as selected and if recursive is set to true will mark
+	 * all tracks as selected as well
+	 * @param album album to select
+	 * @param artist the artist of this album
+	 * @param select true if album should be selected, false otherwise
+	 * @param recursive true to also set all tracks to select as well
+	 */
+	private void selectAlbum(Album album, Artist artist, boolean select) {
 		Collection<Track> tracks = album.getTracks().values();
-		String albumTitle = album.getName();
 		album.setSelected(select);
+
 		for(Track track : tracks) {
-			selectTrack(track, artistName, albumTitle, select);
+			selectTrack(track, artist, album, select);
 		}
+
 	}
 
-	private void selectTrack(Track track, String artistName, String albumTitle, boolean select) {
+	private void selectTrack(Track track, Artist artist, Album album, boolean select) {
 		if( select ) {
 			track.setSelected(true);
-			this.musicDbHelper.addSong(this.sqliteDatabase, artistName, albumTitle, 
+			this.musicDbHelper.addSong(this.sqliteDatabase, artist.getName(), album.getName(), 
 					track.getName(), track.getNumber(), track.getData());
 		} else {
 			track.setSelected(false);
-			this.musicDbHelper.deleteSong(this.sqliteDatabase, artistName, albumTitle, 
+			this.musicDbHelper.deleteSong(this.sqliteDatabase, artist.getName(), album.getName(), 
 					track.getName(), track.getNumber(), track.getData());
 		}
+	}
+
+	private boolean itemSelected(LibraryItem[] items) {
+		boolean itemSelected = false;
+		for(LibraryItem libraryItem : items) {
+			if( libraryItem.isSelected() ) {
+				itemSelected = true;
+				break;
+			}
+		}
+		return itemSelected;
 	}
 }
 
