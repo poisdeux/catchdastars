@@ -121,8 +121,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		setWorld(this.world);
 		
 		//Make sure Box2D world is not updated while we add and remove objects
-		int prevGameState = getGameState();
-		setGameState(GAME_STATE_PAUSED);
+		pauseGame();
 
 //		this.stageActors.clear();
 
@@ -160,8 +159,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 			}
 		}
-
-		setGameState(prevGameState);
 	}
 
 	@Override

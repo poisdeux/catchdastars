@@ -1,5 +1,8 @@
 package com.strategames.catchdastars.database;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.strategames.catchdastars.database.MusicContract.Songs;
+import com.strategames.catchdastars.music.Artist;
 
 public class MusicDbHelper extends SQLiteOpenHelper {
 
@@ -72,8 +76,10 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 	public int deleteAllSongs(SQLiteDatabase db) {
 		return db.delete(Songs.TABLE_NAME, null, null);
 	}
-	
-	public Cursor getAllSongs(SQLiteDatabase db) {
+
+	public Collection<Artist> getAll(SQLiteDatabase db) {
+		Collection<Artist> artists = new ArrayList<Artist>();
+
 		String[] projection = {
 				Songs.COLUMN_NAME_ARTIST,
 				Songs.COLUMN_NAME_ALBUM,
@@ -81,6 +87,24 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 				Songs.COLUMN_NAME_TRACK_PATH,
 				Songs.COLUMN_NAME_TRACK_TITLE,
 		};
-		return db.query(Songs.TABLE_NAME, projection, null, null, null, null, null);
+		Cursor cursor = db.query(Songs.TABLE_NAME, projection, null, null, null, null, null);
+		int indexArtist = cursor.getColumnIndex(Songs.COLUMN_NAME_ARTIST);
+		int indexAlbum = cursor.getColumnIndex(Songs.COLUMN_NAME_ALBUM);
+		int indexTrackTitle = cursor.getColumnIndex(Songs.COLUMN_NAME_TRACK_TITLE);
+		int indexTrackNumber = cursor.getColumnIndex(Songs.COLUMN_NAME_TRACK_NUMBER);
+		int indexTrackPath = cursor.getColumnIndex(Songs.COLUMN_NAME_TRACK_PATH);
+		while(cursor.moveToNext()) {
+			String artistName = cursor.getString(indexArtist);
+			String albumName = cursor.getString(indexAlbum);
+			String trackTitle = cursor.getString(indexTrackTitle);
+			String trackNumber = cursor.getString(indexTrackNumber);
+			String trackPath = cursor.getString(indexTrackPath);
+			
+			Artist artist = new Artist(artistName);
+			artist.addTrack(albumName, trackTitle, trackNumber, trackPath);
+			artists.add(artist);
+		}
+
+		return artists;
 	}
 }

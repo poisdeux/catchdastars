@@ -1,27 +1,31 @@
 package com.strategames.catchdastars.activities;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.strategames.catchdastars.CatchDaStars;
+import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.interfaces.ExportImport;
 import com.strategames.catchdastars.interfaces.MusicSelector;
 import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
 import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
+import com.strategames.catchdastars.music.Artist;
+import com.strategames.catchdastars.music.Library;
 
 public class MainActivity extends AndroidApplication implements ExportImport, MusicSelector {
 
 	private OnLevelsReceivedListener onLevelsReceivedListener;
 	private OnMusicFilesReceivedListener onMusicFilesReceivedListener;
-	
+
 	private static final int REQUEST_CODE_IMPORT = 1;
 	private static final int REQUEST_CODE_SELECTMUSIC = 2;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,7 +33,7 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
 		cfg.useAccelerometer = true;
 		cfg.useCompass = false;
-		
+
 		CatchDaStars game = new CatchDaStars();
 		game.setExporterImporter(this);
 		game.setMusicSelector(this);
@@ -47,25 +51,20 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 		switch (requestCode) {
 		case REQUEST_CODE_IMPORT:
 			String json = null;
-			
+
 			if( ( resultCode == Activity.RESULT_OK ) && ( data != null ) ) {
 				Bundle b = data.getExtras();
 				if( b != null ) {
 					json = b.getString(ImportAndroidActivity.BUNDLE_KEY_JSON);
 				}
 			}
-			
+
 			if( this.onLevelsReceivedListener != null ) {
 				this.onLevelsReceivedListener.levelsReceived(json);
 			}
 		case REQUEST_CODE_SELECTMUSIC:
-			if( ( resultCode == Activity.RESULT_OK ) && ( data != null ) ) {
-				ArrayList<String> musicList = null;
-				Bundle b = data.getExtras();
-				if( b != null ) {
-					musicList = b.getStringArrayList(SelectMusicActivity.BUNDLE_KEY_MUSICLIST);
-				}
-				this.onMusicFilesReceivedListener.onMusicFilesReceived(musicList);
+			if( ( resultCode == Activity.RESULT_OK ) ) {
+				this.onMusicFilesReceivedListener.onMusicFilesReceived();
 			}
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
@@ -77,7 +76,19 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 		this.onMusicFilesReceivedListener = listener;
 		startActivityForResult(new Intent(this, SelectMusicActivity.class), REQUEST_CODE_IMPORT);
 	}
-	
+
+	@Override
+	public Library getLibrary() {
+		MusicDbHelper helper = new MusicDbHelper(this);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		Collection<Artist> artists = helper.getAll(db);
+		Library library = new Library();
+		for(Artist artist : artists) {
+			library.add(artist);
+		}
+		return library;
+	}
+
 	@Override
 	public void export(String text) {
 		Intent sendIntent = new Intent();

@@ -1,10 +1,13 @@
 package com.strategames.catchdastars.music;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Artist extends LibraryItem {
 	private HashMap<String, Album> albums;
 	private Album selectedAlbum;
+	
+	private Iterator<Album> albumIterator;
 	
 	private Artist() {
 		super(null);
@@ -33,5 +36,13 @@ public class Artist extends LibraryItem {
 
 	public HashMap<String, Album> getAlbums() {
 		return albums;
+	}
+	
+	public Track getNextTrack() {
+		if( ( albumIterator == null ) || ( ! this.albumIterator.hasNext() ) ) {
+			this.albumIterator = this.albums.values().iterator();
+		}
+		Album album = this.albumIterator.next();
+		return album.getNextTrack();
 	}
 }

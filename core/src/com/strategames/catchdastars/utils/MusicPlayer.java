@@ -1,9 +1,9 @@
 package com.strategames.catchdastars.utils;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.strategames.catchdastars.music.Library;
+import com.strategames.catchdastars.music.Track;
 
 public class MusicPlayer implements Music.OnCompletionListener {
 
@@ -12,8 +12,8 @@ public class MusicPlayer implements Music.OnCompletionListener {
 		private static final MusicPlayer INSTANCE = new MusicPlayer();
 	}
 	
-	private ArrayList<String> musicFiles = new ArrayList<String>();
-	private int index;
+	private Library library;
+	
 	private Music music;
 	private float volume = 0.7f;
 	
@@ -31,12 +31,8 @@ public class MusicPlayer implements Music.OnCompletionListener {
 		return volume;
 	}
 	
-	public void add(String filename) {
-		this.musicFiles.add(filename);
-	}
-	
-	public void reset() {
-		this.index = 0;	
+	public void setLibrary(Library library) {
+		this.library = library;
 	}
 	
 	/**
@@ -44,29 +40,35 @@ public class MusicPlayer implements Music.OnCompletionListener {
 	 * and plays the first music file
 	 */
 	public void playNext() {
-		if( this.index >= this.musicFiles.size() ) {
-			reset();
+		if( this.library == null ) {
+			return;
 		}
+		
+		Track track = this.library.getNexTrack();
 		
 		//Dispose any previous music file as these are pretty resource hungry
 		if( this.music != null ) {
 			this.music.dispose();
 		}
 		
-		this.music = Gdx.audio.newMusic(Gdx.files.internal(this.musicFiles.get(this.index)));
+		this.music = Gdx.audio.newMusic(Gdx.files.absolute(track.getData()));
 		this.music.setVolume(this.volume);
 		this.music.play();
 		this.music.setOnCompletionListener(this);
 	}
 	
 	public void pause() {
-		this.music.pause();
+		if( this.music != null ) {
+			this.music.pause();
+		}
 	}
 	
 	public void resume() {
-		this.music.play();
+		if( this.music != null ) {
+			this.music.play();
+		}
 	}
-
+	
 	@Override
 	public void onCompletion(Music music) {
 		playNext();

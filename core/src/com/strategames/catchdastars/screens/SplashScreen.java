@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.Game;
+import com.strategames.catchdastars.utils.MusicPlayer;
 import com.strategames.catchdastars.utils.Sounds;
 import com.strategames.catchdastars.utils.Textures;
 
@@ -52,6 +53,9 @@ public class SplashScreen extends AbstractScreen {
 		Sounds.load(assetManager);
 		
 		stage.addActor( this.splashImage );
+		
+		MusicPlayer player = MusicPlayer.getInstance();
+		player.setLibrary(getGame().getMusicSelector().getLibrary());
 	}
 
 	@Override

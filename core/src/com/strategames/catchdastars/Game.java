@@ -7,6 +7,7 @@ import java.util.Stack;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
@@ -63,7 +64,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private Stack<Screen> backStack;
 
 	private int totalScore;
-
+	
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -106,14 +107,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public void pauseGame() {
 		this.gameState = GAME_STATE_PAUSED;
+		MusicPlayer.getInstance().pause();
 	}
 
 	public void resumeGame() {
 		this.gameState = GAME_STATE_RUNNING;
+		MusicPlayer.getInstance().resume();
 	}
 
 	public void startGame() {
 		this.gameState = GAME_STATE_RUNNING;
+		MusicPlayer.getInstance().resume();
 	}
 
 	public boolean isRunning() {
@@ -122,10 +126,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public boolean isPaused() {
 		return this.gameState == GAME_STATE_PAUSED;
-	}
-
-	public void setGameState(int gameState) {
-		this.gameState = gameState;
 	}
 
 	public int getGameState() {
@@ -174,12 +174,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 	}
 	
-	@Override
-	public void onMusicFilesReceived(ArrayList<String> filenames) {
-		MusicPlayer player = MusicPlayer.getInstance();
-		for(String filename : filenames) { 
-			player.add(filename);
-		}
+	public MusicSelector getMusicSelector() {
+		return musicSelector;
 	}
 	
 	public void addToBackstack(Screen screen) {
@@ -410,11 +406,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void startLevel(int level) {
 		setLevelNumber(level);
 		showLevelScreen();
+		MusicPlayer.getInstance().playNext();
 	}
 
 	public void startLevel(Level level) {
 		setLevel(level);
 		showLevelScreen();
+		MusicPlayer.getInstance().playNext();
 	}
 
 	private void showLevelScreen() {
@@ -460,6 +458,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		setScreen(peepBackstack());
 	}
 
+	@Override
+	public void onMusicFilesReceived() {
+		MusicPlayer player = MusicPlayer.getInstance();
+		player.setLibrary(this.musicSelector.getLibrary());
+	}
+	
 	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
