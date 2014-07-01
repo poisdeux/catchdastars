@@ -12,7 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.strategames.catchdastars.R;
-import com.strategames.catchdastars.music.LibraryItem;
+import com.strategames.engine.musiclibrary.LibraryItem;
 
 public class CheckBoxTextViewAdapter extends BaseAdapter {
 	private Context context;

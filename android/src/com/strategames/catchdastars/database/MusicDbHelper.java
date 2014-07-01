@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.strategames.catchdastars.database.MusicContract.Songs;
-import com.strategames.catchdastars.music.Artist;
+import com.strategames.engine.musiclibrary.Artist;
 
 public class MusicDbHelper extends SQLiteOpenHelper {
 

@@ -13,26 +13,23 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.Array;
-import com.strategames.catchdastars.actors.Balloon;
-import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.actors.GameObject.Type;
-import com.strategames.catchdastars.actors.Icecube;
-import com.strategames.catchdastars.actors.Star;
-import com.strategames.catchdastars.actors.Wall;
-import com.strategames.catchdastars.screens.AbstractScreen;
-import com.strategames.catchdastars.utils.Collectable;
-import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.LevelLoader;
-import com.strategames.catchdastars.utils.Textures;
+import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.Collectable;
+import com.strategames.engine.utils.Level;
+import com.strategames.engine.utils.LevelLoader;
+import com.strategames.engine.utils.Textures;
+import com.strategames.gameobjects.Balloon;
+import com.strategames.gameobjects.GameObject;
+import com.strategames.gameobjects.Icecube;
+import com.strategames.gameobjects.Star;
+import com.strategames.gameobjects.Wall;
+import com.strategames.gameobjects.GameObject.Type;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
@@ -142,11 +139,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 					Star star = (Star) gameObject;
 					Star.ColorType color = star.getColorType();
 					if( color == Star.ColorType.BLUE ) {
-						this.blueCollectables.setTotal(this.blueCollectables.getTotal() + 1);
+						this.blueCollectables.add();
 					} else if( color == Star.ColorType.RED ) {
-						this.redCollectables.setTotal(this.redCollectables.getTotal() + 1);
+						this.redCollectables.add();
 					} else if( color == Star.ColorType.YELLOW ) {
-						this.goldCollectables.setTotal(this.goldCollectables.getTotal() + 1);
+						this.goldCollectables.add();
 					}
 				} else if( type == GameObject.Type.BALLOON ) {
 					Balloon balloon = (Balloon) gameObject;
@@ -159,6 +156,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 			}
 		}
+		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
 	@Override

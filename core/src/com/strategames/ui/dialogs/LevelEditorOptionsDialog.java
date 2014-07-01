@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.strategames.catchdastars.utils.LevelEditorPreferences;
+import com.strategames.engine.utils.LevelEditorPreferences;
 
 public class LevelEditorOptionsDialog extends Dialog {
 	public static final int CHECKBOX_SNAPTOGRID = 1;

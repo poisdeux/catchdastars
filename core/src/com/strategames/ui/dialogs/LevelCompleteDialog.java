@@ -20,10 +20,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.Game;
-import com.strategames.catchdastars.actors.ChalkLine;
-import com.strategames.catchdastars.actors.ChalkLine.ChalkLineAnimationListener;
-import com.strategames.catchdastars.utils.Sounds;
-import com.strategames.catchdastars.utils.Textures;
+import com.strategames.engine.utils.Sounds;
+import com.strategames.engine.utils.Textures;
+import com.strategames.gameobjects.ChalkLine;
+import com.strategames.gameobjects.ChalkLine.ChalkLineAnimationListener;
 
 public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
 	

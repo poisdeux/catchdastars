@@ -6,8 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.strategames.catchdastars.Game;
-import com.strategames.catchdastars.utils.Textures;
-import com.strategames.interfaces.ButtonListener;
+import com.strategames.engine.utils.Textures;
+import com.strategames.ui.interfaces.ButtonListener;
 
 public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implements EventListener {
 	private ButtonListener listener = null;

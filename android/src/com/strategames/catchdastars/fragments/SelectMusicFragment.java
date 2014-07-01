@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
-import com.strategames.catchdastars.music.LibraryItem;
+import com.strategames.engine.musiclibrary.LibraryItem;
 
 public class SelectMusicFragment extends Fragment implements OnItemClickListener {
 	

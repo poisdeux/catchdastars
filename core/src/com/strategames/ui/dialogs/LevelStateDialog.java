@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.TextButton;
 
 /**

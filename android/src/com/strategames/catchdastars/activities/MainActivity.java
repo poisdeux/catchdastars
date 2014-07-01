@@ -11,12 +11,12 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.catchdastars.database.MusicDbHelper;
-import com.strategames.catchdastars.interfaces.ExportImport;
-import com.strategames.catchdastars.interfaces.MusicSelector;
-import com.strategames.catchdastars.interfaces.OnLevelsReceivedListener;
-import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
-import com.strategames.catchdastars.music.Artist;
-import com.strategames.catchdastars.music.Library;
+import com.strategames.engine.interfaces.ExportImport;
+import com.strategames.engine.interfaces.MusicSelector;
+import com.strategames.engine.interfaces.OnLevelsReceivedListener;
+import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
+import com.strategames.engine.musiclibrary.Artist;
+import com.strategames.engine.musiclibrary.Library;
 
 public class MainActivity extends AndroidApplication implements ExportImport, MusicSelector {
 
@@ -62,10 +62,12 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 			if( this.onLevelsReceivedListener != null ) {
 				this.onLevelsReceivedListener.levelsReceived(json);
 			}
+			break;
 		case REQUEST_CODE_SELECTMUSIC:
 			if( ( resultCode == Activity.RESULT_OK ) ) {
 				this.onMusicFilesReceivedListener.onMusicFilesReceived();
 			}
+			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
 		}
@@ -74,7 +76,7 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 	@Override
 	public void selectMusic(OnMusicFilesReceivedListener listener) {
 		this.onMusicFilesReceivedListener = listener;
-		startActivityForResult(new Intent(this, SelectMusicActivity.class), REQUEST_CODE_IMPORT);
+		startActivityForResult(new Intent(this, SelectMusicActivity.class), REQUEST_CODE_SELECTMUSIC);
 	}
 
 	@Override
@@ -86,6 +88,7 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 		for(Artist artist : artists) {
 			library.add(artist);
 		}
+		db.close();
 		return library;
 	}
 

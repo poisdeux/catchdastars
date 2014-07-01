@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.strategames.catchdastars.utils.Level;
+import com.strategames.engine.utils.Level;
 
 public class EditLevelDialog extends ButtonsDialog {
 	public static final int BUTTON_DELETELEVEL_CLICKED = 1;

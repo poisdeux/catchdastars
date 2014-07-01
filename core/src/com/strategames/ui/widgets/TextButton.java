@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
-import com.strategames.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ButtonListener;
 
 public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton implements EventListener {
 	private Timer timer;

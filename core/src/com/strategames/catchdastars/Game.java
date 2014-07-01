@@ -13,23 +13,23 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.strategames.catchdastars.actors.GameObject;
-import com.strategames.catchdastars.interfaces.ExportImport;
-import com.strategames.catchdastars.interfaces.MusicSelector;
-import com.strategames.catchdastars.interfaces.OnMusicFilesReceivedListener;
-import com.strategames.catchdastars.screens.AbstractScreen;
-import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
-import com.strategames.catchdastars.screens.LevelEditorScreen;
-import com.strategames.catchdastars.screens.LevelScreen;
-import com.strategames.catchdastars.screens.MainMenuScreen;
-import com.strategames.catchdastars.screens.SettingsScreen;
-import com.strategames.catchdastars.screens.SplashScreen;
-import com.strategames.catchdastars.utils.Level;
-import com.strategames.catchdastars.utils.LevelLoader;
-import com.strategames.catchdastars.utils.LevelLoader.OnLevelLoadedListener;
-import com.strategames.catchdastars.utils.MusicPlayer;
-import com.strategames.catchdastars.utils.Sounds;
-import com.strategames.catchdastars.utils.Textures;
+import com.strategames.engine.interfaces.ExportImport;
+import com.strategames.engine.interfaces.MusicSelector;
+import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
+import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.screens.LevelEditorMenuScreen;
+import com.strategames.engine.screens.LevelEditorScreen;
+import com.strategames.engine.screens.LevelScreen;
+import com.strategames.engine.screens.MainMenuScreen;
+import com.strategames.engine.screens.SettingsScreen;
+import com.strategames.engine.screens.SplashScreen;
+import com.strategames.engine.utils.Level;
+import com.strategames.engine.utils.LevelLoader;
+import com.strategames.engine.utils.MusicPlayer;
+import com.strategames.engine.utils.Sounds;
+import com.strategames.engine.utils.Textures;
+import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
+import com.strategames.gameobjects.GameObject;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
@@ -406,13 +406,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void startLevel(int level) {
 		setLevelNumber(level);
 		showLevelScreen();
-		MusicPlayer.getInstance().playNext();
 	}
 
 	public void startLevel(Level level) {
 		setLevel(level);
 		showLevelScreen();
-		MusicPlayer.getInstance().playNext();
 	}
 
 	private void showLevelScreen() {

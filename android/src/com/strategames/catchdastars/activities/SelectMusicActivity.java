@@ -21,11 +21,11 @@ import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter.OnCheckboxC
 import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.fragments.SelectMusicFragment;
 import com.strategames.catchdastars.fragments.SelectMusicFragment.SelectMusicFragmentListener;
-import com.strategames.catchdastars.music.Album;
-import com.strategames.catchdastars.music.Artist;
-import com.strategames.catchdastars.music.Library;
-import com.strategames.catchdastars.music.LibraryItem;
-import com.strategames.catchdastars.music.Track;
+import com.strategames.engine.musiclibrary.Album;
+import com.strategames.engine.musiclibrary.Artist;
+import com.strategames.engine.musiclibrary.Library;
+import com.strategames.engine.musiclibrary.LibraryItem;
+import com.strategames.engine.musiclibrary.Track;
 
 
 
