@@ -32,7 +32,8 @@ public class SelectMusicActivity extends FragmentActivity implements LoaderCallb
 SelectMusicFragmentListener, OnCheckboxChangedListener {
 	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
 
-	private Library musicLibrary;
+	private Library musicOnDeviceLibrary;
+	private Library musicInDatabase;
 	private SelectMusicFragment fragment;
 
 	private MusicDbHelper musicDbHelper;
@@ -43,7 +44,7 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selectmusicactivity);
 
-		this.musicLibrary = new Library();
+		this.musicOnDeviceLibrary = new Library();
 		this.musicDbHelper = new MusicDbHelper(this);
 
 		this.fragment = new SelectMusicFragment();
@@ -57,6 +58,7 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	protected void onResume() {
 		super.onResume();
 		this.sqliteDatabase = this.musicDbHelper.getWritableDatabase();
+		this.musicInDatabase = this.musicDbHelper.getAll(this.sqliteDatabase);
 	}
 
 	@Override
@@ -89,23 +91,17 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 
 		while(cursor.moveToNext()) {
 			String albumTitle = cursor.getString(indexAlbum);
-			String data = cursor.getString(indexData);
+			String trackPath = cursor.getString(indexData);
 			String trackTitle = cursor.getString(indexTitle);
 			String trackNumber = cursor.getString(indexTrack);
-
 			String artistName = cursor.getString(indexArtist);
 
-			Artist artist = this.musicLibrary.get(artistName);
-			if( artist == null ) {
-				artist = new Artist(artistName);
-				this.musicLibrary.add(artist);
-			}
-			artist.addTrack(albumTitle, trackTitle, trackNumber, data);
+			addTrack(artistName, albumTitle, trackTitle, trackNumber, trackPath);
 		}
 
 		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
 
-		HashMap<String, Artist> artistMap = this.musicLibrary.get();
+		HashMap<String, Artist> artistMap = this.musicOnDeviceLibrary.get();
 		Artist[] artists = artistMap.values().toArray(new Artist[artistMap.size()]);
 
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, artists, this);
@@ -264,6 +260,32 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 			}
 		}
 		return itemSelected;
+	}
+
+	private void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
+		Artist artist = this.musicOnDeviceLibrary.get(artistName);
+		if( artist == null ) {
+			artist = new Artist(artistName);
+			this.musicOnDeviceLibrary.add(artist);
+		}
+
+		Album album = artist.getAlbum(albumTitle);
+		if( album == null ) {
+			album = new Album(albumTitle, artist);
+		}
+
+		Track track = album.getTrack(trackTitle);
+		if( track == null ) {
+			track = new Track(trackTitle, trackPath, trackNumber, album);
+		}
+
+		//Restore state from database entries
+		Track trackInDatabase = this.musicInDatabase.get(artistName).getAlbum(albumTitle).getTrack(trackTitle);
+		if( trackInDatabase != null ) {
+			artist.setSelected(true);
+			album.setSelected(true);
+			track.setSelected(true);
+		}
 	}
 }
 

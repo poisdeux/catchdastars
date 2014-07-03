@@ -26,16 +26,24 @@ public class Artist extends LibraryItem {
 		return selectedAlbum;
 	}
 	
-	public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
-		if( ! this.albums.containsKey(albumTitle) ) {
-			this.albums.put(albumTitle, new Album(albumTitle, this));
-		}
-		Album album = this.albums.get(albumTitle);
-		album.addTrack(trackTitle, data, trackNumber);
+	public void addAlbum(Album album) {
+		this.albums.put(album.getName(), album);	
 	}
+	
+//	public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
+//		if( ! this.albums.containsKey(albumTitle) ) {
+//			this.albums.put(albumTitle, new Album(albumTitle, this));
+//		}
+//		Album album = this.albums.get(albumTitle);
+//		album.addTrack(trackTitle, data, trackNumber);
+//	}
 
 	public HashMap<String, Album> getAlbums() {
 		return albums;
+	}
+	
+	public Album getAlbum(String albumTitle) {
+		return this.albums.get(albumTitle);
 	}
 	
 	public Track getNextTrack() {

@@ -10,7 +10,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.strategames.catchdastars.database.MusicContract.Songs;
+import com.strategames.engine.musiclibrary.Album;
 import com.strategames.engine.musiclibrary.Artist;
+import com.strategames.engine.musiclibrary.Library;
+import com.strategames.engine.musiclibrary.Track;
 
 public class MusicDbHelper extends SQLiteOpenHelper {
 
@@ -32,7 +35,6 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 
 	public MusicDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -42,7 +44,6 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -77,8 +78,8 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 		return db.delete(Songs.TABLE_NAME, null, null);
 	}
 
-	public Collection<Artist> getAll(SQLiteDatabase db) {
-		Collection<Artist> artists = new ArrayList<Artist>();
+	public Library getAll(SQLiteDatabase db) {
+		Library library = new Library();
 
 		String[] projection = {
 				Songs.COLUMN_NAME_ARTIST,
@@ -95,16 +96,54 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 		int indexTrackPath = cursor.getColumnIndex(Songs.COLUMN_NAME_TRACK_PATH);
 		while(cursor.moveToNext()) {
 			String artistName = cursor.getString(indexArtist);
-			String albumName = cursor.getString(indexAlbum);
+			String albumTitle = cursor.getString(indexAlbum);
 			String trackTitle = cursor.getString(indexTrackTitle);
 			String trackNumber = cursor.getString(indexTrackNumber);
 			String trackPath = cursor.getString(indexTrackPath);
 			
-			Artist artist = new Artist(artistName);
-			artist.addTrack(albumName, trackTitle, trackNumber, trackPath);
-			artists.add(artist);
+			Artist artist = library.get(artistName);
+			if( artist == null ) {
+				artist = new Artist(artistName);
+				library.add(artist);
+			}
+
+			Album album = artist.getAlbum(albumTitle);
+			if( album == null ) {
+				album = new Album(albumTitle, artist);
+				artist.addAlbum(album);
+			}
+
+			Track track = album.getTrack(trackTitle);
+			if( track == null ) {
+				track = new Track(trackTitle, trackPath, trackNumber, album);
+				album.addTrack(track);
+			}
 		}
 
-		return artists;
+		return library;
+	}
+	
+	public boolean isTrackInDatabase(SQLiteDatabase db, String artist, String album, String trackTitle, String trackNumber, String trackPath) {
+		String[] projection = {
+				Songs.COLUMN_NAME_ARTIST,
+				Songs.COLUMN_NAME_ALBUM,
+				Songs.COLUMN_NAME_TRACK_NUMBER,
+				Songs.COLUMN_NAME_TRACK_PATH,
+				Songs.COLUMN_NAME_TRACK_TITLE,
+		};
+		String whereClausule = Songs.COLUMN_NAME_ARTIST + " = ? " + " AND " +
+				Songs.COLUMN_NAME_ALBUM + " = ? " + " AND " +
+				Songs.COLUMN_NAME_TRACK_TITLE + " = ? " + " AND " +
+				Songs.COLUMN_NAME_TRACK_NUMBER + " = ? " + " AND " +
+				Songs.COLUMN_NAME_TRACK_PATH + " = ? ";
+		String[] args = new String[] {
+				artist,
+				album,
+				trackTitle,
+				trackNumber,
+				trackPath
+		};
+		Cursor cursor = db.query(Songs.TABLE_NAME, projection, whereClausule, args, null, null, null);
+		return cursor.getCount() > 0;
 	}
 }

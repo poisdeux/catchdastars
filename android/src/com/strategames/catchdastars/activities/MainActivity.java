@@ -1,7 +1,5 @@
 package com.strategames.catchdastars.activities;
 
-import java.util.Collection;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,7 +13,6 @@ import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
-import com.strategames.engine.musiclibrary.Artist;
 import com.strategames.engine.musiclibrary.Library;
 
 public class MainActivity extends AndroidApplication implements ExportImport, MusicSelector {
@@ -83,13 +80,7 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 	public Library getLibrary() {
 		MusicDbHelper helper = new MusicDbHelper(this);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		Collection<Artist> artists = helper.getAll(db);
-		Library library = new Library();
-		for(Artist artist : artists) {
-			library.add(artist);
-		}
-		db.close();
-		return library;
+		return helper.getAll(db);
 	}
 
 	@Override

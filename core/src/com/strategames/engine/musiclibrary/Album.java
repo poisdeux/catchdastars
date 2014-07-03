@@ -17,13 +17,17 @@ public class Album extends LibraryItem {
 		this.tracks = new HashMap<String, Track>();
 		this.artist = artist;
 	}
-	
-	public void addTrack(String title, String data, String number) {
-		this.tracks.put(title, new Track(title, data, number, this));
-	}
 
+	public void addTrack(Track track) {
+		this.tracks.put(track.getName(), track);
+	}
+	
 	public HashMap<String, Track> getTracks() {
 		return tracks;
+	}
+	
+	public Track getTrack(String trackTitle) {
+		return this.tracks.get(trackTitle);
 	}
 	
 	public Artist getArtist() {

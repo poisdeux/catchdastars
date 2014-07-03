@@ -5,7 +5,10 @@ abstract public class LibraryItem {
 	private String name;
 	private boolean selected;
 	
-	public LibraryItem(String name) {
+	private LibraryItem() {
+	}
+	
+	protected LibraryItem(String name) {
 		this.name = name;
 	}
 
