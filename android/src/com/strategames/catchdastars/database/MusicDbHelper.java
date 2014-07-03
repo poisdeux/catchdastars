@@ -101,10 +101,10 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 			String trackNumber = cursor.getString(indexTrackNumber);
 			String trackPath = cursor.getString(indexTrackPath);
 			
-			Artist artist = library.get(artistName);
+			Artist artist = library.getArtist(artistName);
 			if( artist == null ) {
 				artist = new Artist(artistName);
-				library.add(artist);
+				library.addArtist(artist);
 			}
 
 			Album album = artist.getAlbum(albumTitle);

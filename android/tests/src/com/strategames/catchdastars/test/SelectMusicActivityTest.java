@@ -1,13 +1,11 @@
 package com.strategames.catchdastars.test;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 import android.widget.ListView;
 
 import com.strategames.catchdastars.activities.SelectMusicActivity;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
-import com.strategames.catchdastars.database.MusicDbHelper;
 
 public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<SelectMusicActivity> {
 

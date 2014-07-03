@@ -101,7 +101,7 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 
 		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
 
-		HashMap<String, Artist> artistMap = this.musicOnDeviceLibrary.get();
+		HashMap<String, Artist> artistMap = this.musicOnDeviceLibrary.getArtists();
 		Artist[] artists = artistMap.values().toArray(new Artist[artistMap.size()]);
 
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, artists, this);
@@ -263,29 +263,42 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	}
 
 	private void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
-		Artist artist = this.musicOnDeviceLibrary.get(artistName);
+		Artist artist = this.musicOnDeviceLibrary.getArtist(artistName);
 		if( artist == null ) {
 			artist = new Artist(artistName);
-			this.musicOnDeviceLibrary.add(artist);
+			this.musicOnDeviceLibrary.addArtist(artist);
 		}
 
 		Album album = artist.getAlbum(albumTitle);
 		if( album == null ) {
 			album = new Album(albumTitle, artist);
+			artist.addAlbum(album);
 		}
 
 		Track track = album.getTrack(trackTitle);
 		if( track == null ) {
 			track = new Track(trackTitle, trackPath, trackNumber, album);
+			album.addTrack(track);
 		}
 
-		//Restore state from database entries
-		Track trackInDatabase = this.musicInDatabase.get(artistName).getAlbum(albumTitle).getTrack(trackTitle);
-		if( trackInDatabase != null ) {
+		if( trackInDatabase(artistName, albumTitle, trackTitle) ) {
 			artist.setSelected(true);
 			album.setSelected(true);
 			track.setSelected(true);
 		}
+	}
+
+	private boolean trackInDatabase(String artistName, String albumTitle, String trackTitle) {
+		Artist artistDatabase = this.musicInDatabase.getArtist(artistName);
+		if( artistDatabase != null ) {
+			Album albumDatabase = artistDatabase.getAlbum(albumTitle);
+			if( albumDatabase != null ) {
+				if( albumDatabase.getTrack(trackTitle) != null ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
 

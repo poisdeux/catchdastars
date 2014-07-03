@@ -12,15 +12,15 @@ public class Library {
 		this.artists = new HashMap<String, Artist>();
 	}
 
-	public void add(Artist artist) {
+	public void addArtist(Artist artist) {
 		this.artists.put(artist.getName(), artist);
 	}
 
-	public HashMap<String, Artist> get() {
+	public HashMap<String, Artist> getArtists() {
 		return artists;
 	}
 
-	public Artist get(String artist) {
+	public Artist getArtist(String artist) {
 		return this.artists.get(artist);
 	}
 	
