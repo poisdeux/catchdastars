@@ -37,7 +37,6 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	private SelectMusicFragment fragment;
 
 	private MusicDbHelper musicDbHelper;
-	private SQLiteDatabase sqliteDatabase;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,14 +56,14 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		this.sqliteDatabase = this.musicDbHelper.getWritableDatabase();
-		this.musicInDatabase = this.musicDbHelper.getAll(this.sqliteDatabase);
+		this.musicDbHelper.getWritableDatabase();
+		this.musicInDatabase = this.musicDbHelper.getAll();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		this.sqliteDatabase.close();
+		this.musicDbHelper.close();
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -242,11 +241,11 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	private void selectTrack(Track track, Artist artist, Album album, boolean select) {
 		if( select ) {
 			track.setSelected(true);
-			this.musicDbHelper.addSong(this.sqliteDatabase, artist.getName(), album.getName(), 
+			this.musicDbHelper.addSong(artist.getName(), album.getName(), 
 					track.getName(), track.getNumber(), track.getData());
 		} else {
 			track.setSelected(false);
-			this.musicDbHelper.deleteSong(this.sqliteDatabase, artist.getName(), album.getName(), 
+			this.musicDbHelper.deleteSong(artist.getName(), album.getName(), 
 					track.getName(), track.getNumber(), track.getData());
 		}
 	}
@@ -262,7 +261,15 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 		return itemSelected;
 	}
 
-	private void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
+	/**
+	 * Adds a track to the library used to populate the ListView
+	 * @param artistName
+	 * @param albumTitle
+	 * @param trackTitle
+	 * @param trackNumber
+	 * @param trackPath
+	 */
+	public void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
 		Artist artist = this.musicOnDeviceLibrary.getArtist(artistName);
 		if( artist == null ) {
 			artist = new Artist(artistName);

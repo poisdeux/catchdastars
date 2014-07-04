@@ -1,8 +1,5 @@
 package com.strategames.catchdastars.database;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -33,6 +30,8 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 					Songs.COLUMN_NAME_TRACK_PATH + TEXT_TYPE +
 					" )";
 
+	private SQLiteDatabase sqliteDatabase;
+	
 	public MusicDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -47,7 +46,13 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 
 	}
 
-	public long addSong(SQLiteDatabase db, String artist, String album, String trackTitle, String trackNumber, String trackPath) {
+	@Override
+	public SQLiteDatabase getWritableDatabase() {
+		this.sqliteDatabase = super.getWritableDatabase();
+		return this.sqliteDatabase;
+	}
+	
+	public long addSong(String artist, String album, String trackTitle, String trackNumber, String trackPath) {
 		ContentValues values = new ContentValues();
 		values.put(Songs.COLUMN_NAME_ARTIST, artist);
 		values.put(Songs.COLUMN_NAME_ALBUM, album);
@@ -55,11 +60,11 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 		values.put(Songs.COLUMN_NAME_TRACK_NUMBER, trackNumber);
 		values.put(Songs.COLUMN_NAME_TRACK_PATH, trackPath);
 
-		return db.insert(Songs.TABLE_NAME, null, values);
+		return this.sqliteDatabase.insert(Songs.TABLE_NAME, null, values);
 	}
 
-	public int deleteSong(SQLiteDatabase db, String artist, String album, String trackTitle, String trackNumber, String trackPath) {
-		return db.delete(Songs.TABLE_NAME, 
+	public int deleteSong(String artist, String album, String trackTitle, String trackNumber, String trackPath) {
+		return this.sqliteDatabase.delete(Songs.TABLE_NAME, 
 				Songs.COLUMN_NAME_ARTIST + " = ? " + " AND " +
 						Songs.COLUMN_NAME_ALBUM + " = ? " + " AND " +
 						Songs.COLUMN_NAME_TRACK_TITLE + " = ? " + " AND " +
@@ -74,11 +79,11 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 		});
 	}
 
-	public int deleteAllSongs(SQLiteDatabase db) {
-		return db.delete(Songs.TABLE_NAME, null, null);
+	public void clearDatabase() {
+		this.sqliteDatabase.delete(Songs.TABLE_NAME, null, null);
 	}
 
-	public Library getAll(SQLiteDatabase db) {
+	public Library getAll() {
 		Library library = new Library();
 
 		String[] projection = {
@@ -88,7 +93,7 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 				Songs.COLUMN_NAME_TRACK_PATH,
 				Songs.COLUMN_NAME_TRACK_TITLE,
 		};
-		Cursor cursor = db.query(Songs.TABLE_NAME, projection, null, null, null, null, null);
+		Cursor cursor = this.sqliteDatabase.query(Songs.TABLE_NAME, projection, null, null, null, null, null);
 		int indexArtist = cursor.getColumnIndex(Songs.COLUMN_NAME_ARTIST);
 		int indexAlbum = cursor.getColumnIndex(Songs.COLUMN_NAME_ALBUM);
 		int indexTrackTitle = cursor.getColumnIndex(Songs.COLUMN_NAME_TRACK_TITLE);
@@ -123,7 +128,7 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 		return library;
 	}
 	
-	public boolean isTrackInDatabase(SQLiteDatabase db, String artist, String album, String trackTitle, String trackNumber, String trackPath) {
+	public boolean isTrackInDatabase(String artist, String album, String trackTitle, String trackNumber, String trackPath) {
 		String[] projection = {
 				Songs.COLUMN_NAME_ARTIST,
 				Songs.COLUMN_NAME_ALBUM,
@@ -143,7 +148,7 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 				trackNumber,
 				trackPath
 		};
-		Cursor cursor = db.query(Songs.TABLE_NAME, projection, whereClausule, args, null, null, null);
+		Cursor cursor = this.sqliteDatabase.query(Songs.TABLE_NAME, projection, whereClausule, args, null, null, null);
 		return cursor.getCount() > 0;
 	}
 }

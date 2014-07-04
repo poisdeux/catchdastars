@@ -79,8 +79,10 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 	@Override
 	public Library getLibrary() {
 		MusicDbHelper helper = new MusicDbHelper(this);
-		SQLiteDatabase db = helper.getWritableDatabase();
-		return helper.getAll(db);
+		helper.getWritableDatabase();
+		Library library = helper.getAll();
+		helper.close();
+		return library;
 	}
 
 	@Override
