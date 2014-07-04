@@ -2,10 +2,15 @@ package com.strategames.catchdastars.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.activities.SelectMusicActivity;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
+import com.strategames.engine.musiclibrary.Artist;
 
 public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<SelectMusicActivity> {
 
@@ -16,7 +21,7 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	private ListView listview;
 	private CheckBoxTextViewAdapter adapter;
 	private SelectMusicActivity activity;
-	private String mSelection;
+	private Artist selectedArtist;
 	private int mPos;
 	  
 	public SelectMusicActivityTest() {
@@ -33,9 +38,14 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	public void testPreConditions() {
-		assertTrue(this.listview.getOnItemSelectedListener() != null);
-		assertTrue(this.adapter != null);
-		assertEquals(this.adapter.getCount(), ADAPTER_COUNT);
+		assertNotNull(this.listview);
+		assertNotNull(this.listview.getOnItemClickListener());
+		assertTrue(this.listview.getChildCount() > 0);
+		
+		View view = this.listview.getChildAt(0);
+		assertNotNull(view);
+		assertTrue(view.findViewById(R.id.checkbox) instanceof CheckBox);
+		assertTrue(view.findViewById(R.id.textview) instanceof TextView);
 	}
 	
 	public void testListViewUI() {
@@ -44,6 +54,8 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 					public void run() {
 						listview.requestFocus();
 						listview.setSelection(INITIAL_POSITION);
+						
+						listview.getChildAt(0);
 					} 
 				}
 				);
@@ -56,7 +68,7 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		this.sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
 
 		mPos = this.listview.getSelectedItemPosition();
-		mSelection = (String) this.listview.getItemAtPosition(mPos);
+		selectedArtist = (Artist) this.listview.getItemAtPosition(mPos);
 
 		//assertEquals(resultText,mSelection);
 
