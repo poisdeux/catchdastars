@@ -39,4 +39,32 @@ public class Library {
 		
 		return track;
 	}
+	
+	/**
+	 * Adds a track to the library used to populate the ListView
+	 * @param artistName
+	 * @param albumTitle
+	 * @param trackTitle
+	 * @param trackNumber
+	 * @param trackPath
+	 */
+	public void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
+		Artist artist = getArtist(artistName);
+		if( artist == null ) {
+			artist = new Artist(artistName);
+			addArtist(artist);
+		}
+
+		Album album = artist.getAlbum(albumTitle);
+		if( album == null ) {
+			album = new Album(albumTitle, artist);
+			artist.addAlbum(album);
+		}
+
+		Track track = album.getTrack(trackTitle);
+		if( track == null ) {
+			track = new Track(trackTitle, trackPath, trackNumber, album);
+			album.addTrack(track);
+		}
+	}
 }

@@ -1,10 +1,9 @@
 package com.strategames.catchdastars.test;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -41,7 +40,6 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 
 	public SelectMusicActivityTest() {
 		super(SelectMusicActivity.class);
-		this.library = createLibrary();
 	}
 
 	@Override
@@ -50,19 +48,33 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		setActivityInitialTouchMode(false);
 
 		this.activity = getActivity();
+		
+		this.solo = new Solo(getInstrumentation(), this.activity);
+		
+		this.library = createLibrary();
+				
 		this.listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		
 		this.fragment = (SelectMusicFragment) this.activity.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 		
+		this.activity.setLibrary(library);
+		
 		HashMap<String, Artist> artists = library.getArtists();
-		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(activity, artists.values().toArray(new Artist[artists.size()]), activity);
-		this.fragment.setAdapter(adapter);
+		final CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(activity, artists.values().toArray(new Artist[artists.size()]), activity);
+		this.activity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				fragment.setAdapter(adapter);
+			}
+		});
+		
+		this.solo.waitForFragmentById(R.id.fragment_container);
 
 		//Clear database
 		this.dbHelper = new MusicDbHelper(this.activity);
 		this.dbHelper.getWritableDatabase();
 		this.dbHelper.clearDatabase();
-
-		this.solo = new Solo(getInstrumentation(), this.activity);
 	}
 
 	@Override
@@ -71,7 +83,11 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		super.tearDown();
 	}
 
-	public void testPreConditions() {
+	/**
+	 * TODO fix race condition where listview has not been setup yet with new adapter.
+	 */
+	public void test1PreConditions() {
+		assertNotNull(this.fragment);
 		assertNotNull(this.listview);
 		assertNotNull(this.listview.getOnItemClickListener());
 		assertTrue(this.listview.getChildCount() > 0);
@@ -84,7 +100,7 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		assertTrue(this.dbHelper.getAll().getArtists().isEmpty());
 	}
 
-	public void testAmountOfItemsShown() {
+	public void test2AmountOfItemsShown() {
 		testAmountOfItemsShown(AMOUNT_OF_ARTISTS);
 		solo.clickInList(1);
 		testAmountOfItemsShown(AMOUNT_OF_ALBUMS);
@@ -92,14 +108,14 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		testAmountOfItemsShown(AMOUNT_OF_TRACKS);
 	}
 	
-	public void testListViewContentForArtists() {
+	public void test3ListViewContentForArtists() {
 		HashMap<String, Artist> artists = this.library.getArtists();
 		LibraryItem[] libraryItems = artists.values().toArray(new LibraryItem[artists.size()]);
 		assertTrue("Library contains "+libraryItems.length+" artists, but should be "+AMOUNT_OF_ARTISTS, libraryItems.length == AMOUNT_OF_ARTISTS);
 		testContentOfItemsShown(libraryItems);
 	}
 	
-	public void testListViewContentForAlbum() {
+	public void test4ListViewContentForAlbum() {
 		TextView tv = (TextView) this.listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 		
@@ -112,7 +128,7 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		testContentOfItemsShown(libraryItems);
 	}
 
-	public void testListViewContentForTracks() {
+	public void test5ListViewContentForTracks() {
 		TextView tv = (TextView) this.listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 		
@@ -130,12 +146,12 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		testContentOfItemsShown(libraryItems);
 	}
 	
-	public void testSelectArtist() {
+	public void test6SelectArtist() {
 		testSelectAllForArtist(0);
 		testSelectAllForArtist(3);
 	}
 
-	public void testSelectSingleAlbum() {
+	public void test7SelectSingleAlbum() {
 		//Select album 2 for artist 1
 		solo.clickInList(1);
 
@@ -145,19 +161,12 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	private Library createLibrary() {
 		Library library = new Library();
 		for(int i = 0; i < AMOUNT_OF_ARTISTS; i++) {
-			Artist artist = new Artist("artist"+i);
 			for(int j = 0; j < AMOUNT_OF_ALBUMS; j++) {
-				Album album = new Album("album"+j, artist);
-				artist.addAlbum(album);
 				for(int k = 0; k < AMOUNT_OF_TRACKS; k++) {
-					Track track = new Track("track"+k, "/opt/storage/"+album.getName()+"/track"+k, ""+k, album);
-					album.addTrack(track);
-					this.activity.addTrack("artist"+i, "album"+j, "track"+k, ""+k, "/opt/storage/album"+j+"/track"+k);
+					library.addTrack("artist"+i, "album"+j, "track"+k, ""+k, "/opt/storage/album"+j+"/track"+k);
 				}
 			}
-			library.addArtist(artist);
 		}
-
 		return library;
 	}
 

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +18,7 @@ import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter.OnCheckboxChangedListener;
 import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.fragments.SelectMusicFragment;
+import com.strategames.catchdastars.fragments.SelectMusicFragment.STATE;
 import com.strategames.catchdastars.fragments.SelectMusicFragment.SelectMusicFragmentListener;
 import com.strategames.engine.musiclibrary.Album;
 import com.strategames.engine.musiclibrary.Artist;
@@ -32,7 +32,7 @@ public class SelectMusicActivity extends FragmentActivity implements LoaderCallb
 SelectMusicFragmentListener, OnCheckboxChangedListener {
 	public static final String BUNDLE_KEY_MUSICLIST = "bundle_key_musiclist";
 
-	private Library musicOnDeviceLibrary;
+	private Library musicAll;
 	private Library musicInDatabase;
 	private SelectMusicFragment fragment;
 
@@ -43,13 +43,14 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selectmusicactivity);
 
-		this.musicOnDeviceLibrary = new Library();
 		this.musicDbHelper = new MusicDbHelper(this);
 
 		this.fragment = new SelectMusicFragment();
-		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
-
+		
+		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		fragmentTransaction.addToBackStack(null);
+		fragmentTransaction.add(R.id.fragment_container, fragment).commit();
+		
 		getSupportLoaderManager().initLoader(0, null, this);
 	}
 
@@ -82,6 +83,8 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader,
 			Cursor cursor) {
 
+		this.musicAll = new Library();
+		
 		int indexArtist = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST);
 		int indexAlbum = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM);
 		int indexData = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
@@ -95,12 +98,19 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 			String trackNumber = cursor.getString(indexTrack);
 			String artistName = cursor.getString(indexArtist);
 
-			addTrack(artistName, albumTitle, trackTitle, trackNumber, trackPath);
+			this.musicAll.addTrack(artistName, albumTitle, trackTitle, trackNumber, trackPath);
+			
+			if( trackInDatabase(artistName, albumTitle, trackTitle) ) {
+				Artist artist = this.musicAll.getArtist(artistName);
+				artist.setSelected(true);
+				Album album = artist.getAlbum(albumTitle);
+				album.setSelected(true);
+				Track track = album.getTrack(trackTitle);
+				track.setSelected(true);
+			}
 		}
 
-		this.fragment.setState(SelectMusicFragment.STATE.ARTISTS);
-
-		HashMap<String, Artist> artistMap = this.musicOnDeviceLibrary.getArtists();
+		HashMap<String, Artist> artistMap = this.musicAll.getArtists();
 		Artist[] artists = artistMap.values().toArray(new Artist[artistMap.size()]);
 
 		CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(this, artists, this);
@@ -262,39 +272,13 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 	}
 
 	/**
-	 * Adds a track to the library used to populate the ListView
-	 * @param artistName
-	 * @param albumTitle
-	 * @param trackTitle
-	 * @param trackNumber
-	 * @param trackPath
+	 * Sets the library which items will be displayed
+	 * @param library
 	 */
-	public void addTrack(String artistName, String albumTitle, String trackTitle, String trackNumber, String trackPath) {
-		Artist artist = this.musicOnDeviceLibrary.getArtist(artistName);
-		if( artist == null ) {
-			artist = new Artist(artistName);
-			this.musicOnDeviceLibrary.addArtist(artist);
-		}
-
-		Album album = artist.getAlbum(albumTitle);
-		if( album == null ) {
-			album = new Album(albumTitle, artist);
-			artist.addAlbum(album);
-		}
-
-		Track track = album.getTrack(trackTitle);
-		if( track == null ) {
-			track = new Track(trackTitle, trackPath, trackNumber, album);
-			album.addTrack(track);
-		}
-
-		if( trackInDatabase(artistName, albumTitle, trackTitle) ) {
-			artist.setSelected(true);
-			album.setSelected(true);
-			track.setSelected(true);
-		}
+	public void setLibrary(Library library) {
+		this.musicAll = library;
 	}
-
+	
 	private boolean trackInDatabase(String artistName, String albumTitle, String trackTitle) {
 		Artist artistDatabase = this.musicInDatabase.getArtist(artistName);
 		if( artistDatabase != null ) {
