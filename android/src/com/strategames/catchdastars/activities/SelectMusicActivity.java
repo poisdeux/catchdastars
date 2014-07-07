@@ -3,6 +3,7 @@ package com.strategames.catchdastars.activities;
 import java.util.Collection;
 import java.util.HashMap;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,7 +19,6 @@ import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter.OnCheckboxChangedListener;
 import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.catchdastars.fragments.SelectMusicFragment;
-import com.strategames.catchdastars.fragments.SelectMusicFragment.STATE;
 import com.strategames.catchdastars.fragments.SelectMusicFragment.SelectMusicFragmentListener;
 import com.strategames.engine.musiclibrary.Album;
 import com.strategames.engine.musiclibrary.Artist;
