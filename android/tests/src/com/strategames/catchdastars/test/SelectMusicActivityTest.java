@@ -2,9 +2,7 @@ package com.strategames.catchdastars.test;
 
 import java.util.HashMap;
 
-import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.CheckBox;
@@ -32,9 +30,7 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	public static final int AMOUNT_OF_ALBUMS = 3;
 	public static final int AMOUNT_OF_TRACKS = 8;
 
-	private ListView listview;
 	private SelectMusicActivity activity;
-	private SelectMusicFragment fragment;
 	private MusicDbHelper dbHelper;
 	private Library library;
 
@@ -55,10 +51,9 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 
 		this.library = createLibrary();
 
-		this.listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
-		this.fragment = (SelectMusicFragment) this.activity.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
 		this.activity.setLibrary(library);
+
+		final SelectMusicFragment fragment = (SelectMusicFragment) this.activity.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
 		HashMap<String, Artist> artists = library.getArtists();
 		final CheckBoxTextViewAdapter adapter = new CheckBoxTextViewAdapter(activity, artists.values().toArray(new Artist[artists.size()]), activity);
@@ -69,13 +64,13 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 				fragment.setAdapter(adapter);
 			}
 		});
-
-		this.solo.waitForFragmentById(R.id.fragment_container);
-
+		
 		//Clear database
 		this.dbHelper = new MusicDbHelper(this.activity);
 		this.dbHelper.getWritableDatabase();
 		this.dbHelper.clearDatabase();
+		
+		solo.sleep(2000);
 	}
 
 	@Override
@@ -88,11 +83,12 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	 * TODO fix race condition where listview has not been setup yet with new adapter.
 	 */
 	public void test1PreConditions() {
-		assertNotNull(this.fragment);
-		assertNotNull(this.listview);
-		assertNotNull(this.listview.getOnItemClickListener());
-		assertTrue(this.listview.getChildCount() > 0);
-		View view = this.listview.getChildAt(0);
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		assertNotNull(listview);
+		assertNotNull(listview.getOnItemClickListener());
+		assertTrue(listview.getChildCount() > 0);
+		
+		View view = listview.getChildAt(0);
 		assertTrue("ListView item at position 0 is null", view != null);
 		assertTrue("ListView item does not contain a TextView identified by R.id.textview", view.findViewById(R.id.textview) instanceof TextView);
 		assertTrue("ListView item does not contain a CheckBox identified by R.id.checkbox", view.findViewById(R.id.checkbox) instanceof CheckBox);
@@ -104,8 +100,10 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	public void test2AmountOfItemsShown() {
 		testAmountOfItemsShown(AMOUNT_OF_ARTISTS);
 		solo.clickInList(1);
+		solo.sleep(1000);
 		testAmountOfItemsShown(AMOUNT_OF_ALBUMS);
 		solo.clickInList(1);
+		solo.sleep(1000);
 		testAmountOfItemsShown(AMOUNT_OF_TRACKS);
 	}
 
@@ -117,7 +115,8 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	public void test4ListViewContentForAlbum() {
-		TextView tv = (TextView) this.listview.getChildAt(1).findViewById(R.id.textview);
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		TextView tv = (TextView) listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 
 		HashMap<String, Album> albums = this.library.getArtist(artistName).getAlbums();
@@ -130,12 +129,14 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	public void test5ListViewContentForTracks() {
-		TextView tv = (TextView) this.listview.getChildAt(1).findViewById(R.id.textview);
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		TextView tv = (TextView) listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 
 		//Go into albums view
 		solo.clickInList(1);
-		tv = (TextView) this.listview.getChildAt(2).findViewById(R.id.textview);
+		listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		tv = (TextView) listview.getChildAt(2).findViewById(R.id.textview);
 		String albumTitle = tv.getText().toString();
 
 		HashMap<String, Track> tracks = this.library.getArtist(artistName).getAlbum(albumTitle).getTracks();
@@ -193,14 +194,16 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	private void testAmountOfItemsShown(int shouldBeAmount) {
-		int childCount = this.listview.getChildCount();
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		int childCount = listview.getChildCount();
 		assertTrue("Amount of items ("+childCount+") in listview does not equal "+shouldBeAmount, shouldBeAmount == childCount);
 	}
 
 	private void testContentOfItemsShown(LibraryItem[] items) {
-		int amount = this.listview.getChildCount();
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		int amount = listview.getChildCount();
 		for(int i = 0; i < amount; i++) {
-			TextView tv = (TextView) this.listview.getChildAt(i).findViewById(R.id.textview);
+			TextView tv = (TextView) listview.getChildAt(i).findViewById(R.id.textview);
 			String listViewItemText = tv.getText().toString();
 			String nameInLibrary = items[i].getName();
 			assertTrue("Content of listview item at position "+i+" is "+listViewItemText+" which does not equal "+nameInLibrary, 

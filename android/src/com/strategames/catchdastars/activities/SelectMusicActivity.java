@@ -3,7 +3,6 @@ package com.strategames.catchdastars.activities;
 import java.util.Collection;
 import java.util.HashMap;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -25,8 +24,6 @@ import com.strategames.engine.musiclibrary.Artist;
 import com.strategames.engine.musiclibrary.Library;
 import com.strategames.engine.musiclibrary.LibraryItem;
 import com.strategames.engine.musiclibrary.Track;
-
-
 
 public class SelectMusicActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, 
 SelectMusicFragmentListener, OnCheckboxChangedListener {
