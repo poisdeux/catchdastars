@@ -35,7 +35,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
 
 	private World world;
-	
+
 	private ArrayList<GameObject> availableGameObjects;
 
 	private boolean accelerometerAvailable;
@@ -53,6 +53,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
+	private Type typeCollidingGameObject1;
+	private Type typeCollidingGameObject2;
 
 	private Box2DDebugRenderer debugRenderer;
 
@@ -84,7 +86,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		//of libgdx.
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-		
+
 		super.create();
 	}
 
@@ -100,7 +102,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		super.update(delta, stage);
 
-//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -116,11 +118,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 		//Reset world
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-		
+
 		//Make sure Box2D world is not updated while we add and remove objects
 		pauseGame();
 
-//		this.stageActors.clear();
+		//		this.stageActors.clear();
 
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -130,7 +132,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfRedBalloons = 0;
 
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
-		
+
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
 				addGameObject(gameObject);
@@ -222,7 +224,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Level level = getLevel();
 		if( level == null )
 			return;
-		
+
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
 		if ( gameObjects == null )
 			return;
@@ -330,17 +332,21 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Info on collision handling by Box2D
+	 * http://www.iforce2d.net/b2dtut/collision-anatomy
+	 */
 	@Override
 	public void beginContact(Contact contact) {
 		this.collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
 		this.collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
-		Type type1 = this.collidingGameObject1.getType();
-		Type type2 = this.collidingGameObject2.getType();
-		if( ( type1 == Type.BALLOON ) && ( type2 != Type.BALLOON ) ) {
+		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
+		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
+		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( this.typeCollidingGameObject2 != Type.BALLOON ) ) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if(( type2 == Type.BALLOON ) && ( type1 != Type.BALLOON )) {
+		} else if(( this.typeCollidingGameObject2 == Type.BALLOON ) && ( this.typeCollidingGameObject1 != Type.BALLOON )) {
 			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
-		} 
+		}
 	}
 
 	@Override
@@ -353,13 +359,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		Type type1 = this.collidingGameObject1.getType();
-		Type type2 = this.collidingGameObject2.getType();
-		if( type1 == Type.ROCK ) {
-			this.collidingGameObject1.handleCollision(contact, impulse, this.collidingGameObject2);
-		}
-		if( type2 == Type.ROCK ) {
+		if( this.typeCollidingGameObject1 == Type.ROCK ) {
 			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
+		}
+		if( this.typeCollidingGameObject2 == Type.ROCK ) {
+			this.collidingGameObject1.handleCollision(contact, impulse, this.collidingGameObject2);
 		}
 	}
 

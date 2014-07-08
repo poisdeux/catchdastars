@@ -233,13 +233,16 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		WorldManifold worldManifold = contact.getWorldManifold();
 		Vector2 normal = worldManifold.getNormal();
 		Vector2 linearVelocity = super.body.getLinearVelocity();
+		
 		float bounceVelocity = (linearVelocity.x * normal.x) + (linearVelocity.y * normal.y);
 		if( bounceVelocity > 0.1 ) {
 			this.sounds.play(this.sounds.balloonBounce, bounceVelocity / this.maxVelocitySquared);
 		}
+		
 //		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+
 //				", this.maxVelocitySquared="+this.maxVelocitySquared+
-//				", this.liftFactor="+this.liftFactor);
+//				", linearVelocity="+linearVelocity);
+		
 	}
 
 	@Override
