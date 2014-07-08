@@ -47,6 +47,8 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 	private Vector2 animPosition;
 
 	private float IMAGEHEIGHT = Game.convertWorldToScreen(0.60f);
+
+	private Sounds sounds;
 	
 	/**
 	 * Shows a scoreboard animation
@@ -64,6 +66,8 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 		
 		setLeftButton("Quit");
 		setRightButton("Next level");
+		
+		this.sounds = Sounds.getInstance();
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
@@ -107,7 +111,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 					350f, 
 					this.animPosition.y, 420, LevelCompleteDialog.this);
 			super.stage.addActor(line);
-			Sounds.drawChalkLine.play();
+			this.sounds.play(this.sounds.drawChalkLine);
 			this.chalkLines.add(line);
 			break;
 		case 2:
@@ -115,7 +119,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y, 
 					this.animPosition.x + 50f, this.animPosition.y, 220, this);
 			super.stage.addActor(line);
-			Sounds.drawChalkLineShort2.play();
+			this.sounds.play(this.sounds.drawChalkLineShort2);
 			this.chalkLines.add(line);
 			break;
 		case 3:
@@ -123,7 +127,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y + 25f, 
 					this.animPosition.x, this.animPosition.y - 25f, 210, this);
 			super.stage.addActor(line);
-			Sounds.drawChalkLineShort1.play();
+			this.sounds.play(this.sounds.drawChalkLineShort1);
 			this.chalkLines.add(line);
 			break;
 		case 4:
@@ -145,7 +149,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 
 		final int increment = scoreItem.getScorePerGameObject();
 		final int amount = scoreItem.getAmount() * increment;
-		final Sound sound = Sounds.getSoundForIncrement(increment);
+		final Sound incrementSound = this.sounds.getSoundForIncrement(increment);
 
 		Drawable drawable = this.scoreItems.get(number).getDrawable();
 		Image image = new Image(drawable);
@@ -178,7 +182,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 							if( delayCount < 1 ) {
 								label.setText(String.valueOf(count));
 								if( count > 0 ) {
-									sound.play();
+									sounds.play(incrementSound);
 								}
 								count += increment;
 								delayCount = delay;
@@ -232,7 +236,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 
 		super.stage.addActor(this.cashRegister);
 		
-		Sounds.cashRegisterOpen.play();
+		this.sounds.play(this.sounds.cashRegisterOpen);
 	}
 
 	private void calculateTotalAnimation(final int number, final float x, final float y) {
@@ -246,7 +250,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			public boolean act(float delta) {
 				int amount = scoreItem.getAmount() * scoreItem.getScorePerGameObject();
 				if( amount > 0 ) {
-					Sounds.getSoundForIncrement(amount).play();
+					sounds.play(sounds.getSoundForIncrement(amount));
 					totalScore += amount;
 					totalScoreLabel.setText(String.valueOf(totalScore));
 				}

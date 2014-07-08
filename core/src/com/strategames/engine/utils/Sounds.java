@@ -5,26 +5,39 @@ import com.badlogic.gdx.audio.Sound;
 
 public class Sounds {
 
-	private static float globalVolume = 1f;
+	//We use static class as class loading is thread safe
+	static class SingletonHolder {
+		private static final Sounds INSTANCE = new Sounds();
+	}
+
+	private float globalVolume = 1f;
+
+	public Sound glass;
+	public Sound balloonPop;
+	public Sound balloonBounce;
+	public Sound tinyBell;
+	public Sound cashRegisterOpen;
+	public Sound coinsDrop;
+	public Sound coinsDropMany;
+	public Sound singleCoinDrop;
+	public Sound drawChalkLine;
+	public Sound drawChalkLineShort1;
+	public Sound drawChalkLineShort2;
+	public Sound rockHit;
+	public Sound rockBreak;
 	
-	public static Sound glass;
-	public static Sound balloonPop;
-	public static Sound balloonBounce;
-	public static Sound tinyBell;
-	public static Sound cashRegisterOpen;
-	public static Sound coinsDrop;
-	public static Sound coinsDropMany;
-	public static Sound singleCoinDrop;
-	public static Sound drawChalkLine;
-	public static Sound drawChalkLineShort1;
-	public static Sound drawChalkLineShort2;
-	public static Sound rockHit;
-	public static Sound rockBreak;
+	private Sounds() {
+		this.globalVolume = Settings.getInstance().getSfxVolume();
+	}
+	
+	public static Sounds getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
 
 	/**
 	 * Loads assets asynchronous
 	 */
-	static public void load(AssetManager manager) {
+	public void load(AssetManager manager) {
 		manager.load("sounds/glass.ogg", Sound.class);
 		manager.load("sounds/balloon_pop.mp3", Sound.class);
 		manager.load("sounds/single_balloon_bounce.ogg", Sound.class);
@@ -43,7 +56,7 @@ public class Sounds {
 	/**
 	 * Unloads all loaded assets
 	 */
-	static public void dispose(AssetManager manager) {
+	public void dispose(AssetManager manager) {
 		manager.unload("sounds/glass.ogg");
 		manager.unload("sounds/balloon_pop.mp3");
 		manager.unload("sounds/single_balloon_bounce.ogg");
@@ -65,7 +78,7 @@ public class Sounds {
 	 * Note you cannot access the sounds before calling this method
 	 * @param manager
 	 */
-	public static void setup(AssetManager manager) {
+	public void setup(AssetManager manager) {
 		glass = manager.get("sounds/glass.ogg", Sound.class);
 		balloonPop = manager.get("sounds/balloon_pop.mp3", Sound.class);
 		balloonBounce = manager.get("sounds/single_balloon_bounce.ogg", Sound.class);
@@ -81,38 +94,43 @@ public class Sounds {
 		rockBreak = manager.get("sounds/rock_hit_break1.ogg", Sound.class);
 	}
 
-	public static Sound getSoundForIncrement(int increment) {
-		Sound sound = Sounds.singleCoinDrop;
+	public Sound getSoundForIncrement(int increment) {
+		Sound sound = this.singleCoinDrop;
 
 		if( increment > 49 ) {
-			sound = Sounds.coinsDropMany;
+			sound = this.coinsDropMany;
 		} else if ( increment > 9 ) {
-			sound = Sounds.coinsDrop;
+			sound = this.coinsDrop;
 		}
-		
+
 		return sound;
 	}
-	
+
 	/**
 	 * Plays given sound relative to global volume setting
 	 * @param sound
 	 * @param volume the volume of this sound in relation to the global volume setting
 	 */
-	public static void play(Sound sound, float volume) {
+	public void play(Sound sound, float volume) {
 		sound.play(volume * globalVolume);
 	}
-	
-	public static float getVolume() {
-		return globalVolume * 100;
+
+	public void play(Sound sound) {
+		sound.play(globalVolume);
 	}
 	
-	public static void setVolume(float volume) {
+	/**
+	 * Sets the volume in the range [0,1]
+	 * @param volume in the range [0,1]. 
+	 * Levels lower then 0 are set to 0 and levels higher then 1 are set 1
+	 */
+	public void setVolume(float volume) {
 		if( volume < 0f ) {
-			Sounds.globalVolume = 0f;
+			this.globalVolume = 0f;
 		} else if( volume > 1f ){
-			Sounds.globalVolume = 1f;
+			this.globalVolume = 1f;
 		} else {
-			Sounds.globalVolume = volume;
+			this.globalVolume = volume;
 		}
 	}
 }

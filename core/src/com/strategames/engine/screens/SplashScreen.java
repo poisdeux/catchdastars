@@ -27,8 +27,6 @@ public class SplashScreen extends AbstractScreen {
 		super(game);
 
 		this.assetManager = getGame().getManager();
-
-//		Gdx.input.setInputProcessor(this);
 	}
 	
 	@Override
@@ -50,7 +48,7 @@ public class SplashScreen extends AbstractScreen {
 		this.splashImage.getColor().a = 0f;
 
 		Textures.load(assetManager);
-		Sounds.load(assetManager);
+		Sounds.getInstance().load(assetManager);
 		
 		stage.addActor( this.splashImage );
 		
@@ -65,7 +63,7 @@ public class SplashScreen extends AbstractScreen {
 
 		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
 			Textures.setup(this.assetManager);
-			Sounds.setup(this.assetManager);
+			Sounds.getInstance().setup(this.assetManager);
 
 			this.finishedSetupAssets = true;
 			

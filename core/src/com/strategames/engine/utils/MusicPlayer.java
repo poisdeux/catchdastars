@@ -17,7 +17,9 @@ public class MusicPlayer implements Music.OnCompletionListener {
 	private Music music;
 	private float volume = 0.7f;
 	
-	private MusicPlayer() {	}
+	private MusicPlayer() {	
+		this.volume = Settings.getInstance().getMusicVolume();
+	}
 	
 	public static MusicPlayer getInstance() {
         return SingletonHolder.INSTANCE;
@@ -25,10 +27,6 @@ public class MusicPlayer implements Music.OnCompletionListener {
 	
 	public void setVolume(float volume) {
 		this.volume = volume;
-	}
-	
-	public float getVolume() {
-		return volume;
 	}
 	
 	public void setLibrary(Library library) {

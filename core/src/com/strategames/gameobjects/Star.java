@@ -26,7 +26,7 @@ import com.strategames.engine.utils.Textures;
 public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
-//	private float scale = 1f;
+	private Sounds sounds;
 	
 	public static enum ColorType {
 		BLUE, 
@@ -38,6 +38,7 @@ public class Star extends GameObject {
 	
 	public Star() {
 		super(new Vector2(WIDTH, -1f));
+		this.sounds = Sounds.getInstance();
 	}
 	
 	public Star(Game game, float x, float y, ColorType type) {
@@ -155,7 +156,7 @@ public class Star extends GameObject {
 	public void delete() {
 		remove();
 		setCanBeDeleted(true);
-		Sounds.play(Sounds.glass, 1);
+		this.sounds.play(this.sounds.glass);
 	}
 
 	@Override

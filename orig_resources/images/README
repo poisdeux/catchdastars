@@ -1,0 +1,4 @@
+Chalk images created using GIMP. Select brush Chalk-02 and select show as image.
+Save layers as separate images.
+
+Run make all to build texture maps

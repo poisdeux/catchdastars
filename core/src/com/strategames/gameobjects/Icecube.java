@@ -63,6 +63,8 @@ public class Icecube extends GameObject {
 
 	private static long prevPlayRocksRolling;
 
+	private static Sounds sounds = Sounds.getInstance();;
+	
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -274,10 +276,10 @@ public class Icecube extends GameObject {
 
 		float volume = rocksHitTotalImpulse / (maxVelocitySquared * rocksHit);
 		if( rocksHit > 2 ) {
-			Sounds.play(Sounds.rockHit, volume);
-			Sounds.play(Sounds.rockBreak, volume);
+			sounds.play(sounds.rockHit, volume);
+			sounds.play(sounds.rockBreak, volume);
 		} else {
-			Sounds.play(Sounds.rockHit, volume);
+			sounds.play(sounds.rockHit, volume);
 		}
 
 		rocksHit = 0;

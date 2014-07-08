@@ -36,6 +36,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	private float liftFactor = DEFAULT_LIFTFACTOR;
 
 	private float maxVolume = 0.5f;
+	
+	private Sounds sounds;
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -56,6 +58,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	public Balloon() {
 		super(new Vector2(WIDTH, -1f));
+		this.sounds = Sounds.getInstance();
 	}
 
 	public Balloon(Game game, float x, float y, ColorType type) {
@@ -217,7 +220,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	public void delete() {
 		remove();
 		setCanBeDeleted(true);
-		Sounds.play(Sounds.balloonPop, 1);
+		this.sounds.play(this.sounds.balloonPop, 1);
 	}
 
 	@Override
@@ -232,7 +235,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		Vector2 linearVelocity = super.body.getLinearVelocity();
 		float bounceVelocity = (linearVelocity.x * normal.x) + (linearVelocity.y * normal.y);
 		if( bounceVelocity > 0.1 ) {
-			Sounds.play(Sounds.balloonBounce, bounceVelocity / this.maxVelocitySquared);
+			this.sounds.play(this.sounds.balloonBounce, bounceVelocity / this.maxVelocitySquared);
 		}
 //		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+
 //				", this.maxVelocitySquared="+this.maxVelocitySquared+
