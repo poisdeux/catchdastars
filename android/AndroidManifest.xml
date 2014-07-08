@@ -6,13 +6,16 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="20" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Needed if you want robotium (Junit testing) to create screenshots   
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    -->
     
     <application
         android:allowBackup="true"

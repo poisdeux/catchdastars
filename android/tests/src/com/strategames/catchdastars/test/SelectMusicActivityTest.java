@@ -2,8 +2,9 @@ package com.strategames.catchdastars.test;
 
 import java.util.HashMap;
 
-import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.suitebuilder.annotation.MediumTest;
+import android.test.suitebuilder.annotation.SmallTest;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -23,12 +24,13 @@ import com.strategames.engine.musiclibrary.Track;
 
 public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<SelectMusicActivity> {
 
-	public static final int ADAPTER_COUNT = 9;
-	public static final int INITIAL_POSITION = 0;
-	public static final int TEST_POSITION = 3;
 	public static final int AMOUNT_OF_ARTISTS = 4;
 	public static final int AMOUNT_OF_ALBUMS = 3;
 	public static final int AMOUNT_OF_TRACKS = 8;
+
+	private String ARTIST0_NAME;
+	private String ALBUM0_NAME;
+	private String TRACK0_NAME;
 
 	private SelectMusicActivity activity;
 	private MusicDbHelper dbHelper;
@@ -64,13 +66,13 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 				fragment.setAdapter(adapter);
 			}
 		});
-		
+
 		//Clear database
 		this.dbHelper = new MusicDbHelper(this.activity);
 		this.dbHelper.getWritableDatabase();
 		this.dbHelper.clearDatabase();
-		
-		solo.sleep(2000);
+
+		waitForArtistList();
 	}
 
 	@Override
@@ -79,15 +81,10 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		super.tearDown();
 	}
 
-	/**
-	 * TODO fix race condition where listview has not been setup yet with new adapter.
-	 */
+	@MediumTest
 	public void test1PreConditions() {
-		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
-		assertNotNull(listview);
-		assertNotNull(listview.getOnItemClickListener());
-		assertTrue(listview.getChildCount() > 0);
-		
+		ListView listview = getListView();
+
 		View view = listview.getChildAt(0);
 		assertTrue("ListView item at position 0 is null", view != null);
 		assertTrue("ListView item does not contain a TextView identified by R.id.textview", view.findViewById(R.id.textview) instanceof TextView);
@@ -95,18 +92,30 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 
 		//Check that database is really empty
 		assertTrue(this.dbHelper.getAll().getArtists().isEmpty());
+
+		/**
+		 * Check none of the items are checked
+		 * Note we only do this here as it takes a long time to complete
+		 * We assume (yeah i know) that if it succeeds here all tests will
+		 * start with a clean unchecked setup
+		 */
+		testIfAllItemsAreUnchecked();
 	}
 
+	@SmallTest
 	public void test2AmountOfItemsShown() {
 		testAmountOfItemsShown(AMOUNT_OF_ARTISTS);
+
 		solo.clickInList(1);
-		solo.sleep(1000);
+		waitForAlbumList();
 		testAmountOfItemsShown(AMOUNT_OF_ALBUMS);
+
 		solo.clickInList(1);
-		solo.sleep(1000);
+		waitForTrackList();
 		testAmountOfItemsShown(AMOUNT_OF_TRACKS);
 	}
 
+	@SmallTest
 	public void test3ListViewContentForArtists() {
 		HashMap<String, Artist> artists = this.library.getArtists();
 		LibraryItem[] libraryItems = artists.values().toArray(new LibraryItem[artists.size()]);
@@ -114,8 +123,9 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 		testContentOfItemsShown(libraryItems);
 	}
 
+	@SmallTest
 	public void test4ListViewContentForAlbum() {
-		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		ListView listview = getListView();
 		TextView tv = (TextView) listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 
@@ -125,17 +135,20 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 
 		//Go into albums view
 		solo.clickInList(1);
+		waitForAlbumList();
 		testContentOfItemsShown(libraryItems);
 	}
 
+	@SmallTest
 	public void test5ListViewContentForTracks() {
-		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		ListView listview = getListView();
 		TextView tv = (TextView) listview.getChildAt(1).findViewById(R.id.textview);
 		String artistName = tv.getText().toString();
 
 		//Go into albums view
 		solo.clickInList(1);
-		listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		waitForAlbumList();
+		listview = getListView();
 		tv = (TextView) listview.getChildAt(2).findViewById(R.id.textview);
 		String albumTitle = tv.getText().toString();
 
@@ -145,22 +158,41 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 
 		//Go into tracks view
 		solo.clickInList(1);
+		waitForTrackList();
 		testContentOfItemsShown(libraryItems);
 	}
 
+	@MediumTest
 	public void test6SelectArtist() {
 		testSelectAllForArtist(0);
 		testSelectAllForArtist(3);
 	}
 
+	@SmallTest
 	public void test7SelectSingleAlbum() {
+		assertFalse("Artist1 is checked", solo.isCheckBoxChecked(1));
 		//Select album 2 for artist 1
 		solo.clickInList(1);
+		waitForAlbumList();
+		assertFalse("Album2 is checked", solo.isCheckBoxChecked(2));
+		solo.goBack();
+		waitForArtistList();
 
+		//Select album 2 for artist 1
+		solo.clickInList(1);
+		waitForAlbumList();
+		solo.clickOnCheckBox(2);
 		assertTrue("Artist1 album2 checkbox not checked", solo.isCheckBoxChecked(2));
+		//Check that artist is selected
+		solo.goBack();
+
 	}
 
 	private Library createLibrary() {
+		ARTIST0_NAME = "artist0";
+		ALBUM0_NAME = "album0";
+		TRACK0_NAME = "track0";
+
 		Library library = new Library();
 		for(int i = 0; i < AMOUNT_OF_ARTISTS; i++) {
 			for(int j = 0; j < AMOUNT_OF_ALBUMS; j++) {
@@ -173,18 +205,22 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	private void testSelectAllForArtist(int number) {
+		waitForArtistList();
+
 		//Select artist
 		solo.clickOnCheckBox(number);
 		//Check if checkbox is selected
 		assertTrue("Artist"+number+" checkbox not checked", solo.isCheckBoxChecked(number));
 
-		//Check if all albums are selected
+		//Check if all albums and tracks are selected
 		solo.clickInList(0);
+		waitForAlbumList();
 		for(int j = 0; j < AMOUNT_OF_ALBUMS; j++) {
 			assertTrue("Artist"+number+" album"+j+" checkbox not checked", solo.isCheckBoxChecked(j));
 
 			//Check if all tracks are selected
 			solo.clickInList(j);
+			waitForTrackList();
 			for(int k = 0; k < AMOUNT_OF_TRACKS; k++) {
 				assertTrue("Artist"+number+" album"+j+" track"+k+" checkbox not checked", solo.isCheckBoxChecked(k));
 			}
@@ -194,13 +230,13 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 	}
 
 	private void testAmountOfItemsShown(int shouldBeAmount) {
-		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		ListView listview = getListView();
 		int childCount = listview.getChildCount();
 		assertTrue("Amount of items ("+childCount+") in listview does not equal "+shouldBeAmount, shouldBeAmount == childCount);
 	}
 
 	private void testContentOfItemsShown(LibraryItem[] items) {
-		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		ListView listview = getListView();
 		int amount = listview.getChildCount();
 		for(int i = 0; i < amount; i++) {
 			TextView tv = (TextView) listview.getChildAt(i).findViewById(R.id.textview);
@@ -209,5 +245,47 @@ public class SelectMusicActivityTest extends ActivityInstrumentationTestCase2<Se
 			assertTrue("Content of listview item at position "+i+" is "+listViewItemText+" which does not equal "+nameInLibrary, 
 					nameInLibrary.contentEquals(listViewItemText));
 		}
+	}
+
+	private void testIfAllItemsAreUnchecked() {
+		waitForArtistList();
+
+		for(int artistNumber = 0; artistNumber < AMOUNT_OF_ARTISTS; artistNumber++) {
+			//Check if none of the albums and tracks are selected
+			solo.clickInList(artistNumber);
+			waitForAlbumList();
+			for(int albumNumber = 0; albumNumber < AMOUNT_OF_ALBUMS; albumNumber++) {
+				assertFalse("Artist"+artistNumber+" album"+albumNumber+" checkbox checked", solo.isCheckBoxChecked(albumNumber));
+
+				//Check if all tracks are selected
+				solo.clickInList(albumNumber);
+				waitForTrackList();
+				for(int trackNumber = 0; trackNumber < AMOUNT_OF_TRACKS; trackNumber++) {
+					assertFalse("Artist"+artistNumber+" album"+albumNumber+" track"+trackNumber+" checkbox checked", solo.isCheckBoxChecked(trackNumber));
+				}
+				solo.goBack();
+			}
+			solo.goBack();
+		}
+	}
+
+	private ListView getListView() {
+		ListView listview = (ListView) this.activity.findViewById(com.strategames.catchdastars.R.id.listview);
+		assertNotNull("ListView in activity is null", listview);
+		assertNotNull("ListView has no OnItemClickListener connected", listview.getOnItemClickListener());
+		assertTrue("ListView has no rows", listview.getChildCount() > 0);
+		return listview;
+	}
+
+	private void waitForArtistList() {
+		assertTrue(solo.waitForText(ARTIST0_NAME, 1, 5000));
+	}
+
+	private void waitForAlbumList() {
+		assertTrue(solo.waitForText(ALBUM0_NAME, 1, 5000));
+	}
+
+	private void waitForTrackList() {
+		assertTrue(solo.waitForText(TRACK0_NAME, 1, 5000));
 	}
 }
