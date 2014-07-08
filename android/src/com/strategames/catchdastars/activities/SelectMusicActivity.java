@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import com.strategames.catchdastars.R;
 import com.strategames.catchdastars.adapters.CheckBoxTextViewAdapter;
@@ -49,6 +50,8 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 		fragmentTransaction.add(R.id.fragment_container, fragment).commit();
 		
 		getSupportLoaderManager().initLoader(0, null, this);
+		
+		setResult(RESULT_OK);
 	}
 
 	@Override
@@ -195,6 +198,9 @@ SelectMusicFragmentListener, OnCheckboxChangedListener {
 		super.onBackPressed();
 		FragmentManager manager = getSupportFragmentManager();
 		this.fragment = (SelectMusicFragment) manager.findFragmentById(R.id.fragment_container);
+		if( this.fragment == null ) {
+			finish();
+		}
 	}
 
 

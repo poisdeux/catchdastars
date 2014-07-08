@@ -27,4 +27,9 @@ public class Track extends LibraryItem {
 	public Album getAlbum() {
 		return album;
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString() +", Album="+this.album;
+	}
 }

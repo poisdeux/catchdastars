@@ -23,4 +23,9 @@ abstract public class LibraryItem {
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public String toString() {
+		return this.name + " selected="+this.selected;
+	}
 }

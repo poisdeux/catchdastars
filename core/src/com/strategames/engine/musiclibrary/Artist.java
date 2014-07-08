@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class Artist extends LibraryItem {
 	private HashMap<String, Album> albums;
-	private Album selectedAlbum;
+	private Album currentAlbum;
 	
 	private Iterator<Album> albumIterator;
 	
@@ -18,26 +18,10 @@ public class Artist extends LibraryItem {
 		this.albums = new HashMap<String, Album>();
 	}
 
-	public void setSelectedAlbum(Album selectedAlbum) {
-		this.selectedAlbum = selectedAlbum;
-	}
-	
-	public Album getSelectedAlbum() {
-		return selectedAlbum;
-	}
-	
 	public void addAlbum(Album album) {
 		this.albums.put(album.getName(), album);	
 	}
 	
-//	public void addTrack(String albumTitle, String trackTitle, String trackNumber, String data) {
-//		if( ! this.albums.containsKey(albumTitle) ) {
-//			this.albums.put(albumTitle, new Album(albumTitle, this));
-//		}
-//		Album album = this.albums.get(albumTitle);
-//		album.addTrack(trackTitle, data, trackNumber);
-//	}
-
 	public HashMap<String, Album> getAlbums() {
 		return albums;
 	}
@@ -47,12 +31,25 @@ public class Artist extends LibraryItem {
 	}
 	
 	public Track getNextTrack() {
-		if( ( albumIterator == null ) || ( ! this.albumIterator.hasNext() ) ) {
+		if( this.albumIterator == null ) {
 			this.albumIterator = this.albums.values().iterator();
+			if( this.albumIterator.hasNext() ) {
+				this.currentAlbum = this.albumIterator.next();
+			} else {
+				//Empty album list
+				this.albumIterator = null;
+				return null;
+			}
 		}
-		Track track = null;
-		if( this.albumIterator.hasNext() ) {
-			track = this.albumIterator.next().getNextTrack();
+		
+		Track track = this.currentAlbum.getNextTrack();
+		if( track == null ) {
+			if( this.albumIterator.hasNext() ) {
+				this.currentAlbum = this.albumIterator.next();
+				track = this.currentAlbum.getNextTrack();
+			} else {
+				this.albumIterator = null;
+			}
 		}
 		return track;
 	}
