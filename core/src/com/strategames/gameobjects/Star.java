@@ -153,10 +153,9 @@ public class Star extends GameObject {
 	}
 
 	@Override
-	public void delete() {
-		remove();
-		setCanBeDeleted(true);
+	public void destroyAction() {
 		this.sounds.play(this.sounds.glass);
+		setCanBeDeleted(true);
 	}
 
 	@Override

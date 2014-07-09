@@ -206,9 +206,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	}
 
 	@Override
-	public void delete() {
-		remove();
-		setCanBeDeleted(true);
+	public void destroyAction() {
 		this.sounds.play(this.sounds.balloonPop, 1);
 	}
 

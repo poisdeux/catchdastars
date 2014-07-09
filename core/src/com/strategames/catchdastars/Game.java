@@ -358,13 +358,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 
 		if( ! this.world.isLocked() ) {
-			Iterator<GameObject> itr = this.gameObjectsForDeletion.iterator();
-			while(itr.hasNext()) {
-				GameObject object = itr.next();
+			for (GameObject object : this.gameObjectsForDeletion ) {
 				object.remove();
 				object.deleteBody();
-				itr.remove();
 			}
+			this.gameObjectsForDeletion.clear();
 		}
 	}
 

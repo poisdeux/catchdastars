@@ -1,15 +1,20 @@
 package com.strategames.engine.utils;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
+import com.strategames.gameobjects.GameObject;
+
 public class Collectable {
 	private int total;
-	private int collected;
+	private HashSet<GameObject> collected;
 	
 	public Collectable() {
 		this.total = 0;
-		this.collected = 0;
+		this.collected = new HashSet<GameObject>();
 	}
 	
-	public int getCollected() {
+	public HashSet<GameObject> getCollected() {
 		return collected;
 	}
 	
@@ -35,12 +40,12 @@ public class Collectable {
 	/**
 	 * Increases the amount of collected items by one
 	 */
-	public void collect() {
-		this.collected++;
+	public void collect(GameObject object) {
+		this.collected.add(object);
 	}
 	
 	public boolean allCollected() {
-		if( this.total <= this.collected ) {
+		if( this.total <= this.collected.size() ) {
 			return true;
 		}
 		return false;

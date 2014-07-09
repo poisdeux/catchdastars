@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -181,9 +180,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	private int calculateScore() {
-		int blueCollectablesScore = this.amountOfBlueBalloons * this.blueCollectables.getCollected() * this.scorePerBlueStar;
-		int redCollectablesScore = this.amountOfRedBalloons * this.redCollectables.getCollected() * this.scorePerRedStar;
-		int goldCollectablesScore = this.goldCollectables.getCollected() * this.scorePerGoldStar;
+		int blueCollectablesScore = this.amountOfBlueBalloons * this.blueCollectables.getCollected().size() * this.scorePerBlueStar;
+		int redCollectablesScore = this.amountOfRedBalloons * this.redCollectables.getCollected().size() * this.scorePerRedStar;
+		int goldCollectablesScore = this.goldCollectables.getCollected().size() * this.scorePerGoldStar;
 		int blueBalloonsScore = this.amountOfBlueBalloons * this.scorePerBalloon;
 		int redBalloonsScore = this.amountOfRedBalloons * this.scorePerBalloon;
 		return blueCollectablesScore + redCollectablesScore + goldCollectablesScore +
@@ -199,9 +198,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(Textures.starBlue), this.blueCollectables.getCollected(), this.scorePerBlueStar);
-		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected(), this.scorePerRedStar);
-		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected(), this.scorePerGoldStar);
+		levelCompleteDialog.add(new Image(Textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
+		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
+		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
 
 		levelCompleteDialog.setOnClickListener(this);
 
@@ -289,15 +288,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 			if( starColor == Star.ColorType.YELLOW ) {
 				star.destroy();
 				deleteGameObject(star);
-				this.goldCollectables.collect();
+				this.goldCollectables.collect(star);
 			} else if( ( balloonColor == Balloon.ColorType.BLUE ) && ( starColor == Star.ColorType.BLUE ) ) {
 				star.destroy();
 				deleteGameObject(star);
-				this.blueCollectables.collect();
+				this.blueCollectables.collect(star);
 			} else if( ( balloonColor == Balloon.ColorType.RED ) && ( starColor == Star.ColorType.RED ) ) {
 				star.destroy();
 				deleteGameObject(star);
-				this.redCollectables.collect();
+				this.redCollectables.collect(star);
 			} else {
 				destroyBalloon(balloon);
 			}

@@ -405,18 +405,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract public void decreaseSize();
 
-	
-	synchronized public void destroy() {
-		this.canBeDeleted = true;
-		delete();
-	}
-
 	/**
 	 * Called when object must be removed from game
 	 * <br/>
-	 * This should start any remove animation and set object to deleted afterwards using {@link #setCanBeDeleted(boolean)}
+	 * Note that this sets object can be deleted using {@link #setCanBeDeleted(boolean)}
 	 */
-	abstract protected void delete();
+	synchronized public void destroy() {
+		if( this.isHit ) { //prevent object from being destroyed multiple times during a removal animation
+			return;
+		}
+		this.isHit = true;
+		destroyAction();
+	}
+
+	/**
+	 * Called by {@link #destroy()} to start any animation or sound when object is destroyed
+	 * <br/>
+	 * Be sure to call {@link #setCanBeDeleted(boolean)} and set it to true when object can
+	 * safely be removed from game. Otherwise object will not be removed.
+	 */
+	abstract protected void destroyAction();
 	
 	/**
 	 * Depending on the game engine this gets called when object collides with another object

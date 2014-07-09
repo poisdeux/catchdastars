@@ -268,8 +268,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 
 	@Override
-	public void delete() {
-		remove();
+	public void destroyAction() {
 		setCanBeDeleted(true);
 	}
 
