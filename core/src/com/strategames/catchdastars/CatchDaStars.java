@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,10 +23,10 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.Textures;
 import com.strategames.gameobjects.Balloon;
 import com.strategames.gameobjects.GameObject;
+import com.strategames.gameobjects.GameObject.Type;
 import com.strategames.gameobjects.Icecube;
 import com.strategames.gameobjects.Star;
 import com.strategames.gameobjects.Wall;
-import com.strategames.gameobjects.GameObject.Type;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
@@ -262,9 +263,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 		return this.availableGameObjects;
 	}
 
-	private void destroyBalloon(Balloon balloon, Balloon.ColorType color) {
+	private void destroyBalloon(Balloon balloon) {
 		balloon.destroy();
 		deleteGameObject(balloon);
+		Balloon.ColorType color = balloon.getColorType();
 		if( color == Balloon.ColorType.BLUE ) {
 			this.amountOfBlueBalloons--;
 		} else if( color == Balloon.ColorType.RED ) {
@@ -272,7 +274,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 	}
 
-	private void handleBalloonCollision(Contact contact, ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
+	private void handleSensorCollision(Balloon balloon, GameObject gameObject) {
 		if( ! isRunning() ) {
 			return;
 		}
@@ -297,18 +299,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				deleteGameObject(star);
 				this.redCollectables.collect();
 			} else {
-				destroyBalloon(balloon, balloonColor);
-			}
-		} else if ( type == Type.WALL ) {
-			balloon.handleCollision(contact, impulse, gameObject);
-		} else if ( type == Type.ROCK ) {
-			Icecube icecube = (Icecube) gameObject;
-			//The higher the velocity of the icecube the higher the chance the balloon
-			//will pop
-			float vel = icecube.getBody().getLinearVelocity().len2();
-			float ranVel = MathUtils.random(Icecube.maxVelocitySquared - 6000);
-			if ( vel >= ranVel ) {
-				destroyBalloon(balloon, balloonColor);
+				destroyBalloon(balloon);
 			}
 		}
 
@@ -332,20 +323,35 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 	}
 
+	private void handleBalloonRockCollision(ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
+		if ( gameObject instanceof Icecube ) {
+			if ( impulse.getNormalImpulses()[0] > 2 ) {
+				destroyBalloon(balloon);
+			}
+		}
+	}
+
 	/**
 	 * Info on collision handling by Box2D
 	 * http://www.iforce2d.net/b2dtut/collision-anatomy
 	 */
+
+	/**
+	 * beginContact is called when two fixtures make contact
+	 */
 	@Override
 	public void beginContact(Contact contact) {
-		this.collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
-		this.collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
+		Fixture fixtureA = contact.getFixtureA();
+		Fixture fixtureB = contact.getFixtureB();
+		this.collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
+		this.collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
 		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
 		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
-		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( this.typeCollidingGameObject2 != Type.BALLOON ) ) {
-			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if(( this.typeCollidingGameObject2 == Type.BALLOON ) && ( this.typeCollidingGameObject1 != Type.BALLOON )) {
-			handleBalloonCollision(contact, null, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
+
+		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( fixtureB.isSensor() ) ) {
+			handleSensorCollision((Balloon) this.collidingGameObject1, this.collidingGameObject2);
+		} else if(( this.typeCollidingGameObject2 == Type.BALLOON ) && ( fixtureA.isSensor() )) {
+			handleSensorCollision((Balloon) this.collidingGameObject2, this.collidingGameObject1);
 		}
 	}
 
@@ -353,16 +359,22 @@ public class CatchDaStars extends Game implements OnClickListener {
 	public void endContact(Contact contact) {
 	}
 
+	/**
+	 * Note that when an object hits a sensor object (like a star)
+	 * preSolve and postSolve will not be called
+	 */
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
 	}
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		if( this.typeCollidingGameObject1 == Type.ROCK ) {
+		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( this.typeCollidingGameObject2 == Type.ROCK ) ) {
+			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
+		} else if( ( this.typeCollidingGameObject2 == Type.BALLOON ) && ( this.typeCollidingGameObject1 == Type.ROCK ) ) {
+			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
+		} else {
 			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
-		}
-		if( this.typeCollidingGameObject2 == Type.ROCK ) {
 			this.collidingGameObject1.handleCollision(contact, impulse, this.collidingGameObject2);
 		}
 	}

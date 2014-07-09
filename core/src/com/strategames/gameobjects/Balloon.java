@@ -34,10 +34,11 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
-
-	private float maxVolume = 0.5f;
 	
 	private Sounds sounds;
+	
+	private static final float maxVolume = 0.5f;
+	
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -45,10 +46,9 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
 	 * 
 	 * Where bd.linearDamping is set in setupBox2D()
-	 * Following value of 28.77593 was determined empirically by checking maximum speed of balloon
-	 * in game for maximum liftFactor (see createConfigurationItems)
+	 * Following value was determined empirically
 	 */
-	private final float maxVelocitySquared = 28.77593f * 28.77593f * (1/maxVolume);
+	private static final float maxImpulse = 0.05f / maxVolume;
 
 	public static enum ColorType {
 		BLUE, RED
@@ -69,16 +69,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		setup();
 		setLiftFactor(DEFAULT_LIFTFACTOR);
 	}
-	
-//	public static Balloon create(Game game, float x, float y, ColorType type) {
-//		Balloon balloon = new Balloon();
-//		balloon.setGame(game);
-//		balloon.setColorType(type);
-//		balloon.setPosition(x, y);
-//		balloon.setup();
-//		balloon.setLiftFactor(DEFAULT_LIFTFACTOR);
-//		return balloon;
-//	}
 
 	public void setColorType(ColorType colorType) {
 		this.colorType = colorType;
@@ -116,7 +106,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	@Override
 	protected Body setupBox2D() {
 		World world = getGame().getWorld();
-//		float balloonWidth = Game.convertScreenToWorld(getPrefWidth() * getScaleX());
 		
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 		loader.setupVertices("Balloon", WIDTH);
@@ -139,7 +128,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		this.upwardLiftPosition.y += 0.1f;
  		
 		this.upwardLift = -body.getMass() * this.liftFactor;
-		
+
 		return body;
 	}
 	
@@ -230,18 +219,12 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
-		WorldManifold worldManifold = contact.getWorldManifold();
-		Vector2 normal = worldManifold.getNormal();
-		Vector2 linearVelocity = super.body.getLinearVelocity();
-		
-		float bounceVelocity = (linearVelocity.x * normal.x) + (linearVelocity.y * normal.y);
-		if( bounceVelocity > 0.1 ) {
-			this.sounds.play(this.sounds.balloonBounce, bounceVelocity / this.maxVelocitySquared);
+		float[] impulses = impulse.getNormalImpulses();
+		if( impulses[0] > 0.01 ) {
+			this.sounds.play(this.sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
 		}
 		
-//		Gdx.app.log("Balloon", "handleCollision: bounceVelocity="+bounceVelocity+
-//				", this.maxVelocitySquared="+this.maxVelocitySquared+
-//				", linearVelocity="+linearVelocity);
+		//Gdx.app.log("Balloon", "handleCollision: impulses[0]="+impulses[0]);
 		
 	}
 
