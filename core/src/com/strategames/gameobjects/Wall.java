@@ -57,6 +57,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		setType(type);
 		setup();
 		setLength(length);
+		Gdx.app.log("Wall", "Wall: this="+this);
 	}
 
 	/**
@@ -77,7 +78,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void setPosition(float x, float y) {
-		super.setPosition(x, y);
 		pos.x = x;
 		pos.y = y;
 		setupParts();
@@ -113,11 +113,14 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		}
 
 		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.position.set(this.pos.x, this.pos.y); // Set its world position
+		groundBodyDef.position.set(getX(), getY()); // Set its world position
 		Body body = getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
 
+
+		Gdx.app.log("Wall", "setupBox2D: this="+this);
+		
 		return body;
 	}
 

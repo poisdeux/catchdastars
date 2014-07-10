@@ -15,6 +15,9 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.gameobjects.StarBlue;
+import com.strategames.catchdastars.gameobjects.StarRed;
+import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
@@ -110,8 +113,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		Level level = getLevel();
-
-		if ( level == null ) {
+		if( level == null ) {
+			return;
+		}
+		
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
+		if ( gameObjects == null ) {
 			return;
 		}
 
@@ -131,20 +138,17 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
-
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
-				addGameObject(gameObject);
+				gameObject.setGame(this);
+				gameObject.setup();
 				GameObject.Type type = gameObject.getType();
-				if( type == GameObject.Type.STAR ) {
-					Star star = (Star) gameObject;
-					Star.ColorType color = star.getColorType();
-					if( color == Star.ColorType.BLUE ) {
+				if( gameObject instanceof Star ) {
+					if( gameObject instanceof StarBlue ) {
 						this.blueCollectables.add();
-					} else if( color == Star.ColorType.RED ) {
+					} else if( gameObject instanceof StarRed ) {
 						this.redCollectables.add();
-					} else if( color == Star.ColorType.YELLOW ) {
+					} else if( gameObject instanceof StarYellow ) {
 						this.goldCollectables.add();
 					}
 				} else if( type == GameObject.Type.BALLOON ) {
@@ -158,7 +162,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 			}
 		}
-		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
+//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
 	@Override
@@ -250,9 +254,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		objects.add(new Balloon(this, 0, 0, Balloon.ColorType.BLUE));
 		objects.add(new Balloon(this, 0, 0, Balloon.ColorType.RED));
-		objects.add(new Star(this, 0, 0, Star.ColorType.BLUE));
-		objects.add(new Star(this, 0, 0, Star.ColorType.YELLOW));
-		objects.add(new Star(this, 0, 0, Star.ColorType.RED));
+		objects.add(new StarBlue(this, 0, 0));
+		objects.add(new StarYellow(this, 0, 0));
+		objects.add(new StarRed(this, 0, 0));
 		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
 		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
 		objects.add(new Icecube(this, 0, 0));
@@ -280,23 +284,19 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		Balloon.ColorType balloonColor = balloon.getColorType();
 
-		Type type = gameObject.getType();
-		if( type == Type.STAR ) {
-			Star star = (Star) gameObject;
-			Star.ColorType starColor = star.getColorType();
-
-			if( starColor == Star.ColorType.YELLOW ) {
-				star.destroy();
-				deleteGameObject(star);
-				this.goldCollectables.collect(star);
-			} else if( ( balloonColor == Balloon.ColorType.BLUE ) && ( starColor == Star.ColorType.BLUE ) ) {
-				star.destroy();
-				deleteGameObject(star);
-				this.blueCollectables.collect(star);
-			} else if( ( balloonColor == Balloon.ColorType.RED ) && ( starColor == Star.ColorType.RED ) ) {
-				star.destroy();
-				deleteGameObject(star);
-				this.redCollectables.collect(star);
+		if( gameObject instanceof Star ) {
+			if( gameObject instanceof StarYellow ) {
+				gameObject.destroy();
+				deleteGameObject(gameObject);
+				this.goldCollectables.collect(gameObject);
+			} else if( ( balloonColor == Balloon.ColorType.BLUE ) && ( gameObject instanceof StarBlue ) ) {
+				gameObject.destroy();
+				deleteGameObject(gameObject);
+				this.blueCollectables.collect(gameObject);
+			} else if( ( balloonColor == Balloon.ColorType.RED ) && ( gameObject instanceof StarRed ) ) {
+				gameObject.destroy();
+				deleteGameObject(gameObject);
+				this.redCollectables.collect(gameObject);
 			} else {
 				destroyBalloon(balloon);
 			}

@@ -108,7 +108,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	}
 
 	@Override
-	public void onLevelLoaded(Level level) {
+	public void onLevelLoaded(final Level level) {
 		if( level == null ) {
 			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error loading level", getSkin());
 			dialog.setOnClickListener(this);
@@ -133,7 +133,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 			@Override
 			public boolean act(float delta) {
 				levelImage.remove();
-				ArrayList<GameObject> gameObjects = getGame().getGameObjects();
+				ArrayList<GameObject> gameObjects = level.getGameObjects();
 				Stage stage = getStageActors();
 				
 				for( GameObject gameObject : gameObjects ) {

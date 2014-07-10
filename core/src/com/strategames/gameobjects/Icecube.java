@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.catchdastars.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
+import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Mutex;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
@@ -312,14 +313,17 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 
 		Game game = getGame();
-
+		Level level = game.getLevel();
+		
 		// Create new object with piece that broke off
 		Icecube icecube1 = new Icecube();
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(getRotation());
 		icecube1.addPart(this.parts.get(partId));
 		icecube1.setBroken(true);
-		game.addGameObject(icecube1);
+		icecube1.setGame(game);
+		icecube1.setup();
+		level.addGameObject(icecube1);
 
 		// Create new object with the pieces that are left
 		Icecube icecube2 = new Icecube();
@@ -332,7 +336,9 @@ public class Icecube extends GameObject {
 			}
 		}
 		icecube2.setBroken(true);
-		game.addGameObject(icecube2);
+		icecube2.setGame(game);
+		icecube2.setup();
+		level.addGameObject(icecube2);
 
 		game.deleteGameObject(this);
 	}

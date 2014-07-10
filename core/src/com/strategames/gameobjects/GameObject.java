@@ -13,6 +13,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.utils.Box2DBuild;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -59,7 +61,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private boolean saveToFile = true;
 
 	public static enum Type {
-		WALL, BALLOON, STAR, ROCK
+		WALL, BALLOON, ROCK
 	}
 
 	public Type type;
@@ -214,6 +216,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	public void setup() {
 		TextureRegionDrawable trd = createTexture();
+//		Gdx.app.log("GameObject", "setup: gameObject="+this+", trd="+trd);
 		if( trd != null ) {
 			setDrawable(trd);
 			setScaling(Scaling.stretch);
@@ -234,13 +237,20 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.isHit = false;
 	}
 
+	/**
+	 * Moves a gameobject to location x, y. Note that you should use
+	 * {@link Actor#setPosition(float, float)} if you only want to change
+	 * the position of the drawable used by this gameobject
+	 * @param x
+	 * @param y
+	 */
 	public void moveTo(float x, float y) {
 		if( this.body != null ) {
 			this.body.setTransform(x, y, this.body.getAngle());
 		} 
 		setPosition(x, y);
 	}
-
+	
 	/**
 	 * Returns the bounding rectangle for this game object.
 	 * If you reposition or resize the game object you should again call this
@@ -441,9 +451,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	@Override
 	public String toString() {
-		String message = super.toString();
 		StringBuffer messageBuffer = new StringBuffer();
-		messageBuffer.append(message);
+		messageBuffer.append(System.identityHashCode(this));
+		messageBuffer.append(super.toString());
+		messageBuffer.append(", position=("+getX()+","+getY()+")");
 		messageBuffer.append(", halfWidth="+this.halfWidth);
 		messageBuffer.append(", halfHeight="+this.halfHeight);
 		return messageBuffer.toString();

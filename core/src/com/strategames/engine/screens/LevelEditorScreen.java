@@ -147,16 +147,26 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	protected void setupActors(Stage stage) {
 		getMultiplexer().addProcessor(stage);
 
-		ArrayList<GameObject> gameObjects = getGame().getGameObjects();
+		Level level = getGame().getLevel();
+		if( level == null ) {
+			return;
+		}
 		
-		if( gameObjects.size() == 0 ) {
+		ArrayList<GameObject> gameObjects = level.getGameObjects();
+		if ( gameObjects == null ) {
+			return;
+		}
+		
+		if( (gameObjects == null)  || ( gameObjects.size() == 0 ) ) {
 			ScreenBorder.create(this.game);
 		}
 
-		for( GameObject gameObject : gameObjects ) {
-			gameObject.initializeConfigurationItems();
-			deselectGameObject(gameObject);
-			stage.addActor(gameObject);
+		if( (gameObjects != null) ) {
+			for( GameObject gameObject : gameObjects ) {
+				gameObject.initializeConfigurationItems();
+				deselectGameObject(gameObject);
+				stage.addActor(gameObject);
+			}
 		}
 
 		//This is added to the actor stage as we use
@@ -187,7 +197,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		if( this.testGame ) { //do not handle event in game mode
 			return false;
@@ -237,6 +247,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				if( inGameArea(gameObject) ) {
 					gameObject.setMenuItem(false);
 					gameObject.setSaveToFile(true);
+					getGame().getLevel().addGameObject(gameObject);
 					addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
 				} else {
 					//return menu item to its original position
@@ -276,7 +287,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		}
 	}
-	
+
 	@Override
 	public boolean tap(final float x, final float y, int count, int button) {
 		this.tap.tap();
@@ -357,7 +368,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		copy.setInitialPosition(new Vector2(xStage, yStage));
 		copy.moveTo(xStage, yStage);
 		copy.initializeConfigurationItems();
-		getGame().addGameObject(copy);
+		copy.setGame(getGame());
+		copy.setup();
+		getGame().getLevel().addGameObject(copy);
 		return copy;
 	}
 
@@ -398,15 +411,17 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		} else {
 			xDelta = 0.06f; // empirically determined
 		}
-		
+
 		copy.setPosition(copy.getX() + xDelta, copy.getY() + yDelta);
-		getGame().addGameObject(copy);
+		copy.setGame(getGame());
+//		copy.setup();
+		getGame().getLevel().addGameObject(copy);
 		stageActors.addActor(copy);
 		deselectGameObject(object);
 		selectGameObject(copy);
 		return copy;
 	}
-	
+
 	/**
 	 * Positions camera to make room for menu
 	 */
@@ -487,10 +502,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private void saveLevel() {
-		Game game = getGame();
-		Level level = game.getLevel();
-		level.setGameObjects(game.getGameObjects());
-		LevelWriter.save(level);
+		LevelWriter.save(getGame().getLevel());
 	}
 
 	private Actor getActor(Rectangle rectangle) {

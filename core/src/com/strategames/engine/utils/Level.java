@@ -13,19 +13,33 @@ public class Level implements Comparable<Level> {
 	private String name;
 	private ArrayList<GameObject> gameObjects;
 
-	public void setGameObjects(ArrayList<GameObject> gameObjects) {
+	public Level() {
 		this.gameObjects = new ArrayList<GameObject>();
-
+	}
+	
+	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		if( gameObjects == null )
 			return;
-
+		
+		this.gameObjects = new ArrayList<GameObject>();
+		
 		for( GameObject object : gameObjects ) {
-			if( object.getSaveToFile() ){
-				this.gameObjects.add(object);
-			}
+			addGameObject(object);
 		}
 	}
 
+	/**
+	 * Adds a gameobject to the level.
+	 * Note that gameobjects will only be added if {@link GameObject#setSaveToFile(boolean)}
+	 * is set to true
+	 * @param object
+	 */
+	public void addGameObject(GameObject object) {
+		if( object.getSaveToFile() ){
+			this.gameObjects.add(object);
+		}
+	}
+	
 	public ArrayList<GameObject> getGameObjects() {
 		return this.gameObjects;
 	}

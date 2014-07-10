@@ -314,21 +314,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return world;
 	}
 
-	/**
-	 * Use this to add game objects that require collision detection and physics to calculate the objects new position.
-	 * @param object the actual game object
-	 */
-	public void addGameObject(GameObject object) {
-		object.setGame(this);
-		object.setup();
-	}
-
-	public ArrayList<GameObject> getGameObjects() {
-		if( this.level == null )
-			return null;
-		
-		return this.level.getGameObjects();
-	}
+//	public ArrayList<GameObject> getGameObjects() {
+//		if( this.level == null )
+//			return null;
+//		
+//		return this.level.getGameObjects();
+//	}
 
 	/**
 	 * Use this to add User interface elements that do not require collision detection nor physics
