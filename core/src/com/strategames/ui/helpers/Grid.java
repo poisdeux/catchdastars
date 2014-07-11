@@ -24,7 +24,7 @@ public class Grid extends Image {
 	public void draw(Batch batch, float parentAlpha) {
 		for( float y = 0; y < this.height; y += GRIDSIZE) {
 			for( float x = 0; x < this.width; x += GRIDSIZE) {
-				batch.draw(Textures.gridPoint, x - this.halfWidth, y - this.halfHeight, GRIDSIZE, GRIDSIZE);
+				batch.draw(Textures.getInstance().gridPoint, x - this.halfWidth, y - this.halfHeight, GRIDSIZE, GRIDSIZE);
 //				batch.draw(Textures.gridPoint, x, y, GRIDSIZE, GRIDSIZE);
 			}
 		}

@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Textures;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
@@ -42,6 +42,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	private boolean isBorder;
 
+	private static Textures textures = Textures.getInstance();
+	
 	public enum Orientation {
 		HORIZONTAL, VERTICAL
 	}
@@ -54,7 +56,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		this();
 		setGame(game);
 		setPosition(x, y);
-		setType(type);
+		setOrientation(type);
 		setup();
 		setLength(length);
 		Gdx.app.log("Wall", "Wall: this="+this);
@@ -86,15 +88,15 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void setup() {
 		this.colorActor = getColor();
-
-		Sprite sprite = new Sprite(Textures.bricksHorizontal);
+		
+		Sprite sprite = new Sprite(textures.bricksHorizontal);
 		setDrawable(new TextureRegionDrawable(sprite));
 		setScaling(Scaling.stretch);
 		setLength(this.length);
 		setPosition(getX(), getY());
 
-		Textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		Textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		super.setup();
 	}
 
@@ -159,12 +161,19 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		//				", this.amountOfParts="+this.amountOfParts);
 	}
 
-	public void setType(Orientation type) {
+	public float getLength() {
+		return length;
+	}
+	
+	public void setOrientation(Orientation type) {
 		this.orientation = type;
 		setName(getClass().getSimpleName() + " " + type.name().toLowerCase());
 	}
 
-
+	public Orientation getOrientation() {
+		return orientation;
+	}
+	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		float prevAlpha = batch.getColor().a;
@@ -172,14 +181,14 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 		if ( orientation == Orientation.HORIZONTAL ) {
 			if( this.length > this.stepSize ) {
-				batch.draw(Textures.bricksHorizontalEndLeft, pos.x, pos.y, WIDTH, HEIGHT);
-				batch.draw(Textures.bricksHorizontal, this.startHorizontalMiddlePart, pos.y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
-				batch.draw(Textures.bricksHorizontalEndRight, this.startHorizontalEndPart, pos.y, WIDTH, HEIGHT);
+				batch.draw(textures.bricksHorizontalEndLeft, pos.x, pos.y, WIDTH, HEIGHT);
+				batch.draw(textures.bricksHorizontal, this.startHorizontalMiddlePart, pos.y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
+				batch.draw(textures.bricksHorizontalEndRight, this.startHorizontalEndPart, pos.y, WIDTH, HEIGHT);
 			} else { // draw single brick
-				batch.draw(Textures.bricksVertical, pos.x, pos.y, WIDTH, HEIGHT);
+				batch.draw(textures.bricksVertical, pos.x, pos.y, WIDTH, HEIGHT);
 			}
 		} else {
-			batch.draw(Textures.bricksVertical, pos.x, pos.y, WIDTH, this.length, 0, 0, -1, this.amountOfParts);
+			batch.draw(textures.bricksVertical, pos.x, pos.y, WIDTH, this.length, 0, 0, -1, this.amountOfParts);
 		}
 
 		batch.getColor().a = prevAlpha;

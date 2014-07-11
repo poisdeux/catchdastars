@@ -2,8 +2,8 @@ package com.strategames.engine.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.strategames.catchdastars.Game;
-import com.strategames.gameobjects.Wall;
+import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobjects.Wall;
 
 public class ScreenBorder {
 

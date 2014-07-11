@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;

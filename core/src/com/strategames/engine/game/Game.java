@@ -1,4 +1,4 @@
-package com.strategames.catchdastars;
+package com.strategames.engine.game;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
@@ -29,7 +30,6 @@ import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
-import com.strategames.gameobjects.GameObject;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
@@ -152,7 +152,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void dispose() {
 		super.dispose();
 		Sounds.getInstance().dispose(getManager());
-		Textures.dispose(getManager());
+		Textures.getInstance().dispose(getManager());
 	}
 
 

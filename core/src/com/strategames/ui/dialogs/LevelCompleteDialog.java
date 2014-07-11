@@ -19,11 +19,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobjects.ChalkLine;
+import com.strategames.engine.gameobjects.ChalkLine.ChalkLineAnimationListener;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
-import com.strategames.gameobjects.ChalkLine;
-import com.strategames.gameobjects.ChalkLine.ChalkLineAnimationListener;
 
 public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
 	
@@ -208,7 +208,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 	private void showCashRegistry(final float x, final float y) {
 		this.cashRegister = new Table();
 		final float scale = 1.2f;
-		Image image = new Image(Textures.cashRegister);
+		Image image = new Image(Textures.getInstance().cashRegister);
 		image.setScaling(Scaling.stretch);
 		double scaleFactor = this.maxImageHeight / (double) image.getHeight() ;
 		float height = this.maxImageHeight;

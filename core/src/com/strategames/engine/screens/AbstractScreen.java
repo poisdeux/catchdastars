@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 
 /**
  * TODO create a screen manager to reduce the amount of new objects created when a new screen must be shown

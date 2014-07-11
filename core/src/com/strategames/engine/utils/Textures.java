@@ -1,6 +1,5 @@
 package com.strategames.engine.utils;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,51 +8,64 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Textures {
 
-	public static TextureRegion blueBalloon;
-	public static TextureRegion redBalloon;
-	public static TextureRegion starBlue;
-	public static TextureRegion starYellow;
-	public static TextureRegion starRed;
-	public static Texture 		bricksHorizontal;
-	public static Texture 		bricksHorizontalEndLeft;
-	public static Texture 		bricksHorizontalEndRight;
-	public static Texture 		bricksVertical;
-	public static TextureRegion chalk1;
-	public static TextureRegion chalk2;
-	public static TextureRegion chalk3;
-	public static TextureRegion chalk4;
-	public static TextureRegion chalk5;
-	public static TextureRegion cashRegister;
-	public static TextureRegion icecube;
-	public static TextureRegion icecubePart1;
-	public static TextureRegion icecubePart2;
-	public static TextureRegion icecubePart3;
-	public static TextureRegion icecubePart4;
-	public static TextureRegion icecubePart5;
-	public static TextureRegion icecubePart6;
-	public static TextureRegion icecubePart7;
-	public static TextureRegion icecubePart8;
-	public static TextureRegion icecubePart9;
-	public static TextureRegion icecubePart10;
-	public static TextureRegion level;
-	public static TextureRegion digit0;
-	public static TextureRegion digit1;
-	public static TextureRegion digit2;
-	public static TextureRegion digit3;
-	public static TextureRegion digit4;
-	public static TextureRegion digit5;
-	public static TextureRegion digit6;
-	public static TextureRegion digit7;
-	public static TextureRegion digit8;
-	public static TextureRegion digit9;
-	public static TextureRegion gridPoint;
-	public static TextureRegion	menu;
-	public static Texture		Loading;
-	public static Texture		dot;
-	
-	private static String atlasFilename;
-	private static String screenDensity;
+	//We use static class as class loading is thread safe
+	static class SingletonHolder {
+		private static final Textures INSTANCE = new Textures();
+	}
 
+	public TextureRegion blueBalloon;
+	public TextureRegion redBalloon;
+	public TextureRegion starBlue;
+	public TextureRegion starYellow;
+	public TextureRegion starRed;
+	public TextureRegion chalk1;
+	public TextureRegion chalk2;
+	public TextureRegion chalk3;
+	public TextureRegion chalk4;
+	public TextureRegion chalk5;
+	public TextureRegion cashRegister;
+	public TextureRegion icecube;
+	public TextureRegion icecubePart1;
+	public TextureRegion icecubePart2;
+	public TextureRegion icecubePart3;
+	public TextureRegion icecubePart4;
+	public TextureRegion icecubePart5;
+	public TextureRegion icecubePart6;
+	public TextureRegion icecubePart7;
+	public TextureRegion icecubePart8;
+	public TextureRegion icecubePart9;
+	public TextureRegion icecubePart10;
+	public TextureRegion level;
+	public TextureRegion digit0;
+	public TextureRegion digit1;
+	public TextureRegion digit2;
+	public TextureRegion digit3;
+	public TextureRegion digit4;
+	public TextureRegion digit5;
+	public TextureRegion digit6;
+	public TextureRegion digit7;
+	public TextureRegion digit8;
+	public TextureRegion digit9;
+	public TextureRegion gridPoint;
+	public TextureRegion menu;
+	public Texture		 Loading;
+	public Texture		 dot;
+	public Texture 		 bricksHorizontal;
+	public Texture 		 bricksHorizontalEndLeft;
+	public Texture 		 bricksHorizontalEndRight;
+	public Texture 		 bricksVertical;
+	
+	private String atlasFilename;
+	private String screenDensity;
+
+	private Textures() {
+		
+	}
+	
+	public static Textures getInstance() {
+		return SingletonHolder.INSTANCE;
+	}
+	
 	public static Texture loadTexture (String file) {
 		return new Texture(Gdx.files.internal(file));
 	}
@@ -61,7 +73,7 @@ public class Textures {
 	/**
 	 * Loads assets asynchronous
 	 */
-	static public void load(AssetManager manager) {
+	public void load(AssetManager manager) {
 		if( screenDensity == null ) {
 			screenDensity = getScreenDensity();
 		}
@@ -73,7 +85,7 @@ public class Textures {
 	/**
 	 * Unloads all loaded assets
 	 */
-	static public void dispose(AssetManager manager) {
+	public void dispose(AssetManager manager) {
 		manager.unload(atlasFilename);
 	}
 
@@ -83,7 +95,7 @@ public class Textures {
 	 * Note you cannot access the textures before calling this method
 	 * @param manager
 	 */
-	public static void setup(AssetManager manager) {
+	public void setup(AssetManager manager) {
 		if( atlasFilename == null ) {
 			load(manager);
 		}
@@ -135,7 +147,7 @@ public class Textures {
 		menu = atlas.findRegion("icon-menu");
 	}
 
-	public static Texture getSplashScreen() {
+	public Texture getSplashScreen() {
 		if( screenDensity == null ) {
 			screenDensity = getScreenDensity();
 		}
@@ -143,11 +155,11 @@ public class Textures {
 		return new Texture( "images/"+screenDensity+"/splashscreen.png" );
 	}
 
-	private static String getScreenDensity() {
+	private String getScreenDensity() {
 		String densityModifier = "mdpi";
 
 		float density = Gdx.graphics.getDensity();
-		
+
 		/**
 		 *  we originally designed the game for a 800x480 hdpi screen
 		 *  mdpi	533.33333
@@ -156,9 +168,9 @@ public class Textures {
 		 *  xxhdpi	1600	
 		 */
 
-//		float width = Gdx.graphics.getWidth();
-//		float height = Gdx.graphics.getHeight();
-//		float size = width > height ? width : height;
+		//		float width = Gdx.graphics.getWidth();
+		//		float height = Gdx.graphics.getHeight();
+		//		float size = width > height ? width : height;
 		//		if( size >= 1599 ) {
 		//			densityModifier = "xxhdpi";
 		//		} else if ( size >= 1066 ) {

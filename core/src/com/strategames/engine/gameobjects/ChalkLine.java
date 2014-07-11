@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.Textures;
 
 public class ChalkLine extends Image {
@@ -23,7 +23,8 @@ public class ChalkLine extends Image {
 	private Vector2 start;
 	private Vector2 end;
 	private Vector2 increments;
-
+	private Textures textures = Textures.getInstance();
+	
 	public interface ChalkLineAnimationListener {
 		public void onLineDrawEnd(ChalkLine line);
 	}
@@ -39,11 +40,11 @@ public class ChalkLine extends Image {
 		synchronized (this) {
 			if( chalks == null ) {
 				chalks = new Sprite[5];
-				chalks[0] = new Sprite(Textures.chalk1);
-				chalks[1] = new Sprite(Textures.chalk2);
-				chalks[2] = new Sprite(Textures.chalk3);
-				chalks[3] = new Sprite(Textures.chalk4);
-				chalks[4] = new Sprite(Textures.chalk5);
+				chalks[0] = new Sprite(textures.chalk1);
+				chalks[1] = new Sprite(textures.chalk2);
+				chalks[2] = new Sprite(textures.chalk3);
+				chalks[3] = new Sprite(textures.chalk4);
+				chalks[4] = new Sprite(textures.chalk5);
 
 				for( int i = 0; i < chalks.length; i++ ) {
 					chalks[i].setScale(0.5f);

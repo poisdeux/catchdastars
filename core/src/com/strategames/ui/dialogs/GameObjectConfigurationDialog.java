@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.gameobjects.GameObject;
 import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectConfigurationDialog extends Dialog {

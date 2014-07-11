@@ -18,17 +18,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
+import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobjects.Balloon;
+import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobjects.Icecube;
+import com.strategames.engine.gameobjects.Star;
+import com.strategames.engine.gameobjects.Wall;
+import com.strategames.engine.gameobjects.GameObject.Type;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.Textures;
-import com.strategames.gameobjects.Balloon;
-import com.strategames.gameobjects.GameObject;
-import com.strategames.gameobjects.GameObject.Type;
-import com.strategames.gameobjects.Icecube;
-import com.strategames.gameobjects.Star;
-import com.strategames.gameobjects.Wall;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
@@ -200,11 +201,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
-		levelCompleteDialog.add(new Image(Textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(Textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(Textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
-		levelCompleteDialog.add(new Image(Textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
-		levelCompleteDialog.add(new Image(Textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
+		Textures textures = Textures.getInstance();
+		levelCompleteDialog.add(new Image(textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
+		levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
+		levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
 
 		levelCompleteDialog.setOnClickListener(this);
 

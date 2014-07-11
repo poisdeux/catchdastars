@@ -6,7 +6,7 @@ import java.util.Locale;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.strategames.gameobjects.GameObject;
+import com.strategames.engine.gameobjects.GameObject;
 
 public class Level implements Comparable<Level> {
 	private int number;

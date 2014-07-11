@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Level;
@@ -64,7 +64,9 @@ public class Icecube extends GameObject {
 
 	private static long prevPlayRocksRolling;
 
-	private static Sounds sounds = Sounds.getInstance();;
+	private static Sounds sounds = Sounds.getInstance();
+	
+	private static Textures textures = Textures.getInstance();
 	
 	/**
 	 * New velocity is calculated as follows by Box2D
@@ -190,7 +192,7 @@ public class Icecube extends GameObject {
 
 		return cube;
 	}
-
+	
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
 		return null;
@@ -372,16 +374,16 @@ public class Icecube extends GameObject {
 	private void setupStaticResources() {
 
 		availableParts = new ArrayList<Icecube.Part>();
-		availableParts.add(new Part("icecube-part01.png", Textures.icecubePart1));
-		availableParts.add(new Part("icecube-part02.png", Textures.icecubePart2));
-		availableParts.add(new Part("icecube-part03.png", Textures.icecubePart3));
-		availableParts.add(new Part("icecube-part04.png", Textures.icecubePart4));
-		availableParts.add(new Part("icecube-part05.png", Textures.icecubePart5));
-		availableParts.add(new Part("icecube-part06.png", Textures.icecubePart6));
-		availableParts.add(new Part("icecube-part07.png", Textures.icecubePart7));
-		availableParts.add(new Part("icecube-part08.png", Textures.icecubePart8));
-		availableParts.add(new Part("icecube-part09.png", Textures.icecubePart9));
-		availableParts.add(new Part("icecube-part10.png", Textures.icecubePart10));
+		availableParts.add(new Part("icecube-part01.png", textures.icecubePart1));
+		availableParts.add(new Part("icecube-part02.png", textures.icecubePart2));
+		availableParts.add(new Part("icecube-part03.png", textures.icecubePart3));
+		availableParts.add(new Part("icecube-part04.png", textures.icecubePart4));
+		availableParts.add(new Part("icecube-part05.png", textures.icecubePart5));
+		availableParts.add(new Part("icecube-part06.png", textures.icecubePart6));
+		availableParts.add(new Part("icecube-part07.png", textures.icecubePart7));
+		availableParts.add(new Part("icecube-part08.png", textures.icecubePart8));
+		availableParts.add(new Part("icecube-part09.png", textures.icecubePart9));
+		availableParts.add(new Part("icecube-part10.png", textures.icecubePart10));
 
 		loader = new BodyEditorLoader(Gdx.files.internal("fixtures/icecube.json"));
 		int size = availableParts.size();
@@ -406,6 +408,6 @@ public class Icecube extends GameObject {
 		bodyDef.angularDamping = 0.1f;
 
 
-		drawable = new TextureRegionDrawable(Textures.icecube);
+		drawable = new TextureRegionDrawable(textures.icecube);
 	}
 }

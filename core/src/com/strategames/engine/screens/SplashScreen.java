@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
@@ -36,7 +36,7 @@ public class SplashScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-		Texture texture = Textures.getSplashScreen();
+		Texture texture = Textures.getInstance().getSplashScreen();
 
 		this.splashImage = new Image(texture);
 
@@ -47,7 +47,7 @@ public class SplashScreen extends AbstractScreen {
 
 		this.splashImage.getColor().a = 0f;
 
-		Textures.load(assetManager);
+		Textures.getInstance().load(assetManager);
 		Sounds.getInstance().load(assetManager);
 		
 		stage.addActor( this.splashImage );
@@ -62,7 +62,7 @@ public class SplashScreen extends AbstractScreen {
 		super.render(delta);
 
 		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
-			Textures.setup(this.assetManager);
+			Textures.getInstance().setup(this.assetManager);
 			Sounds.getInstance().setup(this.assetManager);
 
 			this.finishedSetupAssets = true;

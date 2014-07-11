@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.strategames.catchdastars.Game;
-import com.strategames.gameobjects.GameObject;
+import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectPickerDialog extends Dialog {

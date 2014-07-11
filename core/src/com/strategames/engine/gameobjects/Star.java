@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Sounds;
 
@@ -148,6 +148,12 @@ abstract public class Star extends GameObject {
 //		}
 //		return copy;
 //	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {

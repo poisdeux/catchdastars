@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Sounds;
@@ -35,8 +35,8 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
 	
-	private Sounds sounds;
-	
+	private static Sounds sounds = Sounds.getInstance();
+			
 	private static final float maxVolume = 0.5f;
 	
 	/**
@@ -58,7 +58,6 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	public Balloon() {
 		super(new Vector2(WIDTH, -1f));
-		this.sounds = Sounds.getInstance();
 	}
 
 	public Balloon(Game game, float x, float y, ColorType type) {
@@ -94,10 +93,11 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	@Override
 	protected TextureRegionDrawable createTexture() {
 		TextureRegionDrawable trd = null;
+		Textures textures = Textures.getInstance();
 		if( colorType == ColorType.BLUE ) {
-			trd = new TextureRegionDrawable(Textures.blueBalloon);
+			trd = new TextureRegionDrawable(textures.blueBalloon);
 		} else if( colorType == ColorType.RED ) {
-			trd = new TextureRegionDrawable(Textures.redBalloon);
+			trd = new TextureRegionDrawable(textures.redBalloon);
 		}
 
 		return trd;

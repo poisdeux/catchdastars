@@ -5,14 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.interfaces.ButtonListener;
 
 public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implements EventListener {
 	private ButtonListener listener = null;
 	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
-	private static Drawable drawable = new TextureRegionDrawable(Textures.menu);
+	private static Drawable drawable = new TextureRegionDrawable(Textures.getInstance().menu);
 	
 	public MenuButton() {
 		super(drawable);

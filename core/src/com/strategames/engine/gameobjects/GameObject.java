@@ -1,4 +1,4 @@
-package com.strategames.gameobjects;
+package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.Game;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -392,7 +392,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	abstract public GameObject copy();
-
+	
 	public void initializeConfigurationItems() {
 		this.configurationItems = createConfigurationItems();
 	}
