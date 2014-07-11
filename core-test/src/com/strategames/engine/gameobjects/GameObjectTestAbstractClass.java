@@ -1,12 +1,15 @@
 package com.strategames.engine.gameobjects;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
-
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.math.Vector2;
@@ -26,7 +29,9 @@ abstract public class GameObjectTestAbstractClass {
 			this.application = new LwjglApplication(game, cfg);
 		}
 		
-		Textures.getInstance().load(game.getManager());
+		AssetManager assetManager = game.getManager();
+		Textures.getInstance().setup(assetManager);
+		while( ! assetManager.update() ) {};
 		
 		this.gameObject = createGameObject();
 		this.gameObject.setPosition(2, 4);

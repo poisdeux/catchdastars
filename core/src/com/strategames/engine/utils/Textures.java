@@ -55,8 +55,13 @@ public class Textures {
 	public Texture 		 bricksHorizontalEndRight;
 	public Texture 		 bricksVertical;
 	
+	public enum ScreenDensity {
+		mdpi, hdpi, xhdpi, xxhdpi
+	}
+	
+	private ScreenDensity screenDensity;
+	
 	private String atlasFilename;
-	private String screenDensity;
 
 	private Textures() {
 		
@@ -74,11 +79,11 @@ public class Textures {
 	 * Loads assets asynchronous
 	 */
 	public void load(AssetManager manager) {
-		if( screenDensity == null ) {
-			screenDensity = getScreenDensity();
+		if( this.screenDensity == null ) {
+			this.screenDensity = getScreenDensity();
 		}
 
-		atlasFilename = "packed/"+screenDensity+".atlas";
+		atlasFilename = "packed/"+screenDensity.name()+".atlas";
 		manager.load(atlasFilename, TextureAtlas.class);
 	}
 
@@ -100,7 +105,7 @@ public class Textures {
 			load(manager);
 		}
 
-		String path = "images/"+screenDensity;
+		String path = "images/"+screenDensity.name();
 		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
 		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
 		bricksHorizontalEndLeft = new Texture(path+"/bricks-texture-horizontal-left-end.png");
@@ -148,15 +153,15 @@ public class Textures {
 	}
 
 	public Texture getSplashScreen() {
-		if( screenDensity == null ) {
-			screenDensity = getScreenDensity();
+		if( this.screenDensity == null ) {
+			this.screenDensity = getScreenDensity();
 		}
 
-		return new Texture( "images/"+screenDensity+"/splashscreen.png" );
+		return new Texture( "images/"+screenDensity.name()+"/splashscreen.png" );
 	}
 
-	private String getScreenDensity() {
-		String densityModifier = "mdpi";
+	public ScreenDensity getScreenDensity() {
+		ScreenDensity densityModifier = ScreenDensity.mdpi;
 
 		float density = Gdx.graphics.getDensity();
 
@@ -179,12 +184,16 @@ public class Textures {
 		//			densityModifier = "hdpi";
 		//		}
 		if( density >= 3 ) {
-			densityModifier = "xxhdpi";
+			densityModifier = ScreenDensity.xxhdpi;
 		} else if ( density >= 2 ) {
-			densityModifier = "xhdpi";
+			densityModifier = ScreenDensity.xhdpi;
 		} else if ( density >= 1.5 ) {
-			densityModifier = "hdpi";
+			densityModifier = ScreenDensity.hdpi;
 		}
 		return densityModifier;
+	}
+	
+	public void setScreenDensity(ScreenDensity screenDensity) {
+		this.screenDensity = screenDensity;
 	}
 }
