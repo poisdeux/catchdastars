@@ -6,9 +6,15 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.screens.ScreenTestClass;
 
 public class GameTestClass extends Game {
 
+	@Override
+	public void create() {
+		setScreen(new ScreenTestClass(this));
+	}
+	
 	@Override
 	public void beginContact(Contact contact) {
 		// TODO Auto-generated method stub

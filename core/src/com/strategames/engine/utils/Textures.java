@@ -1,5 +1,7 @@
 package com.strategames.engine.utils;
 
+import java.io.FileNotFoundException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -76,15 +78,25 @@ public class Textures {
 	}
 
 	/**
-	 * Loads assets asynchronous
+	 * Adds the textures to the AssetManager load queue
+	 * <br/>
+	 * Note this does not actually load the assets just yet.
+	 * <br/>
+	 * Use {@link AssetManager#update()} to load the actual assets
+	 * @param manager
+	 * @throws FileNotFoundException
 	 */
-	public void load(AssetManager manager) {
+	public void addToAssetManager(AssetManager manager) throws FileNotFoundException {
 		if( this.screenDensity == null ) {
 			this.screenDensity = getScreenDensity();
 		}
 
 		atlasFilename = "packed/"+screenDensity.name()+".atlas";
-		manager.load(atlasFilename, TextureAtlas.class);
+		if( Gdx.files.internal(atlasFilename).exists() ) {
+			manager.load(atlasFilename, TextureAtlas.class);
+		} else {
+			throw new FileNotFoundException("Could not find atlas "+atlasFilename);
+		}
 	}
 
 	/**
@@ -95,24 +107,18 @@ public class Textures {
 	}
 
 	/**
-	 * Call this to fill the different textures from the AssetManager
+	 * Call this to fill create the different textures.
+	 * <br/>
+	 * Note DO NOT call this method if AssetManager is not ready loading.
+	 * <br/>
+	 * Use {@link #addToAssetManager(AssetManager)} to load textures and use {@link AssetManager#update()}
+	 * to load assets.
 	 * <br/>
 	 * Note you cannot access the textures before calling this method
 	 * @param manager
+	 * @throws FileNotFoundException 
 	 */
-	public void setup(AssetManager manager) {
-		if( atlasFilename == null ) {
-			load(manager);
-		}
-
-		String path = "images/"+screenDensity.name();
-		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
-		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
-		bricksHorizontalEndLeft = new Texture(path+"/bricks-texture-horizontal-left-end.png");
-		bricksVertical = new Texture(path+"/bricks-texture-vertical.png");
-		dot = new Texture(path+"/dot.png");
-		Loading = new Texture(path+"/Loading.png");
-
+	public void setup(AssetManager manager) throws FileNotFoundException {
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 
 		blueBalloon = atlas.findRegion("aj_balloon_blue");
@@ -150,6 +156,15 @@ public class Textures {
 		digit9 = atlas.findRegion("9");
 		gridPoint = atlas.findRegion("gridpoint");
 		menu = atlas.findRegion("icon-menu");
+		
+		String path = "images/"+screenDensity.name();
+		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
+		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
+		bricksHorizontalEndLeft = new Texture(path+"/bricks-texture-horizontal-left-end.png");
+		bricksVertical = new Texture(path+"/bricks-texture-vertical.png");
+		dot = new Texture(path+"/dot.png");
+		Loading = new Texture(path+"/Loading.png");
+
 	}
 
 	public Texture getSplashScreen() {

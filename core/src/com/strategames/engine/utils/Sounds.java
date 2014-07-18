@@ -35,9 +35,14 @@ public class Sounds {
 	}
 
 	/**
-	 * Loads assets asynchronous
+	 * Adds the sounds to the AssetManager load queue
+	 * <br/>
+	 * Note this does not actually load the assets just yet.
+	 * <br/>
+	 * Use {@link AssetManager#update()} to load the actual assets
+	 * @param manager
 	 */
-	public void load(AssetManager manager) {
+	public void addToAssetManager(AssetManager manager) {
 		manager.load("sounds/glass.ogg", Sound.class);
 		manager.load("sounds/balloon_pop.mp3", Sound.class);
 		manager.load("sounds/single_balloon_bounce.ogg", Sound.class);

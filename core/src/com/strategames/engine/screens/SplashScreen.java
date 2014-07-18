@@ -6,6 +6,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import java.io.FileNotFoundException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,8 +49,13 @@ public class SplashScreen extends AbstractScreen {
 
 		this.splashImage.getColor().a = 0f;
 
-		Textures.getInstance().load(assetManager);
-		Sounds.getInstance().load(assetManager);
+		try {
+			Textures.getInstance().addToAssetManager(assetManager);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Sounds.getInstance().addToAssetManager(assetManager);
 		
 		stage.addActor( this.splashImage );
 		
@@ -62,7 +69,12 @@ public class SplashScreen extends AbstractScreen {
 		super.render(delta);
 
 		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
-			Textures.getInstance().setup(this.assetManager);
+			try {
+				Textures.getInstance().setup(this.assetManager);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Sounds.getInstance().setup(this.assetManager);
 
 			this.finishedSetupAssets = true;
