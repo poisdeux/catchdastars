@@ -88,7 +88,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void setup() {
 		this.colorActor = getColor();
-		
+		Gdx.app.log("Wall", "setup: textures.bricksHorizontal="+textures.bricksHorizontal);
 		Sprite sprite = new Sprite(textures.bricksHorizontal);
 		setDrawable(new TextureRegionDrawable(sprite));
 		setScaling(Scaling.stretch);

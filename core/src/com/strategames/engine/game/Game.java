@@ -54,7 +54,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private World world;
 
-	private Vector3 worldSize;
+	private Vector3 worldSize = new Vector3(0f, 0f, 0f);
 
 	private ExportImport exportimport;
 	private MusicSelector musicSelector;
