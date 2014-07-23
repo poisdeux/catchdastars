@@ -51,8 +51,7 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 	
 	@Test
 	public void testCopySimpleObject() {
-		Balloon copy = (Balloon) this.gameObject.copy();
-		testIfEqual(this.gameObject, copy);
+		testIfEqual(this.gameObject, this.gameObject.copy());
 	}
 	
 	@Test
@@ -61,8 +60,7 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
 		this.gameObject.setup();
-		Balloon copy = (Balloon) this.gameObject.copy();
-		testIfEqual(this.gameObject, copy);
+		testIfEqual(this.gameObject, this.gameObject.copy());
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {

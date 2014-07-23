@@ -16,7 +16,7 @@ public class WallTest extends GameObjectTestAbstractClass {
 		Wall b1 = (Wall) object1;
 		Wall b2 = (Wall) object2;
 		
-		assertTrue("Length not equal", b1.getLength() == b2.getLength());
-		assertTrue("Orientation not equal", b1.getOrientation() == b2.getOrientation());
+		assertTrue("Length not equal: "+b1.getLength()+" != "+b2.getLength(), b1.getLength() == b2.getLength());
+		assertTrue("Orientation not equal: "+b1.getOrientation().name()+" != "+b2.getOrientation().name(), b1.getOrientation() == b2.getOrientation());
 	}
 }

@@ -57,6 +57,8 @@ public class Textures {
 	public Texture 		 bricksHorizontalEndRight;
 	public Texture 		 bricksVertical;
 	
+	private boolean texturesLoaded = false;
+	
 	public enum ScreenDensity {
 		mdpi, hdpi, xhdpi, xxhdpi
 	}
@@ -77,6 +79,10 @@ public class Textures {
 		return new Texture(Gdx.files.internal(file));
 	}
 
+	public boolean allTexturesLoaded() {
+		return texturesLoaded;
+	}
+	
 	/**
 	 * Adds the textures to the AssetManager load queue
 	 * <br/>
@@ -103,6 +109,7 @@ public class Textures {
 	 * Unloads all loaded assets
 	 */
 	public void dispose(AssetManager manager) {
+		this.texturesLoaded = false;
 		manager.unload(atlasFilename);
 	}
 
@@ -164,7 +171,7 @@ public class Textures {
 		bricksVertical = new Texture(path+"/bricks-texture-vertical.png");
 		dot = new Texture(path+"/dot.png");
 		Loading = new Texture(path+"/Loading.png");
-
+		this.texturesLoaded = true;
 	}
 
 	public Texture getSplashScreen() {

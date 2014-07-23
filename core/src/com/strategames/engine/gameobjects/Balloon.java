@@ -207,7 +207,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	public void destroyAction() {
-		this.sounds.play(this.sounds.balloonPop, 1);
+		sounds.play(sounds.balloonPop, 1);
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		float[] impulses = impulse.getNormalImpulses();
 		if( impulses[0] > 0.01 ) {
-			this.sounds.play(this.sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
+			sounds.play(sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
 		}
 		
 		//Gdx.app.log("Balloon", "handleCollision: impulses[0]="+impulses[0]);
@@ -231,7 +231,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		String message = super.toString();
 		StringBuffer messageBuffer = new StringBuffer();
 		messageBuffer.append(message);
-		messageBuffer.append(", colorType="+this.colorType.name());
+		messageBuffer.append(", liftFactor="+this.liftFactor);
 		return messageBuffer.toString();
 	}
 

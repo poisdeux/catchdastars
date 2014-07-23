@@ -26,9 +26,13 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	public final static float WIDTH = 0.30f;
 	public final static float HEIGHT = 0.30f;
 
+	public enum Orientation {
+		HORIZONTAL, VERTICAL
+	}
+	private Orientation orientation = Orientation.HORIZONTAL;
+	
 	private Color colorActor;
-	private Orientation orientation;
-	private float length;
+	private float length = WIDTH;
 	private float increaseDecreaseSizeAccumulatedDelta;
 	private float stepSize;
 
@@ -43,11 +47,10 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private boolean isBorder;
 
 	private static Textures textures = Textures.getInstance();
-	
-	public enum Orientation {
-		HORIZONTAL, VERTICAL
-	}
 
+	/**
+	 * Creates a wall object with type horizontal and default length
+	 */
 	public Wall() {
 		super(new Vector2(WIDTH, -1f));
 	}
@@ -88,21 +91,19 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void setup() {
 		this.colorActor = getColor();
-		Gdx.app.log("Wall", "setup: textures.bricksHorizontal="+textures.bricksHorizontal);
-		Sprite sprite = new Sprite(textures.bricksHorizontal);
-		setDrawable(new TextureRegionDrawable(sprite));
 		setScaling(Scaling.stretch);
 		setLength(this.length);
 		setPosition(getX(), getY());
 
-		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+//		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+//		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		super.setup();
 	}
 
 	@Override
 	protected TextureRegionDrawable createTexture() {
-		return null;
+		Sprite sprite = new Sprite(textures.bricksHorizontal);
+		return new TextureRegionDrawable(sprite);
 	}
 
 	@Override
@@ -214,11 +215,12 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public GameObject copy() {
-		GameObject object = new Wall(getGame(), 
+		Wall object = new Wall(getGame(), 
 				getX(), 
 				getY(),
 				this.length,
 				this.orientation);
+		object.setDrawable(getDrawable());
 		return object;
 	}
 

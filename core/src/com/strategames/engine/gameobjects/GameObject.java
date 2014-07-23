@@ -228,6 +228,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			setHeight(this.size.y);
 		}
 
+		Gdx.app.log("GameObject", "setup: gameObject="+this+", world="+this.world);
 		if( this.world != null ) {
 			this.body = setupBox2D();
 			this.body.setUserData(this);
