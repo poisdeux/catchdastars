@@ -1,14 +1,15 @@
 package com.strategames.engine.gameobjects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+
+import com.strategames.catchdastars.gameobjects.BalloonBlue;
 
 
-public class BalloonTest extends GameObjectTestAbstractClass {
+public class BalloonBlueTest extends GameObjectTestAbstractClass {
 
 	@Override
 	GameObject createGameObject() {
-		Balloon balloon = new Balloon();
-		return balloon;
+		return new BalloonBlue();
 	}
 
 	@Override
@@ -16,7 +17,6 @@ public class BalloonTest extends GameObjectTestAbstractClass {
 		Balloon b1 = (Balloon) object1;
 		Balloon b2 = (Balloon) object2;
 		
-		assertTrue("ColorType not equal", b1.getColorType() == b2.getColorType());
 		assertTrue("LiftFactor not equal", b1.getLiftFactor() == b2.getLiftFactor());
 	}
 	

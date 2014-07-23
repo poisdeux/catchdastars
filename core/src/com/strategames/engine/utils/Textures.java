@@ -15,8 +15,8 @@ public class Textures {
 		private static final Textures INSTANCE = new Textures();
 	}
 
-	public TextureRegion blueBalloon;
-	public TextureRegion redBalloon;
+	public TextureRegion balloonBlue;
+	public TextureRegion balloonRed;
 	public TextureRegion starBlue;
 	public TextureRegion starYellow;
 	public TextureRegion starRed;
@@ -128,8 +128,8 @@ public class Textures {
 	public void setup(AssetManager manager) throws FileNotFoundException {
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 
-		blueBalloon = atlas.findRegion("aj_balloon_blue");
-		redBalloon = atlas.findRegion("aj_balloon_red");
+		balloonBlue = atlas.findRegion("aj_balloon_blue");
+		balloonRed = atlas.findRegion("aj_balloon_red");
 		starBlue = atlas.findRegion("star_blue");
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");

@@ -13,69 +13,62 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
+import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
-import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 
-public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
+abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 2f;
 	private static final float DEFAULT_LIFTFACTOR = 1.3f;
 
 	private static final float WIDTH = 0.30f;
-	
+
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
-	
+
 	private static Sounds sounds = Sounds.getInstance();
-			
+
 	private static final float maxVolume = 0.5f;
-	
+
 	/**
-	 * New velocity is calculated as follows by Box2D
-	 * 
-	 * velocity += Game.UPDATE_FREQUENCY_SECONDS * (Game.GRAVITY + ((1f/this.balloon.getMass()) * (this.upwardLift * Game.GRAVITY)));
-	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
-	 * 
-	 * Where bd.linearDamping is set in setupBox2D()
 	 * Following value was determined empirically
 	 */
 	private static final float maxImpulse = 0.05f / maxVolume;
 
-	public static enum ColorType {
-		BLUE, RED
-	}
+	//	public static enum ColorType {
+	//		BLUE, RED
+	//	}
 
-	private ColorType colorType;
+	//	private ColorType colorType;
 
-	public Balloon() {
+	protected Balloon() {
 		super(new Vector2(WIDTH, -1f));
 	}
 
-	public Balloon(Game game, float x, float y, ColorType type) {
+	protected Balloon(Game game, float x, float y) {
 		this();
 		setGame(game);
-		setColorType(type);
+		//			setColorType(type);
 		setPosition(x, y);
 		setup();
 		setLiftFactor(DEFAULT_LIFTFACTOR);
 	}
 
-	public void setColorType(ColorType colorType) {
-		this.colorType = colorType;
-	}
-
-	public ColorType getColorType() {
-		return colorType;
-	}
+	//	public void setColorType(ColorType colorType) {
+	//		this.colorType = colorType;
+	//	}
+	//
+	//	public ColorType getColorType() {
+	//		return colorType;
+	//	}
 
 	public void setLiftFactor(float liftFactor) {
 		if( liftFactor > MAX_LIFTFACTOR ) {
@@ -85,31 +78,31 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		}
 		this.liftFactor = liftFactor;
 	}
-	
+
 	public float getLiftFactor() {
 		return liftFactor;
 	}
-	
-	@Override
-	protected TextureRegionDrawable createTexture() {
-		TextureRegionDrawable trd = null;
-		Textures textures = Textures.getInstance();
-		if( colorType == ColorType.BLUE ) {
-			trd = new TextureRegionDrawable(textures.blueBalloon);
-		} else if( colorType == ColorType.RED ) {
-			trd = new TextureRegionDrawable(textures.redBalloon);
-		}
 
-		return trd;
-	}
+	//	@Override
+	//	protected TextureRegionDrawable createTexture() {
+	//		TextureRegionDrawable trd = null;
+	//		Textures textures = Textures.getInstance();
+	//		if( colorType == ColorType.BLUE ) {
+	//			trd = new TextureRegionDrawable(textures.blueBalloon);
+	//		} else if( colorType == ColorType.RED ) {
+	//			trd = new TextureRegionDrawable(textures.redBalloon);
+	//		}
+	//
+	//		return trd;
+	//	}
 
 	@Override
 	protected Body setupBox2D() {
 		World world = getGame().getWorld();
-		
+
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 		loader.setupVertices("Balloon", WIDTH);
-		
+
 		//Balloon body
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
@@ -126,12 +119,12 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 		this.upwardLiftPosition = body.getLocalCenter();
 		this.upwardLiftPosition.y += 0.1f;
- 		
+
 		this.upwardLift = -body.getMass() * this.liftFactor;
 
 		return body;
 	}
-	
+
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
@@ -151,29 +144,31 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 	@Override
 	protected void writeValues(Json json) {
-		json.writeValue("type", this.colorType.name());
+		//		json.writeValue("type", this.colorType.name());
 		json.writeValue("liftfactor", this.liftFactor);
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
 		String name = jsonData.name();
-		if( name.contentEquals("type")) {
-			setColorType(ColorType.valueOf(jsonData.asString()));
-		} else if( name.contentEquals("liftfactor")) {
+		//		if( name.contentEquals("type")) {
+		//			setColorType(ColorType.valueOf(jsonData.asString()));
+		//		} else if( name.contentEquals("liftfactor")) {
+		//			setLiftFactor(Float.valueOf(jsonData.asFloat()));
+		//		}
+		if( name.contentEquals("liftfactor")) {
 			setLiftFactor(Float.valueOf(jsonData.asFloat()));
 		}
 	}
 
-	@Override
-	public GameObject copy() {
-		Balloon balloon = new Balloon(getGame(), 
-				getX(), 
-				getY(),
-				this.colorType);
-		balloon.setLiftFactor(this.liftFactor);
-		return balloon;
-	}
+	//	@Override
+	//	public GameObject copy() {
+	//		Balloon balloon = new Balloon(getGame(), 
+	//				getX(), 
+	//				getY());
+	//		balloon.setLiftFactor(this.liftFactor);
+	//		return balloon;
+	//	}
 
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
@@ -187,7 +182,7 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 
 		item.setMinValue(MIN_LIFTFACTOR);
 		item.setStepSize(0.1f);
-		
+
 		items.add(item);
 
 		return items;
@@ -221,9 +216,9 @@ public class Balloon extends GameObject implements OnConfigurationItemChangedLis
 		if( impulses[0] > 0.01 ) {
 			sounds.play(sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
 		}
-		
+
 		//Gdx.app.log("Balloon", "handleCollision: impulses[0]="+impulses[0]);
-		
+
 	}
 
 	@Override

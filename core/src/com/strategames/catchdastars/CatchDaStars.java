@@ -15,16 +15,18 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.gameobjects.BalloonBlue;
+import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobjects.GameObject.Type;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
 import com.strategames.engine.gameobjects.Wall;
-import com.strategames.engine.gameobjects.GameObject.Type;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
@@ -143,7 +145,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 			for(GameObject gameObject : gameObjects ) {
 				gameObject.setGame(this);
 				gameObject.setup();
-				GameObject.Type type = gameObject.getType();
 				if( gameObject instanceof Star ) {
 					if( gameObject instanceof StarBlue ) {
 						this.blueCollectables.add();
@@ -152,12 +153,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 					} else if( gameObject instanceof StarYellow ) {
 						this.goldCollectables.add();
 					}
-				} else if( type == GameObject.Type.BALLOON ) {
-					Balloon balloon = (Balloon) gameObject;
-					Balloon.ColorType color = balloon.getColorType();
-					if( color == Balloon.ColorType.BLUE ) {
+				} else if( gameObject instanceof Balloon ) {
+					if( gameObject instanceof BalloonBlue ) {
 						this.amountOfBlueBalloons++;
-					} else if( color == Balloon.ColorType.RED ) {
+					} else if( gameObject instanceof BalloonRed ) {
 						this.amountOfRedBalloons++;
 					}
 				}
@@ -202,8 +201,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
 		Textures textures = Textures.getInstance();
-		levelCompleteDialog.add(new Image(textures.blueBalloon), this.amountOfBlueBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(textures.redBalloon), this.amountOfRedBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(textures.balloonBlue), this.amountOfBlueBalloons, this.scorePerBalloon);
+		levelCompleteDialog.add(new Image(textures.balloonRed), this.amountOfRedBalloons, this.scorePerBalloon);
 		levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
 		levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
 		levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
@@ -254,8 +253,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
-		objects.add(new Balloon(this, 0, 0, Balloon.ColorType.BLUE));
-		objects.add(new Balloon(this, 0, 0, Balloon.ColorType.RED));
+		objects.add(new BalloonBlue(this, 0, 0));
+		objects.add(new BalloonRed(this, 0, 0));
 		objects.add(new StarBlue(this, 0, 0));
 		objects.add(new StarYellow(this, 0, 0));
 		objects.add(new StarRed(this, 0, 0));
@@ -271,10 +270,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private void destroyBalloon(Balloon balloon) {
 		balloon.destroy();
 		deleteGameObject(balloon);
-		Balloon.ColorType color = balloon.getColorType();
-		if( color == Balloon.ColorType.BLUE ) {
+		if( balloon instanceof BalloonBlue ) {
 			this.amountOfBlueBalloons--;
-		} else if( color == Balloon.ColorType.RED ) {
+		} else if( balloon instanceof BalloonBlue ) {
 			this.amountOfRedBalloons--;
 		}
 	}
@@ -284,18 +282,16 @@ public class CatchDaStars extends Game implements OnClickListener {
 			return;
 		}
 
-		Balloon.ColorType balloonColor = balloon.getColorType();
-
 		if( gameObject instanceof Star ) {
 			if( gameObject instanceof StarYellow ) {
 				gameObject.destroy();
 				deleteGameObject(gameObject);
 				this.goldCollectables.collect(gameObject);
-			} else if( ( balloonColor == Balloon.ColorType.BLUE ) && ( gameObject instanceof StarBlue ) ) {
+			} else if( ( balloon instanceof BalloonBlue ) && ( gameObject instanceof StarBlue ) ) {
 				gameObject.destroy();
 				deleteGameObject(gameObject);
 				this.blueCollectables.collect(gameObject);
-			} else if( ( balloonColor == Balloon.ColorType.RED ) && ( gameObject instanceof StarRed ) ) {
+			} else if( ( balloon instanceof BalloonRed ) && ( gameObject instanceof StarRed ) ) {
 				gameObject.destroy();
 				deleteGameObject(gameObject);
 				this.redCollectables.collect(gameObject);
