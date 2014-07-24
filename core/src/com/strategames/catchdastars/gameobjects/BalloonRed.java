@@ -3,7 +3,6 @@ package com.strategames.catchdastars.gameobjects;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
-import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.utils.Textures;
 
 public class BalloonRed extends Balloon {
@@ -22,12 +21,8 @@ public class BalloonRed extends Balloon {
 	}
 
 	@Override
-	public GameObject copy() {
-		BalloonRed balloon = new BalloonRed(getGame(), 
-				getX(), 
-				getY());
-		balloon.setLiftFactor(getLiftFactor());
-		return balloon;
+	protected Balloon newInstance() {
+		return new BalloonRed();
 	}
 
 }

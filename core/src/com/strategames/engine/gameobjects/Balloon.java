@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
@@ -21,7 +20,6 @@ import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 import com.strategames.engine.utils.Sounds;
-import com.strategames.engine.utils.Textures;
 
 abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
@@ -43,12 +41,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	 */
 	private static final float maxImpulse = 0.05f / maxVolume;
 
-	//	public static enum ColorType {
-	//		BLUE, RED
-	//	}
-
-	//	private ColorType colorType;
-
 	protected Balloon() {
 		super(new Vector2(WIDTH, -1f));
 	}
@@ -56,19 +48,10 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	protected Balloon(Game game, float x, float y) {
 		this();
 		setGame(game);
-		//			setColorType(type);
 		setPosition(x, y);
 		setup();
 		setLiftFactor(DEFAULT_LIFTFACTOR);
 	}
-
-	//	public void setColorType(ColorType colorType) {
-	//		this.colorType = colorType;
-	//	}
-	//
-	//	public ColorType getColorType() {
-	//		return colorType;
-	//	}
 
 	public void setLiftFactor(float liftFactor) {
 		if( liftFactor > MAX_LIFTFACTOR ) {
@@ -82,19 +65,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	public float getLiftFactor() {
 		return liftFactor;
 	}
-
-	//	@Override
-	//	protected TextureRegionDrawable createTexture() {
-	//		TextureRegionDrawable trd = null;
-	//		Textures textures = Textures.getInstance();
-	//		if( colorType == ColorType.BLUE ) {
-	//			trd = new TextureRegionDrawable(textures.blueBalloon);
-	//		} else if( colorType == ColorType.RED ) {
-	//			trd = new TextureRegionDrawable(textures.redBalloon);
-	//		}
-	//
-	//		return trd;
-	//	}
 
 	@Override
 	protected Body setupBox2D() {
@@ -144,31 +114,16 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 
 	@Override
 	protected void writeValues(Json json) {
-		//		json.writeValue("type", this.colorType.name());
 		json.writeValue("liftfactor", this.liftFactor);
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
 		String name = jsonData.name();
-		//		if( name.contentEquals("type")) {
-		//			setColorType(ColorType.valueOf(jsonData.asString()));
-		//		} else if( name.contentEquals("liftfactor")) {
-		//			setLiftFactor(Float.valueOf(jsonData.asFloat()));
-		//		}
 		if( name.contentEquals("liftfactor")) {
 			setLiftFactor(Float.valueOf(jsonData.asFloat()));
 		}
 	}
-
-	//	@Override
-	//	public GameObject copy() {
-	//		Balloon balloon = new Balloon(getGame(), 
-	//				getX(), 
-	//				getY());
-	//		balloon.setLiftFactor(this.liftFactor);
-	//		return balloon;
-	//	}
 
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
@@ -216,9 +171,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		if( impulses[0] > 0.01 ) {
 			sounds.play(sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
 		}
-
-		//Gdx.app.log("Balloon", "handleCollision: impulses[0]="+impulses[0]);
-
 	}
 
 	@Override
@@ -236,4 +188,20 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 			setLiftFactor(item.getValueNumeric());
 		}
 	}
+	
+	@Override
+	public GameObject copy() {
+		Balloon balloon = newInstance();
+		balloon.setGame(getGame());
+		balloon.setPosition(getX(), getY());
+		balloon.setLiftFactor(getLiftFactor());
+		balloon.setup();
+		return balloon;
+	}
+	
+	/**
+	 * Should create the most basic instance of this gameobject
+	 * @return new instance of Balloon
+	 */
+	abstract protected Balloon newInstance();
 }

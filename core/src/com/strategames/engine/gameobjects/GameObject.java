@@ -453,7 +453,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	@Override
 	public String toString() {
 		StringBuffer messageBuffer = new StringBuffer();
-		messageBuffer.append(System.identityHashCode(this));
+		messageBuffer.append(System.identityHashCode(this) + " ");
 		messageBuffer.append(super.toString());
 		messageBuffer.append(", position=("+getX()+","+getY()+")");
 		messageBuffer.append(", halfWidth="+this.halfWidth);

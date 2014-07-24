@@ -14,8 +14,9 @@ abstract public class ApplicationSetupAbstractClass {
 	
 	@Before
 	public void setUp() throws Exception {
-		game = new GameTestClass();
-		
+		if( game == null ) { 
+			game = new GameTestClass();
+		}
 		if(application == null) {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 			config.title = "core-test";
@@ -26,6 +27,10 @@ abstract public class ApplicationSetupAbstractClass {
 		//Wait for application to setup
 		this.textures  = Textures.getInstance();
 		while( ! this.textures.allTexturesLoaded() ) {
+			Thread.sleep(100);
+		}
+		
+		while( game.getScreen() == null ) {
 			Thread.sleep(100);
 		}
 	}
