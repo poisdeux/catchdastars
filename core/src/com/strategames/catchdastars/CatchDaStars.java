@@ -253,13 +253,30 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
-		objects.add(new BalloonBlue(this, 0, 0));
-		objects.add(new BalloonRed(this, 0, 0));
-		objects.add(new StarBlue(this, 0, 0));
-		objects.add(new StarYellow(this, 0, 0));
-		objects.add(new StarRed(this, 0, 0));
+		BalloonBlue balloonBlue = new BalloonBlue();
+		balloonBlue.setGame(this);
+		objects.add(balloonBlue);
+		
+		BalloonRed balloonRed = new BalloonRed();
+		balloonRed.setGame(this);
+		objects.add(balloonRed);
+		
+		StarBlue starBlue = new StarBlue();
+		starBlue.setGame(this);
+		objects.add(starBlue);
+		
+		StarYellow starYellow = new StarYellow();
+		starYellow.setGame(this);
+		objects.add(starYellow);
+		
+		StarRed starRed = new StarRed();
+		starRed.setGame(this);
+		objects.add(starRed);
+		
 		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
+		
 		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
+		
 		objects.add(new Icecube(this, 0, 0));
 
 		this.availableGameObjects = objects;

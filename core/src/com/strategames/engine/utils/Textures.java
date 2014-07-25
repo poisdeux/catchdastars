@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class Textures {
 
@@ -15,9 +16,9 @@ public class Textures {
 		private static final Textures INSTANCE = new Textures();
 	}
 
-	public TextureRegion balloonBlue;
+	public TextureRegionDrawable balloonBlue;
 	public TextureRegion balloonRed;
-	public TextureRegion starBlue;
+	public TextureRegionDrawable starBlue;
 	public TextureRegion starYellow;
 	public TextureRegion starRed;
 	public TextureRegion chalk1;
@@ -128,9 +129,9 @@ public class Textures {
 	public void setup(AssetManager manager) throws FileNotFoundException {
 		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
 
-		balloonBlue = atlas.findRegion("aj_balloon_blue");
+		balloonBlue = new TextureRegionDrawable(atlas.findRegion("aj_balloon_blue"));
 		balloonRed = atlas.findRegion("aj_balloon_red");
-		starBlue = atlas.findRegion("star_blue");
+		starBlue = new TextureRegionDrawable(atlas.findRegion("star_blue"));
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");
 		chalk1 = atlas.findRegion("Chalk-01");

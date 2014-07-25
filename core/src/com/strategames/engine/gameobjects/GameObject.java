@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.utils.Box2DBuild;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -40,7 +39,6 @@ import com.strategames.engine.utils.ConfigurationItem;
  *
  */
 abstract public class GameObject extends Image implements Json.Serializable {
-	private World world;
 	protected Body body;
 	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
@@ -95,10 +93,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return game;
 	}
 
+	/**
+	 * Sets the game and calls {@link #setup()} to initialize gameobject
+	 * @param game holding the World object
+	 */
 	public void setGame(Game game) {
 		this.game = game;
 		if( game != null ) {
-			this.world = game.getWorld();
+			setup();
 		}
 	}
 
@@ -159,14 +161,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.initialPosition = initialPosition;
 	}
 
-	public void setWorld(World world) {
-		this.world = world;
-	}
-
-	public World getWorld() {
-		return this.world;
-	}
-
 	public void setCollectible(boolean isCollectible) {
 		this.isCollectible = isCollectible;
 	}
@@ -177,12 +171,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @return
 	 */
 	public boolean deleteBody() {
-		if(this.world.isLocked()) {
+		World world = this.game.getWorld();
+		if(world.isLocked()) {
 			return false;
 		}
 
 		if( this.body != null ) {
-			this.world.destroyBody(this.body);
+			world.destroyBody(this.body);
 			this.body = null;
 		}
 		return true;
@@ -210,7 +205,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 
 	/**
-	 * Setup the image and body for this game object. 
+	 * Setup the image and body for this game object.
+	 * <br/>
+	 * Note: if you want to change the objects configuration (e.g. position, size, ...). Make sure
+	 * you do it BEFORE calling setup
 	 * <br/>
 	 * This will add the GameObject as user data to the Box2D body. This can be retrieved using body.getUserData().
 	 */
@@ -228,8 +226,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			setHeight(this.size.y);
 		}
 
-		Gdx.app.log("GameObject", "setup: gameObject="+this+", world="+this.world);
-		if( this.world != null ) {
+//		Gdx.app.log("GameObject", "setup: gameObject="+this+", world="+this.world);
+		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
 			this.body = setupBox2D();
 			this.body.setUserData(this);
 		}
@@ -393,6 +391,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	abstract public GameObject copy();
+	
+	/**
+	 * Should create the most basic instance of this gameobject
+	 * @return new instance of GameObject
+	 */
+	abstract protected GameObject newInstance();
 	
 	public void initializeConfigurationItems() {
 		this.configurationItems = createConfigurationItems();

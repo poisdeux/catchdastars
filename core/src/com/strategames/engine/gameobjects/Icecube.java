@@ -132,7 +132,7 @@ public class Icecube extends GameObject {
 	@Override
 	protected Body setupBox2D() {
 
-		World world = getWorld();
+		World world = getGame().getWorld();
 
 		bodyDef.position.set(getX(), getY());
 		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
@@ -182,15 +182,20 @@ public class Icecube extends GameObject {
 
 	@Override
 	public GameObject copy() {
-		Icecube cube = new Icecube(getGame(), 
-				getX(), 
-				getY());
+		Icecube cube = (Icecube) newInstance();
+		cube.setPosition(getX(), getY());
+		cube.setGame(getGame());
 
 		for( Part part : availableParts ) {
 			cube.addPart(part);
 		}
 
 		return cube;
+	}
+	
+	@Override
+	protected GameObject newInstance() {
+		return new Icecube();
 	}
 	
 	@Override

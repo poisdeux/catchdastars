@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -42,7 +41,6 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 	@Test
 	public void testSetupWithoutWorld() {
 		this.gameObject.setGame(getGame());
-		this.gameObject.setup();
 		assertNull("Body for " + this.gameObject.getClass().getName() + " is not null", this.gameObject.getBody());
 	}
 	
@@ -51,7 +49,6 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 		Game game = getGame();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
 		assertNotNull("Body for " + this.gameObject.getClass().getName() + " is not null", this.gameObject.getBody());
 	}
 	
@@ -65,10 +62,13 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 		GameTestClass game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
 		testIfEqual(this.gameObject, this.gameObject.copy());
 	}
 	
+	/**
+	 * TODO Drawing is performed on a separate thread so we cannot check for exceptions
+	 * here. Need to fix this somehow.
+	 */
 	@Test
 	public void testDraw() {
 		Screen screen = getGame().getScreen();
@@ -93,19 +93,17 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 		Game game = getGame();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
-		batch.begin();
-		this.gameObject.draw(batch, 1f);
-		batch.end();
+		stage.addActor(this.gameObject);
+		stage.act();
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {
 		if( ( object1.getBody() != null ) || ( object2.getBody() != null ) ) {
 			assertFalse(this.gameObject.getClass().getName() + ": Bodies are equal", object1.getBody() == object2.getBody());
 		}
-		assertTrue(this.gameObject.getClass().getName() + ": Drawable not equal", object1.getDrawable() == object2.getDrawable());
-		assertTrue(this.gameObject.getClass().getName() + ": X position not equal", object1.getX() == object2.getX());
-		assertTrue(this.gameObject.getClass().getName() + ": Y position not equal", object1.getY() == object2.getY());
+		assertTrue(this.gameObject.getClass().getName() + ": Drawable not equal: "+ object1.getDrawable() + " != " +object2.getDrawable(), object1.getDrawable() == object2.getDrawable());
+		assertTrue(this.gameObject.getClass().getName() + ": X position not equal: "+object1.getX() +"!="+ object2.getX(), object1.getX() == object2.getX());
+		assertTrue(this.gameObject.getClass().getName() + ": Y position not equal: "+object1.getY() +"!="+ object2.getY(), object1.getY() == object2.getY());
 		assertForEquality(object1, object2);
 	}
 	

@@ -10,7 +10,9 @@ public class BalloonTest extends GameObjectTestAbstractClass {
 
 	@Override
 	GameObject createGameObject() {
-		return new BalloonTestClass();
+		BalloonTestClass b = new BalloonTestClass();
+		b.setLiftFactor(2.2f);
+		return b;
 	}
 
 	@Override
@@ -29,7 +31,7 @@ public class BalloonTest extends GameObjectTestAbstractClass {
 		
 		@Override
 		protected TextureRegionDrawable createTexture() {
-			return new TextureRegionDrawable(Textures.getInstance().balloonBlue);
+			return Textures.getInstance().balloonBlue;
 		}
 
 		@Override

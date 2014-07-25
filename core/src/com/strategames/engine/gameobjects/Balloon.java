@@ -15,7 +15,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
@@ -45,14 +44,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		super(new Vector2(WIDTH, -1f));
 	}
 
-	protected Balloon(Game game, float x, float y) {
-		this();
-		setGame(game);
-		setPosition(x, y);
-		setup();
-		setLiftFactor(DEFAULT_LIFTFACTOR);
-	}
-
 	public void setLiftFactor(float liftFactor) {
 		if( liftFactor > MAX_LIFTFACTOR ) {
 			liftFactor = MAX_LIFTFACTOR;
@@ -70,6 +61,9 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	protected Body setupBox2D() {
 		World world = getGame().getWorld();
 
+		/**
+		 * TODO do we really need a separate loader for each object? Replace with static?
+		 */
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("fixtures/balloon.json"));
 		loader.setupVertices("Balloon", WIDTH);
 
@@ -108,7 +102,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		super.act(delta);
 		if( super.game.getGameState() == game.GAME_STATE_RUNNING ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
-			super.body.applyForce(getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
+			super.body.applyForce(getGame().getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
 		}
 	}
 
@@ -191,17 +185,10 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	
 	@Override
 	public GameObject copy() {
-		Balloon balloon = newInstance();
-		balloon.setGame(getGame());
+		Balloon balloon = (Balloon) newInstance();
 		balloon.setPosition(getX(), getY());
 		balloon.setLiftFactor(getLiftFactor());
-		balloon.setup();
+		balloon.setGame(getGame());
 		return balloon;
 	}
-	
-	/**
-	 * Should create the most basic instance of this gameobject
-	 * @return new instance of Balloon
-	 */
-	abstract protected Balloon newInstance();
 }

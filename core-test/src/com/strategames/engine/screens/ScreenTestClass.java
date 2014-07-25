@@ -11,7 +11,6 @@ public class ScreenTestClass extends AbstractScreen {
 
 	public ScreenTestClass(Game game) {
 		super(game);
-		System.out.println("ScreenTestClass created");
 	}
 
 	@Override

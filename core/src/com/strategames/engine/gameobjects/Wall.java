@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -19,8 +18,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.engine.utils.Textures;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
+import com.strategames.engine.utils.Textures;
 
 public class Wall extends GameObject implements OnConfigurationItemChangedListener {
 	public final static float WIDTH = 0.30f;
@@ -117,13 +116,10 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 		BodyDef groundBodyDef = new BodyDef();
 		groundBodyDef.position.set(getX(), getY()); // Set its world position
-		Body body = getWorld().createBody(groundBodyDef);
+		Body body = getGame().getWorld().createBody(groundBodyDef);
 		body.createFixture(box, 0.0f); //Attach the box we created horizontally or vertically to the body
 		box.dispose();
 
-
-		Gdx.app.log("Wall", "setupBox2D: this="+this);
-		
 		return body;
 	}
 
@@ -215,15 +211,19 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public GameObject copy() {
-		Wall object = new Wall(getGame(), 
-				getX(), 
-				getY(),
-				this.length,
-				this.orientation);
-		object.setDrawable(getDrawable());
+		Wall object = (Wall) newInstance();
+		object.setPosition(getX(), getY());
+		object.setLength(getLength());
+		object.setOrientation(getOrientation());
+		object.setGame(getGame());
 		return object;
 	}
 
+	@Override
+	protected GameObject newInstance() {
+		return new Wall();
+	}
+	
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
 		ArrayList<ConfigurationItem> items = new ArrayList<ConfigurationItem>();
