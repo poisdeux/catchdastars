@@ -211,6 +211,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * you do it BEFORE calling setup
 	 * <br/>
 	 * This will add the GameObject as user data to the Box2D body. This can be retrieved using body.getUserData().
+	 * TODO replace setup method with a builder pattern create method
 	 */
 	public void setup() {
 		TextureRegionDrawable trd = createTexture();

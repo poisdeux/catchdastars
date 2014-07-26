@@ -67,7 +67,8 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 	
 	/**
 	 * TODO Drawing is performed on a separate thread so we cannot check for exceptions
-	 * here. Need to fix this somehow.
+	 * here. Need to fix this somehow. Replace methods/classes that require OpenGL context by 
+	 * mock objects? (e.g. Sprite class)
 	 */
 	@Test
 	public void testDraw() {
