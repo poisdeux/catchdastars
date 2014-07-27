@@ -154,10 +154,10 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		sounds.play(sounds.balloonPop, 1);
 	}
 
-	@Override
-	protected Type setType() {
-		return Type.BALLOON;
-	}
+//	@Override
+//	protected Type setType() {
+//		return Type.BALLOON;
+//	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {

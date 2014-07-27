@@ -2,6 +2,8 @@ package com.strategames.engine.gameobjects;
 
 import static org.junit.Assert.*;
 
+import org.junit.Test;
+
 
 public class WallTest extends GameObjectTestAbstractClass {
 
@@ -18,5 +20,17 @@ public class WallTest extends GameObjectTestAbstractClass {
 		
 		assertTrue("Length not equal: "+b1.getLength()+" != "+b2.getLength(), b1.getLength() == b2.getLength());
 		assertTrue("Orientation not equal: "+b1.getOrientation().name()+" != "+b2.getOrientation().name(), b1.getOrientation() == b2.getOrientation());
+	}
+	
+	@Override
+	@Test
+	public void testDraw() {
+		super.testDraw();
+		GameObject gameObject = getGameObject();
+		if( gameObject instanceof Wall ) {
+			((Wall) gameObject).setWrap(true);
+		} else {
+			fail("gameObject not instance of Wall");
+		}
 	}
 }

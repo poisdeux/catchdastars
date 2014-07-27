@@ -152,7 +152,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void dispose() {
 		super.dispose();
 		Sounds.getInstance().dispose(getManager());
-		Textures.getInstance().dispose(getManager());
+		try {
+			Textures.getInstance().dispose();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 

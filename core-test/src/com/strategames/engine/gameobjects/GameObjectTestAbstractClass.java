@@ -4,32 +4,32 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.strategames.desktop.ApplicationSetupAbstractClass;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.game.GameTestClass;
-import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.screens.GdxTestRunner;
 
-abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstractClass {
+@RunWith(GdxTestRunner.class)
+abstract public class GameObjectTestAbstractClass {
 	private GameObject gameObject;
 	
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
-		
 		this.gameObject = createGameObject();
 		this.gameObject.setPosition(2, 4);
 	}
 
+	public GameObject getGameObject() {
+		return gameObject;
+	}
+	
 	abstract GameObject createGameObject();
 
 	@Test
@@ -40,13 +40,13 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 	
 	@Test
 	public void testSetupWithoutWorld() {
-		this.gameObject.setGame(getGame());
-		assertNull("Body for " + this.gameObject.getClass().getName() + " is not null", this.gameObject.getBody());
+		this.gameObject.setGame(new GameTestClass());
+		assertNull("Body for " + this.gameObject.getClass().getName() + " ", this.gameObject.getBody());
 	}
 	
 	@Test
 	public void testSetupWithWorld() {
-		Game game = getGame();
+		Game game = new GameTestClass();;
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
 		assertNotNull("Body for " + this.gameObject.getClass().getName() + " is not null", this.gameObject.getBody());
@@ -72,30 +72,10 @@ abstract public class GameObjectTestAbstractClass extends ApplicationSetupAbstra
 	 */
 	@Test
 	public void testDraw() {
-		Screen screen = getGame().getScreen();
-		if( screen == null ) {
-			fail("Screen set in game is null");
-			return;
-		}
-		if( ! ( screen instanceof AbstractScreen ) ) {
-			fail("Screen set in game not of type AbstractScreen");
-			return;
-		}
-		Stage stage = ((AbstractScreen) screen).getStageActors();
-		if( stage == null ) {
-			fail("No stage set in screen");
-			return;
-		}
-		Batch batch = stage.getSpriteBatch();
-		if( batch == null ) {
-			fail("No sprite batch set in stage");
-			return;
-		}
-		Game game = getGame();
+		Game game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		stage.addActor(this.gameObject);
-		stage.act();
+		this.gameObject.draw(new SpriteBatch(), 1);
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {

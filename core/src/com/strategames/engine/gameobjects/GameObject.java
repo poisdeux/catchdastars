@@ -57,13 +57,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected Vector2 size;
 
 	private boolean saveToFile = true;
-
-	public static enum Type {
-		WALL, BALLOON, ROCK
-	}
-
-	public Type type;
-
+	
 	/**
 	 * Constructor for creating a game object
 	 * @param size in meters. size.x = width, size.y = height. If size.y < 0 height of the game object is calculated using size.x and image size. 
@@ -85,7 +79,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	private void init() {
 		setName(getClass().getSimpleName());
-		this.type = setType();
 		this.initialPosition = new Vector2();
 	}
 
@@ -115,10 +108,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	public boolean getSaveToFile() {
 		return this.saveToFile;
-	}
-
-	public Type getType() {
-		return type;
 	}
 
 	public float getHalfHeight() {
@@ -447,13 +436,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * @param gameObject object that collided
 	 */
 	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
-
-
-	/**
-	 * Called when object is created and should return the {@linkplain #type} of this object
-	 * @return Type the generic game object type 
-	 */
-	abstract protected Type setType();
 
 	@Override
 	public String toString() {

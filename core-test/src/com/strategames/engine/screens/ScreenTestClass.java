@@ -19,7 +19,7 @@ public class ScreenTestClass extends AbstractScreen {
 		
 		Textures textures = Textures.getInstance();
 		try {
-			textures.addToAssetManager(assetManager);
+			textures.addAllToAssetManager(assetManager);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -28,8 +28,11 @@ public class ScreenTestClass extends AbstractScreen {
 		while( ! assetManager.update() ) {};
 		
 		try {
-			textures.setup(assetManager);
+			textures.setup();
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

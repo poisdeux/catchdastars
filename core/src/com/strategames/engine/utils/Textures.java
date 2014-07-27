@@ -67,7 +67,8 @@ public class Textures {
 	private ScreenDensity screenDensity;
 	
 	private String atlasFilename;
-
+	private AssetManager assetManager;
+	
 	private Textures() {
 		
 	}
@@ -93,14 +94,16 @@ public class Textures {
 	 * @param manager
 	 * @throws FileNotFoundException
 	 */
-	public void addToAssetManager(AssetManager manager) throws FileNotFoundException {
+	public void addAllToAssetManager(AssetManager manager) throws FileNotFoundException {
 		if( this.screenDensity == null ) {
 			this.screenDensity = getScreenDensity();
 		}
 
+		this.assetManager = manager;
+		
 		atlasFilename = "packed/"+screenDensity.name()+".atlas";
 		if( Gdx.files.internal(atlasFilename).exists() ) {
-			manager.load(atlasFilename, TextureAtlas.class);
+			this.assetManager.load(atlasFilename, TextureAtlas.class);
 		} else {
 			throw new FileNotFoundException("Could not find atlas "+atlasFilename);
 		}
@@ -108,10 +111,14 @@ public class Textures {
 
 	/**
 	 * Unloads all loaded assets
+	 * @throws Exception 
 	 */
-	public void dispose(AssetManager manager) {
+	public void dispose() throws Exception {
+		if( this.assetManager == null ) {
+			throw new Exception("AssetManager not available");
+		}
 		this.texturesLoaded = false;
-		manager.unload(atlasFilename);
+		this.assetManager.unload(atlasFilename);
 	}
 
 	/**
@@ -119,15 +126,19 @@ public class Textures {
 	 * <br/>
 	 * Note DO NOT call this method if AssetManager is not ready loading.
 	 * <br/>
-	 * Use {@link #addToAssetManager(AssetManager)} to load textures and use {@link AssetManager#update()}
+	 * Use {@link #addAllToAssetManager(AssetManager)} setup the asset manager and use {@link AssetManager#update()}
 	 * to load assets.
 	 * <br/>
 	 * Note you cannot access the textures before calling this method
 	 * @param manager
-	 * @throws FileNotFoundException 
+	 * @throws Exception 
 	 */
-	public void setup(AssetManager manager) throws FileNotFoundException {
-		TextureAtlas atlas = manager.get(atlasFilename, TextureAtlas.class);
+	public void setup() throws Exception {
+		if( this.assetManager == null ) {
+			throw new Exception("AssetManager not available");
+		}
+		
+		TextureAtlas atlas = this.assetManager.get(atlasFilename, TextureAtlas.class);
 
 		balloonBlue = new TextureRegionDrawable(atlas.findRegion("aj_balloon_blue"));
 		balloonRed = atlas.findRegion("aj_balloon_red");

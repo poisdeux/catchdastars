@@ -23,7 +23,6 @@ import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
-import com.strategames.engine.gameobjects.GameObject.Type;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
 import com.strategames.engine.gameobjects.Wall;
@@ -59,8 +58,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
-	private Type typeCollidingGameObject1;
-	private Type typeCollidingGameObject2;
+//	private Type typeCollidingGameObject1;
+//	private Type typeCollidingGameObject2;
 
 	private Box2DDebugRenderer debugRenderer;
 
@@ -359,12 +358,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Fixture fixtureB = contact.getFixtureB();
 		this.collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
 		this.collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
-		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
-		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
+//		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
+//		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
 
-		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( fixtureB.isSensor() ) ) {
+		if( ( this.collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
 			handleSensorCollision((Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if(( this.typeCollidingGameObject2 == Type.BALLOON ) && ( fixtureA.isSensor() )) {
+		} else if(( this.collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
 			handleSensorCollision((Balloon) this.collidingGameObject2, this.collidingGameObject1);
 		}
 	}
@@ -383,9 +382,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		if( ( this.typeCollidingGameObject1 == Type.BALLOON ) && ( this.typeCollidingGameObject2 == Type.ROCK ) ) {
+		if( ( this.collidingGameObject1 instanceof Balloon ) && ( this.collidingGameObject2 instanceof Icecube ) ) {
 			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if( ( this.typeCollidingGameObject2 == Type.BALLOON ) && ( this.typeCollidingGameObject1 == Type.ROCK ) ) {
+		} else if( ( this.collidingGameObject2 instanceof Balloon ) && ( this.collidingGameObject1 instanceof Icecube ) ) {
 			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
 		} else {
 			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);

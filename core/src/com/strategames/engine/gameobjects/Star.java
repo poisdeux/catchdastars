@@ -114,10 +114,10 @@ abstract public class Star extends GameObject {
 		setCanBeDeleted(true);
 	}
 
-	@Override
-	protected Type setType() {
-		return null;
-	}
+//	@Override
+//	protected Type setType() {
+//		return null;
+//	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -45,7 +46,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	private boolean isBorder;
 
-	private static Textures textures = Textures.getInstance();
+	private Textures textures = Textures.getInstance();
 
 	/**
 	 * Creates a wall object with type horizontal and default length
@@ -94,11 +95,16 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		setLength(this.length);
 		setPosition(getX(), getY());
 
-//		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-//		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		super.setup();
 	}
 
+	public void setWrap(boolean wrap) {
+		if( wrap ) {
+			textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+			textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		}
+	}
+	
 	@Override
 	protected TextureRegionDrawable createTexture() {
 		Sprite sprite = new Sprite(textures.bricksHorizontal);
@@ -284,11 +290,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void destroyAction() {
 		setCanBeDeleted(true);
-	}
-
-	@Override
-	protected Type setType() {
-		return Type.WALL;
 	}
 
 	@Override

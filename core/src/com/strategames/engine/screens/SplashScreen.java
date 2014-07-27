@@ -50,7 +50,7 @@ public class SplashScreen extends AbstractScreen {
 		this.splashImage.getColor().a = 0f;
 
 		try {
-			Textures.getInstance().addToAssetManager(assetManager);
+			Textures.getInstance().addAllToAssetManager(assetManager);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,8 +70,11 @@ public class SplashScreen extends AbstractScreen {
 
 		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
 			try {
-				Textures.getInstance().setup(this.assetManager);
+				Textures.getInstance().setup();
 			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

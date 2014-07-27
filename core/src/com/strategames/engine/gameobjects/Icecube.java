@@ -218,10 +218,10 @@ public class Icecube extends GameObject {
 		setCanBeDeleted(true);
 	}
 
-	@Override
-	protected Type setType() {
-		return Type.ROCK;
-	}
+//	@Override
+//	protected Type setType() {
+//		return Type.ROCK;
+//	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
