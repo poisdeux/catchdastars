@@ -9,29 +9,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.strategames.engine.screens.GdxTestRunner;
+import com.strategames.engine.screens.GdxTestRunner2;
 
-@RunWith(GdxTestRunner.class)
+@RunWith(GdxTestRunner2.class)
 public class TexturesTest {
 
 	@Test
 	public void testSetup() {
-		System.out.println("1");
 		AssetManager assetManager = new AssetManager();
 		
 		addTexturesToAssetManagerQueue(assetManager);
 		loadAssets(assetManager);
-		System.out.println("2");
 		Textures textures = Textures.getInstance();
 		try {
 			textures.setup();
 		} catch (Exception e) {
 			fail("Setting up textures failed: "+e.getMessage());
 		}
-		System.out.println("3");
 		assertNotNull("bricksHorizontal texture is null", textures.bricksHorizontal);
 		assertNotNull("blueBalloon texture is null", textures.balloonBlue);
-		System.out.println("4");
 	}
 	
 	private void addTexturesToAssetManagerQueue(AssetManager assetManager) {

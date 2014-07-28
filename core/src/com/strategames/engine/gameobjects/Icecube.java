@@ -110,7 +110,7 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	protected TextureRegionDrawable createTexture() {
+	protected TextureRegionDrawable createTextureRegionDrawable() {
 		this.colorActor = getColor();
 
 		return drawable; 

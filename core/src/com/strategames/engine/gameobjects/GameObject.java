@@ -203,7 +203,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * TODO replace setup method with a builder pattern create method
 	 */
 	public void setup() {
-		TextureRegionDrawable trd = createTexture();
+		TextureRegionDrawable trd = createTextureRegionDrawable();
 //		Gdx.app.log("GameObject", "setup: gameObject="+this+", trd="+trd);
 		if( trd != null ) {
 			setDrawable(trd);
@@ -305,10 +305,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	/**
 	 * Called to create the image for the game object
 	 */
-	abstract protected TextureRegionDrawable createTexture();
+	abstract protected TextureRegionDrawable createTextureRegionDrawable();
 
 	/**
-	 * Called after {@link #createTexture()} to create the Box2D body of the game object.
+	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
 	abstract protected Body setupBox2D();

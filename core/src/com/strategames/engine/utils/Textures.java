@@ -16,9 +16,9 @@ public class Textures {
 		private static final Textures INSTANCE = new Textures();
 	}
 
-	public TextureRegionDrawable balloonBlue;
+	public TextureRegion balloonBlue;
 	public TextureRegion balloonRed;
-	public TextureRegionDrawable starBlue;
+	public TextureRegion starBlue;
 	public TextureRegion starYellow;
 	public TextureRegion starRed;
 	public TextureRegion chalk1;
@@ -140,9 +140,9 @@ public class Textures {
 		
 		TextureAtlas atlas = this.assetManager.get(atlasFilename, TextureAtlas.class);
 
-		balloonBlue = new TextureRegionDrawable(atlas.findRegion("aj_balloon_blue"));
+		balloonBlue = atlas.findRegion("aj_balloon_blue");
 		balloonRed = atlas.findRegion("aj_balloon_red");
-		starBlue = new TextureRegionDrawable(atlas.findRegion("star_blue"));
+		starBlue = atlas.findRegion("star_blue");
 		starRed = atlas.findRegion("star_red");
 		starYellow = atlas.findRegion("star_yellow");
 		chalk1 = atlas.findRegion("Chalk-01");

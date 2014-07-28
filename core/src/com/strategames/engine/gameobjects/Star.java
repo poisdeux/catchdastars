@@ -3,6 +3,7 @@ package com.strategames.engine.gameobjects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.utils.ConfigurationItem;
@@ -24,7 +26,8 @@ abstract public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
 	private Sounds sounds;
-
+	private static TextureRegionDrawable textureRegionDrawable;
+	
 	protected Star() {
 		super(new Vector2(WIDTH, -1f));
 		this.sounds = Sounds.getInstance();
@@ -66,6 +69,25 @@ abstract public class Star extends GameObject {
 		}
 	}
 
+	/**
+	 * TODO move this and next abstract method to GameObject? as it seems to be generally
+	 * applicable
+	 */
+	@Override
+	protected TextureRegionDrawable createTextureRegionDrawable() {
+		synchronized (this) {
+			if( textureRegionDrawable == null ) {
+				TextureRegion region = createTextureRegion();
+				if( region != null ) {
+					textureRegionDrawable = new TextureRegionDrawable(region);
+				}
+			}
+		}
+		return textureRegionDrawable;
+	}
+	
+	abstract protected TextureRegion createTextureRegion();
+	
 	@Override
 	protected Body setupBox2D() {
 		float radius = getHalfWidth() * 0.7f;

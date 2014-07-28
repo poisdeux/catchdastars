@@ -2,7 +2,7 @@ package com.strategames.engine.gameobjects;
 
 import static org.junit.Assert.assertTrue;
 
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.strategames.engine.utils.Textures;
 
 
@@ -30,7 +30,7 @@ public class BalloonTest extends GameObjectTestAbstractClass {
 		}
 		
 		@Override
-		protected TextureRegionDrawable createTexture() {
+		protected TextureRegion createTextureRegion() {
 			return Textures.getInstance().balloonBlue;
 		}
 

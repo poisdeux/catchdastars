@@ -9,7 +9,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -24,12 +23,12 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
 		System.out.println("GdxTestRunner constructor called");
 		synchronized (this) {
 			if( application == null ) {
-				System.out.println("GdxTestRunner creating application");
 				LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 				config.title = "core-test";
 				config.width = 504;
 				config.height = 800;
 				application = new LwjglApplication(this, config);
+				
 			}
 		}
 	}
@@ -80,22 +79,27 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
 
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		System.out.println("GdxTestRunner runChild called");
 		synchronized (invokeInRender) {
+			System.out.println("GdxTestRunner adding method: "+method);
 			//add for invoking in render phase, where gl context is available
 			invokeInRender.put(method, notifier);   
 		}
 		//wait until that test was invoked
 		waitUntilInvokedInRenderMethod();
+		System.out.println("GdxTestRunner runChild finished");
 	}
 
 	/**
 	 * 
 	 */
 	private void waitUntilInvokedInRenderMethod() {
+		System.out.println("GdxTestRunner waitUntilInvokedInRenderMethod called");
 		try {
 			while (true){
 				Thread.sleep(10);
 				synchronized (invokeInRender) {
+					System.out.println("GdxTestRunner checking if invokeInRender is empty");
 					if (invokeInRender.isEmpty()) break;
 				}
 			}

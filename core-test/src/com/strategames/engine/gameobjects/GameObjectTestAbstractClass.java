@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.game.GameTestClass;
-import com.strategames.engine.screens.GdxTestRunner;
+import com.strategames.engine.screens.GdxTestRunner2;
 
-@RunWith(GdxTestRunner.class)
+@RunWith(GdxTestRunner2.class)
 abstract public class GameObjectTestAbstractClass {
 	private GameObject gameObject;
 	
@@ -75,7 +75,10 @@ abstract public class GameObjectTestAbstractClass {
 		Game game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.draw(new SpriteBatch(), 1);
+		SpriteBatch batch = new SpriteBatch();
+		batch.begin();
+		this.gameObject.draw(batch, 1);
+		batch.end();
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {

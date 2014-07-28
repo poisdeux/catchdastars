@@ -48,6 +48,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	private Textures textures = Textures.getInstance();
 
+	private static TextureRegionDrawable drawable;
+	
 	/**
 	 * Creates a wall object with type horizontal and default length
 	 */
@@ -94,21 +96,17 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		setScaling(Scaling.stretch);
 		setLength(this.length);
 		setPosition(getX(), getY());
-
+		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		super.setup();
-	}
-
-	public void setWrap(boolean wrap) {
-		if( wrap ) {
-			textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-			textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		}
 	}
 	
 	@Override
-	protected TextureRegionDrawable createTexture() {
-		Sprite sprite = new Sprite(textures.bricksHorizontal);
-		return new TextureRegionDrawable(sprite);
+	protected TextureRegionDrawable createTextureRegionDrawable() {
+		if( drawable == null ) {
+			drawable = new TextureRegionDrawable(new Sprite(textures.bricksHorizontal));
+		}
+		return drawable;
 	}
 
 	@Override

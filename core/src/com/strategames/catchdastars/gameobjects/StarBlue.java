@@ -1,6 +1,6 @@
 package com.strategames.catchdastars.gameobjects;
 
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Star;
 import com.strategames.engine.utils.Textures;
@@ -8,8 +8,8 @@ import com.strategames.engine.utils.Textures;
 public class StarBlue extends Star {
 
 	@Override
-	protected TextureRegionDrawable createTexture() {
-		return new TextureRegionDrawable(Textures.getInstance().starBlue);
+	protected TextureRegion createTextureRegion() {
+		return Textures.getInstance().starBlue;
 	}
 
 	@Override
