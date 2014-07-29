@@ -1,5 +1,6 @@
 package com.strategames.engine.screens;
 
+import java.io.FileNotFoundException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -9,8 +10,10 @@ import org.junit.runners.model.InitializationError;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.strategames.engine.utils.Textures;
 
 public class GdxTestRunner2 extends BlockJUnit4ClassRunner
 {
@@ -119,6 +122,24 @@ public class GdxTestRunner2 extends BlockJUnit4ClassRunner
 				@Override
 				public void create()
 				{
+					AssetManager assetManager = new AssetManager();
+					
+					Textures textures = Textures.getInstance();
+					try {
+						textures.addAllToAssetManager(assetManager);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					
+					while( ! assetManager.update() ) {};
+					
+					try {
+						textures.setup();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}, config);
 

@@ -37,7 +37,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 
 	private static final float maxVolume = 0.5f;
 
-	private static TextureRegionDrawable textureRegionDrawable;
+	private TextureRegionDrawable textureRegionDrawable;
 
 	/**
 	 * Following value was determined empirically
@@ -67,14 +67,14 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	 */
 	@Override
 	protected TextureRegionDrawable createTextureRegionDrawable() {
-		synchronized (this) {
-			if( textureRegionDrawable == null ) {
-				TextureRegion region = createTextureRegion();
-				if( region != null ) {
-					textureRegionDrawable = new TextureRegionDrawable(region);
-				}
-			}
+		TextureRegion region = createTextureRegion();
+		if( region != null ) {
+			textureRegionDrawable = new TextureRegionDrawable(region);
 		}
+		return textureRegionDrawable;
+	}
+
+	public TextureRegionDrawable getTextureRegionDrawable() {
 		return textureRegionDrawable;
 	}
 
@@ -207,6 +207,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		balloon.setPosition(getX(), getY());
 		balloon.setLiftFactor(getLiftFactor());
 		balloon.setGame(getGame());
+		balloon.setDrawable(getDrawable());
 		return balloon;
 	}
 }

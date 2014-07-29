@@ -26,7 +26,7 @@ abstract public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
 	private Sounds sounds;
-	private static TextureRegionDrawable textureRegionDrawable;
+	private TextureRegionDrawable textureRegionDrawable;
 	
 	protected Star() {
 		super(new Vector2(WIDTH, -1f));
@@ -75,17 +75,17 @@ abstract public class Star extends GameObject {
 	 */
 	@Override
 	protected TextureRegionDrawable createTextureRegionDrawable() {
-		synchronized (this) {
-			if( textureRegionDrawable == null ) {
-				TextureRegion region = createTextureRegion();
-				if( region != null ) {
-					textureRegionDrawable = new TextureRegionDrawable(region);
-				}
-			}
+		TextureRegion region = createTextureRegion();
+		if( region != null ) {
+			textureRegionDrawable = new TextureRegionDrawable(region);
 		}
 		return textureRegionDrawable;
 	}
-	
+
+	public TextureRegionDrawable getTextureRegionDrawable() {
+		return textureRegionDrawable;
+	}
+
 	abstract protected TextureRegion createTextureRegion();
 	
 	@Override
