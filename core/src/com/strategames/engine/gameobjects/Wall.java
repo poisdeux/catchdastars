@@ -31,7 +31,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	}
 	private Orientation orientation = Orientation.HORIZONTAL;
 	
-	private Color colorActor;
 	private float length = WIDTH;
 	private float increaseDecreaseSizeAccumulatedDelta;
 	private float stepSize;
@@ -54,7 +53,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	 * Creates a wall object with type horizontal and default length
 	 */
 	public Wall() {
-		super(new Vector2(WIDTH, -1f));
+		super(new Vector2(WIDTH, HEIGHT));
 	}
 
 	public Wall(Game game, float x, float y, float length, Orientation type) {
@@ -62,8 +61,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		setGame(game);
 		setPosition(x, y);
 		setOrientation(type);
-		setup();
 		setLength(length);
+		setup();
 		Gdx.app.log("Wall", "Wall: this="+this);
 	}
 
@@ -92,9 +91,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void setup() {
-		this.colorActor = getColor();
 		setScaling(Scaling.stretch);
-		setLength(this.length);
+//		setLength(this.length);
 		setPosition(getX(), getY());
 		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
@@ -111,6 +109,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	protected Body setupBox2D() {
+		Gdx.app.log("Wall", this+": setupBox2D: halfWidth="+super.halfWidth+", halfHeight="+halfHeight);
 		PolygonShape box = new PolygonShape();  
 		if( orientation == Orientation.HORIZONTAL ) {
 			box.setAsBox(super.halfWidth, super.halfHeight, new Vector2(super.halfWidth, super.halfHeight), 0f);
@@ -140,8 +139,8 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	 * @param length in Box2D
 	 */
 	public void setLength(float length) {
-		//		Gdx.app.log("Wall", "setLength (before): Orientation="+orientation.name()+", getWidth()="+getWidth()+", getHeight()="+getHeight()+
-		//				", length="+length);
+				Gdx.app.log("Wall", this+": setLength (before): Orientation="+orientation.name()+", getWidth()="+getWidth()+", getHeight()="+getHeight()+
+						", length="+length);
 
 		if( orientation == Orientation.HORIZONTAL ) {
 			this.length = length < WIDTH ? WIDTH : length; //Make sure length is not smaller than a single block
@@ -155,11 +154,14 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 			this.stepSize = HEIGHT;
 		}
 
+		Gdx.app.log("Wall", this+": setLength (after): Orientation="+orientation.name()+", getWidth()="+getWidth()+", getHeight()="+getHeight()+
+				", length="+length);
+		
 		setupParts();
 
-		//		Gdx.app.log("Wall", "setLength (after): getWidth()="+getWidth()+", getHeight()="+getHeight()+
-		//				", this.length="+this.length+
-		//				", this.amountOfParts="+this.amountOfParts);
+//				Gdx.app.log("Wall", "setLength (after): getWidth()="+getWidth()+", getHeight()="+getHeight()+
+//						", this.length="+this.length+
+//						", this.amountOfParts="+this.amountOfParts);
 	}
 
 	public float getLength() {
@@ -178,7 +180,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		float prevAlpha = batch.getColor().a;
-		batch.getColor().a = this.colorActor.a;
+		batch.getColor().a = getColor().a;
 
 		if ( orientation == Orientation.HORIZONTAL ) {
 			if( this.length > this.stepSize ) {
@@ -220,6 +222,7 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		object.setLength(getLength());
 		object.setOrientation(getOrientation());
 		object.setGame(getGame());
+		object.setup();
 		return object;
 	}
 

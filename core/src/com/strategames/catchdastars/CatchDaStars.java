@@ -107,7 +107,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		super.update(delta, stage);
 
-		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -251,26 +251,17 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
-
-		BalloonBlue balloonBlue = new BalloonBlue();
-		balloonBlue.setGame(this);
-		objects.add(balloonBlue);
 		
-		BalloonRed balloonRed = new BalloonRed();
-		balloonRed.setGame(this);
-		objects.add(balloonRed);
+		objects.add(new BalloonBlue());
+		objects.add(new BalloonRed());
+		objects.add(new StarBlue());
+		objects.add(new StarBlue());
+		objects.add(new StarYellow());
 		
-		StarBlue starBlue = new StarBlue();
-		starBlue.setGame(this);
-		objects.add(starBlue);
-		
-		StarYellow starYellow = new StarYellow();
-		starYellow.setGame(this);
-		objects.add(starYellow);
-		
-		StarRed starRed = new StarRed();
-		starRed.setGame(this);
-		objects.add(starRed);
+		for(GameObject object : objects) {
+			object.setGame(this);
+			object.setup();
+		}
 		
 		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
 		

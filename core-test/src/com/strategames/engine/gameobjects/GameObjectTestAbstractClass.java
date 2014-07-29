@@ -49,7 +49,8 @@ abstract public class GameObjectTestAbstractClass {
 		Game game = new GameTestClass();;
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		assertNotNull("Body for " + this.gameObject.getClass().getName() + " is not null", this.gameObject.getBody());
+		this.gameObject.setup();
+		assertNotNull("Body for " + this.gameObject.getClass().getName() + " is null", this.gameObject.getBody());
 	}
 	
 	@Test
@@ -75,10 +76,19 @@ abstract public class GameObjectTestAbstractClass {
 		Game game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
+		this.gameObject.setup();
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		this.gameObject.draw(batch, 1);
 		batch.end();
+	}
+	
+	@Test
+	public void testSetWidth() {
+		float width = 1.3f;
+		this.gameObject.setWidth(width);
+		assertTrue("Width is "+this.gameObject.getWidth()+", but should be "+width, this.gameObject.getWidth() == width);
+		assertTrue("HalfWidth is "+this.gameObject.getHalfWidth()+", but should be "+width/2f, this.gameObject.getHalfWidth() == (width/2f));
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {
@@ -88,6 +98,7 @@ abstract public class GameObjectTestAbstractClass {
 		assertTrue(this.gameObject.getClass().getName() + ": Drawable not equal: "+ object1.getDrawable() + " != " +object2.getDrawable(), object1.getDrawable() == object2.getDrawable());
 		assertTrue(this.gameObject.getClass().getName() + ": X position not equal: "+object1.getX() +"!="+ object2.getX(), object1.getX() == object2.getX());
 		assertTrue(this.gameObject.getClass().getName() + ": Y position not equal: "+object1.getY() +"!="+ object2.getY(), object1.getY() == object2.getY());
+//		assertTrue(this.gameObject.getClass().getName() + ": Color not equal", object1.getColor() == object2.getColor());
 		assertForEquality(object1, object2);
 	}
 	

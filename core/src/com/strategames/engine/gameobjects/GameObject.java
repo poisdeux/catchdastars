@@ -60,7 +60,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	
 	/**
 	 * Constructor for creating a game object
-	 * @param size in meters. size.x = width, size.y = height. If size.y < 0 height of the game object is calculated using size.x and image size. 
+	 * @param size in meters. size.x = width, size.y = height. 
+	 * <br/>
+	 * If size.y < 0 height of the game object is calculated using size.x and image size when {@link #setup()} is called. 
 	 */
 	public GameObject(Vector2 size) {
 		this.size = size;
@@ -78,6 +80,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	private void init() {
+		setWidth(this.size.x);
+		setHeight(this.size.y);
 		setName(getClass().getSimpleName());
 		this.initialPosition = new Vector2();
 	}
@@ -86,15 +90,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return game;
 	}
 
-	/**
-	 * Sets the game and calls {@link #setup()} to initialize gameobject
-	 * @param game holding the World object
-	 */
 	public void setGame(Game game) {
 		this.game = game;
-		if( game != null ) {
-			setup();
-		}
 	}
 
 	/**
@@ -211,9 +208,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			if( this.size.y < 0 ) {
 				double aspectRatio = trd.getRegion().getRegionHeight() / (double) trd.getRegion().getRegionWidth();
 				this.size.y = (float) (this.size.x * aspectRatio);
+				setHeight(this.size.y);
 			}
-			setWidth(this.size.x);
-			setHeight(this.size.y);
 		}
 
 //		Gdx.app.log("GameObject", "setup: gameObject="+this+", world="+this.world);
