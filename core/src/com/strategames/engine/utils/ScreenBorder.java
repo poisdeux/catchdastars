@@ -10,11 +10,14 @@ public class ScreenBorder {
 	static public void create(Game game) {
 		Vector3 worldSize = game.getWorldSize();	
 		
-		Wall wTop = new Wall(game, 0, 0, worldSize.x, Wall.Orientation.HORIZONTAL);
+		Wall wTop = new Wall();
+		wTop.setGame(game);
+		wTop.setLength(worldSize.x);
 		wTop.increaseSize();
 		wTop.increaseSize();
 		wTop.setPosition(-wTop.getHalfHeight(), worldSize.y - wTop.getHalfHeight());
 		wTop.setBorder(true);
+		wTop.setup();
 		game.getLevel().addGameObject(wTop);
 		
 		Wall wBottom = (Wall) wTop.copy();
@@ -22,17 +25,21 @@ public class ScreenBorder {
 		wBottom.setBorder(true);
 		game.getLevel().addGameObject(wBottom);
 		
-		Wall wLeft = new Wall(game, 0, 0, worldSize.y, Wall.Orientation.VERTICAL);
+		Wall wLeft = new Wall();
+		wLeft.setGame(game);
+		wLeft.setLength(worldSize.x);
 		wLeft.decreaseSize();
 		wLeft.decreaseSize();
 		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getY() + wLeft.getHalfWidth());
 		wLeft.setBorder(true);
+		wLeft.setup();
 		Gdx.app.log("ScreenBorder","create: wLeft="+wLeft);
 		game.getLevel().addGameObject(wLeft);
 		
 		Wall wRight = (Wall) wLeft.copy();
 		wRight.setPosition(worldSize.x - wRight.getHalfWidth(), wLeft.getY());
 		wRight.setBorder(true);
+		wRight.setup();
 		Gdx.app.log("ScreenBorder","create: wRight="+wRight);
 		game.getLevel().addGameObject(wRight);
 	}

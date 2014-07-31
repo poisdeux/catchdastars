@@ -257,18 +257,21 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(new StarBlue());
 		objects.add(new StarBlue());
 		objects.add(new StarYellow());
+		objects.add(new Icecube());
+		
+		Wall w = new Wall();
+		w.setOrientation(Wall.Orientation.HORIZONTAL);
+		objects.add(w);
+		
+		w = new Wall();
+		w.setOrientation(Wall.Orientation.VERTICAL);
+		objects.add(w);
 		
 		for(GameObject object : objects) {
 			object.setGame(this);
 			object.setup();
 		}
 		
-		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.HORIZONTAL));
-		
-		objects.add(new Wall(this, 0, 0, WORLD_TO_BOX, Wall.Orientation.VERTICAL));
-		
-		objects.add(new Icecube(this, 0, 0));
-
 		this.availableGameObjects = objects;
 
 		return this.availableGameObjects;

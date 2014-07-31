@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,7 +16,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
@@ -48,15 +48,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isHit;
 	protected boolean isCollectible;
 
-	protected Vector2 initialPosition; 
+	protected Vector2 initialPosition = new Vector2(); 
 
 	private boolean isMenuItem;
 
 	protected Game game;
 
-	protected Vector2 size;
+	protected Vector2 size = new Vector2();
 
 	private boolean saveToFile = true;
+	
+	private TextureRegion textureRegion;
 	
 	/**
 	 * Constructor for creating a game object
@@ -66,24 +68,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	public GameObject(Vector2 size) {
 		this.size = size;
-		init();
-	}
-
-	public GameObject(Game game) {
-		setGame(game);
-		init();
-	}
-
-	public GameObject(Drawable trd) {
-		super(trd, Scaling.none);
-		init();
-	}
-
-	private void init() {
 		setWidth(this.size.x);
 		setHeight(this.size.y);
 		setName(getClass().getSimpleName());
-		this.initialPosition = new Vector2();
 	}
 
 	public Game getGame() {
@@ -151,6 +138,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.isCollectible = isCollectible;
 	}
 
+	public void setTextureRegion(TextureRegion textureRegion) {
+		this.textureRegion = textureRegion;
+	}
+	
+	public TextureRegion getTextureRegion() {
+		return textureRegion;
+	}
+	
 	/**
 	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
 	 * not running.
@@ -200,13 +195,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * TODO replace setup method with a builder pattern create method
 	 */
 	public void setup() {
-		TextureRegionDrawable trd = createTextureRegionDrawable();
+		this.textureRegion = createTextureRegion();
 //		Gdx.app.log("GameObject", "setup: gameObject="+this+", trd="+trd);
-		if( trd != null ) {
-			setDrawable(trd);
+		if( this.textureRegion != null ) {
+			setDrawable(new TextureRegionDrawable(this.textureRegion));
 			setScaling(Scaling.stretch);
 			if( this.size.y < 0 ) {
-				double aspectRatio = trd.getRegion().getRegionHeight() / (double) trd.getRegion().getRegionWidth();
+				double aspectRatio = this.textureRegion.getRegionHeight() / (double) this.textureRegion.getRegionWidth();
 				this.size.y = (float) (this.size.x * aspectRatio);
 				setHeight(this.size.y);
 			}
@@ -297,11 +292,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.shapeRenderer.end();
 		batch.begin();
 	}
-
+	
 	/**
 	 * Called to create the image for the game object
 	 */
-	abstract protected TextureRegionDrawable createTextureRegionDrawable();
+	abstract protected TextureRegion createTextureRegion();
 
 	/**
 	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.utils.BodyEditorLoader;
@@ -37,8 +35,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 
 	private static final float maxVolume = 0.5f;
 
-	private TextureRegionDrawable textureRegionDrawable;
-
 	/**
 	 * Following value was determined empirically
 	 */
@@ -60,25 +56,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	public float getLiftFactor() {
 		return liftFactor;
 	}
-
-	/**
-	 * TODO move this and next abstract method to GameObject? as it seems to be generally
-	 * applicable
-	 */
-	@Override
-	protected TextureRegionDrawable createTextureRegionDrawable() {
-		TextureRegion region = createTextureRegion();
-		if( region != null ) {
-			textureRegionDrawable = new TextureRegionDrawable(region);
-		}
-		return textureRegionDrawable;
-	}
-
-	public TextureRegionDrawable getTextureRegionDrawable() {
-		return textureRegionDrawable;
-	}
-
-	abstract protected TextureRegion createTextureRegion();
 
 	@Override
 	protected Body setupBox2D() {

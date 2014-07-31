@@ -414,7 +414,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		copy.setPosition(copy.getX() + xDelta, copy.getY() + yDelta);
 		copy.setGame(getGame());
-//		copy.setup();
+		copy.setup();
 		getGame().getLevel().addGameObject(copy);
 		stageActors.addActor(copy);
 		deselectGameObject(object);
@@ -672,6 +672,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		deselectGameObject(gameObject);
 		gameObject.moveTo(x, y);
 		gameObject.setInitialPosition(new Vector2(x, y));
+		gameObject.setup();
 		stage.addActor(gameObject);
 	}
 

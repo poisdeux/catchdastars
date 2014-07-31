@@ -3,17 +3,15 @@ package com.strategames.engine.gameobjects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
@@ -46,24 +44,12 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 	private boolean isBorder;
 
 	private Textures textures = Textures.getInstance();
-
-	private static TextureRegionDrawable drawable;
 	
 	/**
 	 * Creates a wall object with type horizontal and default length
 	 */
 	public Wall() {
 		super(new Vector2(WIDTH, HEIGHT));
-	}
-
-	public Wall(Game game, float x, float y, float length, Orientation type) {
-		this();
-		setGame(game);
-		setPosition(x, y);
-		setOrientation(type);
-		setLength(length);
-		setup();
-		Gdx.app.log("Wall", "Wall: this="+this);
 	}
 
 	/**
@@ -84,27 +70,37 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 	@Override
 	public void setPosition(float x, float y) {
+		super.setPosition(x, y);
 		pos.x = x;
 		pos.y = y;
 		setupParts();
 	}
 
 	@Override
+	public void setX(float x) {
+		super.setX(x);
+		pos.x = x;
+		setupParts();
+	}
+	
+	@Override
+	public void setY(float y) {
+		super.setY(y);
+		pos.y = y;
+		setupParts();
+	}
+	
+	@Override
 	public void setup() {
 		setScaling(Scaling.stretch);
-//		setLength(this.length);
-		setPosition(getX(), getY());
-		textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		this.textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		this.textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		super.setup();
 	}
 	
 	@Override
-	protected TextureRegionDrawable createTextureRegionDrawable() {
-		if( drawable == null ) {
-			drawable = new TextureRegionDrawable(new Sprite(textures.bricksHorizontal));
-		}
-		return drawable;
+	protected TextureRegion createTextureRegion() {
+		return new TextureRegion(this.textures.bricksHorizontal);
 	}
 
 	@Override
@@ -184,14 +180,14 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 
 		if ( orientation == Orientation.HORIZONTAL ) {
 			if( this.length > this.stepSize ) {
-				batch.draw(textures.bricksHorizontalEndLeft, pos.x, pos.y, WIDTH, HEIGHT);
-				batch.draw(textures.bricksHorizontal, this.startHorizontalMiddlePart, pos.y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
-				batch.draw(textures.bricksHorizontalEndRight, this.startHorizontalEndPart, pos.y, WIDTH, HEIGHT);
+				batch.draw(this.textures.bricksHorizontalEndLeft, pos.x, pos.y, WIDTH, HEIGHT);
+				batch.draw(this.textures.bricksHorizontal, this.startHorizontalMiddlePart, pos.y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
+				batch.draw(this.textures.bricksHorizontalEndRight, this.startHorizontalEndPart, pos.y, WIDTH, HEIGHT);
 			} else { // draw single brick
-				batch.draw(textures.bricksVertical, pos.x, pos.y, WIDTH, HEIGHT);
+				batch.draw(this.textures.bricksVertical, pos.x, pos.y, WIDTH, HEIGHT);
 			}
 		} else {
-			batch.draw(textures.bricksVertical, pos.x, pos.y, WIDTH, this.length, 0, 0, -1, this.amountOfParts);
+			batch.draw(this.textures.bricksVertical, pos.x, pos.y, WIDTH, this.length, 0, 0, -1, this.amountOfParts);
 		}
 
 		batch.getColor().a = prevAlpha;
@@ -222,7 +218,6 @@ public class Wall extends GameObject implements OnConfigurationItemChangedListen
 		object.setLength(getLength());
 		object.setOrientation(getOrientation());
 		object.setGame(getGame());
-		object.setup();
 		return object;
 	}
 

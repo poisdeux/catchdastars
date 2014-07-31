@@ -18,7 +18,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
@@ -60,8 +59,6 @@ public class Icecube extends GameObject {
 
 	private static BodyDef bodyDef;
 
-	private static TextureRegionDrawable drawable;
-
 	private static long prevPlayRocksRolling;
 
 	private static Sounds sounds = Sounds.getInstance();
@@ -95,25 +92,12 @@ public class Icecube extends GameObject {
 		}
 		
 		this.parts = new ArrayList<Icecube.Part>();
-	}
-
-	public Icecube(Game game, float x, float y) {
-		this();
-		setPosition(x, y);
-		setGame(game);
-		setup();
-
-		//		//Initial object contains all parts
-		//		for( Part part : availableParts ) {
-		//			addPart(part);
-		//		}
+		this.colorActor = getColor();
 	}
 
 	@Override
-	protected TextureRegionDrawable createTextureRegionDrawable() {
-		this.colorActor = getColor();
-
-		return drawable; 
+	protected TextureRegion createTextureRegion() {
+		return Textures.getInstance().icecube; 
 	}
 
 	public void addPart(Part part) {
@@ -411,8 +395,5 @@ public class Icecube extends GameObject {
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.angularDamping = 0.1f;
-
-
-		drawable = new TextureRegionDrawable(textures.icecube);
 	}
 }
