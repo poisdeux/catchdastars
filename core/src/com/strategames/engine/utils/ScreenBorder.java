@@ -4,13 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Wall;
+import com.strategames.engine.gameobjects.WallHorizontal;
+import com.strategames.engine.gameobjects.WallVertical;
 
 public class ScreenBorder {
 
 	static public void create(Game game) {
 		Vector3 worldSize = game.getWorldSize();	
 		
-		Wall wTop = new Wall();
+		Wall wTop = new WallHorizontal();
 		wTop.setGame(game);
 		wTop.setLength(worldSize.x);
 		wTop.increaseSize();
@@ -25,7 +27,7 @@ public class ScreenBorder {
 		wBottom.setBorder(true);
 		game.getLevel().addGameObject(wBottom);
 		
-		Wall wLeft = new Wall();
+		Wall wLeft = new WallVertical();
 		wLeft.setGame(game);
 		wLeft.setLength(worldSize.x);
 		wLeft.decreaseSize();

@@ -26,6 +26,8 @@ import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
 import com.strategames.engine.gameobjects.Wall;
+import com.strategames.engine.gameobjects.WallHorizontal;
+import com.strategames.engine.gameobjects.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
@@ -258,14 +260,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(new StarBlue());
 		objects.add(new StarYellow());
 		objects.add(new Icecube());
-		
-		Wall w = new Wall();
-		w.setOrientation(Wall.Orientation.HORIZONTAL);
-		objects.add(w);
-		
-		w = new Wall();
-		w.setOrientation(Wall.Orientation.VERTICAL);
-		objects.add(w);
+		objects.add(new WallHorizontal());
+		objects.add(new WallVertical());
 		
 		for(GameObject object : objects) {
 			object.setGame(this);

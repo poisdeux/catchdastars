@@ -14,11 +14,11 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.GameTestClass;
 
 
-public class WallTest extends GameObjectTestAbstractClass {
+public class WallVerticalTest extends GameObjectTestAbstractClass {
 
 	@Override
 	GameObject createGameObject() {
-		Wall wall = new Wall();
+		Wall wall = new WallVertical();
 		return wall;
 	}
 
@@ -28,15 +28,14 @@ public class WallTest extends GameObjectTestAbstractClass {
 		Wall b2 = (Wall) object2;
 		
 		assertTrue("Length not equal: "+b1.getLength()+" != "+b2.getLength(), b1.getLength() == b2.getLength());
-		assertTrue("Orientation not equal: "+b1.getOrientation().name()+" != "+b2.getOrientation().name(), b1.getOrientation() == b2.getOrientation());
 	}
 	
 	@Test
 	public void testSetLength() {
 		Wall wall = (Wall) getGameObject();
 		wall.setLength(4.2f);
-		assertTrue("Width not equal to length: "+wall.getWidth() +" != "+ wall.getLength(), wall.getWidth() == wall.getLength());
-		assertTrue("Height not equal to HEIGHT constant: "+wall.getHeight() + " != "+ Wall.HEIGHT, wall.getHeight() == Wall.HEIGHT);
+		assertTrue("Height not equal to length: "+wall.getHeight() +" != "+ wall.getLength(), wall.getHeight() == wall.getLength());
+		assertTrue("Width not equal to WIDTH constant: "+wall.getWidth() + " != "+ Wall.WIDTH, wall.getWidth() == Wall.WIDTH);
 	}
 	
 	@Test
@@ -62,7 +61,7 @@ public class WallTest extends GameObjectTestAbstractClass {
 		}
 		Vector2 vertex = new Vector2();  
 		polygonShape.getVertex(2, vertex);
-		assertTrue("Body length not equal to wall length: " + wall.getLength() +" != " + vertex.x, wall.getLength() == vertex.x);
-		assertTrue("Body height not equal to wall height: " + wall.getHeight() +" != " + vertex.y, wall.getHeight() == vertex.y);
+		assertTrue("Body length not equal to wall length: " + wall.getLength() +" != " + vertex.y, wall.getLength() == vertex.y);
+		assertTrue("Body width not equal to wall width: " + wall.getWidth() +" != " + vertex.x, wall.getWidth() == vertex.x);
 	}
 }
