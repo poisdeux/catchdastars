@@ -29,7 +29,7 @@ public class ScreenBorder {
 		
 		Wall wLeft = new WallVertical();
 		wLeft.setGame(game);
-		wLeft.setLength(worldSize.x);
+		wLeft.setLength(worldSize.y);
 		wLeft.decreaseSize();
 		wLeft.decreaseSize();
 		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getY() + wLeft.getHalfWidth());

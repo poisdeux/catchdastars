@@ -11,6 +11,8 @@ public class WallVertical extends Wall {
 	
 	private static TextureRegion textureRegion;
 	
+	private int amountOfParts;
+	
 	@Override
 	public void setLength(float length) {
 		if( length < HEIGHT ) {
@@ -21,7 +23,7 @@ public class WallVertical extends Wall {
 		
 		setHeight(getLength());
 		setWidth(WIDTH);
-		calculateAmountOfParts(length, HEIGHT);
+		this.amountOfParts = calculateAmountOfParts(length, HEIGHT);
 	}
 	
 	@Override
@@ -42,7 +44,7 @@ public class WallVertical extends Wall {
 	public void draw(Batch batch, float parentAlpha) {
 		float prevAlpha = batch.getColor().a;
 		batch.getColor().a = getColor().a;
-		batch.draw(this.textures.bricksVertical, getX(), getY(), WIDTH, getLength(), 0, 0, -1, getAmountOfParts());
+		batch.draw(this.textures.bricksVertical, getX(), getY(), WIDTH, getLength(), 0, 0, -1, this.amountOfParts);
 		batch.getColor().a = prevAlpha;
 	}
 

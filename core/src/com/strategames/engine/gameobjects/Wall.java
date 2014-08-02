@@ -23,8 +23,6 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	private float increaseDecreaseSizeAccumulatedDelta;
 	private float partSize;
 
-	private int amountOfParts;
-
 	private boolean isBorder;
 
 	/**
@@ -83,10 +81,6 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	
 	public float getPartSize() {
 		return partSize;
-	}
-	
-	public int getAmountOfParts() {
-		return amountOfParts;
 	}
 		
 

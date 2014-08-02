@@ -11,7 +11,8 @@ public class WallHorizontal extends Wall {
 	private float startHorizontalMiddlePart;
 	private float startHorizontalEndPart;
 	private float endHorizontalMiddlePart;
-
+	private int amountOfParts;
+	
 	private static TextureRegion textureRegion;
 	
 	@Override
@@ -41,7 +42,7 @@ public class WallHorizontal extends Wall {
 		
 		setHeight(HEIGHT);
 		setWidth(getLength());
-		calculateAmountOfParts(length, WIDTH);
+		this.amountOfParts = calculateAmountOfParts(length, WIDTH);
 		
 		setupParts();
 	}
@@ -77,7 +78,7 @@ public class WallHorizontal extends Wall {
 		
 		if( getLength() > getPartSize() ) {
 			batch.draw(this.textures.bricksHorizontalEndLeft, x, y, WIDTH, HEIGHT);
-			batch.draw(this.textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, getAmountOfParts(), -1);			
+			batch.draw(this.textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
 			batch.draw(this.textures.bricksHorizontalEndRight, this.startHorizontalEndPart, y, WIDTH, HEIGHT);
 		} else { // draw single brick
 			batch.draw(this.textures.bricksVertical, x, y, WIDTH, HEIGHT);
