@@ -1,8 +1,15 @@
 package com.strategames.engine.gameobjects;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.repeat;
+
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,6 +17,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.utils.ConfigurationItem;
@@ -23,7 +32,7 @@ import com.strategames.engine.utils.Sounds;
 abstract public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
-	
+
 	protected Star() {
 		super(new Vector2(WIDTH, -1f));
 		setCollectible(true);
@@ -36,7 +45,7 @@ abstract public class Star extends GameObject {
 	public float getRotationSpeed() {
 		return rotationSpeed;
 	}
-	
+
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		rotateBy(this.rotationSpeed);
@@ -63,7 +72,7 @@ abstract public class Star extends GameObject {
 			this.rotationSpeed = jsonData.asFloat();
 		}
 	}
-	
+
 	@Override
 	protected Body setupBox2D() {
 		float radius = getHalfWidth() * 0.7f;
@@ -81,13 +90,13 @@ abstract public class Star extends GameObject {
 
 		return body;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
 		// TODO Auto-generated method stub
@@ -110,7 +119,16 @@ abstract public class Star extends GameObject {
 	public void destroyAction() {
 		Sounds sounds = Sounds.getInstance();
 		sounds.play(sounds.glass);
-		setCanBeDeleted(true);
+		addAction( sequence( parallel(
+				fadeOut( 0.8f ) , repeat(2, sequence( rotateTo(5f, 0.2f, Interpolation.linear), rotateTo(-5f, 0.2f, Interpolation.linear)) )),
+				new Action() {
+
+					@Override
+					public boolean act(float delta) {
+						setCanBeRemoved(true);
+						return true;
+					}
+				}));
 	}
 
 	@Override
@@ -127,7 +145,7 @@ abstract public class Star extends GameObject {
 		star.setGame(getGame());
 		return star;
 	}
-	
+
 	@Override
 	public String toString() {
 		String message = super.toString();

@@ -44,7 +44,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected float halfWidth;
 	protected float halfHeight;
 	private ShapeRenderer shapeRenderer;
-	protected boolean canBeDeleted;
+	protected boolean canBeRemoved;
 	protected boolean isHit;
 	protected boolean isCollectible;
 
@@ -146,6 +146,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return textureRegion;
 	}
 	
+	@Override
+	public boolean remove() {
+		if( super.remove() ) {
+			return deleteBody();
+		}
+		return false;
+	}
+	
 	/**
 	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
 	 * not running.
@@ -153,9 +161,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	public boolean deleteBody() {
 		World world = this.game.getWorld();
-		if(world.isLocked()) {
-			return false;
-		}
+//		if(world.isLocked()) {
+//			return false;
+//		}
 
 		if( this.body != null ) {
 			world.destroyBody(this.body);
@@ -164,12 +172,16 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return true;
 	}
 
+	public boolean canBeRemoved() {
+		return this.canBeRemoved;
+	}
+	
 	/**
 	 * Use this to mark this object for deletion.
 	 * @param delete
 	 */
-	synchronized public void setCanBeDeleted(boolean delete) {
-		this.canBeDeleted = delete;
+	synchronized public void setCanBeRemoved(boolean remove) {
+		this.canBeRemoved = remove;
 	}
 
 	public void setBody(Body body) {
@@ -183,8 +195,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
-
-
+	
+	public boolean isHit() {
+		return this.isHit;
+	}
+	
 	/**
 	 * Setup the image and body for this game object.
 	 * <br/>
@@ -213,7 +228,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			this.body.setUserData(this);
 		}
 
-		this.canBeDeleted = false;
+		this.canBeRemoved = false;
 		this.isHit = false;
 	}
 
@@ -402,9 +417,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	abstract public void decreaseSize();
 
 	/**
-	 * Called when object must be removed from game
-	 * <br/>
-	 * Note that this sets object can be deleted using {@link #setCanBeDeleted(boolean)}
+	 * Use this to remove object from game during gameplay. It starts the {@link #destroyAction()}
+	 * and sets {@link #isHit} to true.
 	 */
 	synchronized public void destroy() {
 		if( this.isHit ) { //prevent object from being destroyed multiple times during a removal animation
@@ -417,7 +431,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	/**
 	 * Called by {@link #destroy()} to start any animation or sound when object is destroyed
 	 * <br/>
-	 * Be sure to call {@link #setCanBeDeleted(boolean)} and set it to true when object can
+	 * Be sure to call {@link #setCanBeRemoved(boolean)} and set it to true when object can
 	 * safely be removed from game. Otherwise object will not be removed.
 	 */
 	abstract protected void destroyAction();

@@ -152,6 +152,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	@Override
 	public void destroyAction() {
 		sounds.play(sounds.balloonPop, 1);
+		setCanBeRemoved(true);
 	}
 
 	@Override

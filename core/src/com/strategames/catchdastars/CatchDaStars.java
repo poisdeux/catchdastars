@@ -117,7 +117,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( level == null ) {
 			return;
 		}
-		
+
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
 		if ( gameObjects == null ) {
 			return;
@@ -160,7 +160,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 			}
 		}
-//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
+		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
 	@Override
@@ -250,7 +250,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
-		
+
 		objects.add(new BalloonBlue());
 		objects.add(new BalloonRed());
 		objects.add(new StarBlue());
@@ -259,24 +259,26 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(new Icecube());
 		objects.add(new WallHorizontal());
 		objects.add(new WallVertical());
-		
+
 		for(GameObject object : objects) {
 			object.setGame(this);
 			object.setup();
 		}
-		
+
 		this.availableGameObjects = objects;
 
 		return this.availableGameObjects;
 	}
 
 	private void destroyBalloon(Balloon balloon) {
-		balloon.destroy();
-		deleteGameObject(balloon);
-		if( balloon instanceof BalloonBlue ) {
-			this.amountOfBlueBalloons--;
-		} else if( balloon instanceof BalloonBlue ) {
-			this.amountOfRedBalloons--;
+		synchronized (balloon) {
+			balloon.destroy();
+			deleteGameObject(balloon);
+			if( balloon instanceof BalloonBlue ) {
+				this.amountOfBlueBalloons--;
+			} else if( balloon instanceof BalloonBlue ) {
+				this.amountOfRedBalloons--;
+			}
 		}
 	}
 
@@ -287,17 +289,25 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		if( gameObject instanceof Star ) {
 			if( gameObject instanceof StarYellow ) {
-				gameObject.destroy();
-				deleteGameObject(gameObject);
-				this.goldCollectables.collect(gameObject);
+				synchronized (gameObject) {
+					if( ! gameObject.isHit() ) {
+						gameObject.destroy();
+						deleteGameObject(gameObject);
+						this.goldCollectables.collect(gameObject);
+					}
+				}
 			} else if( ( balloon instanceof BalloonBlue ) && ( gameObject instanceof StarBlue ) ) {
-				gameObject.destroy();
-				deleteGameObject(gameObject);
-				this.blueCollectables.collect(gameObject);
+				if( ! gameObject.isHit() ) {
+					gameObject.destroy();
+					deleteGameObject(gameObject);
+					this.blueCollectables.collect(gameObject);
+				}
 			} else if( ( balloon instanceof BalloonRed ) && ( gameObject instanceof StarRed ) ) {
-				gameObject.destroy();
-				deleteGameObject(gameObject);
-				this.redCollectables.collect(gameObject);
+				if( ! gameObject.isHit() ) {
+					gameObject.destroy();
+					deleteGameObject(gameObject);
+					this.redCollectables.collect(gameObject);
+				}
 			} else {
 				destroyBalloon(balloon);
 			}
@@ -345,8 +355,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Fixture fixtureB = contact.getFixtureB();
 		this.collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
 		this.collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
-//		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
-//		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
+		//		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
+		//		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
 
 		if( ( this.collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
 			handleSensorCollision((Balloon) this.collidingGameObject1, this.collidingGameObject2);

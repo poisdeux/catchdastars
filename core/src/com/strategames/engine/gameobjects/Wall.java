@@ -152,7 +152,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 
 	@Override
 	public void destroyAction() {
-		setCanBeDeleted(true);
+		setCanBeRemoved(true);
 	}
 
 	@Override

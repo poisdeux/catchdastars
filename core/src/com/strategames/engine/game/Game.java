@@ -301,11 +301,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 
 		if( ! this.world.isLocked() ) {
+			ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
 			for (GameObject object : this.gameObjectsForDeletion ) {
-				object.remove();
-				object.deleteBody();
+				if( object.canBeRemoved() ) {
+					if( object.remove() ) {
+						object.clear();
+					}
+				} else {
+					notDeletedGameObjects.add(object);
+				}
 			}
-			this.gameObjectsForDeletion.clear();
+			this.gameObjectsForDeletion = notDeletedGameObjects;
 		}
 	}
 

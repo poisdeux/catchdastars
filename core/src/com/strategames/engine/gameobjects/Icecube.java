@@ -199,7 +199,7 @@ public class Icecube extends GameObject {
 
 	@Override
 	public void destroyAction() {
-		setCanBeDeleted(true);
+		setCanBeRemoved(true);
 	}
 
 //	@Override
