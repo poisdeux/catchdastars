@@ -20,7 +20,6 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	public final static float HEIGHT = 0.30f;
 
 	private float length = WIDTH;
-	private float increaseDecreaseSizeAccumulatedDelta;
 	private float partSize;
 
 	private boolean isBorder;
@@ -47,7 +46,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	public boolean isBorder() {
 		return this.isBorder;
 	}
-	
+
 	@Override
 	protected Body setupBox2D() {
 		Gdx.app.log("Wall", this+": setupBox2D: halfWidth="+super.halfWidth+", halfHeight="+halfHeight);
@@ -70,19 +69,19 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	public void setLength(float length) {
 		this.length = length;
 	}
-	
+
 	public float getLength() {
 		return length;
 	}
-	
+
 	public void setPartSize(float partSize) {
 		this.partSize = partSize;
 	}
-	
+
 	public float getPartSize() {
 		return partSize;
 	}
-		
+
 
 	@Override
 	protected void writeValues(Json json) {
@@ -93,7 +92,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	protected void readValue(JsonValue jsonData) {
 		String name = jsonData.name();
 		if( name.contentEquals("length")) {
-			this.length = jsonData.asFloat();
+			setLength(jsonData.asFloat());
 		}
 	}
 
@@ -106,7 +105,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 		object.setTextureRegion(getTextureRegion());
 		return object;
 	}
-	
+
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
 		ArrayList<ConfigurationItem> items = new ArrayList<ConfigurationItem>();
@@ -127,24 +126,12 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 
 	@Override
 	public void increaseSize() {
-		this.increaseDecreaseSizeAccumulatedDelta += this.partSize;
-
-		if( this.increaseDecreaseSizeAccumulatedDelta > this.partSize ) {
-			this.increaseDecreaseSizeAccumulatedDelta = 0;
-
-			setLength(this.length + this.partSize);
-		}
+		setLength(this.length + this.partSize);
 	}
 
 	@Override
 	public void decreaseSize() {
-		this.increaseDecreaseSizeAccumulatedDelta -= this.partSize;
-
-		if( Math.abs(this.increaseDecreaseSizeAccumulatedDelta) > this.partSize ) {
-			this.increaseDecreaseSizeAccumulatedDelta = 0;
-
-			setLength(this.length - this.partSize);
-		}
+		setLength(this.length - this.partSize);
 	}
 
 	@Override
@@ -180,16 +167,5 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 			this.body.setTransform(x, y, this.body.getAngle());
 		}
 		setPosition(x, y);
-	}
-
-	/**
-	 * calculates the amount of textures are needed to draw the wall for the
-	 * given length and size of the texture
-	 * @param length the length of the wall
-	 * @param partSize the size of the texture in the length direction of the wall
-	 * @return
-	 */
-	public int calculateAmountOfParts(float length, float partSize) {
-		return ((int) (length / partSize)) - 2;
 	}
 }

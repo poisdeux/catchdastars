@@ -42,7 +42,7 @@ public class WallHorizontal extends Wall {
 		
 		setHeight(HEIGHT);
 		setWidth(getLength());
-		this.amountOfParts = calculateAmountOfParts(length, WIDTH);
+		this.amountOfParts = ((int) (length / WIDTH)) - 2;
 		
 		setupParts();
 	}

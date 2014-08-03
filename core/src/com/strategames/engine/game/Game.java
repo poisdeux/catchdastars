@@ -1,13 +1,11 @@
 package com.strategames.engine.game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Stack;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
@@ -26,10 +24,10 @@ import com.strategames.engine.screens.SettingsScreen;
 import com.strategames.engine.screens.SplashScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
+import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
-import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
@@ -85,24 +83,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	@Override
 	public void resume() {
 		super.resume();
-		//		if( Gdx.app.getType() == ApplicationType.Android ) {
-		//			AssetManager manager = getManager();
-		//			Sounds.load(manager);
-		//			Textures.load(manager);
-		//			manager.finishLoading();
-		//			Sounds.setup(manager);
-		//			Textures.setup(manager);
-		//		}
 	}
 
 	@Override
 	public void pause() {
 		super.pause();
-		//		if( Gdx.app.getType() == ApplicationType.Android ) {
-		//			AssetManager manager = getManager();
-		//			Sounds.dispose(manager);
-		//			Textures.dispose(manager);
-		//		}
 	}
 
 	public void pauseGame() {
@@ -244,24 +229,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 	}
 
-	/**
-	 * Tries to get level from AssetManager. If AssetManager has no level available
-	 * the level set through {@link #setLevel(Level)} is returned.
-	 * @return Level or null if not available or set.
-	 */
 	public Level getLevel() {
-		//		Level level;
-		//		try {
-		//			level = getManager().get(Level.getLocalPath(this.levelNumber), Level.class);
-		//		} catch( Exception e ) {
-		//			level = null;
-		//		}
-		//		
-		//		if( level == null ) {
-		//			return this.level;
-		//		} else {
-		//			return level;
-		//		}
 		return this.level;
 	}
 
@@ -275,19 +243,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void loadLevel(OnLevelLoadedListener listener) {
 		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
 		loadLevelSync(listener);
-	}
-
-	private void loadLevelAsync(final OnLevelLoadedListener listener) {
-		LevelLoader.loadLocalAsync(getLevelNumber(), new OnLevelLoadedListener() {
-
-			@Override
-			public void onLevelLoaded(Level level) {
-				setLevel(level);
-				if( listener != null ) {
-					listener.onLevelLoaded(level);
-				}
-			}
-		});
 	}
 
 	private void loadLevelSync(final OnLevelLoadedListener listener) {
@@ -317,13 +272,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public World getWorld() {
 		return world;
 	}
-
-//	public ArrayList<GameObject> getGameObjects() {
-//		if( this.level == null )
-//			return null;
-//		
-//		return this.level.getGameObjects();
-//	}
 
 	/**
 	 * Use this to add User interface elements that do not require collision detection nor physics

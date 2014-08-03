@@ -23,7 +23,7 @@ public class WallVertical extends Wall {
 		
 		setHeight(getLength());
 		setWidth(WIDTH);
-		this.amountOfParts = calculateAmountOfParts(length, HEIGHT);
+		this.amountOfParts = (int) (length / HEIGHT);
 	}
 	
 	@Override

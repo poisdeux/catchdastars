@@ -25,7 +25,6 @@ import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
-import com.strategames.engine.gameobjects.Wall;
 import com.strategames.engine.gameobjects.WallHorizontal;
 import com.strategames.engine.gameobjects.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
@@ -60,8 +59,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private GameObject collidingGameObject1;
 	private GameObject collidingGameObject2;
-//	private Type typeCollidingGameObject1;
-//	private Type typeCollidingGameObject2;
 
 	private Box2DDebugRenderer debugRenderer;
 

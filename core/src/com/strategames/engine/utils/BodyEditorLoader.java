@@ -189,8 +189,7 @@ public class BodyEditorLoader {
         // Json reading process
         // -------------------------------------------------------------------------
 
-        @SuppressWarnings("unchecked")
-		private Model readJson(String str) {
+        private Model readJson(String str) {
                 Model m = new Model();
                 JsonValue rootElem = new JsonReader().parse(str);
                 
@@ -205,8 +204,7 @@ public class BodyEditorLoader {
                 return m;
         }
 
-        @SuppressWarnings("unchecked")
-		private RigidBodyModel readRigidBody(JsonValue bodyElem) {
+        private RigidBodyModel readRigidBody(JsonValue bodyElem) {
                 RigidBodyModel rbModel = new RigidBodyModel();
                 rbModel.name = (String) bodyElem.get("name").asString();
                 rbModel.imagePath = (String) bodyElem.get("imagePath").asString();
@@ -257,9 +255,5 @@ public class BodyEditorLoader {
 
         private Vector2 newVec() {
                 return vectorPool.isEmpty() ? new Vector2() : vectorPool.remove(0);
-        }
-
-        private void free(Vector2 v) {
-                vectorPool.add(v);
         }
 }
