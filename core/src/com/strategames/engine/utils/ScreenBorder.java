@@ -1,6 +1,5 @@
 package com.strategames.engine.utils;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Wall;
@@ -14,9 +13,7 @@ public class ScreenBorder {
 		
 		Wall wTop = new WallHorizontal();
 		wTop.setGame(game);
-		wTop.setLength(worldSize.x);
-		wTop.increaseSize();
-		wTop.increaseSize();
+		wTop.setLength(worldSize.x + WallHorizontal.WIDTH);
 		wTop.setPosition(-wTop.getHalfHeight(), worldSize.y - wTop.getHalfHeight());
 		wTop.setBorder(true);
 		wTop.setup();
@@ -29,20 +26,17 @@ public class ScreenBorder {
 		
 		Wall wLeft = new WallVertical();
 		wLeft.setGame(game);
-		wLeft.setLength(worldSize.y);
-		wLeft.decreaseSize();
-		wLeft.decreaseSize();
-		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getY() + wLeft.getHalfWidth());
+		wLeft.setPartSize(WallVertical.HEIGHT);
+		wLeft.setLength(worldSize.y - WallVertical.HEIGHT);
+		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getHalfWidth());
 		wLeft.setBorder(true);
 		wLeft.setup();
-		Gdx.app.log("ScreenBorder","create: wLeft="+wLeft);
 		game.getLevel().addGameObject(wLeft);
 		
 		Wall wRight = (Wall) wLeft.copy();
 		wRight.setPosition(worldSize.x - wRight.getHalfWidth(), wLeft.getY());
 		wRight.setBorder(true);
 		wRight.setup();
-		Gdx.app.log("ScreenBorder","create: wRight="+wRight);
 		game.getLevel().addGameObject(wRight);
 	}
 }

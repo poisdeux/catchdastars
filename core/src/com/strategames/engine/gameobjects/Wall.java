@@ -27,7 +27,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	/**
 	 * Creates a wall object with type horizontal and default length
 	 */
-	public Wall() {
+	protected Wall() {
 		super(new Vector2(WIDTH, HEIGHT));
 	}
 
@@ -103,6 +103,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 		object.setLength(getLength());
 		object.setGame(getGame());
 		object.setTextureRegion(getTextureRegion());
+		object.setPartSize(getPartSize());
 		return object;
 	}
 

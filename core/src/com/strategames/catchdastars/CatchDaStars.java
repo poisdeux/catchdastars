@@ -142,7 +142,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
 				gameObject.setGame(this);
-				gameObject.setup();
 				if( gameObject instanceof Star ) {
 					if( gameObject instanceof StarBlue ) {
 						this.blueCollectables.add();
@@ -157,7 +156,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 					} else if( gameObject instanceof BalloonRed ) {
 						this.amountOfRedBalloons++;
 					}
+				} else if( gameObject instanceof Icecube ) {
+					((Icecube) gameObject).addAllParts();
 				}
+				gameObject.setup();
 			}
 		}
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);

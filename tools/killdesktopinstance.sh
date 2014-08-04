@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ps -ef | grep 'co[m].strategames.catchdastars.desktop.DesktopLauncher' | awk '{print $2}' | xargs kill -9
+ps -ef | grep 'gdx-platform-[0-9.]*-natives-desktop.jar' | awk '{print $2}' | xargs kill -9

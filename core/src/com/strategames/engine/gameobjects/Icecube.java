@@ -80,21 +80,10 @@ public class Icecube extends GameObject {
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
-		try {
-			mutex.getLockWait();
-			if( availableParts == null ) {
-				setupStaticResources();
-			}
-			mutex.releaseLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return;
-		}
-		
 		this.parts = new ArrayList<Icecube.Part>();
 		this.colorActor = getColor();
 	}
-
+	
 	@Override
 	protected TextureRegion createTextureRegion() {
 		return Textures.getInstance().icecube; 
@@ -105,6 +94,19 @@ public class Icecube extends GameObject {
 		this.amountOfParts = this.parts.size();
 	}
 
+	public void addAllParts() {
+		if( availableParts == null ) {
+			setupStaticResources();
+		}
+		for( Part part : availableParts ) {
+			addPart(part);
+		}
+	}
+	
+	public ArrayList<Part> getParts() {
+		return parts;
+	}
+	
 	public boolean isBroken() {
 		return this.broken;
 	}
@@ -170,7 +172,7 @@ public class Icecube extends GameObject {
 		cube.setPosition(getX(), getY());
 		cube.setGame(getGame());
 
-		for( Part part : availableParts ) {
+		for( Part part : this.parts ) {
 			cube.addPart(part);
 		}
 
@@ -201,11 +203,6 @@ public class Icecube extends GameObject {
 	public void destroyAction() {
 		setCanBeRemoved(true);
 	}
-
-//	@Override
-//	protected Type setType() {
-//		return Type.ROCK;
-//	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
@@ -240,18 +237,10 @@ public class Icecube extends GameObject {
 
 	@Override
 	protected void writeValues(Json json) {
-		json.writeValue("parts", "all");
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
-		if( jsonData.name().contentEquals("parts") && 
-				(jsonData.asString()).contentEquals("all") ) {
-			//Initial object contains all parts
-			for( Part part : availableParts ) {
-				addPart(part);
-			}
-		}
 	}
 
 	public static void playRocksHitSound() {
@@ -334,7 +323,7 @@ public class Icecube extends GameObject {
 		game.deleteGameObject(this);
 	}
 
-	private class Part {
+	public class Part {
 		String name;
 		Sprite sprite;
 
