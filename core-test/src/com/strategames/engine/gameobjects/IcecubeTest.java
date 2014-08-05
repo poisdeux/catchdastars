@@ -1,20 +1,29 @@
 package com.strategames.engine.gameobjects;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
+
+import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameTestClass;
 import com.strategames.engine.gameobjects.Icecube.Part;
 
 
 
 public class IcecubeTest extends GameObjectTestAbstractClass {
 
+	private World world;
+	
 	@Override
 	GameObject createGameObject() {
 		Icecube o = new Icecube();
-		new World(new Vector2(0f, -1f), true); // needed to make sure box2d libraries are loaded
+		this.world = new World(new Vector2(0f, -1f), true); // needed to make sure box2d libraries are loaded
 		o.addAllParts();
 		return o;
 	}
@@ -29,7 +38,42 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	}
 	
 	//TODO add test for splitobject
+	@Test
 	public void splitObjectTest() {
+		Icecube icecube = (Icecube) getGameObject();
+		Game game = new GameTestClass();
+		game.setWorld(this.world);
+		icecube.setGame(game);
+		icecube.setup();
+		ArrayList<Part> parts = icecube.getParts();
+		if( parts == null ) {
+			fail("icecube has no parts");
+		}
+		testPart(parts.get(0), icecube);
+	}
+	
+	private void testPart(Part part, Icecube icecube) {
+		if( part == null ) {
+			return;
+		}
+		Icecube icecube1 = new Icecube();
+		Icecube icecube2 = new Icecube();
+		icecube.splitObject(part, icecube1, icecube2);
+		ArrayList<Part> icecube1Parts = icecube1.getParts();
+		if( icecube1Parts == null ) {
+			fail("icecube1 has no parts");
+		}
+		assertTrue("Icecube1 should contain a single part", icecube1Parts.size() == 1);
+		assertTrue("Icecube1 should contain part="+part+" but contains part="+icecube1Parts.get(0), icecube1Parts.get(0) == part);
 		
+		ArrayList<Part> icecube2Parts = icecube2.getParts();
+		if( icecube2Parts == null ) {
+			fail("icecube2 has no parts");
+		}
+		assertTrue("Icecube2 should contain remaining parts", icecube2Parts.size() == (icecube.getParts().size() - 1));
+			
+		if(icecube2Parts.size() > 1) {
+			testPart(icecube2Parts.get(0), icecube2);
+		}
 	}
 }

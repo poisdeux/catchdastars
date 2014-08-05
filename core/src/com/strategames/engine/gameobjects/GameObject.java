@@ -52,7 +52,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	private boolean isMenuItem;
 
-	protected Game game;
+	private Game game;
 
 	protected Vector2 size = new Vector2();
 

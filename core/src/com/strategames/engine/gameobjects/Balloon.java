@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
@@ -100,7 +101,8 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		if( super.game.getGameState() == game.GAME_STATE_RUNNING ) {
+		Game game = getGame();
+		if( game.getGameState() == game.GAME_STATE_RUNNING ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
 			super.body.applyForce(getGame().getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
 		}
