@@ -715,7 +715,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public void onLevelLoaded(Level level) {
-		this.game.initialize();
+		this.game.setup(this);
 		super.show();
 	}
 }

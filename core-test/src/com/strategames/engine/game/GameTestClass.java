@@ -49,7 +49,7 @@ public class GameTestClass extends Game {
 	}
 
 	@Override
-	public void initialize() {
+	public void setup() {
 		// TODO Auto-generated method stub
 		
 	}

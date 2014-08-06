@@ -110,9 +110,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public void initialize() {
+	public void setup(AbstractScreen screen) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
+		super.setup(screen);
+		
 		Level level = getLevel();
 		if( level == null ) {
 			return;
@@ -126,11 +128,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		//Reset world
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-
-		//Make sure Box2D world is not updated while we add and remove objects
-		pauseGame();
-
-		//		this.stageActors.clear();
 
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -258,7 +255,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(new StarBlue());
 		objects.add(new StarBlue());
 		objects.add(new StarYellow());
-		objects.add(new Icecube());
+		Icecube icecube = new Icecube();
+		icecube.addAllParts();
+		objects.add(icecube);
 		objects.add(new WallHorizontal());
 		objects.add(new WallVertical());
 

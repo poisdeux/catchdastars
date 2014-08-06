@@ -42,7 +42,7 @@ public class Icecube extends GameObject {
 
 	private boolean broken;
 
-	private Part breakOfPart;
+	private Part breakOfPart = null;
 
 	private Color colorActor;
 
@@ -105,6 +105,17 @@ public class Icecube extends GameObject {
 		return parts;
 	}
 	
+	/**
+	 * Returns the parts that are available for all pieces.
+	 * <br/>
+	 * Note that this is not the list of parts used by a piece.
+	 * You can get the used parts using {@link #getParts()}
+	 * @return arraylist containing the available parts to all pieces
+	 */
+	public static ArrayList<Part> getAvailableParts() {
+		return availableParts;
+	}
+	
 	public boolean isBroken() {
 		return this.broken;
 	}
@@ -122,7 +133,7 @@ public class Icecube extends GameObject {
 		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
 
 		Body body = world.createBody(bodyDef);
-
+		
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
@@ -131,7 +142,6 @@ public class Icecube extends GameObject {
 		}
 
 		body.setSleepingAllowed(false);
-
 
 		return body;
 	}
@@ -143,6 +153,7 @@ public class Icecube extends GameObject {
 		setPosition(v.x, v.y);
 		setRotation(rotation);
 
+		Gdx.app.log("Icecube","draw: "+this+", this.amountOfParts="+this.amountOfParts);
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -155,10 +166,9 @@ public class Icecube extends GameObject {
 			Icecube icecube1 = new Icecube();
 			Icecube icecube2 = new Icecube();
 			splitObject(this.breakOfPart, icecube1, icecube2);
-			Level level = getGame().getLevel();
-			level.addGameObject(icecube1);
-			level.addGameObject(icecube2);
-			
+			Game game = getGame();
+			game.addGameObject(icecube1);
+			game.addGameObject(icecube2);
 		}
 
 		//		drawBoundingBox(batch);
@@ -218,7 +228,7 @@ public class Icecube extends GameObject {
 		
 		if( maxImpulse > 10 ) { // prevent counting rocks hitting when they are lying on top of eachother
 			//			game.rockHit(maxImpulse);
-			if( maxImpulse > 20 ) { // break object
+			if( ( maxImpulse > 20 ) && ( this.amountOfParts > 1 ) ) { // break object
 				//Get colliding fixture for this object
 				Fixture fixture;
 				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
@@ -228,7 +238,7 @@ public class Icecube extends GameObject {
 				}
 				Integer userData = (Integer) fixture.getUserData();
 				if( userData != null ) {
-					this.breakOfPart = this.parts.get(userData);
+					this.breakOfPart = this.parts.get(userData.intValue());
 				}
 
 				rocksHit++;
@@ -291,11 +301,6 @@ public class Icecube extends GameObject {
 	 * @param icecube2 gameobject that will get all remaining parts
 	 */
 	public void splitObject(Part part, Icecube icecube1, Icecube icecube2) {
-		// Do not break if object consists of a single part
-		if( this.amountOfParts <= 1 ) {
-			return;
-		}
-
 		Game game = getGame();
 		
 		Vector2 v = super.body.getPosition();
@@ -308,7 +313,7 @@ public class Icecube extends GameObject {
 		icecube1.setBroken(true);
 		icecube1.setGame(game);
 		icecube1.setup();
-
+		
 		// Create new object with the pieces that are left
 		icecube2.setPosition(v.x, v.y);
 		icecube2.setRotation(rotation);
@@ -320,7 +325,7 @@ public class Icecube extends GameObject {
 		icecube2.setBroken(true);
 		icecube2.setGame(game);
 		icecube2.setup();
-
+		
 		setCanBeRemoved(true);
 		game.deleteGameObject(this);
 	}

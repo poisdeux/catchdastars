@@ -63,6 +63,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private int totalScore;
 	
+	private Stage stageActors;
+	
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -294,6 +296,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
 	}
+	
+	public void addGameObject(GameObject object) {
+		this.stageActors.addActor(object);
+	}
 
 	public void update(float delta, Stage stage) {
 		if( this.gameState == GAME_STATE_RUNNING ) {
@@ -415,5 +421,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	abstract public ArrayList<GameObject> getAvailableGameObjects();
 
-	abstract public void initialize();
+	/**
+	 * Called by AbstractScreen when level is loaded and ready to start the game
+	 * @param screen that contains the stage with actors
+	 */
+	public void setup(AbstractScreen screen) {
+		this.stageActors = screen.getStageActors();
+	}
 }

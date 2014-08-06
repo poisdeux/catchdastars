@@ -116,7 +116,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 			return;
 		}
 
-		game.initialize();
+		game.setup(this);
 
 		this.levelImage.addAction(sequence(new Action() {
 
