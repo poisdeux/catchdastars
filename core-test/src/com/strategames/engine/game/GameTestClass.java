@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.screens.ScreenTestClass;
 
 public class GameTestClass extends Game {
@@ -49,7 +50,7 @@ public class GameTestClass extends Game {
 	}
 
 	@Override
-	public void setup() {
+	public void setup(AbstractScreen screen) {
 		// TODO Auto-generated method stub
 		
 	}

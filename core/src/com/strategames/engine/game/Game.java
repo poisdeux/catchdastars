@@ -297,6 +297,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		this.gameObjectsForDeletion.add(object);
 	}
 	
+	/**
+	 * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
+	 * to be deleted
+	 * @return ArrayList<GameObject>
+	 */
+	public ArrayList<GameObject> getGameObjectsForDeletion() {
+		return gameObjectsForDeletion;
+	}
+	
 	public void addGameObject(GameObject object) {
 		this.stageActors.addActor(object);
 	}

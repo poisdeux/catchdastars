@@ -23,8 +23,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.engine.utils.Level;
-import com.strategames.engine.utils.Mutex;
 import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
 
@@ -35,7 +33,6 @@ import com.strategames.engine.utils.Textures;
  */
 public class Icecube extends GameObject {
 	private final static float WIDTH = 0.30f; 
-
 
 	private ArrayList<Part> parts;
 	private int amountOfParts;
@@ -60,9 +57,9 @@ public class Icecube extends GameObject {
 	private static long prevPlayRocksRolling;
 
 	private static Sounds sounds = Sounds.getInstance();
-	
+
 	private static Textures textures = Textures.getInstance();
-	
+
 	/**
 	 * New velocity is calculated as follows by Box2D
 	 * 
@@ -81,7 +78,7 @@ public class Icecube extends GameObject {
 		this.parts = new ArrayList<Icecube.Part>();
 		this.colorActor = getColor();
 	}
-	
+
 	@Override
 	protected TextureRegion createTextureRegion() {
 		return Textures.getInstance().icecube; 
@@ -100,11 +97,11 @@ public class Icecube extends GameObject {
 			addPart(part);
 		}
 	}
-	
+
 	public ArrayList<Part> getParts() {
 		return parts;
 	}
-	
+
 	/**
 	 * Returns the parts that are available for all pieces.
 	 * <br/>
@@ -115,7 +112,7 @@ public class Icecube extends GameObject {
 	public static ArrayList<Part> getAvailableParts() {
 		return availableParts;
 	}
-	
+
 	public boolean isBroken() {
 		return this.broken;
 	}
@@ -123,17 +120,20 @@ public class Icecube extends GameObject {
 	public void setBroken(boolean broken) {
 		this.broken = broken;
 	}
+	
+	public Part getBreakOfPart() {
+		return breakOfPart;
+	}
 
 	@Override
 	protected Body setupBox2D() {
-
 		World world = getGame().getWorld();
 
 		bodyDef.position.set(getX(), getY());
 		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
 
 		Body body = world.createBody(bodyDef);
-		
+
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
@@ -153,7 +153,6 @@ public class Icecube extends GameObject {
 		setPosition(v.x, v.y);
 		setRotation(rotation);
 
-		Gdx.app.log("Icecube","draw: "+this+", this.amountOfParts="+this.amountOfParts);
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -192,12 +191,12 @@ public class Icecube extends GameObject {
 
 		return cube;
 	}
-	
+
 	@Override
 	protected GameObject newInstance() {
 		return new Icecube();
 	}
-	
+
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
 		return null;
@@ -220,28 +219,41 @@ public class Icecube extends GameObject {
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
-
 		float maxImpulse = 0.0f;
 
 		float[] impulses = impulse.getNormalImpulses();
 		maxImpulse = impulses[0];
-		
+
 		if( maxImpulse > 10 ) { // prevent counting rocks hitting when they are lying on top of eachother
 			//			game.rockHit(maxImpulse);
-			if( ( maxImpulse > 20 ) && ( this.amountOfParts > 1 ) ) { // break object
-				//Get colliding fixture for this object
-				Fixture fixture;
-				if(((GameObject) contact.getFixtureA().getBody().getUserData()) == this) {
-					fixture = contact.getFixtureA();
-				} else {
-					fixture = contact.getFixtureB();
-				}
-				Integer userData = (Integer) fixture.getUserData();
-				if( userData != null ) {
-					this.breakOfPart = this.parts.get(userData.intValue());
-				}
 
-				rocksHit++;
+			if( ( maxImpulse > 20 ) && ( this.amountOfParts > 1 ) ) { // break object
+				if( this.breakOfPart == null ) {
+
+					Body body = getBody();
+					//Get colliding fixture for this object
+					Fixture fixture = contact.getFixtureA();
+					if( fixture.getBody() != body ) {
+						fixture = contact.getFixtureB();
+					}
+
+					/**
+					 * fixtures get reused and sometimes seem to be available in the wrong object
+					 * (fixtures from an old object which has not yet been removed)
+					 */
+					if( body.getFixtureList().contains(fixture, true) ) {
+						Integer userData = (Integer) fixture.getUserData();
+						if( userData != null ) {
+							try {
+								this.breakOfPart = this.parts.get(userData.intValue());
+							} catch ( IndexOutOfBoundsException e ) {
+								Gdx.app.log("Icecube", "handleCollision: array out of bounds: this="+this+"fixture="+fixture);
+								throw e;
+							}
+						}
+						rocksHit++;
+					}
+				}
 			}
 			rocksHit++;
 			rocksHitTotalImpulse += maxImpulse;
@@ -302,10 +314,10 @@ public class Icecube extends GameObject {
 	 */
 	public void splitObject(Part part, Icecube icecube1, Icecube icecube2) {
 		Game game = getGame();
-		
+
 		Vector2 v = super.body.getPosition();
 		float rotation = getRotation();
-		
+
 		// Create new object with piece that broke off
 		icecube1.setPosition(v.x, v.y);
 		icecube1.setRotation(rotation);
@@ -313,7 +325,7 @@ public class Icecube extends GameObject {
 		icecube1.setBroken(true);
 		icecube1.setGame(game);
 		icecube1.setup();
-		
+
 		// Create new object with the pieces that are left
 		icecube2.setPosition(v.x, v.y);
 		icecube2.setRotation(rotation);
@@ -325,7 +337,7 @@ public class Icecube extends GameObject {
 		icecube2.setBroken(true);
 		icecube2.setGame(game);
 		icecube2.setup();
-		
+
 		setCanBeRemoved(true);
 		game.deleteGameObject(this);
 	}
