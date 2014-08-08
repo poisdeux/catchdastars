@@ -142,7 +142,9 @@ public class Icecube extends GameObject {
 		Vector2 v = super.body.getPosition();
 		setPosition(v.x, v.y);
 		setRotation(rotation);
-
+		
+//		float rotation = getRotation();
+		
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();

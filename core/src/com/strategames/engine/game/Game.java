@@ -6,11 +6,16 @@ import java.util.Stack;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
@@ -42,6 +47,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public static final float GRAVITY = 9.81f;
 
+	private float accumulator;
+
 	private ArrayList<GameObject> gameObjectsForDeletion;
 
 	private AssetManager manager;
@@ -56,15 +63,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private ExportImport exportimport;
 	private MusicSelector musicSelector;
-	
+
 	private String title;
 
 	private Stack<Screen> backStack;
 
 	private int totalScore;
-	
+
 	private Stage stageActors;
-	
+
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -158,17 +165,17 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void setMusicSelector(MusicSelector musicSelector) {
 		this.musicSelector = musicSelector;
 	}
-	
+
 	public void selectMusicFiles() {
 		if( this.musicSelector != null ) {
 			this.musicSelector.selectMusic(this);
 		}
 	}
-	
+
 	public MusicSelector getMusicSelector() {
 		return musicSelector;
 	}
-	
+
 	public void addToBackstack(Screen screen) {
 		this.backStack.add(screen);
 	}
@@ -296,7 +303,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
 	}
-	
+
 	/**
 	 * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
 	 * to be deleted
@@ -305,7 +312,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public ArrayList<GameObject> getGameObjectsForDeletion() {
 		return gameObjectsForDeletion;
 	}
-	
+
 	public void addGameObject(GameObject object) {
 		this.stageActors.addActor(object);
 	}
@@ -315,18 +322,53 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 		}
 
-		if( ! this.world.isLocked() ) {
-			ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
-			for (GameObject object : this.gameObjectsForDeletion ) {
-				if( object.canBeRemoved() ) {
-					if( object.remove() ) {
-						object.clear();
-					}
-				} else {
-					notDeletedGameObjects.add(object);
+		ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
+		for (GameObject object : this.gameObjectsForDeletion ) {
+			if( object.canBeRemoved() ) {
+				if( object.remove() ) {
+					object.clear();
+				}
+			} else {
+				notDeletedGameObjects.add(object);
+			}
+		}
+		this.gameObjectsForDeletion = notDeletedGameObjects;
+
+	}
+
+	private void fixedTimeStepInterpolated(float delta) {
+		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
+			delta = 0.25f;
+		}
+		accumulator += delta;
+
+		while (accumulator >= UPDATE_FREQUENCY_SECONDS) {
+			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+			accumulator -= UPDATE_FREQUENCY_SECONDS;
+
+			interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS);
+		}
+	}
+
+	private void interpolateGameObjectsCurrentPosition(float alpha) {
+		Array<Actor> actors = stageActors.getActors();
+		int size = actors.size;
+
+		for(int i = 0; i < size; i++) {
+			GameObject gameObject = (GameObject) actors.get(i);
+			Body body = gameObject.getBody();
+			if (body != null) {
+				if (body.getType() == BodyDef.BodyType.DynamicBody ) {
+
+					Vector2 currentPosition = body.getPosition();
+
+					//---- interpolate: currentState*alpha + previousState * ( 1.0 - alpha )
+					gameObject.setX( currentPosition.x * alpha + gameObject.getX() * (1.0f - alpha) );
+					gameObject.setY( currentPosition.y * alpha + gameObject.getY() * (1.0f - alpha) );
+
+					gameObject.setRotation( (MathUtils.radiansToDegrees * body.getAngle()) * alpha + gameObject.getRotation() * (1.0f - alpha) );
 				}
 			}
-			this.gameObjectsForDeletion = notDeletedGameObjects;
 		}
 	}
 
@@ -403,7 +445,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		setScreen(screen);
 		addToBackstack(screen);
 	}
-	
+
 	public void showSettings() {
 		Screen screen = new SettingsScreen(this);
 		setScreen(screen);
@@ -423,7 +465,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		MusicPlayer player = MusicPlayer.getInstance();
 		player.setLibrary(this.musicSelector.getLibrary());
 	}
-	
+
 	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
