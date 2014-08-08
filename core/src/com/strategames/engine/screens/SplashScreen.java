@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.MusicPlayer;
-import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
 
 public class SplashScreen extends AbstractScreen {
@@ -55,7 +55,7 @@ public class SplashScreen extends AbstractScreen {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Sounds.getInstance().addToAssetManager(assetManager);
+//		Sounds.getInstance().addToAssetManager(assetManager);
 		
 		stage.addActor( this.splashImage );
 		

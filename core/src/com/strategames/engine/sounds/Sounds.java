@@ -1,10 +1,14 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.sounds;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.strategames.engine.utils.Settings;
 
 public class Sounds {
 
+	// TODO Sound class takes up too much memory which causes problems during
+	// gameplay. We should load sounds on demand instead of loading all at startup
+	
 	//We use static class as class loading is thread safe
 	static class SingletonHolder {
 		private static final Sounds INSTANCE = new Sounds();

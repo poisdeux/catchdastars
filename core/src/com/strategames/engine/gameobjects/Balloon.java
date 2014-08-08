@@ -16,10 +16,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
-import com.strategames.engine.utils.Sounds;
 
 abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
@@ -39,7 +39,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	/**
 	 * Following value was determined empirically
 	 */
-	private static final float maxImpulse = 0.05f / maxVolume;
+	private static final float maxImpulse = 0.06f / maxVolume;
 
 	protected Balloon() {
 		super(new Vector2(WIDTH, -1f));
@@ -92,9 +92,9 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
-		Vector2 v = super.body.getPosition();
-		setPosition(v.x, v.y);
+//		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
+//		Vector2 v = super.body.getPosition();
+//		setPosition(v.x, v.y);
 		super.draw(batch, parentAlpha);
 	}
 
@@ -160,7 +160,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		float[] impulses = impulse.getNormalImpulses();
-		if( impulses[0] > 0.01 ) {
+		if( impulses[0] > 0.02 ) {
 			sounds.play(sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
 		}
 	}

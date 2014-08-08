@@ -13,9 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Settings;
-import com.strategames.engine.utils.Sounds;
 
 public class SettingsScreen extends AbstractScreen {
 

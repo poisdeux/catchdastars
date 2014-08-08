@@ -22,7 +22,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.ChalkLine;
 import com.strategames.engine.gameobjects.ChalkLine.ChalkLineAnimationListener;
-import com.strategames.engine.utils.Sounds;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.Textures;
 
 public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {

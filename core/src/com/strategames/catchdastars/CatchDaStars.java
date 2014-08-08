@@ -104,9 +104,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 			this.world.setGravity(gravityVector);
 		}
 
-		if( soundDelay-- < 0 ) {
+		soundDelay += delta;
+		if( soundDelay > 1 ) {
 			Icecube.playRocksHitSound();
-			soundDelay = 10;
+			soundDelay = 0;
 		}
 		
 		super.update(delta, stage);

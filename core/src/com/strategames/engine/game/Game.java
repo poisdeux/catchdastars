@@ -27,11 +27,11 @@ import com.strategames.engine.screens.LevelScreen;
 import com.strategames.engine.screens.MainMenuScreen;
 import com.strategames.engine.screens.SettingsScreen;
 import com.strategames.engine.screens.SplashScreen;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
-import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
 
 abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
@@ -319,7 +319,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public void update(float delta, Stage stage) {
 		if( this.gameState == GAME_STATE_RUNNING ) {
-			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+//			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+			fixedTimeStepInterpolated(delta);
 		}
 
 		ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
@@ -345,9 +346,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		while (accumulator >= UPDATE_FREQUENCY_SECONDS) {
 			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 			accumulator -= UPDATE_FREQUENCY_SECONDS;
-
-			interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS);
 		}
+		interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS);
 	}
 
 	private void interpolateGameObjectsCurrentPosition(float alpha) {

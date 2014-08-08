@@ -21,9 +21,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.engine.utils.Sounds;
 import com.strategames.engine.utils.Textures;
 
 /**
