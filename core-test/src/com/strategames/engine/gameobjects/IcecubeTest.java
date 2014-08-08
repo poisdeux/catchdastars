@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -120,7 +121,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 
 			results.add(new ArrayList<Icecube>());
 		}
-		
+
 		CountDownLatch startLatch = new CountDownLatch(amountOfIcecubes);
 		CountDownLatch stopLatch = new CountDownLatch(amountOfIcecubes);
 
@@ -128,23 +129,23 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			final Icecube icecube = icecubes.get(i);
 			final ArrayList<Icecube> result = results.get(i);
 			breakObject(icecube, result);
-			
-//			SynchronizedThread thread = new SynchronizedThread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					breakObject(icecube, result);
-//				}
-//			}, startLatch, stopLatch);
-//			thread.start();
+
+//						SynchronizedThread thread = new SynchronizedThread(new Runnable() {
+//			
+//							@Override
+//							public void run() {
+//								breakObject(icecube, result);
+//							}
+//						}, startLatch, stopLatch);
+//						thread.start();
 		}
-		
-//		try {
-//			stopLatch.await(2, TimeUnit.SECONDS);
-//		} catch (InterruptedException e) {
-//			fail("Threads did not finish within timeout");
-//		}
-		
+//
+//				try {
+//					stopLatch.await(2, TimeUnit.SECONDS);
+//				} catch (InterruptedException e) {
+//					fail("Threads did not finish within timeout");
+//				}
+
 		assertBreakObjectResults(results);
 	}
 
@@ -168,26 +169,62 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 				}
 				fail("result "+resultIndex+" parts not found: "+partsInfo);
 			}
-			
+
 		}
 	}
-	
+
+	@Test
+	public void testFixture() {
+		int amountOfIcecubes = 10;
+		Game game = new GameTestClass();
+		game.setWorld(this.world);
+		ArrayList<Icecube> icecubes = new ArrayList<Icecube>();
+		for(int i = 0; i < amountOfIcecubes; i++) {
+			Icecube icecube = new Icecube();
+			icecube.addAllParts();
+			icecube.setGame(game);
+			icecube.setup();
+			icecubes.add(icecube);
+		}
+
+		for( Icecube icecube : icecubes ) {
+			Body body = icecube.getBody();
+			Array<Fixture> fixtures = body.getFixtureList();
+			for(Fixture fixture : fixtures) {
+				assertTrue("Body of fixture="+fixture+" not equal to body in gameobject", fixture.getBody() == body);
+			}
+		}
+	}
+
 	private void breakObject(Icecube icecube, ArrayList<Icecube> result) {
 		MyContact myContact = new MyContact();
 		MyContactImpulse impulse = new MyContactImpulse();
 
-		while(icecube.getParts().size() > 0) {
-			myContact.setFixtureA(icecube.getBody().getFixtureList().get(0));
+		while(icecube.getParts().size() > 1) {
+			
+			Body body = icecube.getBody();
+			Array<Fixture> fixtures = body.getFixtureList();
+			myContact.setFixtureA(fixtures.get(0));
+			Fixture fixture = myContact.getFixtureA();
+			assertTrue("Body of fixture="+fixture+" not equal to body in icecube", fixture.getBody() == body);
+			
+			assertNotNull(myContact.getFixtureA().getUserData());
+			ArrayList<Part> parts = icecube.getParts();
+			Part part = parts.get((Integer) myContact.getFixtureA().getUserData());
+			assertNotNull(part);
+			
 			icecube.handleCollision(myContact, impulse, null);
-			Icecube icecube1 = new Icecube();
-			Icecube icecube2 = new Icecube();
 			Part breakOffPart = icecube.getBreakOfPart();
 			assertNotNull("breakOffPart is null for "+icecube, breakOffPart);
+			
+			Icecube icecube1 = new Icecube();
+			Icecube icecube2 = new Icecube();
 			icecube.splitObject(breakOffPart, icecube1, icecube2);
 
 			icecube.deleteBody();
 			icecube.remove();
-
+			this.world.step(1/60f, 2, 6);
+			
 			icecube = icecube2;
 
 			result.add(icecube1);

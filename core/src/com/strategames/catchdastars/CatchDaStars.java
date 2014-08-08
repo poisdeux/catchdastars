@@ -62,6 +62,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private Box2DDebugRenderer debugRenderer;
 
+	private int soundDelay = 0;
+	
 	public CatchDaStars() {
 		setTitle("Catch Da Stars");
 		this.redCollectables = new Collectable();
@@ -102,8 +104,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 			this.world.setGravity(gravityVector);
 		}
 
-		Icecube.playRocksHitSound();
-
+		if( soundDelay-- < 0 ) {
+			Icecube.playRocksHitSound();
+			soundDelay = 10;
+		}
+		
 		super.update(delta, stage);
 
 		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);

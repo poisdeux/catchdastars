@@ -60,17 +60,7 @@ public class Icecube extends GameObject {
 
 	private static Textures textures = Textures.getInstance();
 
-	/**
-	 * New velocity is calculated as follows by Box2D
-	 * 
-	 * velocity += Game.UPDATE_FREQUENCY_SECONDS * (Game.GRAVITY + ((1f/this.balloon.getMass()) * (this.upwardLift * Game.GRAVITY)));
-	 * velocity *= 1.0f - (Game.UPDATE_FREQUENCY_SECONDS * bd.linearDamping);
-	 * 
-	 * Where bd.linearDamping is set in setupBox2D()
-	 * Following value of 28.77593 was determined empirically by checking maximum speed of icecube
-	 * in game
-	 */
-	public static float maxVelocitySquared = 828.05414f;
+	public static float maximumImpulse = 700f;
 
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
@@ -224,10 +214,12 @@ public class Icecube extends GameObject {
 		float[] impulses = impulse.getNormalImpulses();
 		maxImpulse = impulses[0];
 
-		if( maxImpulse > 10 ) { // prevent counting rocks hitting when they are lying on top of eachother
-			//			game.rockHit(maxImpulse);
-
-			if( ( maxImpulse > 20 ) && ( this.amountOfParts > 1 ) ) { // break object
+		if( maxImpulse > 100 ) { // prevent counting rocks hitting when they are lying on top of eachother
+			rocksHit++;
+			rocksHitTotalImpulse += maxImpulse;
+			
+			if( ( maxImpulse > 200 ) && ( this.amountOfParts > 1 ) ) { // break object
+				
 				if( this.breakOfPart == null ) {
 
 					Body body = getBody();
@@ -248,15 +240,12 @@ public class Icecube extends GameObject {
 								this.breakOfPart = this.parts.get(userData.intValue());
 							} catch ( IndexOutOfBoundsException e ) {
 								Gdx.app.log("Icecube", "handleCollision: array out of bounds: this="+this+"fixture="+fixture);
-								throw e;
 							}
 						}
 						rocksHit++;
 					}
 				}
 			}
-			rocksHit++;
-			rocksHitTotalImpulse += maxImpulse;
 		}
 	}
 
@@ -273,13 +262,15 @@ public class Icecube extends GameObject {
 			return;
 		}
 
-		long epoch = System.currentTimeMillis();
-		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
-			return;
-		}
-		prevPlayRocksRolling = epoch;
+//		long epoch = System.currentTimeMillis();
+//		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
+//			rocksHit = 0;
+//			rocksHitTotalImpulse = 0;
+//			return;
+//		}
+//		prevPlayRocksRolling = epoch;
 
-		float volume = rocksHitTotalImpulse / (maxVelocitySquared * rocksHit);
+		float volume = rocksHitTotalImpulse / (maximumImpulse * rocksHit);
 		if( rocksHit > 2 ) {
 			sounds.play(sounds.rockHit, volume);
 			sounds.play(sounds.rockBreak, volume);
