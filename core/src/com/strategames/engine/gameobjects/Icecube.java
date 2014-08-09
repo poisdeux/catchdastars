@@ -21,7 +21,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.sounds.Sounds;
+import com.strategames.engine.sounds.RockBreakSound;
+import com.strategames.engine.sounds.RockHitSound;
+import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Textures;
@@ -56,8 +58,9 @@ public class Icecube extends GameObject {
 
 	private static long prevPlayRocksRolling;
 
-	private static Sounds sounds = Sounds.getInstance();
-
+	private static RockBreakSound rockBreakSound = new RockBreakSound();
+	private static RockHitSound rockHitSound = new RockHitSound();
+	
 	private static Textures textures = Textures.getInstance();
 
 	public static float maximumImpulse = 700f;
@@ -259,6 +262,15 @@ public class Icecube extends GameObject {
 	protected void readValue(JsonValue jsonData) {
 	}
 
+	/**
+	 * Use this to reload sounds after sounds were disposed
+	 * using {@link SoundEffect#releaseAll()} or {@link SoundEffect#release()}
+	 */
+	public static void loadSounds() {
+		rockHitSound.load();
+		rockBreakSound.load();
+	}
+	
 	public static void playRocksHitSound() {
 		if( rocksHit == 0 ) {
 			return;
@@ -274,10 +286,10 @@ public class Icecube extends GameObject {
 
 		float volume = rocksHitTotalImpulse / (maximumImpulse * rocksHit);
 		if( rocksHit > 2 ) {
-			sounds.play(sounds.rockHit, volume);
-			sounds.play(sounds.rockBreak, volume);
+			rockHitSound.play(volume);
+			rockBreakSound.play(volume);
 		} else {
-			sounds.play(sounds.rockHit, volume);
+			rockHitSound.play(volume);
 		}
 
 		rocksHit = 0;

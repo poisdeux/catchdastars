@@ -27,7 +27,6 @@ import com.strategames.engine.screens.LevelScreen;
 import com.strategames.engine.screens.MainMenuScreen;
 import com.strategames.engine.screens.SettingsScreen;
 import com.strategames.engine.screens.SplashScreen;
-import com.strategames.engine.sounds.Sounds;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
@@ -145,7 +144,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	@Override
 	public void dispose() {
 		super.dispose();
-		Sounds.getInstance().dispose(getManager());
 		try {
 			Textures.getInstance().dispose();
 		} catch (Exception e) {

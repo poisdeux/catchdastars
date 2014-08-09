@@ -7,7 +7,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -22,7 +21,11 @@ import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.ChalkLine;
 import com.strategames.engine.gameobjects.ChalkLine.ChalkLineAnimationListener;
-import com.strategames.engine.sounds.Sounds;
+import com.strategames.engine.sounds.CashRegisterOpenSound;
+import com.strategames.engine.sounds.DrawChalkLineShort1Sound;
+import com.strategames.engine.sounds.DrawChalkLineShort2Sound;
+import com.strategames.engine.sounds.DrawChalkLineSound;
+import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;
 
 public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
@@ -48,7 +51,10 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 
 	private float IMAGEHEIGHT = Game.convertWorldToScreen(0.60f);
 
-	private Sounds sounds;
+	private DrawChalkLineShort1Sound drawChalkLineShort1Sound = new DrawChalkLineShort1Sound();
+	private DrawChalkLineShort2Sound drawChalkLineShort2Sound = new DrawChalkLineShort2Sound();
+	private DrawChalkLineSound drawChalkLineSound = new DrawChalkLineSound();
+	private CashRegisterOpenSound cashRegisterOpenSound = new CashRegisterOpenSound();
 	
 	/**
 	 * Shows a scoreboard animation
@@ -66,8 +72,6 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 		
 		setLeftButton("Quit");
 		setRightButton("Next level");
-		
-		this.sounds = Sounds.getInstance();
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {
@@ -111,7 +115,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 					350f, 
 					this.animPosition.y, 420, LevelCompleteDialog.this);
 			super.stage.addActor(line);
-			this.sounds.play(this.sounds.drawChalkLine);
+			drawChalkLineSound.play();
 			this.chalkLines.add(line);
 			break;
 		case 2:
@@ -119,7 +123,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y, 
 					this.animPosition.x + 50f, this.animPosition.y, 220, this);
 			super.stage.addActor(line);
-			this.sounds.play(this.sounds.drawChalkLineShort2);
+			drawChalkLineShort2Sound.play();
 			this.chalkLines.add(line);
 			break;
 		case 3:
@@ -127,7 +131,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			line = new ChalkLine(this.animPosition.x, this.animPosition.y + 25f, 
 					this.animPosition.x, this.animPosition.y - 25f, 210, this);
 			super.stage.addActor(line);
-			this.sounds.play(this.sounds.drawChalkLineShort1);
+			drawChalkLineShort1Sound.play();
 			this.chalkLines.add(line);
 			break;
 		case 4:
@@ -149,7 +153,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 
 		final int increment = scoreItem.getScorePerGameObject();
 		final int amount = scoreItem.getAmount() * increment;
-		final Sound incrementSound = this.sounds.getSoundForIncrement(increment);
+		final SoundEffect incrementSound = SoundEffect.getSoundForIncrement(increment);
 
 		Drawable drawable = this.scoreItems.get(number).getDrawable();
 		Image image = new Image(drawable);
@@ -182,7 +186,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 							if( delayCount < 1 ) {
 								label.setText(String.valueOf(count));
 								if( count > 0 ) {
-									sounds.play(incrementSound);
+									incrementSound.play();
 								}
 								count += increment;
 								delayCount = delay;
@@ -236,7 +240,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 
 		super.stage.addActor(this.cashRegister);
 		
-		this.sounds.play(this.sounds.cashRegisterOpen);
+		cashRegisterOpenSound.play();
 	}
 
 	private void calculateTotalAnimation(final int number, final float x, final float y) {
@@ -250,7 +254,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 			public boolean act(float delta) {
 				int amount = scoreItem.getAmount() * scoreItem.getScorePerGameObject();
 				if( amount > 0 ) {
-					sounds.play(sounds.getSoundForIncrement(amount));
+					SoundEffect.getSoundForIncrement(amount).play();
 					totalScore += amount;
 					totalScoreLabel.setText(String.valueOf(totalScore));
 				}

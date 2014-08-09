@@ -20,7 +20,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.sounds.Sounds;
+import com.strategames.engine.sounds.GlassSound;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -32,6 +32,8 @@ abstract public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
 
+	private GlassSound glassSound = new GlassSound();
+	
 	protected Star() {
 		super(new Vector2(WIDTH, -1f));
 		setCollectible(true);
@@ -116,8 +118,7 @@ abstract public class Star extends GameObject {
 
 	@Override
 	public void destroyAction() {
-		Sounds sounds = Sounds.getInstance();
-		sounds.play(sounds.glass);
+		this.glassSound.play();
 		addAction( sequence( parallel(
 				fadeOut( 0.8f ) , repeat(2, sequence( rotateTo(5f, 0.2f, Interpolation.linear), rotateTo(-5f, 0.2f, Interpolation.linear)) )),
 				new Action() {

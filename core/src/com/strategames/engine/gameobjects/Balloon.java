@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,7 +15,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.sounds.Sounds;
+import com.strategames.engine.sounds.BalloonBounceSound;
+import com.strategames.engine.sounds.BalloonPopSound;
+import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
@@ -32,8 +33,9 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
 
-	private static Sounds sounds = Sounds.getInstance();
-
+	private BalloonPopSound soundBalloonPop = new BalloonPopSound();
+	private BalloonBounceSound soundBalloonBounce = new BalloonBounceSound();
+	
 	private static final float maxVolume = 0.5f;
 
 	/**
@@ -153,7 +155,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 
 	@Override
 	public void destroyAction() {
-		sounds.play(sounds.balloonPop, 1);
+		this.soundBalloonPop.play();
 		setCanBeRemoved(true);
 	}
 
@@ -161,7 +163,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		float[] impulses = impulse.getNormalImpulses();
 		if( impulses[0] > 0.02 ) {
-			sounds.play(sounds.balloonBounce, (float) (impulses[0] / maxImpulse));
+			this.soundBalloonBounce.play((float) (impulses[0] / maxImpulse));
 		}
 	}
 
