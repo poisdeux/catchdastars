@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.sounds.SoundEffect;
 
 /**
  * TODO create a screen manager to reduce the amount of new objects created when a new screen must be shown
@@ -138,6 +139,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	{
 		// dispose the resources by default
 		//		dispose();
+		SoundEffect.releaseAll();
 	}
 
 	@Override

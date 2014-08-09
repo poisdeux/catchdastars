@@ -20,7 +20,7 @@ abstract public class SoundEffect {
 		}
 	}
 
-	public void releaseAll() {
+	static public void releaseAll() {
 		for( String name : soundsMap.keySet() ) {
 			soundsMap.get(name).dispose();
 		}
