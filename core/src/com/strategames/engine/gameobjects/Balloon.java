@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.BalloonBounceSound;
 import com.strategames.engine.sounds.BalloonPopSound;
-import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
@@ -38,10 +37,12 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	
 	private static final float maxVolume = 0.5f;
 
+	private float maxTEST;
+	
 	/**
 	 * Following value was determined empirically
 	 */
-	private static final float maxImpulse = 0.06f / maxVolume;
+	private static final float maxImpulse = 0.08f / maxVolume;
 
 	protected Balloon() {
 		super(new Vector2(WIDTH, -1f));
@@ -162,8 +163,12 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		float[] impulses = impulse.getNormalImpulses();
-		if( impulses[0] > 0.02 ) {
-			this.soundBalloonBounce.play((float) (impulses[0] / maxImpulse));
+		if( impulses[0] > 0.04 ) {
+			//If impulse is greater then maxImpulse we play volume at max (i.e. 1f)
+			//otherwise we divide impulse by maxImpulse to make sound softer if balloon
+			//hits object softer
+			float volume = impulses[0] > maxImpulse ? 1f : (impulses[0] / maxImpulse);
+			this.soundBalloonBounce.play(volume);
 		}
 	}
 

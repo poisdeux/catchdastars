@@ -56,15 +56,13 @@ public class Icecube extends GameObject {
 
 	private static BodyDef bodyDef;
 
-	private static long prevPlayRocksRolling;
-
 	private static RockBreakSound rockBreakSound = new RockBreakSound();
 	private static RockHitSound rockHitSound = new RockHitSound();
 	
 	private static Textures textures = Textures.getInstance();
 
-	public static float maximumImpulse = 700f;
-
+	public static float maximumImpulse = 75f;
+	
 	public Icecube() {
 		super(new Vector2(WIDTH, -1f));
 
@@ -217,13 +215,14 @@ public class Icecube extends GameObject {
 		float maxImpulse = 0.0f;
 
 		float[] impulses = impulse.getNormalImpulses();
-		maxImpulse = impulses[0];
-
-		if( maxImpulse > 100 ) { // prevent counting rocks hitting when they are lying on top of eachother
+		
+		maxImpulse = impulses[0] > maximumImpulse ? maximumImpulse : impulses[0];
+		
+		if( maxImpulse > 20 ) { // prevent counting rocks hitting when they are lying on top of eachother
 			rocksHit++;
 			rocksHitTotalImpulse += maxImpulse;
 			
-			if( ( maxImpulse > 200 ) && ( this.amountOfParts > 1 ) ) { // break object
+			if( ( maxImpulse > 50 ) && ( this.amountOfParts > 1 ) ) { // break object
 				
 				if( this.breakOfPart == null ) {
 
@@ -247,7 +246,6 @@ public class Icecube extends GameObject {
 								Gdx.app.log("Icecube", "handleCollision: array out of bounds: this="+this+"fixture="+fixture);
 							}
 						}
-						rocksHit++;
 					}
 				}
 			}
@@ -276,15 +274,11 @@ public class Icecube extends GameObject {
 			return;
 		}
 
-//		long epoch = System.currentTimeMillis();
-//		if( ( prevPlayRocksRolling + 300 ) > epoch ) { //prevent playing sound too fast
-//			rocksHit = 0;
-//			rocksHitTotalImpulse = 0;
-//			return;
-//		}
-//		prevPlayRocksRolling = epoch;
-
 		float volume = rocksHitTotalImpulse / (maximumImpulse * rocksHit);
+//		Gdx.app.log("Icecube", "playRocksHitSound: rocksHit="+rocksHit+
+//				", rocksHitTotalImpulse="+rocksHitTotalImpulse+
+//				", volume="+volume);
+		
 		if( rocksHit > 2 ) {
 			rockHitSound.play(volume);
 			rockBreakSound.play(volume);
