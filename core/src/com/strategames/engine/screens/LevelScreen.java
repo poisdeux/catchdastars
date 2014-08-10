@@ -4,15 +4,12 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Text;
 import com.strategames.engine.utils.Animations;
 import com.strategames.engine.utils.Level;
@@ -23,7 +20,13 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 
-
+/**
+ * TODO GameObjects fading in is not very smooth. Might be a better solution to not fade in
+ * game objects but make a fullscreen widget that shows the levelimage animation with black
+ * background and have it fade out at the end.
+ * @author mbrekhof
+ *
+ */
 public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener, OnLevelLoadedListener
 {	
 	private Game game;

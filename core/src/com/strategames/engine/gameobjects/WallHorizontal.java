@@ -8,15 +8,18 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.strategames.engine.utils.Textures;
 
 public class WallHorizontal extends Wall {
-	private Textures textures = Textures.getInstance();
 	private float startHorizontalMiddlePart;
 	private float startHorizontalEndPart;
 	private float endHorizontalMiddlePart;
 	private int amountOfParts;
-	
+
 	private boolean drawSingleBrick;
-	
+
 	private static TextureRegion textureRegion;
+
+	private static Textures textures = Textures.getInstance();
+
+	private Color color = getColor();
 	
 	@Override
 	public void setPosition(float x, float y) {
@@ -29,20 +32,20 @@ public class WallHorizontal extends Wall {
 		super.setX(x);
 		setupParts();
 	}
-	
+
 	@Override
 	public void setY(float y) {
 		super.setY(y);
 		setupParts();
 	}
-	
+
 	@Override
 	public void setLength(float length) {
 		if( length < WIDTH ) {
 			length = WIDTH; //Make sure length is not smaller than a single block
 		}
 		super.setLength(length);
-		
+
 		setHeight(HEIGHT);
 		setWidth(getLength());
 		this.amountOfParts = ((int) (length / WIDTH)) - 2;
@@ -57,8 +60,8 @@ public class WallHorizontal extends Wall {
 	@Override
 	protected TextureRegion createTextureRegion() {
 		if( textureRegion == null ) {
-			this.textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-			textureRegion = new TextureRegion(this.textures.bricksHorizontal);
+			textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+			textureRegion = new TextureRegion(Textures.getInstance().bricksHorizontal);
 		}
 		return textureRegion;
 	}
@@ -67,7 +70,7 @@ public class WallHorizontal extends Wall {
 	protected Body setupBox2D() {
 		return super.setupBox2D();
 	}
-	
+
 	@Override
 	protected GameObject newInstance() {
 		Wall wall = new WallHorizontal();
@@ -77,19 +80,16 @@ public class WallHorizontal extends Wall {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		Color color = getColor();
 		batch.setColor(color);
 		float x = getX();
 		float y = getY();
 		if( this.drawSingleBrick ) {
-			batch.draw(this.textures.bricksVertical, x, y, WIDTH, HEIGHT);
+			batch.draw(textures.bricksVertical, x, y, WIDTH, HEIGHT);
 		} else {
-			batch.draw(this.textures.bricksHorizontalEndLeft, x, y, WIDTH, HEIGHT);
-			batch.draw(this.textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
-			batch.draw(this.textures.bricksHorizontalEndRight, this.startHorizontalEndPart, y, WIDTH, HEIGHT);
+			batch.draw(textures.bricksHorizontalEndLeft, x, y, WIDTH, HEIGHT);
+			batch.draw(textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
+			batch.draw(textures.bricksHorizontalEndRight, this.startHorizontalEndPart, y, WIDTH, HEIGHT);
 		}
-
-//		batch.getColor().a = prevColor;
 
 		//		drawBoundingBox(batch);
 	}
