@@ -1,5 +1,6 @@
 package com.strategames.engine.gameobjects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,6 +13,8 @@ public class WallHorizontal extends Wall {
 	private float startHorizontalEndPart;
 	private float endHorizontalMiddlePart;
 	private int amountOfParts;
+	
+	private boolean drawSingleBrick;
 	
 	private static TextureRegion textureRegion;
 	
@@ -43,7 +46,11 @@ public class WallHorizontal extends Wall {
 		setHeight(HEIGHT);
 		setWidth(getLength());
 		this.amountOfParts = ((int) (length / WIDTH)) - 2;
-		
+		if( this.amountOfParts < 2 ) {
+			this.drawSingleBrick = true;
+		} else {
+			this.drawSingleBrick = false;
+		}
 		setupParts();
 	}
 
@@ -70,21 +77,19 @@ public class WallHorizontal extends Wall {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		float prevAlpha = batch.getColor().a;
-		batch.getColor().a = getColor().a;
-
+		Color color = getColor();
+		batch.setColor(color);
 		float x = getX();
 		float y = getY();
-		
-		if( getLength() > getPartSize() ) {
+		if( this.drawSingleBrick ) {
+			batch.draw(this.textures.bricksVertical, x, y, WIDTH, HEIGHT);
+		} else {
 			batch.draw(this.textures.bricksHorizontalEndLeft, x, y, WIDTH, HEIGHT);
 			batch.draw(this.textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
 			batch.draw(this.textures.bricksHorizontalEndRight, this.startHorizontalEndPart, y, WIDTH, HEIGHT);
-		} else { // draw single brick
-			batch.draw(this.textures.bricksVertical, x, y, WIDTH, HEIGHT);
 		}
 
-		batch.getColor().a = prevAlpha;
+//		batch.getColor().a = prevColor;
 
 		//		drawBoundingBox(batch);
 	}

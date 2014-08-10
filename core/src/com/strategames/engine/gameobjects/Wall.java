@@ -168,4 +168,9 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 		}
 		setPosition(x, y);
 	}
+	
+	@Override
+	public void loadSounds() {
+		// no sounds for walls
+	}
 }

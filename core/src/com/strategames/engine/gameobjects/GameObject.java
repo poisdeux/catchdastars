@@ -442,6 +442,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
 
+	/**
+	 * Soundeffects get disposed when screen closes. {@link Game} will call this method
+	 * to load sounds when starting a level. Make sure you load all sounds needed here.
+	 */
+	abstract public void loadSounds();
+	
 	@Override
 	public String toString() {
 		StringBuffer messageBuffer = new StringBuffer();

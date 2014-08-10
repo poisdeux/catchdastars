@@ -260,11 +260,8 @@ public class Icecube extends GameObject {
 	protected void readValue(JsonValue jsonData) {
 	}
 
-	/**
-	 * Use this to reload sounds after sounds were disposed
-	 * using {@link SoundEffect#releaseAll()} or {@link SoundEffect#release()}
-	 */
-	public static void loadSounds() {
+	@Override
+	public void loadSounds() {
 		rockHitSound.load();
 		rockBreakSound.load();
 	}

@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.sounds.GlassSound;
+import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -32,11 +33,12 @@ abstract public class Star extends GameObject {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
 
-	private GlassSound glassSound = new GlassSound();
-	
+	private SoundEffect soundCollected;
+
 	protected Star() {
 		super(new Vector2(WIDTH, -1f));
 		setCollectible(true);
+		this.soundCollected = getSoundCollected();
 	}
 
 	public void setRotationSpeed(float speed) {
@@ -93,9 +95,10 @@ abstract public class Star extends GameObject {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return false;
+	public void loadSounds() {
+		if( this.soundCollected != null ) {
+			this.soundCollected.load();
+		}
 	}
 
 	@Override
@@ -118,17 +121,17 @@ abstract public class Star extends GameObject {
 
 	@Override
 	public void destroyAction() {
-		this.glassSound.play();
+		this.soundCollected.play();
 		addAction( sequence( parallel(
 				fadeOut( 0.8f ) , repeat(2, sequence( rotateTo(5f, 0.2f, Interpolation.linear), rotateTo(-5f, 0.2f, Interpolation.linear)) )),
 				new Action() {
 
-					@Override
-					public boolean act(float delta) {
-						setCanBeRemoved(true);
-						return true;
-					}
-				}));
+			@Override
+			public boolean act(float delta) {
+				setCanBeRemoved(true);
+				return true;
+			}
+		}));
 	}
 
 	@Override
@@ -153,4 +156,6 @@ abstract public class Star extends GameObject {
 		messageBuffer.append(message);
 		return messageBuffer.toString();
 	}
+
+	abstract protected SoundEffect getSoundCollected();
 }

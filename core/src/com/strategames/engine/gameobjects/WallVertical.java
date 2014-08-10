@@ -1,5 +1,6 @@
 package com.strategames.engine.gameobjects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,10 +43,9 @@ public class WallVertical extends Wall {
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		float prevAlpha = batch.getColor().a;
-		batch.getColor().a = getColor().a;
+		Color color = getColor();
+		batch.setColor(color);
 		batch.draw(this.textures.bricksVertical, getX(), getY(), WIDTH, getLength(), 0, 0, -1, this.amountOfParts);
-		batch.getColor().a = prevAlpha;
 	}
 
 	@Override

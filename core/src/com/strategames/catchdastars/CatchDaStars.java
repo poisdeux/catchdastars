@@ -57,9 +57,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
 
-	private GameObject collidingGameObject1;
-	private GameObject collidingGameObject2;
-
 	private Box2DDebugRenderer debugRenderer;
 
 	public CatchDaStars() {
@@ -138,7 +135,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		if( gameObjects != null ) {
 			for(GameObject gameObject : gameObjects ) {
-				gameObject.setGame(this);
 				if( gameObject instanceof Star ) {
 					if( gameObject instanceof StarBlue ) {
 						this.blueCollectables.add();
@@ -156,7 +152,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 				} else if( gameObject instanceof Icecube ) {
 					((Icecube) gameObject).addAllParts();
 				}
+				gameObject.setGame(this);
 				gameObject.setup();
+				gameObject.loadSounds();
+				Color color = gameObject.getColor();
+				gameObject.setColor(color.r, color.g, color.b, 0f);
+				addGameObject(gameObject);
 			}
 		}
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
@@ -354,15 +355,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 	public void beginContact(Contact contact) {
 		Fixture fixtureA = contact.getFixtureA();
 		Fixture fixtureB = contact.getFixtureB();
-		this.collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
-		this.collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
+		GameObject collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
+		GameObject collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
 		//		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
 		//		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
 
-		if( ( this.collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
-			handleSensorCollision((Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if(( this.collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
-			handleSensorCollision((Balloon) this.collidingGameObject2, this.collidingGameObject1);
+		if( ( collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
+			handleSensorCollision((Balloon) collidingGameObject1, collidingGameObject2);
+		} else if(( collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
+			handleSensorCollision((Balloon) collidingGameObject2, collidingGameObject1);
 		}
 	}
 
@@ -380,13 +381,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		if( ( this.collidingGameObject1 instanceof Balloon ) && ( this.collidingGameObject2 instanceof Icecube ) ) {
-			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject1, this.collidingGameObject2);
-		} else if( ( this.collidingGameObject2 instanceof Balloon ) && ( this.collidingGameObject1 instanceof Icecube ) ) {
-			handleBalloonRockCollision(impulse, (Balloon) this.collidingGameObject2, this.collidingGameObject1);
+		GameObject collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
+		GameObject collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
+		if( ( collidingGameObject1 instanceof Balloon ) && ( collidingGameObject2 instanceof Icecube ) ) {
+			handleBalloonRockCollision(impulse, (Balloon) collidingGameObject1, collidingGameObject2);
+		} else if( ( collidingGameObject2 instanceof Balloon ) && ( collidingGameObject1 instanceof Icecube ) ) {
+			handleBalloonRockCollision(impulse, (Balloon) collidingGameObject2, collidingGameObject1);
 		} else {
-			this.collidingGameObject2.handleCollision(contact, impulse, this.collidingGameObject1);
-			this.collidingGameObject1.handleCollision(contact, impulse, this.collidingGameObject2);
+			collidingGameObject2.handleCollision(contact, impulse, collidingGameObject1);
+			collidingGameObject1.handleCollision(contact, impulse, collidingGameObject2);
 		}
 	}
 

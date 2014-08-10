@@ -132,12 +132,6 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 			@Override
 			public boolean act(float delta) {
 				levelImage.remove();
-				ArrayList<GameObject> gameObjects = level.getGameObjects();
-				Stage stage = getStageActors();
-				
-				for( GameObject gameObject : gameObjects ) {
-					stage.addActor(gameObject);
-				}
 				game.startGame();
 				MusicPlayer.getInstance().playNext();
 				return true;

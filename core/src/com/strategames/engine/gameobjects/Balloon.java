@@ -36,8 +36,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	private BalloonBounceSound soundBalloonBounce = new BalloonBounceSound();
 	
 	private static final float maxVolume = 0.5f;
-
-	private float maxTEST;
 	
 	/**
 	 * Following value was determined empirically
@@ -196,5 +194,11 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		balloon.setGame(getGame());
 		balloon.setDrawable(getDrawable());
 		return balloon;
+	}
+	
+	@Override
+	public void loadSounds() {
+		this.soundBalloonBounce.load();
+		this.soundBalloonPop.load();
 	}
 }
