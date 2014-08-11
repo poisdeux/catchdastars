@@ -19,7 +19,6 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
-import com.strategames.ui.helpers.Filter;
 
 /**
  * TODO GameObjects fading in is not very smooth. Might be a better solution to not fade in

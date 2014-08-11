@@ -30,10 +30,10 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.dialogs.LevelEditorOptionsDialog;
 import com.strategames.ui.dialogs.ToolsPickerDialog;
+import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.MenuButton;
-import com.strategames.ui.widgets.RectangleImage;
 
 public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
@@ -51,7 +51,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	private ArrayList<GameObject> selectedGameObjects;
 
-	private RectangleImage rectangleImage;
+	private FilledRectangleImage rectangleImage;
 
 	private Grid grid;
 
@@ -129,7 +129,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 
-		this.rectangleImage = new RectangleImage();
+		this.rectangleImage = new FilledRectangleImage();
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 
 		getMultiplexer().addProcessor(new GestureDetector(this));

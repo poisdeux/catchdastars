@@ -3,13 +3,12 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.strategames.ui.helpers.Filter;
+import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.TextButton;
 
@@ -33,7 +32,7 @@ abstract public class LevelStateDialog extends Dialog {
 	private TextButton buttonLeft;
 	private TextButton buttonRight;
 	
-	private Filter filter;
+	private FilledRectangleImage filter;
 	
 	protected LevelStateDialog(String message, States state, Stage stage, Skin skin) {
 		super(stage, skin);
@@ -89,14 +88,16 @@ abstract public class LevelStateDialog extends Dialog {
 	@Override
 	public void create() {
 		Stage stage = getStage();
-		Gdx.app.log("LevelStateDialog", "create(): stage.getWidth()="+stage.getWidth()+", stage.getHeight()="+stage.getHeight());
-		this.filter = new Filter(stage.getWidth(), stage.getHeight());
-		this.filter.setColor(0f, 0f, 0f, 0.5f);
+		this.filter = new FilledRectangleImage();
+		this.filter.setWidth(stage.getWidth());
+		this.filter.setHeight(stage.getHeight());
+		this.filter.setColor(0f, 0f, 0f, 0.4f);
+//		this.filter.addAction( fadeIn(0.25f) );
 		
 		this.messageLabel = new Label(this.message, skin);
 		float xMiddle = (super.stage.getWidth() / 2) - (this.messageLabel.getWidth() / 2);
 		this.messageLabel.setPosition(xMiddle, super.stage.getHeight() / 2);
-		this.messageLabel.addAction( sequence( fadeIn( 0.25f ) ) );
+		this.messageLabel.addAction( fadeIn( 0.25f ) );
 		this.messageLabel.getColor().a = 0f;
 		addActor(this.messageLabel);
 		
