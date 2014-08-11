@@ -166,19 +166,19 @@ public class CatchDaStars extends Game implements OnClickListener {
 	@Override
 	public void pauseGame() {
 		super.pauseGame();
-		darkenActors(0.5f);
+//		darkenActors(0.5f);
 	}
 
 	@Override
 	public void resumeGame() {
 		super.resumeGame();
-		darkenActors(1f);
+//		darkenActors(1f);
 	}
 
 	@Override
 	public void startGame() {
 		super.startGame();
-		darkenActors(1f);
+//		darkenActors(1f);
 	}
 
 	private int calculateScore() {

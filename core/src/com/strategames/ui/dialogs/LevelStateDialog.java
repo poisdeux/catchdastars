@@ -3,11 +3,13 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.strategames.ui.helpers.Filter;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.TextButton;
 
@@ -30,6 +32,8 @@ abstract public class LevelStateDialog extends Dialog {
 	private Label messageLabel;
 	private TextButton buttonLeft;
 	private TextButton buttonRight;
+	
+	private Filter filter;
 	
 	protected LevelStateDialog(String message, States state, Stage stage, Skin skin) {
 		super(stage, skin);
@@ -84,6 +88,10 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	@Override
 	public void create() {
+		Stage stage = getStage();
+		Gdx.app.log("LevelStateDialog", "create(): stage.getWidth()="+stage.getWidth()+", stage.getHeight()="+stage.getHeight());
+		this.filter = new Filter(stage.getWidth(), stage.getHeight());
+		this.filter.setColor(0f, 0f, 0f, 0.5f);
 		
 		this.messageLabel = new Label(this.message, skin);
 		float xMiddle = (super.stage.getWidth() / 2) - (this.messageLabel.getWidth() / 2);
@@ -103,7 +111,20 @@ abstract public class LevelStateDialog extends Dialog {
 		addActor(table);
 		
 		setFillParent(true);
+		
 		super.create();
+	}
+	
+	@Override
+	public void show() {
+		getStage().addActor(this.filter);
+		super.show();
+	}
+	
+	@Override
+	public void hide() {
+		this.filter.remove();
+		super.hide();
 	}
 	
 	@Override
