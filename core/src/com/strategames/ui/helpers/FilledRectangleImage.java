@@ -34,7 +34,9 @@ public class FilledRectangleImage extends Image {
 	@Override
 	protected void setStage(Stage stage) {
 		super.setStage(stage);
-		this.shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
+		if( stage != null ) {
+			this.shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
+		}
 	}
 	
 	@Override

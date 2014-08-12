@@ -356,7 +356,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			GameObject gameObject = (GameObject) actors.get(i);
 			Body body = gameObject.getBody();
 			if (body != null) {
-				if (body.getType() == BodyDef.BodyType.DynamicBody ) {
+				if ( body.getType() == BodyDef.BodyType.DynamicBody ) {
 
 					Vector2 currentPosition = body.getPosition();
 

@@ -163,24 +163,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
-	@Override
-	public void pauseGame() {
-		super.pauseGame();
-//		darkenActors(0.5f);
-	}
-
-	@Override
-	public void resumeGame() {
-		super.resumeGame();
-//		darkenActors(1f);
-	}
-
-	@Override
-	public void startGame() {
-		super.startGame();
-//		darkenActors(1f);
-	}
-
 	private int calculateScore() {
 		int blueCollectablesScore = this.amountOfBlueBalloons * this.blueCollectables.getCollected().size() * this.scorePerBlueStar;
 		int redCollectablesScore = this.amountOfRedBalloons * this.redCollectables.getCollected().size() * this.scorePerRedStar;
@@ -192,8 +174,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	private void showLevelCompleteDialog() {
-		darkenActors(0.4f);
-
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
@@ -223,21 +203,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		dialog.show();
 	}
 
-	private void darkenActors(float factor) {
-		Level level = getLevel();
-		if( level == null )
-			return;
-
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
-		if ( gameObjects == null )
-			return;
-
-		for( GameObject gameObject : gameObjects ) {
-			Color color = gameObject.getColor();
-			gameObject.setColor(color.r, color.g, color.b, factor);
-		}
-	}
-
 	/**
 	 * Beware that you do not change the returned array.
 	 * It is created only the first time getAvailableGameObjects
@@ -254,7 +219,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(new BalloonBlue());
 		objects.add(new BalloonRed());
 		objects.add(new StarBlue());
-		objects.add(new StarBlue());
+		objects.add(new StarRed());
 		objects.add(new StarYellow());
 		Icecube icecube = new Icecube();
 		icecube.addAllParts();

@@ -136,15 +136,14 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.rectangleImage = new FilledRectangleImage(stage);
+		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 		stage.addActor(this.rectangleImage);
 		displayGrid(this.preferences.displayGridEnabled());
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
-		this.rectangleImage = new FilledRectangleImage(stage);
-		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
-		
 		getMultiplexer().addProcessor(stage);
 
 		Level level = getGame().getLevel();

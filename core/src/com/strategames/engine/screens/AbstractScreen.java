@@ -137,9 +137,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
-		// dispose the resources by default
-		//		dispose();
-		SoundEffect.releaseAll();
+		dispose();
 	}
 
 	@Override
@@ -150,11 +148,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void dispose()
 	{
-		this.stageActors.dispose();
-		this.stageUIActors.dispose();
+		if( this.stageActors != null ) this.stageActors.clear();
+		if( this.stageUIActors != null ) this.stageUIActors.clear();
 		if( font != null ) font.dispose();
 		if( batch != null ) batch.dispose();
 		if( skin != null ) skin.dispose();
+		SoundEffect.releaseAll();
 	}
 	
 	public Stage getStageActors() {
