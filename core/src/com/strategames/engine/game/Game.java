@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.MathUtils;
@@ -182,7 +183,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return this.backStack.pop();
 	}
 
-	public Screen peepBackstack() {
+	public Screen peekBackStack() {
 		return this.backStack.peek();
 	}
 
@@ -421,7 +422,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 		//Make sure LevelScreen is only added once to the backstack to prevent
 		//going back to a previous level if user quits level
-		if( ! ( peepBackstack() instanceof LevelScreen ) ) {
+		if( ! ( peekBackStack() instanceof LevelScreen ) ) {
 			addToBackstack(screen);
 		}
 	}
@@ -454,8 +455,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * Hides the current screen and shows the previous screen
 	 */
 	public void stopScreen() {
+		Gdx.app.log("Game", "stopScreen() called");
 		popBackstack();
-		setScreen(peepBackstack());
+		Screen screen = peekBackStack();
+		setScreen(screen);
 	}
 
 	@Override

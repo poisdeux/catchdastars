@@ -103,8 +103,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{
-		this.stageActors.clear();
-		this.stageUIActors.clear();
+		Gdx.app.log("AbstractScreen", "show() called on "+getClass().getSimpleName()+
+				"stageActors="+this.stageActors+
+				"stageUIActors="+this.stageUIActors);
 		Gdx.input.setInputProcessor(this.multiplexer);
 		setupUI(this.stageUIActors);
 		setupActors(this.stageActors);
@@ -137,6 +138,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
+		Gdx.app.log("AbstractScreen", "hide() called on "+getClass().getSimpleName());
 		dispose();
 	}
 
