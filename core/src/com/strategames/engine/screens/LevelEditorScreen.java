@@ -129,9 +129,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 
-		this.rectangleImage = new FilledRectangleImage();
-		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
-
 		getMultiplexer().addProcessor(new GestureDetector(this));
 
 		setCamera();
@@ -145,6 +142,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	protected void setupActors(Stage stage) {
+		this.rectangleImage = new FilledRectangleImage(stage);
+		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
+		
 		getMultiplexer().addProcessor(stage);
 
 		Level level = getGame().getLevel();

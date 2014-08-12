@@ -34,10 +34,13 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	private FilledRectangleImage filter;
 	
+	protected Stage stage;
+	
 	protected LevelStateDialog(String message, States state, Stage stage, Skin skin) {
 		super(stage, skin);
 		this.message = message;
 		this.state = state;
+		this.stage = stage;
 	}
 	
 	public States getState() {
@@ -87,12 +90,10 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	@Override
 	public void create() {
-		Stage stage = getStage();
-		this.filter = new FilledRectangleImage();
-		this.filter.setWidth(stage.getWidth());
-		this.filter.setHeight(stage.getHeight());
+		this.filter = new FilledRectangleImage(this.stage);
+		this.filter.setWidth(this.stage.getWidth());
+		this.filter.setHeight(this.stage.getHeight());
 		this.filter.setColor(0f, 0f, 0f, 0.4f);
-//		this.filter.addAction( fadeIn(0.25f) );
 		
 		this.messageLabel = new Label(this.message, skin);
 		float xMiddle = (super.stage.getWidth() / 2) - (this.messageLabel.getWidth() / 2);
@@ -118,7 +119,7 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	@Override
 	public void show() {
-		getStage().addActor(this.filter);
+		this.stage.addActor(this.filter);
 		super.show();
 	}
 	
