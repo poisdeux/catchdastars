@@ -20,7 +20,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.sounds.GlassSound;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.ConfigurationItem;
 

@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.RockBreakSound;
 import com.strategames.engine.sounds.RockHitSound;
-import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Textures;
@@ -139,17 +138,14 @@ public class Icecube extends GameObject {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		float rotation = MathUtils.radiansToDegrees * this.body.getAngle();
-		Vector2 v = super.body.getPosition();
-		setPosition(v.x, v.y);
-		setRotation(rotation);
-		
-//		float rotation = getRotation();
+		float x = getX();
+		float y = getY();
+		float rotation = getRotation();
 		
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
-			sprite.setPosition(v.x, v.y);
+			sprite.setPosition(x, y);
 			sprite.setRotation(rotation);
 			sprite.draw(batch, this.colorActor.a);
 		}
