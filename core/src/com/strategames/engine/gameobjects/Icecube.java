@@ -4,7 +4,6 @@ package com.strategames.engine.gameobjects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,8 +41,6 @@ public class Icecube extends GameObject {
 
 	private Part breakOfPart = null;
 
-	private Color colorActor;
-
 	private static BodyEditorLoader loader;
 
 	private static int rocksHit;
@@ -66,7 +63,6 @@ public class Icecube extends GameObject {
 		super(new Vector2(WIDTH, -1f));
 
 		this.parts = new ArrayList<Icecube.Part>();
-		this.colorActor = getColor();
 	}
 
 	@Override
@@ -141,13 +137,13 @@ public class Icecube extends GameObject {
 		float x = getX();
 		float y = getY();
 		float rotation = getRotation();
-		
+		Gdx.app.log("Icecube", "x,y="+x+","+y);
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
 			sprite.setPosition(x, y);
 			sprite.setRotation(rotation);
-			sprite.draw(batch, this.colorActor.a);
+			sprite.draw(batch, parentAlpha);
 		}
 
 		if( this.breakOfPart != null ) {

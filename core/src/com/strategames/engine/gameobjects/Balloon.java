@@ -3,7 +3,6 @@ package com.strategames.engine.gameobjects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -89,14 +88,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		this.upwardLift = -body.getMass() * this.liftFactor;
 
 		return body;
-	}
-
-	@Override
-	public void draw(Batch batch, float parentAlpha) {
-//		setRotation(MathUtils.radiansToDegrees * super.body.getAngle());
-//		Vector2 v = super.body.getPosition();
-//		setPosition(v.x, v.y);
-		super.draw(batch, parentAlpha);
 	}
 
 	@Override

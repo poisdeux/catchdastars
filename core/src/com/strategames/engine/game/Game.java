@@ -183,7 +183,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 
 	public Screen peekBackStack() {
-		return this.backStack.peek();
+		if( this.backStack.size() > 0 ) {
+			return this.backStack.peek();
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -449,8 +453,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	public void stopScreen() {
 		popBackstack();
-		Screen screen = peekBackStack();
-		setScreen(screen);
+		setScreen(peekBackStack());
 	}
 
 	@Override

@@ -17,8 +17,8 @@ public class DesktopLauncher implements ExportImport, MusicSelector {
 	public DesktopLauncher() {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Catch Da Stars";
-		config.width = 504;
-		config.height = 800;
+		config.width = 510;
+		config.height = 810;
 
 		CatchDaStars game = new CatchDaStars();
 		game.setExporterImporter(this);
