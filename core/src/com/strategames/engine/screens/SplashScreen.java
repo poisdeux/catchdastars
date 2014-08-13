@@ -23,7 +23,8 @@ public class SplashScreen extends AbstractScreen {
 	private AssetManager assetManager;
 	private boolean finishedSetupAssets = false;
 	private Image splashImage;
-
+	private Stage stageUIActors;
+	
 	public SplashScreen(Game game) {
 		super(game);
 
@@ -37,6 +38,8 @@ public class SplashScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.stageUIActors = stage;
+		
 		Texture texture = Textures.getInstance().getSplashScreen();
 
 		this.splashImage = new Image(texture);

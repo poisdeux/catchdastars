@@ -32,7 +32,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	private Game game;
 	private Image levelImage;
 	private LevelPausedDialog levelPausedDialog;
-
+	private Stage stageActors;
+	
 	public LevelScreen(Game game) {
 		super(game);
 		this.game = game;
@@ -60,13 +61,14 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 	@Override
 	protected void setupActors(Stage stage) {
+		this.stageActors = stage;
 		this.game.pauseGame();
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		this.game.update(delta, super.stageActors);
+		this.game.update(delta, this.stageActors);
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		}
 
 		if( this.levelPausedDialog == null  ) {
-			this.levelPausedDialog = new LevelPausedDialog(super.stageUIActors, getSkin());
+			this.levelPausedDialog = new LevelPausedDialog(getStageUIActors(), getSkin());
 			this.levelPausedDialog.setOnClickListener(this);
 			this.levelPausedDialog.create();
 		}
@@ -112,7 +114,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	@Override
 	public void onLevelLoaded(final Level level) {
 		if( level == null ) {
-			ErrorDialog dialog = new ErrorDialog(getStageUIElements(), "Error loading level", getSkin());
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
 			dialog.setOnClickListener(this);
 			dialog.create();
 			dialog.show();

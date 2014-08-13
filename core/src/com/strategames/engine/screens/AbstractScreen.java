@@ -7,8 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -17,52 +16,31 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.SoundEffect;
 
-/**
- * TODO create a screen manager to reduce the amount of new objects created when a new screen must be shown
- * @author mbrekhof
- *
- */
 public abstract class AbstractScreen implements Screen, InputProcessor
 {
 	private Game game;
 	private InputMultiplexer multiplexer;
-	protected BitmapFont font;
-	protected SpriteBatch batch;
-	private Skin skin;
-	protected final Stage stageActors;
-	protected final Stage stageUIActors;
-	
-	protected float screenHeight;
-	protected float screenWidth;
-	
-	private OrthographicCamera menuCamera;
-	private OrthographicCamera gameCamera;
-	
+	private static Skin skin;
+	private static Stage stageActors;
+	private static Stage stageUIActors;
+
+	private static OrthographicCamera menuCamera;
+	private static OrthographicCamera gameCamera;
+
+	private static Vector2 menuSize;
+
 	public AbstractScreen(Game game)
 	{
 		this.game = game;
-		
-		Vector3 worldSize = this.game.getWorldSize(); 
 
-		this.screenWidth = Game.convertWorldToScreen(worldSize.x);
-		this.screenHeight = Game.convertWorldToScreen(worldSize.y);
-		this.menuCamera = new OrthographicCamera(this.screenWidth, this.screenHeight);
-		this.menuCamera.position.set(this.screenWidth/2f, this.screenHeight/2f, 0f);
-		Viewport viewport = new FitViewport(this.screenWidth, this.screenHeight, this.menuCamera);
-		this.stageUIActors = new Stage(viewport);
-		
-		this.gameCamera = new OrthographicCamera(worldSize.x, worldSize.y);
-		this.gameCamera.position.set(worldSize.x/2f, worldSize.y/2f, worldSize.z);
-		viewport = new FitViewport(worldSize.x, worldSize.y, this.gameCamera);
-		this.stageActors = new Stage(viewport);
-		
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(this.stageUIActors);
+		this.multiplexer.addProcessor(getStageUIActors());
 		this.multiplexer.addProcessor(this);
+		Gdx.input.setInputProcessor(this.multiplexer);
 	}
-	
+
 	@Override
 	public void pause() {
 	}
@@ -71,14 +49,35 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void resume() {
 	}
 
+	public void setMenuSize(Vector2 menuSize) {
+		AbstractScreen.menuSize = menuSize;
+	}
+
+	public Vector2 getMenuSize() {
+		if( menuSize == null ) {
+			setMenuSize(new Vector2(510, 810));
+		}
+		return menuSize;
+	}
+
 	public OrthographicCamera getGameCamera() {
+		if( gameCamera == null ) {
+			Vector3 size = this.game.getWorldSize();
+			gameCamera = new OrthographicCamera(size.x, size.y);
+			gameCamera.position.set(size.x/2f, size.y/2f, 0f);
+		}
 		return gameCamera;
 	}
-	
+
 	public OrthographicCamera getMenuCamera() {
+		if( menuCamera == null ) {
+			Vector2 size = getMenuSize();
+			menuCamera = new OrthographicCamera(size.x, size.y);
+			menuCamera.position.set(size.x/2f, size.y/2f, 0f);
+		}
 		return menuCamera;
 	}
-	
+
 	public InputMultiplexer getMultiplexer() {
 		return this.multiplexer;
 	}
@@ -103,90 +102,91 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{
-		Gdx.app.log("AbstractScreen", "show() called on "+getClass().getSimpleName()+
-				"stageActors="+this.stageActors+
-				"stageUIActors="+this.stageUIActors);
-		Gdx.input.setInputProcessor(this.multiplexer);
-		setupUI(this.stageUIActors);
-		setupActors(this.stageActors);
+		setupUI(getStageUIActors());
+		setupActors(getStageActors());
 	}
 
-	public float getScreenWidth() {
-		return screenWidth;
-	}
-	
-	public float getScreenHeight() {
-		return screenHeight;
-	}
-	
 	@Override
 	public void render( float delta )
 	{	
 		Gdx.gl.glClearColor( 0f, 0f, 0f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
-		
-//		if( this.game.getGameState() == game.GAME_STATE_RUNNING ) {
-			this.stageActors.act(delta);
-//		}
-			
-		this.stageActors.draw();
-		
-		this.stageUIActors.act(delta);
-		this.stageUIActors.draw();
+
+		stageActors.act(delta);
+		stageActors.draw();
+
+		stageUIActors.act(delta);
+		stageUIActors.draw();
 	}
 
 	@Override
 	public void hide()
 	{
-		Gdx.app.log("AbstractScreen", "hide() called on "+getClass().getSimpleName());
 		dispose();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		
+
 	}
 
 	@Override
 	public void dispose()
 	{
-		if( this.stageActors != null ) this.stageActors.clear();
-		if( this.stageUIActors != null ) this.stageUIActors.clear();
-		if( font != null ) font.dispose();
-		if( batch != null ) batch.dispose();
-		if( skin != null ) skin.dispose();
+		if( stageActors != null ) stageActors.clear();
+		if( stageUIActors != null ) stageUIActors.clear();
 		SoundEffect.releaseAll();
 	}
-	
+
 	public Stage getStageActors() {
-		return this.stageActors;
+		if( stageActors == null ) {
+			OrthographicCamera camera = getGameCamera();
+			Vector3 size = this.game.getWorldSize();
+			Viewport viewport = new FitViewport(size.x, size.y, camera);
+			stageActors = new Stage(viewport);
+		}
+		return stageActors;
 	}
 
-	public Stage getStageUIElements() {
-		return this.stageUIActors;
+	public static void setStageActors(Stage stageActors) {
+		AbstractScreen.stageActors = stageActors;
+	}
+
+	public Stage getStageUIActors() {
+		if( stageUIActors == null ) {
+			OrthographicCamera camera = getMenuCamera();
+			Vector2 size = getMenuSize();
+			Viewport viewport = new FitViewport(size.x, size.y, camera);
+			stageUIActors = new Stage(viewport);
+		}
+		return stageUIActors;
+	}
+
+	public static void setStageUIActors(Stage stageUIActors) {
+		AbstractScreen.stageUIActors = stageUIActors;
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
-	
+
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean keyDown(int keycode) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean keyUp(int keycode) {
 		if((keycode == Keys.BACK) 
@@ -205,15 +205,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-//		Gdx.app.log("AbstractScreen", "mouseMoved");
 		return false;
 	}
-	
+
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
 	}
-	
+
 	/**
 	 * Implement to override default back navigation handling
 	 * by Game class
@@ -222,7 +221,17 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	protected boolean handleBackNavigation() {
 		return false;
 	}
-	
+
+	@Override
+	public String toString() {
+		String message = ", stageActors="+stageActors+
+				", stageUIActors="+stageUIActors+
+				"\nmenuCamera="+menuCamera+
+				", gameCamera="+gameCamera+
+				"\nmenuSize="+menuSize;
+		return super.toString() + message;
+	}
+
 	/**
 	 * Called to create the stage for the UI elements.
 	 * <br>

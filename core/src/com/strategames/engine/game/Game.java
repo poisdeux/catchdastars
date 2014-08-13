@@ -288,7 +288,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 */
 	public void addUIElement(Actor actor) {
 		AbstractScreen screen = (AbstractScreen) getScreen();
-		screen.getStageUIElements().addActor(actor);
+		screen.getStageUIActors().addActor(actor);
 	}
 
 	public AssetManager getManager() {
@@ -427,12 +427,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 	}
 
-	/**
-	 * Starts the LevelEditor screen
-	 * TODO remove level argument if it is not really used as 
-	 * level is already available in the game class
-	 * @param level
-	 */
 	public void showLevelEditor() {
 		Screen screen = new LevelEditorScreen(this);
 		setScreen(screen);
@@ -455,7 +449,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * Hides the current screen and shows the previous screen
 	 */
 	public void stopScreen() {
-		Gdx.app.log("Game", "stopScreen() called");
 		popBackstack();
 		Screen screen = peekBackStack();
 		setScreen(screen);

@@ -151,7 +151,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			return;
 		}
 
-		Dialog dialog = new EditLevelDialog(getStageUIElements(), getSkin(), (Level) tag);
+		Dialog dialog = new EditLevelDialog(getStageUIActors(), getSkin(), (Level) tag);
 		dialog.create();
 		dialog.setTag(button);
 		dialog.setPosition(button.getX(), button.getY());
@@ -288,7 +288,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			}
 		}
 
-		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIElements(), this.skin,
+		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIActors(), this.skin,
 				"Select a number", levelNumbers);
 		spinner.create();
 		return spinner;
@@ -319,7 +319,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void showErrorDialog(String title, String message) {
-		ErrorDialog dialog = new ErrorDialog(getStageUIElements(), title, getSkin());
+		ErrorDialog dialog = new ErrorDialog(getStageUIActors(), title, getSkin());
 		dialog.setMessage(message);
 		dialog.setCenter(true);
 		dialog.create();

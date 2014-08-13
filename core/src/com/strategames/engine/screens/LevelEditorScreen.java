@@ -190,7 +190,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
-			this.game.update(delta, super.stageActors);
+			this.game.update(delta, getStageActors());
 		}
 	}
 
@@ -215,11 +215,14 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		Vector2 touchPosition = new Vector2(x, y);
 
-		super.stageUIActors.screenToStageCoordinates(touchPosition);
-		this.uiElementHit = super.stageUIActors.hit(touchPosition.x, touchPosition.y, false);
+		Stage stageUIActors = getStageUIActors();
+		Stage stageActors = getStageActors();
+		
+		stageUIActors.screenToStageCoordinates(touchPosition);
+		this.uiElementHit = stageUIActors.hit(touchPosition.x, touchPosition.y, false);
 		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
-		super.stageActors.screenToStageCoordinates(touchPosition);
-		Actor actor = super.stageActors.hit(touchPosition.x, touchPosition.y, false);
+		stageActors.screenToStageCoordinates(touchPosition);
+		Actor actor = stageActors.hit(touchPosition.x, touchPosition.y, false);
 		//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
 
 		this.tap.setActor(actor);
@@ -247,7 +250,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 					gameObject.setMenuItem(false);
 					gameObject.setSaveToFile(true);
 					getGame().getLevel().addGameObject(gameObject);
-					addGameObjectToMenu(this.stageActors, gameObject, v.x, v.y);
+					addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
 				} else {
 					//return menu item to its original position
 					gameObject.moveTo(v.x, v.y);
@@ -274,7 +277,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 			if( this.actorTouched != null ) {
 				Vector2 newPos = new Vector2(screenX, screenY);
-				super.stageActors.screenToStageCoordinates(newPos);
+				getStageActors().screenToStageCoordinates(newPos);
 				moveActor(this.actorTouched, newPos);
 			}
 
@@ -415,7 +418,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		copy.setGame(getGame());
 		copy.setup();
 		getGame().getLevel().addGameObject(copy);
-		stageActors.addActor(copy);
+		getStageActors().addActor(copy);
 		deselectGameObject(object);
 		selectGameObject(copy);
 		return copy;
@@ -505,7 +508,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private Actor getActor(Rectangle rectangle) {
-		Array<Actor> actors = super.stageActors.getActors();
+		Array<Actor> actors = getStageActors().getActors();
 		for(Actor actor : actors) {
 			if( this.selectedGameObjects.contains(actor) ) continue;
 			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
@@ -562,13 +565,15 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	private void displayGrid(boolean display) {
 		if( display ) {
-			super.stageActors.addActor(this.grid);
+			getStageActors().addActor(this.grid);
 		} else {
 			this.grid.remove();
 		}
 	}
 
 	private void createMainMenu() {
+		final Stage stageUIActors = getStageUIActors();
+		
 		this.mainMenu = new ButtonsDialog(stageUIActors, getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
 		this.mainMenu.add("Tools", new ClickListener() {
@@ -622,7 +627,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
-		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(stageUIActors, gameObject, getSkin());
+		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(getStageUIActors(), gameObject, getSkin());
 		dialog.setOnClickListener(this);
 		dialog.create();
 		dialog.show();
@@ -641,6 +646,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
 		float y = worldSize.y - Wall.HEIGHT;
 
+		Stage stageUIActors = getStageUIActors();
+		
 		Vector3 screenCoords =  stage.getCamera().project(new Vector3(x, Wall.HEIGHT, 0f));
 		Vector3 stageUICoords = stageUIActors.getCamera().unproject(screenCoords);
 		//Add menu button

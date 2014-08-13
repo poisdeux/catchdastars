@@ -174,7 +174,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	private void showLevelCompleteDialog() {
-		Stage stage = ((AbstractScreen) getScreen()).getStageUIElements();
+		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
@@ -197,7 +197,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private void showLevelFailedDialog() {
 		AbstractScreen screen = (AbstractScreen) getScreen();
 
-		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIElements(), screen.getSkin());
+		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIActors(), screen.getSkin());
 		dialog.setOnClickListener(this);
 		dialog.create();
 		dialog.show();

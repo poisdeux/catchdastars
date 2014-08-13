@@ -18,6 +18,8 @@ public class LoadingScreen extends AbstractScreen {
 	private Image dotImage2;
 	private Image dotImage3;
 	
+	private Stage stageUIActors;
+	
 	/**
 	 * Shows an animation which can be displayed during game loading
 	 */
@@ -32,6 +34,8 @@ public class LoadingScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.stageUIActors = stage;
+		
 		Textures textures = Textures.getInstance();
 		this.loadingImage = new Image(textures.Loading);
 		this.dotImage1 = new Image(textures.dot);
