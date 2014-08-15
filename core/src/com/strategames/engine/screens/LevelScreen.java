@@ -2,6 +2,8 @@ package com.strategames.engine.screens;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.badlogic.gdx.InputProcessor;
@@ -11,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Text;
-import com.strategames.engine.utils.Animations;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
@@ -19,6 +20,7 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
+import com.strategames.ui.helpers.FilledRectangleImage;
 
 /**
  * TODO GameObjects fading in is not very smooth. Might be a better solution to not fade in
@@ -33,7 +35,11 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	private Image levelImage;
 	private LevelPausedDialog levelPausedDialog;
 	private Stage stageActors;
-	
+	private FilledRectangleImage filter;
+	private Stage stage;
+	private boolean imageStartAnimationFinished;
+	private boolean levelLoaded;
+
 	public LevelScreen(Game game) {
 		super(game);
 		this.game = game;
@@ -41,6 +47,12 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.stage = stage;
+		this.filter = new FilledRectangleImage(stage);
+		this.filter.setWidth(stage.getWidth());
+		this.filter.setHeight(stage.getHeight());
+		this.filter.setColor(0f, 0f, 0f, 1f);
+		stage.addActor(this.filter);
 
 		this.levelImage = new Text("Level " + this.game.getLevelNumber());
 		this.levelImage.setScale(2f);
@@ -49,12 +61,13 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		float imageHeight = this.levelImage.getHeight();
 
 		float x = (stage.getWidth() - imageWidth) / 2f;
-		float y = (stage.getHeight() + imageHeight) / 2f;
 
 		this.levelImage.setX(x);
 		this.levelImage.setY(-imageHeight);
-		this.levelImage.addAction(moveTo(x, y, 0.5f, Interpolation.circleOut));
+
 		stage.addActor(this.levelImage);
+
+		setupStartAnimation();
 
 		this.game.loadLevel(this);
 	}
@@ -123,24 +136,56 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 		game.setup(this);
 
-		this.levelImage.addAction(sequence(new Action() {
+		this.levelLoaded = true;
+
+		startScreenCloseAnimation();
+	}
+
+	private void startScreenCloseAnimation() {
+		if( imageStartAnimationFinished && levelLoaded ) {
+			setupEndAnimation();
+		}
+	}
+
+	private void setupStartAnimation() {
+		float x = this.levelImage.getX();
+		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
+		this.levelImage.addAction(sequence(moveTo(x, y, 1f, Interpolation.circleOut),
+				new Action() {
 
 			@Override
 			public boolean act(float delta) {
-				Animations.fadeIn(stageActors, 0.5f, Interpolation.circleIn);
+				imageStartAnimationFinished = true;
+				startScreenCloseAnimation();
 				return true;
 			}
-		}, 
-		fadeOut(0.5f),
-		new Action() {
+
+		}));
+	}
+
+	private void setupEndAnimation() {
+
+		this.filter.addAction(sequence(fadeOut(1f), 
+				new Action() {
 
 			@Override
 			public boolean act(float delta) {
-				levelImage.remove();
-				game.startGame();
-				MusicPlayer.getInstance().playNext();
+				levelImage.addAction(sequence(moveTo(levelImage.getX(), stage.getHeight() + levelImage.getHeight(), 0.5f, Interpolation.circleIn),
+						new Action() {
+
+					@Override
+					public boolean act(float delta) {
+						levelImage.remove();
+						filter.remove();
+						game.startGame();
+						MusicPlayer.getInstance().playNext();
+						return true;
+					}
+				}));
 				return true;
 			}
 		}));
+
+
 	}
 }

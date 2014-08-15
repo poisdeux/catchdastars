@@ -47,7 +47,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	}
 
 	@Test
-	public void availablePartsTest() {
+	public void testAvailabeParts() {
 		for( Part part : this.availableParts ) {
 			assertNotNull(part.getName());
 			assertNotNull(part.getSprite());
@@ -56,7 +56,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 
 	//TODO add test for splitobject
 	@Test
-	public void splitObjectTest() {
+	public void testSplitObject() {
 		Icecube icecube = (Icecube) getGameObject();
 		Game game = new GameTestClass();
 		game.setWorld(this.world);
@@ -106,7 +106,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	}
 
 	@Test
-	public void testForThreadSafetyHandleCollision() {
+	public void testHandleCollision() {
 		int amountOfIcecubes = 10;
 		Game game = new GameTestClass();
 		game.setWorld(this.world);
@@ -122,29 +122,11 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			results.add(new ArrayList<Icecube>());
 		}
 
-		CountDownLatch startLatch = new CountDownLatch(amountOfIcecubes);
-		CountDownLatch stopLatch = new CountDownLatch(amountOfIcecubes);
-
 		for(int i = 0; i < amountOfIcecubes; i++) {
 			final Icecube icecube = icecubes.get(i);
 			final ArrayList<Icecube> result = results.get(i);
 			breakObject(icecube, result);
-
-//						SynchronizedThread thread = new SynchronizedThread(new Runnable() {
-//			
-//							@Override
-//							public void run() {
-//								breakObject(icecube, result);
-//							}
-//						}, startLatch, stopLatch);
-//						thread.start();
 		}
-//
-//				try {
-//					stopLatch.await(2, TimeUnit.SECONDS);
-//				} catch (InterruptedException e) {
-//					fail("Threads did not finish within timeout");
-//				}
 
 		assertBreakObjectResults(results);
 	}
@@ -208,14 +190,15 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			Fixture fixture = myContact.getFixtureA();
 			assertTrue("Body of fixture="+fixture+" not equal to body in icecube", fixture.getBody() == body);
 			
-			assertNotNull(myContact.getFixtureA().getUserData());
+			Integer fixtureId = (Integer) fixture.getUserData();
+			assertNotNull(fixtureId);
 			ArrayList<Part> parts = icecube.getParts();
-			Part part = parts.get((Integer) myContact.getFixtureA().getUserData());
+			Part part = parts.get(fixtureId);
 			assertNotNull(part);
 			
 			icecube.handleCollision(myContact, impulse, null);
 			Part breakOffPart = icecube.getBreakOfPart();
-			assertNotNull("breakOffPart is null for "+icecube, breakOffPart);
+			assertTrue("breakOffPart("+breakOffPart+") not equal to part("+part+")", breakOffPart == part);
 			
 			Icecube icecube1 = new Icecube();
 			Icecube icecube2 = new Icecube();
@@ -260,7 +243,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	}
 
 	private class MyContactImpulse extends ContactImpulse {
-		float[] normalImpulses = {30};
+		float[] normalImpulses = {300};
 
 		protected MyContactImpulse() {
 			super(null, 0);
@@ -269,34 +252,6 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 		@Override
 		public float[] getNormalImpulses() {
 			return normalImpulses;
-		}
-	}
-
-	private class SynchronizedThread extends Thread {
-		private CountDownLatch startLatch;
-		private CountDownLatch stopLatch;
-
-		public SynchronizedThread(Runnable runnable, CountDownLatch startLatch, CountDownLatch stopLatch) {
-			super(runnable);
-			this.startLatch = startLatch;
-			this.stopLatch = stopLatch;
-		}
-
-		@Override
-		public void run() {
-			try { 
-				startLatch.await(1, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			super.run();
-			stopLatch.countDown();
-		}
-
-		@Override
-		public synchronized void start() {
-			startLatch.countDown();
-			super.start();
 		}
 	}
 }

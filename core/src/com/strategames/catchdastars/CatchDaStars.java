@@ -155,8 +155,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 				gameObject.setGame(this);
 				gameObject.setup();
 				gameObject.loadSounds();
-				Color color = gameObject.getColor();
-				gameObject.setColor(color.r, color.g, color.b, 0f);
+//				Color color = gameObject.getColor();
+//				gameObject.setColor(color.r, color.g, color.b, 0f);
 				addGameObject(gameObject);
 			}
 		}

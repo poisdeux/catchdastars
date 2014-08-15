@@ -4,6 +4,7 @@ package com.strategames.engine.gameobjects;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -137,7 +138,7 @@ public class Icecube extends GameObject {
 		float x = getX();
 		float y = getY();
 		float rotation = getRotation();
-		Gdx.app.log("Icecube", "x,y="+x+","+y);
+		
 		for(int i = 0; i < this.amountOfParts; i++) {
 			Part part = this.parts.get(i);
 			Sprite sprite = part.getSprite();
@@ -288,8 +289,16 @@ public class Icecube extends GameObject {
 			sprite.setColor(r, g, b, a);
 		}
 	}
-
-
+	
+	@Override
+	public void setColor(Color color) {
+		super.setColor(color);
+		for(int i = 0; i < this.amountOfParts; i++) {
+			Part part = this.parts.get(i);
+			Sprite sprite = part.getSprite();
+			sprite.setColor(color);
+		}
+	}
 
 	/**
 	 * Splits object in two and deletes this gameobject from game. 
@@ -357,7 +366,6 @@ public class Icecube extends GameObject {
 	}
 
 	private void setupStaticResources() {
-
 		availableParts = new ArrayList<Icecube.Part>();
 		availableParts.add(new Part("icecube-part01.png", textures.icecubePart1));
 		availableParts.add(new Part("icecube-part02.png", textures.icecubePart2));

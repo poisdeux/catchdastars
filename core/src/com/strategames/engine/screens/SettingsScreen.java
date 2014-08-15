@@ -99,6 +99,8 @@ public class SettingsScreen extends AbstractScreen {
 	@Override
 	public void hide() {
 		Settings.getInstance().save();
+		super.hide();
+		dispose();
 	}
 }
 

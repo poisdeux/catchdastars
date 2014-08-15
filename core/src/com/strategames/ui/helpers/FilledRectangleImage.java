@@ -10,25 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class FilledRectangleImage extends Image {
-
+	private Color color;
+	private Color shapeRendererColor;
 	private ShapeRenderer shapeRenderer;
 	
 	public FilledRectangleImage(Stage stage) {
 		super();
 		this.shapeRenderer = new ShapeRenderer();
 		setStage(stage);
-	}
-	
-	@Override
-	public void setColor(float r, float g, float b, float a) {
-		super.setColor(r, g, b, a);
-		this.shapeRenderer.setColor(r, g, b, a);
-	}
-	
-	@Override
-	public void setColor(Color color) {
-		super.setColor(color);
-		this.shapeRenderer.setColor(color);
+		this.color = getColor();
+		this.shapeRendererColor = this.shapeRenderer.getColor();
 	}
 	
 	@Override
@@ -44,6 +35,10 @@ public class FilledRectangleImage extends Image {
 		batch.end();
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 	    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+	    this.shapeRendererColor.a = this.color.a;
+	    this.shapeRendererColor.r = this.color.r;
+	    this.shapeRendererColor.g = this.color.g;
+	    this.shapeRendererColor.b = this.color.b;
 		this.shapeRenderer.begin(ShapeType.Filled);
 		this.shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
 		this.shapeRenderer.end();
