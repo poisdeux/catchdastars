@@ -20,13 +20,6 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
 
-/**
- * TODO GameObjects fading in is not very smooth. Might be a better solution to not fade in
- * game objects but make a fullscreen widget that shows the levelimage animation with black
- * background and have it fade out at the end.
- * @author mbrekhof
- *
- */
 public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener, OnLevelLoadedListener
 {	
 	private Game game;
