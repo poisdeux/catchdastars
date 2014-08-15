@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -155,8 +154,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 				gameObject.setGame(this);
 				gameObject.setup();
 				gameObject.loadSounds();
-//				Color color = gameObject.getColor();
-//				gameObject.setColor(color.r, color.g, color.b, 0f);
 				addGameObject(gameObject);
 			}
 		}

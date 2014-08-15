@@ -53,8 +53,8 @@ public class GameObjectConfigurationDialog extends Dialog {
 
 		setupConfigurationItems();
 
-		addButton("Copy " + gameObject.getName(), BUTTON_COPY_CLICKED);
-		addButton("Delete " + gameObject.getName(), BUTTON_DELETE_CLICKED);
+		addButton("Copy ", BUTTON_COPY_CLICKED);
+		addButton("Delete ", BUTTON_DELETE_CLICKED);
 		
 		setPositiveButton("Close", new OnClickListener() {
 			

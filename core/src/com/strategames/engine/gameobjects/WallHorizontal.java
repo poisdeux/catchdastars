@@ -21,6 +21,11 @@ public class WallHorizontal extends Wall {
 
 	private Color color = getColor();
 	
+	public WallHorizontal() {
+		super();
+		setPartSize(WIDTH);
+	}
+	
 	@Override
 	public void setPosition(float x, float y) {
 		super.setPosition(x, y);
@@ -74,7 +79,6 @@ public class WallHorizontal extends Wall {
 	@Override
 	protected GameObject newInstance() {
 		Wall wall = new WallHorizontal();
-		wall.setPartSize(WIDTH);
 		return wall;
 	}
 

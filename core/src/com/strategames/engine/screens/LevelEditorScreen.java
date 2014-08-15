@@ -57,6 +57,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	private Vector3 worldSize;
 
+	private float cameraZoomInitial;
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -401,6 +403,12 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			}
 		}
 	}
+	
+	@Override
+	public void hide() {
+		getGameCamera().zoom = this.cameraZoomInitial;
+		super.hide();
+	}
 
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
@@ -431,7 +439,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		Stage stage = getStageActors();
 		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
 		camera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
-
+		this.cameraZoomInitial = camera.zoom;
+		
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			camera.zoom += 0.02; 

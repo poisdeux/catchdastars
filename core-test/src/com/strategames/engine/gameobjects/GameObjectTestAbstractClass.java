@@ -4,6 +4,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,9 +13,18 @@ import org.junit.runner.RunWith;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.game.GameTestClass;
 import com.strategames.engine.screens.GdxTestRunner2;
+import com.strategames.engine.utils.ConfigurationItem;
 
 @RunWith(GdxTestRunner2.class)
 abstract public class GameObjectTestAbstractClass {
@@ -91,6 +102,38 @@ abstract public class GameObjectTestAbstractClass {
 		this.gameObject.setWidth(width);
 		assertTrue("Width is "+this.gameObject.getWidth()+", but should be "+width, this.gameObject.getWidth() == width);
 		assertTrue("HalfWidth is "+this.gameObject.getHalfWidth()+", but should be "+width/2f, this.gameObject.getHalfWidth() == (width/2f));
+	}
+	
+	@Test
+	public void testConfigurationItems() {
+		this.gameObject.initializeConfigurationItems();
+		ArrayList<ConfigurationItem> configurationItems = gameObject.getConfigurationItems();
+		if( configurationItems == null ) {
+			return;
+		}
+		
+		for( ConfigurationItem item : configurationItems ) {
+			
+			ConfigurationItem.Type type = item.getType();
+			assertNotNull("Configuration item type is null", type);
+			
+			if( type == ConfigurationItem.Type.TEXT ) {
+				
+				String text = item.getValueText();
+				assertTrue("Text configuration item is null", text != null);
+				
+			} else if( type == ConfigurationItem.Type.NUMERIC ) {
+				
+				float number = item.getValueNumeric();
+				
+			} else if( type == ConfigurationItem.Type.NUMERIC_RANGE ) {
+				
+				item.getMinValue();
+				item.getMaxValue();
+				assertTrue("Numeric range configuration item stepsize not greater than 0: "+item.getStepSize(), item.getStepSize() > 0);
+			
+			}
+		}
 	}
 	
 	private void testIfEqual(GameObject object1, GameObject object2) {

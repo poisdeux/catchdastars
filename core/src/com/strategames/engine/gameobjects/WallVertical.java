@@ -14,6 +14,11 @@ public class WallVertical extends Wall {
 	
 	private int amountOfParts;
 	
+	public WallVertical() {
+		super();
+		setPartSize(HEIGHT);
+	}
+	
 	@Override
 	public void setLength(float length) {
 		if( length < HEIGHT ) {

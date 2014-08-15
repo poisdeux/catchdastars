@@ -3,7 +3,6 @@ package com.strategames.engine.utils;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobjects.GameObject;
@@ -63,7 +62,7 @@ public class Level implements Comparable<Level> {
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
-		Gdx.app.log("Level", "getJson: json="+json.toJson(this));
+//		Gdx.app.log("Level", "getJson: json="+json.toJson(this));
 		return json.toJson(this);
 	}
 

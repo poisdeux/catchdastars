@@ -68,7 +68,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		}
 		return gameCamera;
 	}
-
+	
 	public OrthographicCamera getMenuCamera() {
 		if( menuCamera == null ) {
 			Vector2 size = getMenuSize();
