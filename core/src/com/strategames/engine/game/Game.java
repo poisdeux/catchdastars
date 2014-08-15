@@ -3,6 +3,7 @@ package com.strategames.engine.game;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -321,8 +322,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public void update(float delta, Stage stage) {
 		if( this.gameState == GAME_STATE_RUNNING ) {
-//			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
-			fixedTimeStepInterpolated(delta);
+			Gdx.app.log("Game", "update: delta="+delta);
+//			fixedTimeStep(delta, stage);
+			fixedTimeStepInterpolated(delta, stage);
 		}
 
 		ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
@@ -339,21 +341,45 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	}
 
-	private void fixedTimeStepInterpolated(float delta) {
+	private void fixedTimeStep(float delta, Stage stage) {
+		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+		Array<Actor> actors = stage.getActors();
+		int size = actors.size;
+
+		for(int i = 0; i < size; i++) {
+			GameObject gameObject = (GameObject) actors.get(i);
+			Body body = gameObject.getBody();
+			if (body != null) {
+				if ( body.getType() == BodyDef.BodyType.DynamicBody ) {
+
+					Vector2 currentPosition = body.getPosition();
+
+					gameObject.setX( currentPosition.x );
+					gameObject.setY( currentPosition.y );
+
+					gameObject.setRotation( MathUtils.radiansToDegrees * body.getAngle() );
+				}
+			}
+		}
+	}
+	
+	private void fixedTimeStepInterpolated(float delta, Stage stage) {
 		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
 			delta = 0.25f;
 		}
+		
 		accumulator += delta;
 
 		while (accumulator >= UPDATE_FREQUENCY_SECONDS) {
 			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
 			accumulator -= UPDATE_FREQUENCY_SECONDS;
 		}
-		interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS);
+		
+		interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS, stage);
 	}
 
-	private void interpolateGameObjectsCurrentPosition(float alpha) {
-		Array<Actor> actors = stageActors.getActors();
+	private void interpolateGameObjectsCurrentPosition(float alpha, Stage stage) {
+		Array<Actor> actors = stage.getActors();
 		int size = actors.size;
 
 		for(int i = 0; i < size; i++) {

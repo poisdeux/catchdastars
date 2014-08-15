@@ -103,7 +103,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		
 		super.update(delta, stage);
 
-		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
