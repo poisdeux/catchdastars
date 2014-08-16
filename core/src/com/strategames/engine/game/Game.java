@@ -3,10 +3,12 @@ package com.strategames.engine.game;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import com.badlogic.gdx.Gdx;
+import aurelienribon.tweenengine.Tween;
+
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
@@ -28,6 +31,8 @@ import com.strategames.engine.screens.LevelScreen;
 import com.strategames.engine.screens.MainMenuScreen;
 import com.strategames.engine.screens.SettingsScreen;
 import com.strategames.engine.screens.SplashScreen;
+import com.strategames.engine.tweens.GameObjectAccessor;
+import com.strategames.engine.tweens.TextButtonAccessor;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
@@ -72,11 +77,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private Stage stageActors;
 
+	private FPSLogger fpsLogger;
+	
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new ArrayList<GameObject>();
 		this.backStack = new Stack<Screen>();
+		this.fpsLogger = new FPSLogger();
+		registerTweens();
 	}
 
 	public Game(String title) {
@@ -257,13 +266,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		loadLevelSync(listener);
 	}
 
-	private void loadLevelSync(final OnLevelLoadedListener listener) {
-		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
-		if( listener != null ) {
-			listener.onLevelLoaded(getLevel());
-		}
-	}
-
 	/**
 	 * Unloads level from AssetManager. The level unloaded is the level
 	 * with level number set by {@link #setLevelNumber(int)}
@@ -321,8 +323,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 
 	public void update(float delta, Stage stage) {
+		fpsLogger.log();
 		if( this.gameState == GAME_STATE_RUNNING ) {
-			Gdx.app.log("Game", "update: delta="+delta);
 //			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
 		}
@@ -339,6 +341,90 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 		this.gameObjectsForDeletion = notDeletedGameObjects;
 
+	}
+
+	/**
+	 * Called when a key was pressed
+	 * @param keycode one of the constants in Input.Keys
+	 * @return whether the key was processed
+	 */
+	public boolean handleKeyEvent(int keycode) {
+		if((keycode == Keys.BACK) 
+				|| (keycode == Keys.ESCAPE)) {
+			if( this.gameState == GAME_STATE_RUNNING ) {
+				pauseGame();
+			} else {
+				stopScreen();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Resets the game by reloading the level
+	 */
+	public void reset() {
+		setScreen( new LevelScreen(this) );
+	}
+
+	public void showMainMenu() {
+		Screen screen = new MainMenuScreen(this);
+		setScreen( screen );
+		addToBackstack(screen);
+	}
+
+	public void showSplashScreen() {
+		setScreen(new SplashScreen(this));
+	}
+
+	public void startLevel(int level) {
+		setLevelNumber(level);
+		showLevelScreen();
+	}
+
+	public void startLevel(Level level) {
+		setLevel(level);
+		showLevelScreen();
+	}
+	
+	private void loadLevelSync(final OnLevelLoadedListener listener) {
+		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
+		if( listener != null ) {
+			listener.onLevelLoaded(getLevel());
+		}
+	}
+	
+	public void showLevelEditor() {
+		Screen screen = new LevelEditorScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+
+	public void showLevelEditorMenu() {
+		Screen screen = new LevelEditorMenuScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+
+	public void showSettings() {
+		Screen screen = new SettingsScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+
+	/**
+	 * Hides the current screen and shows the previous screen
+	 */
+	public void stopScreen() {
+		popBackstack();
+		setScreen(peekBackStack());
+	}
+
+	@Override
+	public void onMusicFilesReceived() {
+		MusicPlayer player = MusicPlayer.getInstance();
+		player.setLibrary(this.musicSelector.getLibrary());
 	}
 
 	private void fixedTimeStep(float delta, Stage stage) {
@@ -400,51 +486,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 	}
 
-	/**
-	 * Called when a key was pressed
-	 * @param keycode one of the constants in Input.Keys
-	 * @return whether the key was processed
-	 */
-	public boolean handleKeyEvent(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			if( this.gameState == GAME_STATE_RUNNING ) {
-				pauseGame();
-			} else {
-				stopScreen();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Resets the game by reloading the level
-	 */
-	public void reset() {
-		setScreen( new LevelScreen(this) );
-	}
-
-	public void showMainMenu() {
-		Screen screen = new MainMenuScreen(this);
-		setScreen( screen );
-		addToBackstack(screen);
-	}
-
-	public void showSplashScreen() {
-		setScreen(new SplashScreen(this));
-	}
-
-	public void startLevel(int level) {
-		setLevelNumber(level);
-		showLevelScreen();
-	}
-
-	public void startLevel(Level level) {
-		setLevel(level);
-		showLevelScreen();
-	}
-
 	private void showLevelScreen() {
 		LevelScreen screen = new LevelScreen(this);
 		setScreen( screen );
@@ -455,39 +496,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			addToBackstack(screen);
 		}
 	}
-
-	public void showLevelEditor() {
-		Screen screen = new LevelEditorScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
+	
+	private void registerTweens() {
+		Tween.registerAccessor(TextButton.class, new TextButtonAccessor());
+		Tween.registerAccessor(GameObject.class, new GameObjectAccessor());
 	}
-
-	public void showLevelEditorMenu() {
-		Screen screen = new LevelEditorMenuScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
-	}
-
-	public void showSettings() {
-		Screen screen = new SettingsScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
-	}
-
-	/**
-	 * Hides the current screen and shows the previous screen
-	 */
-	public void stopScreen() {
-		popBackstack();
-		setScreen(peekBackStack());
-	}
-
-	@Override
-	public void onMusicFilesReceived() {
-		MusicPlayer player = MusicPlayer.getInstance();
-		player.setLibrary(this.musicSelector.getLibrary());
-	}
-
+	
 	/**
 	 * This should return one game object for each type used in the game.
 	 * @return

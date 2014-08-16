@@ -19,7 +19,8 @@ public class DesktopLauncher implements ExportImport, MusicSelector {
 		config.title = "Catch Da Stars";
 		config.width = 510;
 		config.height = 810;
-
+		config.vSyncEnabled = true;
+		
 		CatchDaStars game = new CatchDaStars();
 		game.setExporterImporter(this);
 		game.setMusicSelector(this);

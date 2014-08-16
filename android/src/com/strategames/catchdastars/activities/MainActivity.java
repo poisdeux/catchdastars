@@ -29,7 +29,7 @@ public class MainActivity extends AndroidApplication implements ExportImport, Mu
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
 		cfg.useAccelerometer = true;
 		cfg.useCompass = false;
-
+		
 		CatchDaStars game = new CatchDaStars();
 		game.setExporterImporter(this);
 		game.setMusicSelector(this);

@@ -8,6 +8,11 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.strategames.ui.interfaces.ButtonListener;
 
+/**
+ * TextButton that also reacts to longpresses
+ * @author mbrekhof
+ *
+ */
 public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton implements EventListener {
 	private Timer timer;
 	private boolean longPress;
