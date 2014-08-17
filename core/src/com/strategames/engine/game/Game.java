@@ -18,7 +18,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
@@ -31,8 +30,7 @@ import com.strategames.engine.screens.LevelScreen;
 import com.strategames.engine.screens.MainMenuScreen;
 import com.strategames.engine.screens.SettingsScreen;
 import com.strategames.engine.screens.SplashScreen;
-import com.strategames.engine.tweens.GameObjectAccessor;
-import com.strategames.engine.tweens.TextButtonAccessor;
+import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
@@ -44,9 +42,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	public final int GAME_STATE_PAUSED = 1;
 	private int gameState = GAME_STATE_PAUSED;
 
-	public static final float UPDATE_FREQUENCY_SECONDS = 1f/45f;
-	public static final float UPDATE_FREQUENCY_MILLISECONDS = UPDATE_FREQUENCY_SECONDS * 1000f;
-
+	public static final float FRAMES_PER_SECOND = 1/60f;
+	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
+	private static final int BOX2D_VELOCITY_ITERATIONS = 6;
+	private static final int BOX2D_POSITION_ITERATIONS = 3;
+	
 	public static final float BOX_TO_WORLD = 100f;
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 
@@ -428,7 +428,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 
 	private void fixedTimeStep(float delta, Stage stage) {
-		this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
+		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
 		Array<Actor> actors = stage.getActors();
 		int size = actors.size;
 
@@ -450,18 +450,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	private void fixedTimeStepInterpolated(float delta, Stage stage) {
+		
 		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
 			delta = 0.25f;
 		}
 		
 		accumulator += delta;
 
-		while (accumulator >= UPDATE_FREQUENCY_SECONDS) {
-			this.world.step(UPDATE_FREQUENCY_SECONDS, 6, 2);
-			accumulator -= UPDATE_FREQUENCY_SECONDS;
+		while (accumulator >= BOX2D_UPDATE_FREQUENCY) {
+			this.world.step(BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+			accumulator -= BOX2D_UPDATE_FREQUENCY;
 		}
 		
-		interpolateGameObjectsCurrentPosition(accumulator/UPDATE_FREQUENCY_SECONDS, stage);
+		interpolateGameObjectsCurrentPosition(accumulator/BOX2D_UPDATE_FREQUENCY, stage);
 	}
 
 	private void interpolateGameObjectsCurrentPosition(float alpha, Stage stage) {
@@ -498,8 +499,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	}
 	
 	private void registerTweens() {
-		Tween.registerAccessor(TextButton.class, new TextButtonAccessor());
-		Tween.registerAccessor(GameObject.class, new GameObjectAccessor());
+		Tween.registerAccessor(Actor.class, new ActorAccessor());
 	}
 	
 	/**
