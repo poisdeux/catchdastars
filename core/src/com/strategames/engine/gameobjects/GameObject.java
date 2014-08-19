@@ -146,31 +146,31 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return textureRegion;
 	}
 	
-	@Override
-	public boolean remove() {
-		if( super.remove() ) {
-			return deleteBody();
-		}
-		return false;
-	}
-	
-	/**
-	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
-	 * not running.
-	 * @return
-	 */
-	public boolean deleteBody() {
-		World world = this.game.getWorld();
-//		if(world.isLocked()) {
-//			return false;
+//	@Override
+//	public boolean remove() {
+//		if( super.remove() ) {
+//			return deleteBody();
 //		}
-
-		if( this.body != null ) {
-			world.destroyBody(this.body);
-			this.body = null;
-		}
-		return true;
-	}
+//		return false;
+//	}
+	
+//	/**
+//	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
+//	 * not running.
+//	 * @return
+//	 */
+//	public boolean deleteBody() {
+//		World world = this.game.getWorld();
+////		if(world.isLocked()) {
+////			return false;
+////		}
+//
+//		if( this.body != null ) {
+//			world.destroyBody(this.body);
+//			this.body = null;
+//		}
+//		return true;
+//	}
 
 	public boolean canBeRemoved() {
 		return this.canBeRemoved;
@@ -210,8 +210,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * TODO replace setup method with a builder pattern create method
 	 */
 	public void setup() {
+		Gdx.app.debug("GameObject", "0");
 		this.textureRegion = createTextureRegion();
-//		Gdx.app.log("GameObject", "setup: gameObject="+this+", trd="+trd);
+//		Gdx.app.debug("GameObject", "setup: gameObject="+this+", trd="+trd);
 		if( this.textureRegion != null ) {
 			setDrawable(new TextureRegionDrawable(this.textureRegion));
 			setScaling(Scaling.stretch);
@@ -222,10 +223,12 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			}
 		}
 
-//		Gdx.app.log("GameObject", "setup: gameObject="+this+", world="+this.world);
+//		Gdx.app.debug("GameObject", "setup: gameObject="+this+", world="+this.world);
 		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
+//			Gdx.app.debug("GameObject", "1");
 			this.body = setupBox2D();
 			this.body.setUserData(this);
+//			Gdx.app.debug("GameObject", "2");
 		}
 
 		this.canBeRemoved = false;

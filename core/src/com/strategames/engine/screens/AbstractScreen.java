@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -36,9 +37,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(getStageUIActors());
-		this.multiplexer.addProcessor(this);
-		Gdx.input.setInputProcessor(this.multiplexer);
 	}
 
 	@Override
@@ -102,6 +100,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{
+		this.multiplexer.addProcessor(getStageUIActors());
+		this.multiplexer.addProcessor(this);
+		Gdx.input.setInputProcessor(this.multiplexer);
+		
 		setupUI(getStageUIActors());
 		setupActors(getStageActors());
 	}
@@ -122,6 +124,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
+		getMultiplexer().clear();
 		dispose();
 	}
 

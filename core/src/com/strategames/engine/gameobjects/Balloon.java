@@ -23,7 +23,7 @@ import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChanged
 abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 2f;
-	private static final float DEFAULT_LIFTFACTOR = 1.3f;
+	private static final float DEFAULT_LIFTFACTOR = 1.2f;
 
 	private static final float WIDTH = 0.30f;
 

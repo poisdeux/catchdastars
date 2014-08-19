@@ -114,22 +114,27 @@ public class Icecube extends GameObject {
 
 	@Override
 	protected Body setupBox2D() {
+//		Gdx.app.debug("Icecube", "0");
 		World world = getGame().getWorld();
-
+		
 		bodyDef.position.set(getX(), getY());
 		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
 
+//		Gdx.app.debug("Icecube", "1");
 		Body body = world.createBody(bodyDef);
-
+//		Gdx.app.debug("Icecube", "2");
+		
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
 			String name = part.getName();
 			loader.attachFixture(body, name, i, fixtureDef);
 		}
-
+//		Gdx.app.debug("Icecube", "3");
+		
 		body.setSleepingAllowed(false);
-
+		
+//		Gdx.app.debug("Icecube", "4");
 		return body;
 	}
 
@@ -320,8 +325,6 @@ public class Icecube extends GameObject {
 		icecube1.setRotation(rotation);
 		icecube1.addPart(part);
 		icecube1.setBroken(true);
-		icecube1.setGame(game);
-		icecube1.setup();
 
 		// Create new object with the pieces that are left
 		icecube2.setPosition(v.x, v.y);
@@ -332,9 +335,6 @@ public class Icecube extends GameObject {
 			}
 		}
 		icecube2.setBroken(true);
-		icecube2.setGame(game);
-		icecube2.setup();
-
 		setCanBeRemoved(true);
 		game.deleteGameObject(this);
 	}

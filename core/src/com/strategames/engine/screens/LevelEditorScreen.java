@@ -130,24 +130,22 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.snapToGrid = this.preferences.snapToGridEnabled();
 
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
-
-		getMultiplexer().addProcessor(new GestureDetector(this));
-
-		setCamera();
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
+		getMultiplexer().addProcessor(new GestureDetector(this));
 		this.rectangleImage = new FilledRectangleImage(stage);
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 		stage.addActor(this.rectangleImage);
 		displayGrid(this.preferences.displayGridEnabled());
+		setCamera();
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		getMultiplexer().addProcessor(stage);
-
+		
 		Level level = getGame().getLevel();
 		if( level == null ) {
 			return;

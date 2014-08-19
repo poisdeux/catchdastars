@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -44,9 +45,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	public static final float FRAMES_PER_SECOND = 1/60f;
 	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
-	private static final int BOX2D_VELOCITY_ITERATIONS = 6;
-	private static final int BOX2D_POSITION_ITERATIONS = 3;
-	
+	private final int BOX2D_VELOCITY_ITERATIONS = 6;
+	private final int BOX2D_POSITION_ITERATIONS = 3;
+	private WorldThread worldThread;
+
 	public static final float BOX_TO_WORLD = 100f;
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 
@@ -54,7 +56,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 
 	private float accumulator;
 
-	private ArrayList<GameObject> gameObjectsForDeletion;
+	private Array<GameObject> gameObjectsForDeletion;
+	private Array<GameObject> gameObjectsForAddition;
 
 	private AssetManager manager;
 
@@ -78,13 +81,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	private Stage stageActors;
 
 	private FPSLogger fpsLogger;
-	
+
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
-		this.gameObjectsForDeletion = new ArrayList<GameObject>();
+		this.gameObjectsForDeletion = new Array<GameObject>();
+		this.gameObjectsForAddition = new Array<GameObject>();
 		this.backStack = new Stack<Screen>();
 		this.fpsLogger = new FPSLogger();
+		this.worldThread = new WorldThread(null, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
 		registerTweens();
 	}
 
@@ -98,29 +103,24 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		showSplashScreen();
 	}
 
-	@Override
-	public void resume() {
-		super.resume();
-	}
-
-	@Override
-	public void pause() {
-		super.pause();
-	}
-
 	public void pauseGame() {
 		this.gameState = GAME_STATE_PAUSED;
 		MusicPlayer.getInstance().pause();
+		if( this.worldThread != null ) {
+			this.worldThread.stopThread();
+		}
 	}
 
 	public void resumeGame() {
 		this.gameState = GAME_STATE_RUNNING;
 		MusicPlayer.getInstance().resume();
+		startBox2DThread();
 	}
 
 	public void startGame() {
 		this.gameState = GAME_STATE_RUNNING;
 		MusicPlayer.getInstance().resume();
+		startBox2DThread();
 	}
 
 	public boolean isRunning() {
@@ -314,25 +314,29 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * to be deleted
 	 * @return ArrayList<GameObject>
 	 */
-	public ArrayList<GameObject> getGameObjectsForDeletion() {
+	public Array<GameObject> getGameObjectsForDeletion() {
 		return gameObjectsForDeletion;
 	}
 
 	public void addGameObject(GameObject object) {
+		object.setGame(this);
+		this.gameObjectsForAddition.add(object);
 		this.stageActors.addActor(object);
 	}
 
 	public void update(float delta, Stage stage) {
 		fpsLogger.log();
 		if( this.gameState == GAME_STATE_RUNNING ) {
-//			fixedTimeStep(delta, stage);
+			//			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
 		}
-
-		ArrayList<GameObject> notDeletedGameObjects = new ArrayList<GameObject>();
+		
+//		this.worldThread.lock();
+		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
 		for (GameObject object : this.gameObjectsForDeletion ) {
 			if( object.canBeRemoved() ) {
 				if( object.remove() ) {
+					object.getBody().setActive(false);
 					object.clear();
 				}
 			} else {
@@ -341,6 +345,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		}
 		this.gameObjectsForDeletion = notDeletedGameObjects;
 
+		for(GameObject object : this.gameObjectsForAddition) {
+			object.setup();
+			this.stageActors.addActor(object);
+		}
+		this.gameObjectsForAddition.clear();
+//		this.worldThread.unlock();
 	}
 
 	/**
@@ -387,14 +397,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		setLevel(level);
 		showLevelScreen();
 	}
-	
+
 	private void loadLevelSync(final OnLevelLoadedListener listener) {
 		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
 		if( listener != null ) {
 			listener.onLevelLoaded(getLevel());
 		}
 	}
-	
+
 	public void showLevelEditor() {
 		Screen screen = new LevelEditorScreen(this);
 		setScreen(screen);
@@ -448,21 +458,28 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			}
 		}
 	}
-	
-	private void fixedTimeStepInterpolated(float delta, Stage stage) {
-		
-		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
-			delta = 0.25f;
-		}
-		
-		accumulator += delta;
 
-		while (accumulator >= BOX2D_UPDATE_FREQUENCY) {
-			this.world.step(BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
-			accumulator -= BOX2D_UPDATE_FREQUENCY;
+	private void fixedTimeStepInterpolated(float delta, Stage stage) {
+		//		Gdx.app.log("Game", "fixedTimeStepInterpolated: delta="+delta);
+
+		//		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
+		//			delta = 0.25f;
+		//		}
+		//		
+		//		accumulator += delta;
+		//
+		//		while (accumulator >= BOX2D_UPDATE_FREQUENCY) {
+		//			this.world.step(BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+		//			accumulator -= BOX2D_UPDATE_FREQUENCY;
+		//		}
+
+		//		interpolateGameObjectsCurrentPosition(accumulator/BOX2D_UPDATE_FREQUENCY, stage);
+		if( delta > BOX2D_UPDATE_FREQUENCY ) {
+			//Rendering running slower than world updates
+			//Should we also use Toast to notify user?
+			Gdx.app.log("Game", "Renderer took "+delta+" secondes while world is updated each "+BOX2D_UPDATE_FREQUENCY+" seconds");
 		}
-		
-		interpolateGameObjectsCurrentPosition(accumulator/BOX2D_UPDATE_FREQUENCY, stage);
+		interpolateGameObjectsCurrentPosition(delta/BOX2D_UPDATE_FREQUENCY, stage);
 	}
 
 	private void interpolateGameObjectsCurrentPosition(float alpha, Stage stage) {
@@ -497,11 +514,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 			addToBackstack(screen);
 		}
 	}
-	
+
 	private void registerTweens() {
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 	}
-	
+
+	private void startBox2DThread() {
+		if( this.worldThread != null ) {
+			this.worldThread.stopThread();
+		}
+		this.worldThread = new WorldThread(world, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+		this.worldThread.start();
+	}
+
 	/**
 	 * This should return one game object for each type used in the game.
 	 * @return
