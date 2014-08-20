@@ -335,6 +335,7 @@ public class Icecube extends GameObject {
 			}
 		}
 		icecube2.setBroken(true);
+		
 		setCanBeRemoved(true);
 		game.deleteGameObject(this);
 	}

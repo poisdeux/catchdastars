@@ -99,59 +99,40 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			assertNotNull(icecube2Part.getName());
 			assertNotNull(icecube2Part.getSprite());
 		}
-
-		if(icecube2Parts.size() > 1) {
-			testSplitObjectOnPart(icecube2Parts.get(0), icecube2);
-		}
 	}
 
 	@Test
 	public void testHandleCollision() {
-		int amountOfIcecubes = 10;
 		Game game = new GameTestClass();
 		game.setWorld(this.world);
-		ArrayList<ArrayList<Icecube>> results = new ArrayList<ArrayList<Icecube>>();
-		ArrayList<Icecube> icecubes = new ArrayList<Icecube>();
-		for(int i = 0; i < amountOfIcecubes; i++) {
-			Icecube icecube = new Icecube();
-			icecube.addAllParts();
-			icecube.setGame(game);
-			icecube.setup();
-			icecubes.add(icecube);
+		ArrayList<Icecube> result = new ArrayList<Icecube>();
+		Icecube icecube = new Icecube();
+		icecube.addAllParts();
+		icecube.setGame(game);
+		icecube.setup();
 
-			results.add(new ArrayList<Icecube>());
-		}
+		breakObject(icecube, result);
 
-		for(int i = 0; i < amountOfIcecubes; i++) {
-			final Icecube icecube = icecubes.get(i);
-			final ArrayList<Icecube> result = results.get(i);
-			breakObject(icecube, result);
-		}
-
-		assertBreakObjectResults(results);
+		assertBreakObjectResults(result);
 	}
 
-	private void assertBreakObjectResults(ArrayList<ArrayList<Icecube>> results) {
-		for( int resultIndex = 0; resultIndex < results.size(); resultIndex++ ) {
-			ArrayList<Icecube> result = results.get(resultIndex);
-			ArrayList<Part> partsNotFound = new ArrayList<Icecube.Part>();
-			for( Part availablePart : availableParts ) {
-				for(Icecube icecube : result ) {
-					ArrayList<Part> parts = icecube.getParts();
-					assertTrue("Result "+resultIndex+": List of parts is not size 1", parts.size() == 1);
-					if( availablePart != parts.get(0) ) {
-						partsNotFound.add(availablePart);
-					}
+	private void assertBreakObjectResults(ArrayList<Icecube> result) {
+		ArrayList<Part> partsNotFound = new ArrayList<Icecube.Part>();
+		for( Part availablePart : availableParts ) {
+			for(Icecube icecube : result ) {
+				ArrayList<Part> parts = icecube.getParts();
+				assertTrue("Amount of parts is not 1", parts.size() == 1);
+				if( availablePart != parts.get(0) ) {
+					partsNotFound.add(availablePart);
 				}
 			}
-			if( partsNotFound.size() == 0 ) {
-				StringBuffer partsInfo = new StringBuffer();
-				for( Part part : partsNotFound ) {
-					partsInfo.append(part.toString() + "\n");
-				}
-				fail("result "+resultIndex+" parts not found: "+partsInfo);
+		}
+		if( partsNotFound.size() == 0 ) {
+			StringBuffer partsInfo = new StringBuffer();
+			for( Part part : partsNotFound ) {
+				partsInfo.append(part.toString() + "\n");
 			}
-
+			fail("Parts not found: "+partsInfo);
 		}
 	}
 
@@ -181,33 +162,42 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	private void breakObject(Icecube icecube, ArrayList<Icecube> result) {
 		MyContact myContact = new MyContact();
 		MyContactImpulse impulse = new MyContactImpulse();
-
+		
 		while(icecube.getParts().size() > 1) {
+			Game game = icecube.getGame();
+			assertNotNull(game);
 			
 			Body body = icecube.getBody();
+			assertNotNull(body);
+
 			Array<Fixture> fixtures = body.getFixtureList();
 			myContact.setFixtureA(fixtures.get(0));
 			Fixture fixture = myContact.getFixtureA();
 			assertTrue("Body of fixture="+fixture+" not equal to body in icecube", fixture.getBody() == body);
-			
+
 			Integer fixtureId = (Integer) fixture.getUserData();
 			assertNotNull(fixtureId);
 			ArrayList<Part> parts = icecube.getParts();
 			Part part = parts.get(fixtureId);
 			assertNotNull(part);
-			
+
 			icecube.handleCollision(myContact, impulse, null);
 			Part breakOffPart = icecube.getBreakOfPart();
 			assertTrue("breakOffPart("+breakOffPart+") not equal to part("+part+")", breakOffPart == part);
-			
+
 			Icecube icecube1 = new Icecube();
 			Icecube icecube2 = new Icecube();
 			icecube.splitObject(breakOffPart, icecube1, icecube2);
-
-			icecube.deleteBody();
-			icecube.remove();
-			this.world.step(1/60f, 2, 6);
+			icecube1.setGame(game);
+			icecube1.setup();
+			icecube2.setGame(game);
+			icecube2.setup();
 			
+			icecube.getBody().setActive(false);
+			icecube.remove();
+
+			this.world.step(1/60f, 2, 6);
+
 			icecube = icecube2;
 
 			result.add(icecube1);
