@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
@@ -37,12 +38,17 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Textures;
+import com.strategames.ui.dialogs.LevelCompleteDialog;
+import com.strategames.ui.dialogs.LevelFailedDialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 
-abstract public class Game extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
+abstract public class Game extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
 	public final int GAME_STATE_PAUSED = 1;
+	public final int GAME_STATE_COMPLETE = 2;
+	public final int GAME_STATE_FAILED = 3;
 	private int gameState = GAME_STATE_PAUSED;
-
+	
 	public static final float FRAMES_PER_SECOND = 1/60f;
 	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
 	private final int BOX2D_VELOCITY_ITERATIONS = 6;
@@ -131,10 +137,18 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		return this.gameState == GAME_STATE_PAUSED;
 	}
 
+	public boolean isComplete() {
+		return this.gameState == GAME_STATE_COMPLETE;
+	}
+	
+	public boolean isFailed() {
+		return this.gameState == GAME_STATE_FAILED;
+	}
+	
 	public int getGameState() {
 		return this.gameState;
 	}
-
+	
 	public void setTotalScore(int totalScore) {
 		this.totalScore = totalScore;
 	}
@@ -437,6 +451,45 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 		player.setLibrary(this.musicSelector.getLibrary());
 	}
 
+	/**
+	 * Called by AbstractScreen when level is loaded and ready to start the game
+	 * @param screen that contains the stage with actors
+	 */
+	public void setup(AbstractScreen screen) {
+		this.stageActors = screen.getStageActors();
+	}
+	
+	/**
+	 * Override this method to implement a dialog that should be shown
+	 * when game is in state {@link #GAME_STATE_COMPLETE}
+	 */
+	public void showLevelCompleteDialog() {
+		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
+
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
+
+		levelCompleteDialog.setOnClickListener(this);
+
+		levelCompleteDialog.create();
+
+		levelCompleteDialog.show();
+
+		setTotalScore(getTotalScore());
+	}
+	
+	/**
+	 * Override this method to implement a custom dialog that should be shown
+	 * when game is in state {@link #GAME_STATE_FAILED}
+	 */
+	public void showLevelFailedDialog() {
+		AbstractScreen screen = (AbstractScreen) getScreen();
+
+		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIActors(), screen.getSkin());
+		dialog.setOnClickListener(this);
+		dialog.create();
+		dialog.show();
+	}
+	
 	private void fixedTimeStep(float delta, Stage stage) {
 		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
 		Array<Actor> actors = stage.getActors();
@@ -532,12 +585,4 @@ abstract public class Game extends com.badlogic.gdx.Game implements ContactListe
 	 * @return
 	 */
 	abstract public ArrayList<GameObject> getAvailableGameObjects();
-
-	/**
-	 * Called by AbstractScreen when level is loaded and ready to start the game
-	 * @param screen that contains the stage with actors
-	 */
-	public void setup(AbstractScreen screen) {
-		this.stageActors = screen.getStageActors();
-	}
 }

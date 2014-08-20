@@ -72,7 +72,16 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		this.game.update(delta, this.stageActors);
+
+		if( this.game.isRunning() ) {
+			this.game.update(delta, this.stageActors);
+		} else {
+			if( this.game.isComplete() ) {
+				this.game.showLevelCompleteDialog();
+			} else if( this.game.isFailed() ) {
+				this.game.showLevelFailedDialog();
+			}
+		}
 	}
 
 	@Override

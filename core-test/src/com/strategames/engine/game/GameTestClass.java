@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.screens.ScreenTestClass;
+import com.strategames.ui.dialogs.Dialog;
 
 public class GameTestClass extends Game {
 
@@ -51,6 +52,12 @@ public class GameTestClass extends Game {
 
 	@Override
 	public void setup(AbstractScreen screen) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClick(Dialog dialog, int which) {
 		// TODO Auto-generated method stub
 		
 	}

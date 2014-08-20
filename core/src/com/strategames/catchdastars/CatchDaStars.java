@@ -97,12 +97,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 			this.gravityVector.set(-Gdx.input.getAccelerometerX(), -Gdx.input.getAccelerometerY());
 			this.world.setGravity(gravityVector);
 		}
-
 		Icecube.playRocksHitSound();
-		
 		super.update(delta, stage);
 
-//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -110,7 +108,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		super.setup(screen);
-		
+
 		Level level = getLevel();
 		if( level == null ) {
 			return;
@@ -168,7 +166,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 				blueBalloonsScore + redBalloonsScore;
 	}
 
-	private void showLevelCompleteDialog() {
+	@Override
+	public void showLevelCompleteDialog() {
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
@@ -189,7 +188,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 		setTotalScore(getTotalScore() + calculateScore());
 	}
 
-	private void showLevelFailedDialog() {
+	@Override
+	public void showLevelFailedDialog() {
 		AbstractScreen screen = (AbstractScreen) getScreen();
 
 		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIActors(), screen.getSkin());
