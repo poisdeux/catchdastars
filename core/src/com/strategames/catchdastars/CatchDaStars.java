@@ -108,14 +108,16 @@ public class CatchDaStars extends Game implements OnClickListener {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		super.setup(screen);
-
+		
 		Level level = getLevel();
 		if( level == null ) {
+			Gdx.app.log("CatchDaStars", "setup: level==null");
 			return;
 		}
 
 		ArrayList<GameObject> gameObjects = level.getGameObjects();
-		if ( gameObjects == null ) {
+		if ( gameObjects.size() == 0 ) {
+			Gdx.app.log("CatchDaStars", "setup: gameobjects is empty for level="+level);
 			return;
 		}
 
@@ -130,29 +132,28 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		if( gameObjects != null ) {
-			for(GameObject gameObject : gameObjects ) {
-				if( gameObject instanceof Star ) {
-					if( gameObject instanceof StarBlue ) {
-						this.blueCollectables.add();
-					} else if( gameObject instanceof StarRed ) {
-						this.redCollectables.add();
-					} else if( gameObject instanceof StarYellow ) {
-						this.goldCollectables.add();
-					}
-				} else if( gameObject instanceof Balloon ) {
-					if( gameObject instanceof BalloonBlue ) {
-						this.amountOfBlueBalloons++;
-					} else if( gameObject instanceof BalloonRed ) {
-						this.amountOfRedBalloons++;
-					}
-				} else if( gameObject instanceof Icecube ) {
-					((Icecube) gameObject).addAllParts();
+		for(GameObject gameObject : gameObjects ) {
+			if( gameObject instanceof Star ) {
+				if( gameObject instanceof StarBlue ) {
+					this.blueCollectables.add();
+				} else if( gameObject instanceof StarRed ) {
+					this.redCollectables.add();
+				} else if( gameObject instanceof StarYellow ) {
+					this.goldCollectables.add();
 				}
-				gameObject.loadSounds();
-				addGameObject(gameObject);
+			} else if( gameObject instanceof Balloon ) {
+				if( gameObject instanceof BalloonBlue ) {
+					this.amountOfBlueBalloons++;
+				} else if( gameObject instanceof BalloonRed ) {
+					this.amountOfRedBalloons++;
+				}
+			} else if( gameObject instanceof Icecube ) {
+				((Icecube) gameObject).addAllParts();
 			}
+			gameObject.loadSounds();
+			addGameObject(gameObject);
 		}
+
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
@@ -234,7 +235,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private void destroyBalloon(Balloon balloon) {
 		synchronized (balloon) {
-			balloon.destroy();
+			balloon.startRemoveAnimation();
 			deleteGameObject(balloon);
 			if( balloon instanceof BalloonBlue ) {
 				this.amountOfBlueBalloons--;
@@ -253,20 +254,20 @@ public class CatchDaStars extends Game implements OnClickListener {
 			if( gameObject instanceof StarYellow ) {
 				synchronized (gameObject) {
 					if( ! gameObject.isHit() ) {
-						gameObject.destroy();
+						gameObject.startRemoveAnimation();
 						deleteGameObject(gameObject);
 						this.goldCollectables.collect(gameObject);
 					}
 				}
 			} else if( ( balloon instanceof BalloonBlue ) && ( gameObject instanceof StarBlue ) ) {
 				if( ! gameObject.isHit() ) {
-					gameObject.destroy();
+					gameObject.startRemoveAnimation();
 					deleteGameObject(gameObject);
 					this.blueCollectables.collect(gameObject);
 				}
 			} else if( ( balloon instanceof BalloonRed ) && ( gameObject instanceof StarRed ) ) {
 				if( ! gameObject.isHit() ) {
-					gameObject.destroy();
+					gameObject.startRemoveAnimation();
 					deleteGameObject(gameObject);
 					this.redCollectables.collect(gameObject);
 				}
@@ -278,12 +279,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
 			pauseGame();
-			showLevelFailedDialog();
+			setLevelFailed();
 		}
 
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
 			pauseGame();
-			showLevelFailedDialog();
+			setLevelFailed();
 		}
 
 		//Check if all collectables have been retrieved
@@ -291,7 +292,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
 			pauseGame();
-			showLevelCompleteDialog();
+			setLevelCompleted();
 		}
 	}
 

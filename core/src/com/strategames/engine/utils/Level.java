@@ -79,7 +79,7 @@ public class Level implements Comparable<Level> {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d %s", this.number, this.name );
+		return String.format( Locale.US, "%d %s, #gameobjects=%d", this.number, this.name, this.gameObjects.size() );
 	}
 
 	public Level copy() {

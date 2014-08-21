@@ -129,6 +129,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		startBox2DThread();
 	}
 
+	public void setLevelCompleted() {
+		this.gameState = GAME_STATE_COMPLETE;
+	}
+	
+	public void setLevelFailed() {
+		this.gameState = GAME_STATE_FAILED;
+	}
+	
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE_RUNNING;
 	}
@@ -334,6 +342,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	public void addGameObject(GameObject object) {
 		object.setGame(this);
+		object.setup();
 		this.gameObjectsForAddition.add(object);
 		this.stageActors.addActor(object);
 	}

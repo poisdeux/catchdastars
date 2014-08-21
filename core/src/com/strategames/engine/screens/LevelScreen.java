@@ -30,6 +30,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 	private Stage stage;
 	private boolean imageStartAnimationFinished;
 	private boolean levelLoaded;
+	private boolean gameEnded;
 
 	public LevelScreen(Game game) {
 		super(game);
@@ -76,10 +77,14 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		if( this.game.isRunning() ) {
 			this.game.update(delta, this.stageActors);
 		} else {
-			if( this.game.isComplete() ) {
-				this.game.showLevelCompleteDialog();
-			} else if( this.game.isFailed() ) {
-				this.game.showLevelFailedDialog();
+			if( !this.gameEnded ) {
+				if( this.game.isComplete() ) {
+					this.game.showLevelCompleteDialog();
+					this.gameEnded = true;
+				} else if( this.game.isFailed() ) {
+					this.game.showLevelFailedDialog();
+					this.gameEnded = true;
+				}
 			}
 		}
 	}

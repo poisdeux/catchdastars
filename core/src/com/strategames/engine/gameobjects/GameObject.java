@@ -423,7 +423,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Use this to remove object from game during gameplay. It starts the {@link #destroyAction()}
 	 * and sets {@link #isHit} to true.
 	 */
-	synchronized public void destroy() {
+	synchronized public void startRemoveAnimation() {
 		if( this.isHit ) { //prevent object from being destroyed multiple times during a removal animation
 			return;
 		}
@@ -432,7 +432,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	/**
-	 * Called by {@link #destroy()} to start any animation or sound when object is destroyed
+	 * Called by {@link #startRemoveAnimation()} to start any animation or sound when object is destroyed
 	 * <br/>
 	 * Be sure to call {@link #setCanBeRemoved(boolean)} and set it to true when object can
 	 * safely be removed from game. Otherwise object will not be removed.
