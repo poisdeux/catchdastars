@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
@@ -115,8 +116,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 			return;
 		}
 
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
-		if ( gameObjects.size() == 0 ) {
+		Array<GameObject> gameObjects = level.getGameObjects();
+		if ( gameObjects.size == 0 ) {
 			Gdx.app.log("CatchDaStars", "setup: gameobjects is empty for level="+level);
 			return;
 		}

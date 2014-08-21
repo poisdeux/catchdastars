@@ -3,6 +3,7 @@ package com.strategames.engine.utils;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobjects.GameObject;
@@ -10,17 +11,17 @@ import com.strategames.engine.gameobjects.GameObject;
 public class Level implements Comparable<Level> {
 	private int number;
 	private String name;
-	private ArrayList<GameObject> gameObjects;
+	private Array<GameObject> gameObjects;
 
 	public Level() {
-		this.gameObjects = new ArrayList<GameObject>();
+		this.gameObjects = new Array<GameObject>();
 	}
 	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		if( gameObjects == null )
 			return;
 		
-		this.gameObjects = new ArrayList<GameObject>();
+		this.gameObjects = new Array<GameObject>();
 		
 		for( GameObject object : gameObjects ) {
 			addGameObject(object);
@@ -39,7 +40,11 @@ public class Level implements Comparable<Level> {
 		}
 	}
 	
-	public ArrayList<GameObject> getGameObjects() {
+	public void removeGameObject(GameObject object) {
+		this.gameObjects.removeValue(object, true);
+	}
+	
+	public Array<GameObject> getGameObjects() {
 		return this.gameObjects;
 	}
 
@@ -79,7 +84,7 @@ public class Level implements Comparable<Level> {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d %s, #gameobjects=%d", this.number, this.name, this.gameObjects.size() );
+		return String.format( Locale.US, "%d %s, #gameobjects=%d", this.number, this.name, this.gameObjects.size );
 	}
 
 	public Level copy() {

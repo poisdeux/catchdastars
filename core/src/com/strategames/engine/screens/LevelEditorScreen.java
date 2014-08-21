@@ -21,9 +21,9 @@ import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Wall;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
+import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.ScreenBorder;
-import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -373,7 +373,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				((GameObjectConfigurationDialog) dialog).setGameObject(copy);
 				break;
 			case GameObjectConfigurationDialog.BUTTON_DELETE_CLICKED:
-				((GameObjectConfigurationDialog) dialog).getGameObject().remove();
+				GameObject gameObject = ((GameObjectConfigurationDialog) dialog).getGameObject();
+				gameObject.remove();
+				getGame().getLevel().removeGameObject(gameObject);
 				dialog.remove();
 				break;
 			}
@@ -713,12 +715,12 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			return;
 		}
 		
-		ArrayList<GameObject> gameObjects = level.getGameObjects();
+		Array<GameObject> gameObjects = level.getGameObjects();
 		if ( gameObjects == null ) {
 			return;
 		}
 		
-		if( (gameObjects == null)  || ( gameObjects.size() == 0 ) ) {
+		if( (gameObjects == null)  || ( gameObjects.size == 0 ) ) {
 			ScreenBorder.create(this.game);
 		}
 
