@@ -47,12 +47,14 @@ public class WorldThread extends Thread {
 				for(int i = 0; i < gameObjectsForAddition.size; i++) {
 					gameObjectsForAddition.get(i).setupBody();
 				}
+				gameObjectsForAddition.clear();
 			}
 
 			synchronized (gameObjectsForDeletion) {
 				for(int i = 0; i < gameObjectsForDeletion.size; i++) {
 					gameObjectsForDeletion.get(i).getBody().setActive(false);
 				}
+				gameObjectsForDeletion.clear();
 			}
 
 			Array<GameObject> objectsInGame = this.game.getGameObjectsInGame();

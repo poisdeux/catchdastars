@@ -345,8 +345,21 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	public void addGameObject(GameObject object) {
 		object.setGame(this);
-		this.gameObjectsForAddition.add(object);
-		this.worldThread.addGameObject(object);
+		
+		if( isRunning() ) {
+			this.gameObjectsForAddition.add(object);
+			this.worldThread.addGameObject(object);
+		} else {
+			object.loadSounds();
+			object.setupImage();
+			object.setupBody();
+		}
+		
+		synchronized (this.gameObjectsInGame) {
+			this.gameObjectsInGame.add(object);
+		}
+		
+		this.stageActors.addActor(object);
 	}
 
 	public Array<GameObject> getGameObjectsForAddition() {
@@ -382,11 +395,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 		for(GameObject object : this.gameObjectsForAddition) {
 			object.setupImage();
-			this.stageActors.addActor(object);
-
-			synchronized (this.gameObjectsInGame) {
-				this.gameObjectsInGame.add(object);
-			}
 		}
 		this.gameObjectsForAddition.clear();
 	}
