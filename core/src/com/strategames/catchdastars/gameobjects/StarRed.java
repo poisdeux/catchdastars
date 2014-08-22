@@ -10,7 +10,7 @@ import com.strategames.engine.utils.Textures;
 public class StarRed extends Star {
 
 	@Override
-	protected TextureRegion createTextureRegion() {
+	protected TextureRegion createImage() {
 		return Textures.getInstance().starRed;
 	}
 	
@@ -22,5 +22,9 @@ public class StarRed extends Star {
 	@Override
 	protected SoundEffect getSoundCollected() {
 		return new GlassSound();
+	}
+	
+	@Override
+	public void applyForce() {
 	}
 }

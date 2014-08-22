@@ -209,9 +209,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * This will add the GameObject as user data to the Box2D body. This can be retrieved using body.getUserData().
 	 * TODO replace setup method with a builder pattern create method
 	 */
-	public void setup() {
-		Gdx.app.debug("GameObject", "0");
-		this.textureRegion = createTextureRegion();
+	public void setupImage() {
+		this.textureRegion = createImage();
 //		Gdx.app.debug("GameObject", "setup: gameObject="+this+", trd="+trd);
 		if( this.textureRegion != null ) {
 			setDrawable(new TextureRegionDrawable(this.textureRegion));
@@ -222,19 +221,17 @@ abstract public class GameObject extends Image implements Json.Serializable {
 				setHeight(this.size.y);
 			}
 		}
-
-//		Gdx.app.debug("GameObject", "setup: gameObject="+this+", world="+this.world);
-		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
-//			Gdx.app.debug("GameObject", "1");
-			this.body = setupBox2D();
-			this.body.setUserData(this);
-//			Gdx.app.debug("GameObject", "2");
-		}
-
-		this.canBeRemoved = false;
-		this.isHit = false;
 	}
 
+	public void setupBody() {
+		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
+			this.body = createBody();
+			this.body.setUserData(this);
+		} else {
+			Gdx.app.log("GameObject", "setupBody: game or world is null for "+getName());
+		}
+	}
+	
 	/**
 	 * Moves a gameobject to location x, y. Note that you should use
 	 * {@link Actor#setPosition(float, float)} if you only want to change
@@ -311,16 +308,27 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		batch.begin();
 	}
 	
+	@Override
+	public String toString() {
+		StringBuffer messageBuffer = new StringBuffer();
+		messageBuffer.append(System.identityHashCode(this) + " ");
+		messageBuffer.append(super.toString());
+		messageBuffer.append(", position=("+getX()+","+getY()+")");
+		messageBuffer.append(", halfWidth="+this.halfWidth);
+		messageBuffer.append(", halfHeight="+this.halfHeight);
+		return messageBuffer.toString();
+	}
+	
 	/**
 	 * Called to create the image for the game object
 	 */
-	abstract protected TextureRegion createTextureRegion();
+	abstract protected TextureRegion createImage();
 
 	/**
 	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
-	abstract protected Body setupBox2D();
+	abstract protected Body createBody();
 
 	/**
 	 * Use this to write specific object properties to file(s)
@@ -450,15 +458,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * to load sounds when starting a level. Make sure you load all sounds needed here.
 	 */
 	abstract public void loadSounds();
-	
-	@Override
-	public String toString() {
-		StringBuffer messageBuffer = new StringBuffer();
-		messageBuffer.append(System.identityHashCode(this) + " ");
-		messageBuffer.append(super.toString());
-		messageBuffer.append(", position=("+getX()+","+getY()+")");
-		messageBuffer.append(", halfWidth="+this.halfWidth);
-		messageBuffer.append(", halfHeight="+this.halfHeight);
-		return messageBuffer.toString();
-	}
+
+	/**
+	 * Called prior to updating the physics world (Box2D) so you can
+	 * apply forces to the gameobject.
+	 */
+	abstract public void applyForce();
 }

@@ -33,17 +33,12 @@ public class WallVertical extends Wall {
 	}
 	
 	@Override
-	protected TextureRegion createTextureRegion() {
+	protected TextureRegion createImage() {
 		if( textureRegion == null ) {
 			this.textures.bricksVertical.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 			textureRegion = new TextureRegion(this.textures.bricksVertical);
 		}
 		return textureRegion;
-	}
-	
-	@Override
-	protected Body setupBox2D() {
-		return super.setupBox2D();
 	}
 	
 	@Override
@@ -58,5 +53,9 @@ public class WallVertical extends Wall {
 		Wall wall = new WallVertical();
 		wall.setPartSize(HEIGHT);
 		return wall;
+	}
+	
+	@Override
+	public void applyForce() {
 	}
 }

@@ -23,7 +23,7 @@ import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChanged
 abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 2f;
-	private static final float DEFAULT_LIFTFACTOR = 1.2f;
+	private static final float DEFAULT_LIFTFACTOR = 1.4f;
 
 	private static final float WIDTH = 0.30f;
 
@@ -59,7 +59,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	}
 
 	@Override
-	protected Body setupBox2D() {
+	protected Body createBody() {
 		World world = getGame().getWorld();
 
 		/**
@@ -86,20 +86,18 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		this.upwardLiftPosition.y += 0.1f;
 
 		this.upwardLift = -body.getMass() * this.liftFactor;
-
 		return body;
 	}
 
 	@Override
-	public void act(float delta) {
-		super.act(delta);
+	public void applyForce() {
 		Game game = getGame();
 		if( game.getGameState() == game.GAME_STATE_RUNNING ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
 			super.body.applyForce(getGame().getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
 		}
 	}
-
+	
 	@Override
 	protected void writeValues(Json json) {
 		json.writeValue("liftfactor", this.liftFactor);

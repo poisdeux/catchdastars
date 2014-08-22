@@ -63,17 +63,12 @@ public class WallHorizontal extends Wall {
 	}
 
 	@Override
-	protected TextureRegion createTextureRegion() {
+	protected TextureRegion createImage() {
 		if( textureRegion == null ) {
 			textures.bricksHorizontal.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 			textureRegion = new TextureRegion(Textures.getInstance().bricksHorizontal);
 		}
 		return textureRegion;
-	}
-
-	@Override
-	protected Body setupBox2D() {
-		return super.setupBox2D();
 	}
 
 	@Override
@@ -102,5 +97,9 @@ public class WallHorizontal extends Wall {
 		this.startHorizontalMiddlePart = getX() + WIDTH;
 		this.endHorizontalMiddlePart = getLength() - (2 * WIDTH);
 		this.startHorizontalEndPart = this.startHorizontalMiddlePart + this.endHorizontalMiddlePart;
+	}
+	
+	@Override
+	public void applyForce() {
 	}
 }

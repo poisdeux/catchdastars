@@ -67,7 +67,7 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	protected TextureRegion createTextureRegion() {
+	protected TextureRegion createImage() {
 		return Textures.getInstance().icecube; 
 	}
 
@@ -113,7 +113,7 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	protected Body setupBox2D() {
+	protected Body createBody() {
 //		Gdx.app.debug("Icecube", "0");
 		World world = getGame().getWorld();
 		
@@ -400,5 +400,9 @@ public class Icecube extends GameObject {
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.angularDamping = 0.1f;
+	}
+
+	@Override
+	public void applyForce() {
 	}
 }

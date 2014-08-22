@@ -74,7 +74,7 @@ abstract public class Star extends GameObject {
 	}
 
 	@Override
-	protected Body setupBox2D() {
+	protected Body createBody() {
 		float radius = getHalfWidth() * 0.7f;
 
 		CircleShape circle = new CircleShape();

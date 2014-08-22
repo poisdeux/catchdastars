@@ -30,7 +30,7 @@ public class BalloonTest extends GameObjectTestAbstractClass {
 		}
 		
 		@Override
-		protected TextureRegion createTextureRegion() {
+		protected TextureRegion createImage() {
 			return Textures.getInstance().balloonBlue;
 		}
 

@@ -16,7 +16,8 @@ public class ScreenBorder {
 		wTop.setLength(worldSize.x + WallHorizontal.WIDTH);
 		wTop.setPosition(-wTop.getHalfHeight(), worldSize.y - wTop.getHalfHeight());
 		wTop.setBorder(true);
-		wTop.setup();
+		wTop.setupImage();
+		wTop.setupBody();
 		game.getLevel().addGameObject(wTop);
 		
 		Wall wBottom = (Wall) wTop.copy();
@@ -30,13 +31,15 @@ public class ScreenBorder {
 		wLeft.setLength(worldSize.y - WallVertical.HEIGHT);
 		wLeft.setPosition(-wLeft.getHalfWidth(), wLeft.getHalfWidth());
 		wLeft.setBorder(true);
-		wLeft.setup();
+		wLeft.setupImage();
+		wLeft.setupBody();
 		game.getLevel().addGameObject(wLeft);
 		
 		Wall wRight = (Wall) wLeft.copy();
 		wRight.setPosition(worldSize.x - wRight.getHalfWidth(), wLeft.getY());
 		wRight.setBorder(true);
-		wRight.setup();
+		wRight.setupImage();
+		wRight.setupBody();
 		game.getLevel().addGameObject(wRight);
 	}
 }

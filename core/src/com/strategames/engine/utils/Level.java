@@ -93,7 +93,8 @@ public class Level implements Comparable<Level> {
 			ArrayList<GameObject> copyGameObjects = new ArrayList<GameObject>();
 			for( GameObject gameObject : this.gameObjects ) {
 				GameObject copy = gameObject.copy();
-				copy.setup();
+				copy.setupImage();
+				copy.setupBody();
 				copyGameObjects.add(copy);
 			}
 			level.setGameObjects(copyGameObjects);

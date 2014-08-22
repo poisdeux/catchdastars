@@ -7,7 +7,7 @@ import com.strategames.engine.utils.Textures;
 public class BalloonRed extends Balloon {
 		
 	@Override
-	protected TextureRegion createTextureRegion() {
+	protected TextureRegion createImage() {
 		return Textures.getInstance().balloonRed;
 	}
 

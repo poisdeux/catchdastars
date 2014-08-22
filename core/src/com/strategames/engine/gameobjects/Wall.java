@@ -48,7 +48,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	}
 
 	@Override
-	protected Body setupBox2D() {
+	protected Body createBody() {
 		PolygonShape box = new PolygonShape();  
 		box.setAsBox(super.halfWidth, super.halfHeight, new Vector2(super.halfWidth, super.halfHeight), 0f);
 

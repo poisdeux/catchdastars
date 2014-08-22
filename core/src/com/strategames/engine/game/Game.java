@@ -48,7 +48,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public final int GAME_STATE_COMPLETE = 2;
 	public final int GAME_STATE_FAILED = 3;
 	private int gameState = GAME_STATE_PAUSED;
-	
+
 	public static final float FRAMES_PER_SECOND = 1/60f;
 	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
 	private final int BOX2D_VELOCITY_ITERATIONS = 6;
@@ -64,6 +64,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private Array<GameObject> gameObjectsForDeletion;
 	private Array<GameObject> gameObjectsForAddition;
+	private Array<GameObject> gameObjectsInGame;
 
 	private AssetManager manager;
 
@@ -93,9 +94,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new Array<GameObject>();
 		this.gameObjectsForAddition = new Array<GameObject>();
+		this.gameObjectsInGame = new Array<GameObject>();
 		this.backStack = new Stack<Screen>();
 		this.fpsLogger = new FPSLogger();
-		this.worldThread = new WorldThread(null, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+		this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
 		registerTweens();
 	}
 
@@ -132,11 +134,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void setLevelCompleted() {
 		this.gameState = GAME_STATE_COMPLETE;
 	}
-	
+
 	public void setLevelFailed() {
 		this.gameState = GAME_STATE_FAILED;
 	}
-	
+
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE_RUNNING;
 	}
@@ -148,15 +150,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public boolean isComplete() {
 		return this.gameState == GAME_STATE_COMPLETE;
 	}
-	
+
 	public boolean isFailed() {
 		return this.gameState == GAME_STATE_FAILED;
 	}
-	
+
 	public int getGameState() {
 		return this.gameState;
 	}
-	
+
 	public void setTotalScore(int totalScore) {
 		this.totalScore = totalScore;
 	}
@@ -329,6 +331,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
+		this.worldThread.deleteGameObject(object);
 	}
 
 	/**
@@ -342,9 +345,16 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	public void addGameObject(GameObject object) {
 		object.setGame(this);
-		object.setup();
 		this.gameObjectsForAddition.add(object);
-		this.stageActors.addActor(object);
+		this.worldThread.addGameObject(object);
+	}
+
+	public Array<GameObject> getGameObjectsForAddition() {
+		return gameObjectsForAddition;
+	}
+
+	public Array<GameObject> getGameObjectsInGame() {
+		return gameObjectsInGame;
 	}
 
 	public void update(float delta, Stage stage) {
@@ -353,14 +363,16 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			//			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
 		}
-		
-//		this.worldThread.lock();
+
 		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
 		for (GameObject object : this.gameObjectsForDeletion ) {
 			if( object.canBeRemoved() ) {
 				if( object.remove() ) {
-					object.getBody().setActive(false);
 					object.clear();
+				}
+
+				synchronized (this.gameObjectsInGame) {
+					this.gameObjectsInGame.removeValue(object, true);
 				}
 			} else {
 				notDeletedGameObjects.add(object);
@@ -369,11 +381,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		this.gameObjectsForDeletion = notDeletedGameObjects;
 
 		for(GameObject object : this.gameObjectsForAddition) {
-			object.setup();
+			object.setupImage();
 			this.stageActors.addActor(object);
+
+			synchronized (this.gameObjectsInGame) {
+				this.gameObjectsInGame.add(object);
+			}
 		}
 		this.gameObjectsForAddition.clear();
-//		this.worldThread.unlock();
 	}
 
 	/**
@@ -467,7 +482,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void setup(AbstractScreen screen) {
 		this.stageActors = screen.getStageActors();
 	}
-	
+
 	/**
 	 * Override this method to implement a dialog that should be shown
 	 * when game is in state {@link #GAME_STATE_COMPLETE}
@@ -485,7 +500,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 		setTotalScore(getTotalScore());
 	}
-	
+
 	/**
 	 * Override this method to implement a custom dialog that should be shown
 	 * when game is in state {@link #GAME_STATE_FAILED}
@@ -498,7 +513,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		dialog.create();
 		dialog.show();
 	}
-	
+
 	private void fixedTimeStep(float delta, Stage stage) {
 		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
 		Array<Actor> actors = stage.getActors();
@@ -585,7 +600,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		if( this.worldThread != null ) {
 			this.worldThread.stopThread();
 		}
-		this.worldThread = new WorldThread(world, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+		this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
 		this.worldThread.start();
 	}
 

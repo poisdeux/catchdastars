@@ -151,7 +151,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 			} else if( gameObject instanceof Icecube ) {
 				((Icecube) gameObject).addAllParts();
 			}
+			gameObject.setGame(this);
 			gameObject.loadSounds();
+			gameObject.setupImage();
+			gameObject.setupBody();
 			addGameObject(gameObject);
 		}
 
@@ -226,7 +229,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		for(GameObject object : objects) {
 			object.setGame(this);
-			object.setup();
+			object.setupImage();
 		}
 
 		this.availableGameObjects = objects;

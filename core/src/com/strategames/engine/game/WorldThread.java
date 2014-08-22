@@ -1,6 +1,8 @@
 package com.strategames.engine.game;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.strategames.engine.gameobjects.GameObject;
 
 public class WorldThread extends Thread {
 
@@ -9,18 +11,22 @@ public class WorldThread extends Thread {
 	private int velocityIterations;
 	private int positionIterations;
 	private World world;
+	private Game game;
 	private long previousTime;
 	private boolean stopThread = false;
+	private Array<GameObject> gameObjectsForAddition;
+	private Array<GameObject> gameObjectsForDeletion;
 
-	private volatile int lock = 0;
-
-	public WorldThread(World world, float timeStepSeconds, int velocityIterations, int positionIterations) {
+	public WorldThread(Game game, float timeStepSeconds, int velocityIterations, int positionIterations) {
 		super();
-		this.world = world;
+		this.game = game;
+		this.world = game.getWorld();
 		this.timeStepSeconds = timeStepSeconds;
 		this.velocityIterations = velocityIterations;
 		this.positionIterations = positionIterations;
 		this.timeStepMillis = (long) (timeStepSeconds * 1000f);
+		this.gameObjectsForAddition = new Array<GameObject>();
+		this.gameObjectsForDeletion = new Array<GameObject>();
 	}
 
 	@Override
@@ -37,11 +43,25 @@ public class WorldThread extends Thread {
 			}
 			previousTime = System.currentTimeMillis();
 
-			if( lock != 1 ){
-				lock = 1;
-				world.step(timeStepSeconds, velocityIterations, positionIterations);
-				lock = 0;
+			synchronized (gameObjectsForAddition) {
+				for(int i = 0; i < gameObjectsForAddition.size; i++) {
+					gameObjectsForAddition.get(i).setupBody();
+				}
 			}
+
+			synchronized (gameObjectsForDeletion) {
+				for(int i = 0; i < gameObjectsForDeletion.size; i++) {
+					gameObjectsForDeletion.get(i).getBody().setActive(false);
+				}
+			}
+
+			Array<GameObject> objectsInGame = this.game.getGameObjectsInGame();
+			synchronized (objectsInGame) {
+				for(int i = 0; i < objectsInGame.size; i++) {
+					objectsInGame.get(i).applyForce();
+				}
+			}
+			world.step(timeStepSeconds, velocityIterations, positionIterations);
 		}
 	}
 
@@ -49,15 +69,15 @@ public class WorldThread extends Thread {
 		this.stopThread = true;
 	}
 
-	public boolean isLocked() {
-		return lock == 1;
+	public void addGameObject(GameObject object) {
+		synchronized (gameObjectsForAddition) {
+			gameObjectsForAddition.add(object);
+		}
 	}
 
-	public void lock() {
-		lock = 1;
-	}
-
-	public void unlock() {
-		lock = 0;
+	public void deleteGameObject(GameObject object) {
+		synchronized (gameObjectsForDeletion) {
+			gameObjectsForDeletion.add(object);
+		}
 	}
 }
