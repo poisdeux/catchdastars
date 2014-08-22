@@ -1,7 +1,9 @@
 package com.strategames.engine.screens;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.tweens.ActorAccessor;
 
@@ -20,8 +23,16 @@ public class MainMenuScreen extends AbstractScreen {
 	private TweenManager manager;
 	private Vector2 centerPosition;
 	
+	private Label label;
+	private Array<TextButton> buttons;
+
+	private float buttonHeightPlusPadding;
+	
+	private int amountOfAnimations;
+	
 	public MainMenuScreen(Game game) {
 		super(game);
+		this.buttons = new Array<TextButton>();
 	}
 
 	@Override
@@ -30,12 +41,8 @@ public class MainMenuScreen extends AbstractScreen {
 		Skin skin = getSkin();
 		this.manager = new TweenManager();
 		this.centerPosition = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
-		Timeline timeline = Timeline.createSequence();
-		
-		float buttonHeightPlusPadding;
-		Vector2 buttonPosition =new Vector2(100f, 600f);
-		
-		Label label = new Label("Welcome to Catch Da Stars!", skin);
+
+		label = new Label("Welcome to Catch Da Stars!", skin);
 		float x = (centerPosition.x) - (label.getWidth() / 2f);
 		label.setPosition(x, stage.getHeight() + label.getHeight());
 		Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
@@ -51,9 +58,9 @@ public class MainMenuScreen extends AbstractScreen {
 				game.startLevel(1);
 			}
 		});
+		buttons.add(button);
 		buttonHeightPlusPadding = button.getHeight() + 20f;
-		timeline.push(createTextButtonTween(button, buttonPosition));
-		stage.addActor(button);
+		
 		
 		button = new TextButton( "Settings", getSkin() );
 		button.addListener( new ClickListener() {
@@ -62,9 +69,7 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showSettings();
 			}
 		});
-		buttonPosition.y -= buttonHeightPlusPadding;
-		timeline.push(createTextButtonTween(button, buttonPosition));
-		stage.addActor(button);
+		buttons.add(button);
 		
 		button = new TextButton( "High Scores", getSkin() );
 		button.addListener( new ClickListener() {
@@ -72,9 +77,7 @@ public class MainMenuScreen extends AbstractScreen {
 			public void clicked(InputEvent event, float x, float y) {
 			}
 		} );
-		buttonPosition.y -= buttonHeightPlusPadding;
-		timeline.push(createTextButtonTween(button, buttonPosition));
-		stage.addActor(button);
+		buttons.add(button);
 		
 		button = new TextButton( "Game editor", getSkin() );
 		button.addListener( new ClickListener() {
@@ -83,12 +86,7 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showLevelEditorMenu();
 			}
 		} );
-		buttonPosition.y -= buttonHeightPlusPadding;
-		timeline.push(createTextButtonTween(button, buttonPosition));
-		stage.addActor(button);
-		
-		timeline.start(manager);
-//		Gdx.input.setInputProcessor( stage );
+		buttons.add(button);
 	}
 	
 	@Override
@@ -107,11 +105,61 @@ public class MainMenuScreen extends AbstractScreen {
 		return true;
 	}
 	
-	private Tween createTextButtonTween(TextButton button, Vector2 endPosition) {
+	@Override
+	public void show() {
+		super.show();
+		
+		Stage stage = getStageUIActors();
+		Timeline timeline = Timeline.createSequence();
+		float y = 600f;
+		
+		for(TextButton button : this.buttons) {
+			timeline.push(createTextButtonShowAnimation(button, y));
+			stage.addActor(button);
+			y -= buttonHeightPlusPadding;
+		}
+		
+		timeline.start(manager);
+	}
+	
+	@Override
+	public void hide() {
+		Stage stage = getStageUIActors();
+		
+		Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
+		.target(stage.getHeight() + label.getHeight())
+		.start(manager);
+		
+		float y = -buttonHeightPlusPadding;
+		
+		this.amountOfAnimations = this.buttons.size;
+		
+		for(TextButton button : this.buttons) {
+			createTextButtonHideAnimation(button, y).start(manager);
+			y -= buttonHeightPlusPadding;
+		}
+	}
+	
+	private Tween createTextButtonShowAnimation(TextButton button, float endYposition) {
 		float x = (centerPosition.x) - (button.getWidth() / 2f);
 		button.setPosition(x, -button.getHeight());
 		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
-	    .target(endPosition.y);
+	    .target(endYposition);
+	}
+	
+	private Tween createTextButtonHideAnimation(TextButton button, float endYposition) {
+		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
+				.setCallback(new TweenCallback() {
+					
+					@Override
+					public void onEvent(int arg0, BaseTween<?> arg1) {
+						amountOfAnimations--;
+						if( amountOfAnimations == 0 ) {
+							Gdx.app.log("MainMenuScreen", "Last animation finished");
+						}
+					}
+				})
+	    .target(endYposition);
 	}
 }
 

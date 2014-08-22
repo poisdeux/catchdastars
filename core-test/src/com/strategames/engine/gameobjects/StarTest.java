@@ -44,5 +44,10 @@ public class StarTest extends GameObjectTestAbstractClass {
 		protected SoundEffect getSoundCollected() {
 			return null;
 		}
+
+		@Override
+		public void applyForce() {
+			
+		}
 	}
 }

@@ -61,7 +61,8 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 		Game game = new GameTestClass();
 		game.setWorld(this.world);
 		icecube.setGame(game);
-		icecube.setup();
+		icecube.setupImage();
+		icecube.setupBody();
 		ArrayList<Part> parts = icecube.getParts();
 		if( parts == null ) {
 			fail("icecube has no parts");
@@ -109,7 +110,8 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 		Icecube icecube = new Icecube();
 		icecube.addAllParts();
 		icecube.setGame(game);
-		icecube.setup();
+		icecube.setupImage();
+		icecube.setupBody();
 
 		breakObject(icecube, result);
 
@@ -146,7 +148,8 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			Icecube icecube = new Icecube();
 			icecube.addAllParts();
 			icecube.setGame(game);
-			icecube.setup();
+			icecube.setupImage();
+			icecube.setupBody();
 			icecubes.add(icecube);
 		}
 
@@ -189,9 +192,11 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 			Icecube icecube2 = new Icecube();
 			icecube.splitObject(breakOffPart, icecube1, icecube2);
 			icecube1.setGame(game);
-			icecube1.setup();
+			icecube1.setupImage();
+			icecube1.setupBody();
 			icecube2.setGame(game);
-			icecube2.setup();
+			icecube2.setupImage();
+			icecube2.setupBody();
 			
 			icecube.getBody().setActive(false);
 			icecube.remove();

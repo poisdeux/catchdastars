@@ -45,7 +45,8 @@ public class WallHorizontalTest extends GameObjectTestAbstractClass {
 		game.setWorld(new World(new Vector2(0,1), true));
 		wall.setLength(5f);
 		wall.setGame(game);
-		wall.setup();
+		wall.setupImage();
+		wall.setupBody();
 		Array<Fixture> fixtures = wall.getBody().getFixtureList();
 		if( fixtures == null ) {
 			fail("fixtures is null");

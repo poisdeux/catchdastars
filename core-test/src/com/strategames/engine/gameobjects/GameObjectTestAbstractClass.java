@@ -44,15 +44,19 @@ abstract public class GameObjectTestAbstractClass {
 
 	@Test
 	public void testSetupWithoutGame() {
-		this.gameObject.setup();
+		this.gameObject.setupImage();
+		this.gameObject.setupBody();
+		assertNotNull(this.gameObject.getDrawable());
 		assertNull(this.gameObject.getBody());
 	}
 
 	@Test
 	public void testSetupWithoutWorld() {
 		this.gameObject.setGame(new GameTestClass());
-		this.gameObject.setup();
-		assertNull("Body for " + this.gameObject.getClass().getName() + " ", this.gameObject.getBody());
+		this.gameObject.setupImage();
+		this.gameObject.setupBody();
+		assertNotNull(this.gameObject.getDrawable());
+		assertNull(this.gameObject.getBody());
 	}
 
 	@Test
@@ -60,7 +64,8 @@ abstract public class GameObjectTestAbstractClass {
 		Game game = new GameTestClass();;
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
+		this.gameObject.setupImage();
+		this.gameObject.setupBody();
 		assertNotNull("Body for " + this.gameObject.getClass().getName() + " is null", this.gameObject.getBody());
 	}
 
@@ -74,9 +79,11 @@ abstract public class GameObjectTestAbstractClass {
 		GameTestClass game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
+		this.gameObject.setupImage();
+		this.gameObject.setupBody();
 		GameObject copy = this.gameObject.copy();
-		copy.setup();
+		copy.setupImage();
+		copy.setupBody();
 		testIfEqual(this.gameObject, copy);
 	}
 	
@@ -85,7 +92,8 @@ abstract public class GameObjectTestAbstractClass {
 		Game game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
-		this.gameObject.setup();
+		this.gameObject.setupImage();
+		this.gameObject.setupBody();
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		try {
