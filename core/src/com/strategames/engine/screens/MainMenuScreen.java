@@ -58,6 +58,7 @@ public class MainMenuScreen extends AbstractScreen {
 				game.startLevel(1);
 			}
 		});
+		stage.addActor(button);
 		buttons.add(button);
 		buttonHeightPlusPadding = button.getHeight() + 20f;
 		
@@ -69,6 +70,7 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showSettings();
 			}
 		});
+		stage.addActor(button);
 		buttons.add(button);
 		
 		button = new TextButton( "High Scores", getSkin() );
@@ -77,6 +79,7 @@ public class MainMenuScreen extends AbstractScreen {
 			public void clicked(InputEvent event, float x, float y) {
 			}
 		} );
+		stage.addActor(button);
 		buttons.add(button);
 		
 		button = new TextButton( "Game editor", getSkin() );
@@ -86,6 +89,7 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showLevelEditorMenu();
 			}
 		} );
+		stage.addActor(button);
 		buttons.add(button);
 	}
 	
@@ -106,9 +110,7 @@ public class MainMenuScreen extends AbstractScreen {
 	}
 	
 	@Override
-	public void show() {
-		super.show();
-		
+	protected Timeline createShowAnimation() {
 		Stage stage = getStageUIActors();
 		Timeline timeline = Timeline.createSequence();
 		float y = 600f;
@@ -119,25 +121,27 @@ public class MainMenuScreen extends AbstractScreen {
 			y -= buttonHeightPlusPadding;
 		}
 		
-		timeline.start(manager);
+		return timeline;
 	}
-	
+
 	@Override
-	public void hide() {
+	protected Timeline createHideAnimation() {
 		Stage stage = getStageUIActors();
+		Timeline timeline = Timeline.createParallel();
 		
-		Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-		.target(stage.getHeight() + label.getHeight())
-		.start(manager);
+		timeline.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
+		.target(stage.getHeight() + label.getHeight()));
 		
 		float y = -buttonHeightPlusPadding;
 		
 		this.amountOfAnimations = this.buttons.size;
 		
 		for(TextButton button : this.buttons) {
-			createTextButtonHideAnimation(button, y).start(manager);
+			timeline.push(createTextButtonHideAnimation(button, y));
 			y -= buttonHeightPlusPadding;
 		}
+		
+		return timeline;
 	}
 	
 	private Tween createTextButtonShowAnimation(TextButton button, float endYposition) {
@@ -161,6 +165,8 @@ public class MainMenuScreen extends AbstractScreen {
 				})
 	    .target(endYposition);
 	}
+
+	
 }
 
 

@@ -1,6 +1,8 @@
 package com.strategames.engine.screens;
 
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -101,6 +103,18 @@ public class SettingsScreen extends AbstractScreen {
 		Settings.getInstance().save();
 		super.hide();
 		dispose();
+	}
+	
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

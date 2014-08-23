@@ -60,6 +60,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private Box2DDebugRenderer debugRenderer;
 
 	public CatchDaStars() {
+		super();
 		setTitle("Catch Da Stars");
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
@@ -91,16 +92,20 @@ public class CatchDaStars extends Game implements OnClickListener {
 		super.create();
 	}
 
-	public void update(float delta, Stage stage) {
+	@Override
+	public void updateWorld() {
 		if( this.accelerometerAvailable ) {
 			//Accelerometer ranges from -10 to 10. This roughly equals gravity so we do not
 			//normalize and then multiply the vector with gravity for performance sake
 			this.gravityVector.set(-Gdx.input.getAccelerometerX(), -Gdx.input.getAccelerometerY());
 			this.world.setGravity(gravityVector);
 		}
+	}
+	
+	public void updateScreen(float delta, Stage stage) {
+		super.updateScreen(delta, stage);
 		Icecube.playRocksHitSound();
-		super.update(delta, stage);
-
+		
 		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 

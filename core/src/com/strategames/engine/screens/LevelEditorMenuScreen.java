@@ -3,6 +3,8 @@ package com.strategames.engine.screens;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
@@ -350,5 +352,17 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		
 		this.levels.renumberLevels();
 		fillLevelButtonsTable(this.levels.getLevels());
+	}
+
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

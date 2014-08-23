@@ -1,5 +1,10 @@
 package com.strategames.engine.screens;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
@@ -7,7 +12,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,6 +34,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	private static Vector2 menuSize;
 
+	private Timeline timelineShowAnimation;
+	private Timeline timelineHideAnimation;
+	private TweenManager tweenManager;
+	
 	public AbstractScreen(Game game)
 	{
 		this.game = game;
@@ -37,6 +45,13 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setCatchBackKey(true);
 
 		this.multiplexer = new InputMultiplexer();
+		
+		setupUI(getStageUIActors());
+		setupActors(getStageActors());
+		
+		this.tweenManager = new TweenManager();
+		this.timelineShowAnimation = createShowAnimation();
+		this.timelineHideAnimation = createHideAnimation();
 	}
 
 	@Override
@@ -103,11 +118,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.multiplexer.addProcessor(getStageUIActors());
 		this.multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(this.multiplexer);
-		
-		setupUI(getStageUIActors());
-		setupActors(getStageActors());
+		if( this.timelineShowAnimation != null ) {
+			this.timelineShowAnimation.start(this.tweenManager);
+		}
 	}
-
+	
 	@Override
 	public void render( float delta )
 	{	
@@ -125,7 +140,23 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void hide()
 	{
 		getMultiplexer().clear();
-		dispose();
+		if( this.timelineHideAnimation != null ) {
+			this.timelineHideAnimation.setCallbackTriggers(TweenCallback.COMPLETE);
+			this.timelineHideAnimation.setCallback(new TweenCallback() {
+				
+				@Override
+				public void onEvent(int arg0, BaseTween<?> arg1) {
+					if( arg0 == TweenCallback.COMPLETE ){
+						getGame().notifyScreenHidden();
+						dispose();
+					}
+				}
+			});
+			this.timelineHideAnimation.start(this.tweenManager);
+		} else {
+			getGame().notifyScreenHidden();
+			dispose();
+		}
 	}
 
 	@Override
@@ -252,5 +283,16 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * @param stage that should hold the game actors
 	 */
 	abstract protected void setupActors(Stage stage);
-
+	
+	/**
+	 * Called to create the animation when screen is displayed
+	 * @return Timeline that contains the animation(s)
+	 */
+	abstract protected Timeline createShowAnimation();
+	
+	/**
+	 * Called to create the animation when screen will be hidden
+	 * @return Timeline that contains the animation(s)
+	 */
+	abstract protected Timeline createHideAnimation();
 }

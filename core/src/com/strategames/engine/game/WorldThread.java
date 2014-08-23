@@ -32,6 +32,8 @@ public class WorldThread extends Thread {
 	@Override
 	public void run() {
 		while( ! this.stopThread ) {
+			this.game.updateWorld();
+			
 			long delta = System.currentTimeMillis() - previousTime;
 			//			Gdx.app.debug("WorldThread", "delta="+delta+", timeStepMillis="+timeStepMillis);
 			if( delta < timeStepMillis ) {
@@ -63,6 +65,7 @@ public class WorldThread extends Thread {
 					objectsInGame.get(i).applyForce();
 				}
 			}
+			
 			world.step(timeStepSeconds, velocityIterations, positionIterations);
 		}
 	}

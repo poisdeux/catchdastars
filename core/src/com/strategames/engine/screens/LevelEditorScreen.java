@@ -3,6 +3,8 @@ package com.strategames.engine.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -168,7 +170,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
-			this.game.update(delta, getStageActors());
+			this.game.updateScreen(delta, getStageActors());
 		}
 	}
 
@@ -734,6 +736,18 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		}
 		
 		super.show();
+	}
+	
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

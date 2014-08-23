@@ -83,6 +83,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private Stack<Screen> backStack;
 
+	private Screen screen;
+	
 	private int totalScore;
 
 	private Stage stageActors;
@@ -111,6 +113,67 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		showSplashScreen();
 	}
 
+	@Override
+	public void dispose () {
+		if (screen != null) screen.hide();
+		try {
+			Textures.getInstance().dispose();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void pause () {
+		if (screen != null) screen.pause();
+	}
+
+	@Override
+	public void resume () {
+		if (screen != null) screen.resume();
+	}
+
+	@Override
+	public void render () {
+		if (screen != null) screen.render(Gdx.graphics.getDeltaTime());
+	}
+
+	@Override
+	public void resize (int width, int height) {
+		if (screen != null) screen.resize(width, height);
+	}
+	
+	@Override
+	public void setScreen(Screen screen) {
+		if( this.screen != null ) {
+			Gdx.app.log("Game", "setScreen: hide()");
+			this.screen.hide();
+		}
+		if( ! ( this.screen instanceof AbstractScreen ) ) {
+			Gdx.app.log("Game", "setScreen: show()");
+			screen.show();
+			screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
+		this.screen = screen;
+	}
+	
+	@Override
+	public Screen getScreen() {
+		return this.screen;
+	}
+	
+	/**
+	 * Notify the Game manager that screen is now hidden
+	 * @param screen the screen that is now hidden
+	 */
+	public void notifyScreenHidden() {
+		if( this.screen != null ) {
+			this.screen.show();
+			Gdx.app.log("Game", "setScreen: show()");
+			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
+	}
+	
 	public void pauseGame() {
 		this.gameState = GAME_STATE_PAUSED;
 		MusicPlayer.getInstance().pause();
@@ -174,17 +237,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		try {
-			Textures.getInstance().dispose();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 
 	public void setExporterImporter(ExportImport exportimport) {
 		this.exportimport = exportimport;
@@ -370,7 +422,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		return gameObjectsInGame;
 	}
 
-	public void update(float delta, Stage stage) {
+	/**
+	 * Called by the World thread prior to calling {@link World#step(float, int, int)}
+	 */
+	public void updateWorld() {
+		
+	}
+	
+	/**
+	 * Called in game during a render cycle
+	 * @param delta time in seconds since last cycle
+	 * @param stage stage that holds the game actors
+	 */
+	public void updateScreen(float delta, Stage stage) {
 		fpsLogger.log();
 		if( this.gameState == GAME_STATE_RUNNING ) {
 			//			fixedTimeStep(delta, stage);

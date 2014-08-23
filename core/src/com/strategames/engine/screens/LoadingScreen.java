@@ -5,6 +5,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -110,5 +112,17 @@ public class LoadingScreen extends AbstractScreen {
 					}
 					
 				}));
+	}
+	
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

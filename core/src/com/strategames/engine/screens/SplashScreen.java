@@ -8,8 +8,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.io.FileNotFoundException;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,16 +21,14 @@ import com.strategames.engine.utils.Textures;
 
 public class SplashScreen extends AbstractScreen {
 
-	private AssetManager assetManager;
-	private boolean finishedSetupAssets = false;
-	private Image splashImage;
-	private Stage stageUIActors;
-	
 	public SplashScreen(Game game) {
 		super(game);
-
-		this.assetManager = getGame().getManager();
+		MusicPlayer player = MusicPlayer.getInstance();
+		player.setLibrary(getGame().getMusicSelector().getLibrary());
 	}
+
+	private boolean finishedSetupAssets = false;
+	private Image splashImage;
 	
 	@Override
 	protected void setupActors(Stage stage) {
@@ -38,8 +37,6 @@ public class SplashScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.stageUIActors = stage;
-		
 		Texture texture = Textures.getInstance().getSplashScreen();
 
 		this.splashImage = new Image(texture);
@@ -52,7 +49,7 @@ public class SplashScreen extends AbstractScreen {
 		this.splashImage.getColor().a = 0f;
 
 		try {
-			Textures.getInstance().addAllToAssetManager(assetManager);
+			Textures.getInstance().addAllToAssetManager(getGame().getManager());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,17 +57,12 @@ public class SplashScreen extends AbstractScreen {
 //		Sounds.getInstance().addToAssetManager(assetManager);
 		
 		stage.addActor( this.splashImage );
-		
-		MusicPlayer player = MusicPlayer.getInstance();
-		player.setLibrary(getGame().getMusicSelector().getLibrary());
 	}
 
 	@Override
 	public void render(float delta) {
-		this.stageUIActors.act();
 		super.render(delta);
-
-		if ( this.assetManager.update() && ( ! this.finishedSetupAssets ) ) {
+		if ( getGame().getManager().update() && ( ! this.finishedSetupAssets ) ) {
 			try {
 				Textures.getInstance().setup();
 			} catch (FileNotFoundException e) {
@@ -109,5 +101,17 @@ public class SplashScreen extends AbstractScreen {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

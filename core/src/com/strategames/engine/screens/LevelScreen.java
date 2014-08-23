@@ -4,6 +4,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -75,7 +77,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		super.render(delta);
 
 		if( this.game.isRunning() ) {
-			this.game.update(delta, this.stageActors);
+			this.game.updateScreen(delta, this.stageActors);
 		} else {
 			if( !this.gameEnded ) {
 				if( this.game.isComplete() ) {
@@ -192,5 +194,17 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		}));
 
 
+	}
+	
+	@Override
+	protected Timeline createShowAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline createHideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
