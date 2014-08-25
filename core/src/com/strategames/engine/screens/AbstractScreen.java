@@ -114,11 +114,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public void show()
-	{
+	{	
 		this.multiplexer.addProcessor(getStageUIActors());
 		this.multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(this.multiplexer);
 		if( this.timelineShowAnimation != null ) {
+			Gdx.app.log("AbstractScreen", "show(): "+getName()+" starting show animation");
 			this.timelineShowAnimation.start(this.tweenManager);
 		}
 	}
@@ -134,6 +135,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 		stageUIActors.act(delta);
 		stageUIActors.draw();
+		
+		this.tweenManager.update(delta);
 	}
 
 	@Override
@@ -147,6 +150,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					if( arg0 == TweenCallback.COMPLETE ){
+						Gdx.app.log("AbstractScreen", "");
 						getGame().notifyScreenHidden();
 						dispose();
 					}

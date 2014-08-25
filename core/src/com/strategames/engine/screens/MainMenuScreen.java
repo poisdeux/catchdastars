@@ -4,7 +4,6 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -20,7 +19,6 @@ import com.strategames.engine.tweens.ActorAccessor;
 
 public class MainMenuScreen extends AbstractScreen {
 
-	private TweenManager manager;
 	private Vector2 centerPosition;
 	
 	private Label label;
@@ -32,22 +30,18 @@ public class MainMenuScreen extends AbstractScreen {
 	
 	public MainMenuScreen(Game game) {
 		super(game);
-		this.buttons = new Array<TextButton>();
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.buttons = new Array<TextButton>();
 		final Game game = getGame();
 		Skin skin = getSkin();
-		this.manager = new TweenManager();
 		this.centerPosition = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
 
 		label = new Label("Welcome to Catch Da Stars!", skin);
 		float x = (centerPosition.x) - (label.getWidth() / 2f);
 		label.setPosition(x, stage.getHeight() + label.getHeight());
-		Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-		.target(700)
-		.start(manager);
 		stage.addActor(label);
 		
 		TextButton button = new TextButton( "New game", getSkin() );
@@ -94,12 +88,6 @@ public class MainMenuScreen extends AbstractScreen {
 	}
 	
 	@Override
-	public void render(float delta) {
-		this.manager.update(delta);
-		super.render(delta);
-	}
-	
-	@Override
 	protected void setupActors(Stage stage) {
 	}
 	
@@ -109,19 +97,31 @@ public class MainMenuScreen extends AbstractScreen {
 		return true;
 	}
 	
+//	@Override
+//	public void render(float delta) {
+//		super.render(delta);
+//		TextButton button = this.buttons.get(0);
+//		Gdx.app.log("MainMenuScreen", "render: button.x="+button.getX()+", button.y="+button.getY());
+//	}
+	
 	@Override
 	protected Timeline createShowAnimation() {
 		Stage stage = getStageUIActors();
-		Timeline timeline = Timeline.createSequence();
+		Timeline timelineParallel = Timeline.createParallel();
+		Timeline timelineSequence = Timeline.createSequence();
 		float y = 600f;
 		
+		timelineParallel.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
+		.target(700));
+		
 		for(TextButton button : this.buttons) {
-			timeline.push(createTextButtonShowAnimation(button, y));
+			timelineSequence.push(createTextButtonShowAnimation(button, y));
 			stage.addActor(button);
 			y -= buttonHeightPlusPadding;
 		}
 		
-		return timeline;
+		timelineParallel.push(timelineSequence);
+		return timelineParallel;
 	}
 
 	@Override

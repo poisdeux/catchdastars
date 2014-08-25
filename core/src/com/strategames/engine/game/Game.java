@@ -145,16 +145,15 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	
 	@Override
 	public void setScreen(Screen screen) {
-		if( this.screen != null ) {
-			Gdx.app.log("Game", "setScreen: hide()");
-			this.screen.hide();
-		}
-		if( ! ( this.screen instanceof AbstractScreen ) ) {
-			Gdx.app.log("Game", "setScreen: show()");
-			screen.show();
-			screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		}
+		Screen currentScreen = this.screen;
 		this.screen = screen;
+		if( currentScreen != null ) {
+			currentScreen.hide();
+		}
+		if( ! ( currentScreen instanceof AbstractScreen ) ) {
+			this.screen.show();
+			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
 	}
 	
 	@Override
@@ -169,7 +168,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void notifyScreenHidden() {
 		if( this.screen != null ) {
 			this.screen.show();
-			Gdx.app.log("Game", "setScreen: show()");
 			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		}
 	}
@@ -489,9 +487,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void showMainMenu() {
-		Screen screen = new MainMenuScreen(this);
-		setScreen( screen );
-		addToBackstack(screen);
+		Screen s = new MainMenuScreen(this);
+		setScreen( s );
+		addToBackstack(s);
 	}
 
 	public void showSplashScreen() {
