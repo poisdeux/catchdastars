@@ -3,10 +3,9 @@ package com.strategames.engine.screens;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-
 import aurelienribon.tweenengine.Timeline;
 
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,9 +21,8 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
 
-public class LevelScreen extends AbstractScreen implements InputProcessor, OnClickListener, OnLevelLoadedListener
+public class LevelScreen extends AbstractScreen implements OnClickListener, OnLevelLoadedListener
 {	
-	private Game game;
 	private Image levelImage;
 	private LevelPausedDialog levelPausedDialog;
 	private Stage stageActors;
@@ -36,19 +34,19 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 	public LevelScreen(Game game) {
 		super(game);
-		this.game = game;
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
 		this.stage = stage;
+		Game game = getGame();
 		this.filter = new FilledRectangleImage(stage);
 		this.filter.setWidth(stage.getWidth());
 		this.filter.setHeight(stage.getHeight());
 		this.filter.setColor(0f, 0f, 0f, 1f);
 		stage.addActor(this.filter);
 
-		this.levelImage = new Text("Level " + this.game.getLevelNumber());
+		this.levelImage = new Text("Level " + game.getLevelNumber());
 		this.levelImage.setScale(2f);
 
 		float imageWidth = this.levelImage.getWidth();
@@ -63,28 +61,28 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 		setupStartAnimation();
 
-		this.game.loadLevel(this);
+		game.loadLevel(this);
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.stageActors = stage;
-		this.game.pauseGame();
+		getGame().pauseGame();
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-
-		if( this.game.isRunning() ) {
-			this.game.updateScreen(delta, this.stageActors);
+		Game game = getGame();
+		if( game.isRunning() ) {
+			game.updateScreen(delta, this.stageActors);
 		} else {
 			if( !this.gameEnded ) {
-				if( this.game.isComplete() ) {
-					this.game.showLevelCompleteDialog();
+				if( game.isComplete() ) {
+					game.showLevelCompleteDialog();
 					this.gameEnded = true;
-				} else if( this.game.isFailed() ) {
-					this.game.showLevelFailedDialog();
+				} else if( game.isFailed() ) {
+					game.showLevelFailedDialog();
 					this.gameEnded = true;
 				}
 			}
@@ -93,7 +91,8 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 
 	@Override
 	protected boolean handleBackNavigation() {
-		if( ! this.game.isRunning() ) { // prevent pausing game when game is complete or failed
+		Gdx.app.log("LevelScreen", "handleBackNavigation");
+		if( ! getGame().isRunning() ) { // prevent pausing game when game is complete or failed
 			return true;
 		}
 
@@ -116,16 +115,16 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 		if( dialog instanceof LevelPausedDialog ) {
 			switch( which ) {
 			case LevelPausedDialog.BUTTON_QUIT_CLICKED:
-				this.game.stopScreen();
+				getGame().stopScreen();
 				break;
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
-				this.game.resumeGame();
+				getGame().resumeGame();
 				break;
 			}
 		} else if( dialog instanceof ErrorDialog ) {
 			switch( which ) {
 			case ErrorDialog.BUTTON_CLOSE:
-				this.game.stopScreen();
+				getGame().stopScreen();
 				break;
 			}
 		}
@@ -141,7 +140,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 			return;
 		}
 
-		game.setup(this);
+		getGame().setup(this);
 
 		this.levelLoaded = true;
 
@@ -184,7 +183,7 @@ public class LevelScreen extends AbstractScreen implements InputProcessor, OnCli
 					public boolean act(float delta) {
 						levelImage.remove();
 						filter.remove();
-						game.startGame();
+						getGame().startGame();
 						MusicPlayer.getInstance().playNext();
 						return true;
 					}

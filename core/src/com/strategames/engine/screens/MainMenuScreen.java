@@ -96,14 +96,7 @@ public class MainMenuScreen extends AbstractScreen {
 		Gdx.app.exit();
 		return true;
 	}
-	
-//	@Override
-//	public void render(float delta) {
-//		super.render(delta);
-//		TextButton button = this.buttons.get(0);
-//		Gdx.app.log("MainMenuScreen", "render: button.x="+button.getX()+", button.y="+button.getY());
-//	}
-	
+		
 	@Override
 	protected Timeline createShowAnimation() {
 		Stage stage = getStageUIActors();

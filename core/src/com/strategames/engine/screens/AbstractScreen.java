@@ -26,8 +26,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private Game game;
 	private InputMultiplexer multiplexer;
 	private static Skin skin;
-	private static Stage stageActors;
-	private static Stage stageUIActors;
+	private Stage stageActors;
+	private Stage stageUIActors;
 
 	private static OrthographicCamera menuCamera;
 	private static OrthographicCamera gameCamera;
@@ -119,7 +119,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(this.multiplexer);
 		if( this.timelineShowAnimation != null ) {
-			Gdx.app.log("AbstractScreen", "show(): "+getName()+" starting show animation");
 			this.timelineShowAnimation.start(this.tweenManager);
 		}
 	}
@@ -150,7 +149,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					if( arg0 == TweenCallback.COMPLETE ){
-						Gdx.app.log("AbstractScreen", "");
 						getGame().notifyScreenHidden();
 						dispose();
 					}
@@ -186,10 +184,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return stageActors;
 	}
 
-	public static void setStageActors(Stage stageActors) {
-		AbstractScreen.stageActors = stageActors;
-	}
-
 	public Stage getStageUIActors() {
 		if( stageUIActors == null ) {
 			OrthographicCamera camera = getMenuCamera();
@@ -198,10 +192,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			stageUIActors = new Stage(viewport);
 		}
 		return stageUIActors;
-	}
-
-	public static void setStageUIActors(Stage stageUIActors) {
-		AbstractScreen.stageUIActors = stageUIActors;
 	}
 
 	@Override
@@ -227,6 +217,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean keyUp(int keycode) {
+		Gdx.app.log("AbstractScreen", "keyUp");
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
 			if ( handleBackNavigation() ) {

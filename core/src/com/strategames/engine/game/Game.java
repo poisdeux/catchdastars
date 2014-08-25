@@ -19,7 +19,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
@@ -38,9 +37,9 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Textures;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
 
 abstract public class Game extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
 	public final int GAME_STATE_RUNNING = 0;
@@ -59,8 +58,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 
 	public static final float GRAVITY = 9.81f;
-
-	private float accumulator;
 
 	private Array<GameObject> gameObjectsForDeletion;
 	private Array<GameObject> gameObjectsForAddition;

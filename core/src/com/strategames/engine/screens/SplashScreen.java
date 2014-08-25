@@ -90,12 +90,12 @@ public class SplashScreen extends AbstractScreen {
 	}
 
 
-	@Override
-	public void dispose()
-	{
-		super.dispose();
-		this.splashImage.remove();
-	}
+//	@Override
+//	public void dispose()
+//	{
+//		super.dispose();
+//		this.splashImage.remove();
+//	}
 	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
