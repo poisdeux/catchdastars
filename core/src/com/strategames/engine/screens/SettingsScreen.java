@@ -4,6 +4,7 @@ package com.strategames.engine.screens;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -31,7 +32,7 @@ public class SettingsScreen extends AbstractScreen {
 	private float buttonHeightPlusPadding;
 	
 	public SettingsScreen(Game game) {
-		super(game);
+		super(game, "Settings");
 	}
 
 	@Override
@@ -119,51 +120,9 @@ public class SettingsScreen extends AbstractScreen {
 	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
-		Timeline timelineParallel = Timeline.createParallel();
-		Timeline timelineSequence = Timeline.createSequence();
-		
-		timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
-				.target(700));
-
-		float y = 600f;
-		for(Actor actor : this.actors) {
-			timelineSequence.push(createActorShowAnimation(actor, y));
-			y -= buttonHeightPlusPadding;
-		}
-
-		timelineParallel.push(timelineSequence);
-		return timelineParallel;
-	}
-	
-	@Override
-	protected Timeline createHideAnimation() {
-		Stage stage = getStageUIActors();
-		Timeline timeline = Timeline.createParallel();
-
-		timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
-				.target(stage.getHeight() + title.getHeight()));
-
-		float y = -buttonHeightPlusPadding;
-
-		for(Actor actor : this.actors) {
-			timeline.push(createActorHideAnimation(actor, y));
-			y -= buttonHeightPlusPadding;
-		}
-
-		return timeline;
-	}
-	
-	private Tween createActorShowAnimation(Actor actor, float endYposition) {
-		float x = (centerPosition.x) - (actor.getWidth() / 2f);
-		actor.setPosition(x, -actor.getHeight());
-		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-				.target(endYposition);
-	}
-	
-	private Tween createActorHideAnimation(Actor actor, float endYposition) {
-		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-				.target(endYposition);
+	public void render(float delta) {
+		super.render(delta);
+		Gdx.app.log("SettingsScreen", "button: "+actors.get(0).getY()+" title="+title.getY());
 	}
 }
 

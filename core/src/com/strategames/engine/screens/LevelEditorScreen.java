@@ -115,7 +115,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private Tap tap = new Tap();
 
 	public LevelEditorScreen(Game game) {
-		super(game);
+		super(game, "Level " + game.getLevelNumber());
 
 		this.game = game;
 

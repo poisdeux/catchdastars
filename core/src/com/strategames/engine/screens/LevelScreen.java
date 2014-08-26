@@ -33,7 +33,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private boolean gameEnded;
 
 	public LevelScreen(Game game) {
-		super(game);
+		super(game, "Level "+game.getLevelNumber());
 	}
 
 	@Override

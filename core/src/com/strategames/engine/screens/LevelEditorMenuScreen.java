@@ -38,7 +38,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private Levels levels;
 
 	public LevelEditorMenuScreen(Game game) {
-		super(game);
+		super(game, "Level editor");
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import com.strategames.engine.utils.Textures;
 public class SplashScreen extends AbstractScreen {
 
 	public SplashScreen(Game game) {
-		super(game);
+		super(game, "Catch Da Stars");
 		MusicPlayer player = MusicPlayer.getInstance();
 		player.setLibrary(getGame().getMusicSelector().getLibrary());
 	}

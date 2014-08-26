@@ -26,7 +26,7 @@ public class LoadingScreen extends AbstractScreen {
 	 * Shows an animation which can be displayed during game loading
 	 */
 	public LoadingScreen(Game game) {
-		super(game);
+		super(game, "Loading...");
 	}
 
 	@Override
