@@ -1,9 +1,7 @@
 package com.strategames.engine.screens;
 
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -103,7 +101,6 @@ public class MainMenuScreen extends AbstractScreen {
 	
 	@Override
 	protected Timeline createShowAnimation() {
-		Stage stage = getStageUIActors();
 		Timeline timelineParallel = Timeline.createParallel();
 		Timeline timelineSequence = Timeline.createSequence();
 		
@@ -113,7 +110,6 @@ public class MainMenuScreen extends AbstractScreen {
 		float y = 600f;
 		for(TextButton button : this.buttons) {
 			timelineSequence.push(createTextButtonShowAnimation(button, y));
-			stage.addActor(button);
 			y -= buttonHeightPlusPadding;
 		}
 

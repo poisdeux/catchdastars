@@ -2,7 +2,9 @@ package com.strategames.engine.screens;
 
 
 import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,28 +16,38 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.SoundEffect;
+import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Settings;
 
 public class SettingsScreen extends AbstractScreen {
 
-
+	private Label title;
+	private Array<Actor> actors;
+	private Vector2 centerPosition;
+	private float buttonHeightPlusPadding;
+	
 	public SettingsScreen(Game game) {
 		super(game);
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
+		this.actors = new Array<Actor>();
 		Skin skin = getSkin();
 		final Settings settings = Settings.getInstance();
 		
-		Table table = new Table( getSkin() );
-		table.setFillParent(true);
-		table.add( "Settings" ).spaceBottom( 50 );
-		table.row();
-
+		this.centerPosition = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
+		
+		this.title = new Label("Settings", skin);
+		float x = (centerPosition.x) - (title.getWidth() / 2f);
+		title.setPosition(x, stage.getHeight() + title.getHeight());
+		stage.addActor(title);
+		
+		Table table = new Table();
 		Label label = new Label("SFX volume", skin);
 		table.add(label);
 		
@@ -50,10 +62,11 @@ public class SettingsScreen extends AbstractScreen {
 				SoundEffect.setVolume(volume);
 			}
 		});
-		
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
-		table.row();
-
+		actors.add(table);
+		stage.addActor(table);
+		
+		table = new Table();
 		label = new Label("Music volume", skin);
 		table.add(label);
 		
@@ -68,10 +81,10 @@ public class SettingsScreen extends AbstractScreen {
 				MusicPlayer.getInstance().setVolume(volume);
 			}
 		});
-		
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
-		table.row();
-
+		actors.add(table);
+		stage.addActor(table);
+		
 		Button button = new TextButton( "Select music", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -79,9 +92,10 @@ public class SettingsScreen extends AbstractScreen {
 				getGame().selectMusicFiles();
 			}
 		} );
-		table.add( button ).uniform().fill().spaceBottom( 10 );
-		table.row();
-
+		actors.add(button);
+		stage.addActor(button);
+		buttonHeightPlusPadding = button.getHeight() + 20f;
+		
 		button = new TextButton( "Main menu", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -89,9 +103,8 @@ public class SettingsScreen extends AbstractScreen {
 				getGame().stopScreen();
 			}
 		} );
-		table.add( button ).uniform().fill().spaceBottom( 10 );
-		table.row();
-		stage.addActor(table);
+		actors.add(button);
+		stage.addActor(button);
 	}
 	
 	@Override
@@ -107,14 +120,50 @@ public class SettingsScreen extends AbstractScreen {
 	
 	@Override
 	protected Timeline createShowAnimation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Timeline timelineParallel = Timeline.createParallel();
+		Timeline timelineSequence = Timeline.createSequence();
+		
+		timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+				.target(700));
 
+		float y = 600f;
+		for(Actor actor : this.actors) {
+			timelineSequence.push(createActorShowAnimation(actor, y));
+			y -= buttonHeightPlusPadding;
+		}
+
+		timelineParallel.push(timelineSequence);
+		return timelineParallel;
+	}
+	
 	@Override
 	protected Timeline createHideAnimation() {
-		// TODO Auto-generated method stub
-		return null;
+		Stage stage = getStageUIActors();
+		Timeline timeline = Timeline.createParallel();
+
+		timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+				.target(stage.getHeight() + title.getHeight()));
+
+		float y = -buttonHeightPlusPadding;
+
+		for(Actor actor : this.actors) {
+			timeline.push(createActorHideAnimation(actor, y));
+			y -= buttonHeightPlusPadding;
+		}
+
+		return timeline;
+	}
+	
+	private Tween createActorShowAnimation(Actor actor, float endYposition) {
+		float x = (centerPosition.x) - (actor.getWidth() / 2f);
+		actor.setPosition(x, -actor.getHeight());
+		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+				.target(endYposition);
+	}
+	
+	private Tween createActorHideAnimation(Actor actor, float endYposition) {
+		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+				.target(endYposition);
 	}
 }
 
