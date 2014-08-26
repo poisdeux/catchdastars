@@ -32,7 +32,6 @@ import com.strategames.ui.widgets.TextButton;
 
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
-	private Skin skin;
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
 	private Table table;
@@ -40,15 +39,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	public LevelEditorMenuScreen(Game game) {
 		super(game);
-
-		this.skin = getSkin();
-
-		this.levels = new Levels(); 
-		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
+		
+		this.levels = new Levels(); 
+		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
+		
+		Skin skin = getSkin();
 		this.table = new Table( skin );
 		this.table.setFillParent(true);
 		this.table.add( "Level editor" ).expand().top();
@@ -267,7 +266,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void addLevel(Level level) {
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
-		TextButton button = new TextButton(level.getLevelNumber() + ". " +level.getName(), skin);
+		TextButton button = new TextButton(level.getLevelNumber() + ". " +level.getName(), getSkin());
 		button.setTag(level);
 		button.setListener(LevelEditorMenuScreen.this);
 		levelButtonsTable.add(button).expand();
@@ -290,7 +289,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			}
 		}
 
-		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIActors(), this.skin,
+		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIActors(), getSkin(),
 				"Select a number", levelNumbers);
 		spinner.create();
 		return spinner;
@@ -312,7 +311,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.lastLevelNumber = levels.get(levels.size() - 1).getLevelNumber();
 
 		for( Level level : levels ) {
-			TextButton button = new TextButton(level.getLevelNumber() + ". " + level.getName(), skin);
+			TextButton button = new TextButton(level.getLevelNumber() + ". " + level.getName(), getSkin());
 			button.setTag(level);
 			button.setListener(LevelEditorMenuScreen.this);
 			levelButtonsTable.add(button).expand();

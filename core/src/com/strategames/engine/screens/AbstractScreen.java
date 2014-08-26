@@ -34,8 +34,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	private static Vector2 menuSize;
 
-	private Timeline timelineShowAnimation;
-	private Timeline timelineHideAnimation;
 	private TweenManager tweenManager;
 	
 	public AbstractScreen(Game game)
@@ -43,15 +41,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.game = game;
 
 		Gdx.input.setCatchBackKey(true);
-
-		this.multiplexer = new InputMultiplexer();
 		
 		setupUI(getStageUIActors());
 		setupActors(getStageActors());
 		
 		this.tweenManager = new TweenManager();
-		this.timelineShowAnimation = createShowAnimation();
-		this.timelineHideAnimation = createHideAnimation();
 	}
 
 	@Override
@@ -115,11 +109,16 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{	
+		Gdx.app.log("AbstractScreen", getName()+": show: called");
+		this.multiplexer = new InputMultiplexer();
 		this.multiplexer.addProcessor(getStageUIActors());
 		this.multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(this.multiplexer);
-		if( this.timelineShowAnimation != null ) {
-			this.timelineShowAnimation.start(this.tweenManager);
+		
+		Timeline timeline = createShowAnimation();
+		if( timeline != null ) {
+			this.tweenManager.killAll();
+			timeline.start(this.tweenManager);
 		}
 	}
 	
@@ -141,20 +140,26 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
-		getMultiplexer().clear();
-		if( this.timelineHideAnimation != null ) {
-			this.timelineHideAnimation.setCallbackTriggers(TweenCallback.COMPLETE);
-			this.timelineHideAnimation.setCallback(new TweenCallback() {
+		Gdx.app.log("AbstractScreen", getName()+": hide: called");
+		this.multiplexer.clear();
+		
+		Timeline timeline = createHideAnimation();
+		if( timeline != null ) {
+			this.tweenManager.killAll();
+			Gdx.app.log("AbstractScreen", getName()+": setting up hide animation");
+			timeline.setCallbackTriggers(TweenCallback.ANY);
+			timeline.setCallback(new TweenCallback() {
 				
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					if( arg0 == TweenCallback.COMPLETE ){
 						getGame().notifyScreenHidden();
-						dispose();
+//						dispose();
 					}
 				}
 			});
-			this.timelineHideAnimation.start(this.tweenManager);
+			
+			timeline.start(this.tweenManager);
 		} else {
 			getGame().notifyScreenHidden();
 			dispose();

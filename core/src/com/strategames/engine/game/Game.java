@@ -80,7 +80,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private Stack<Screen> backStack;
 
-	private Screen screen;
+	private Screen currentScreen;
+	private Screen newScreen;
 	
 	private int totalScore;
 
@@ -112,7 +113,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	@Override
 	public void dispose () {
-		if (screen != null) screen.hide();
+		if (currentScreen != null) currentScreen.hide();
 		try {
 			Textures.getInstance().dispose();
 		} catch (Exception e) {
@@ -122,50 +123,51 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	@Override
 	public void pause () {
-		if (screen != null) screen.pause();
+		if (currentScreen != null) currentScreen.pause();
 	}
 
 	@Override
 	public void resume () {
-		if (screen != null) screen.resume();
+		if (currentScreen != null) currentScreen.resume();
 	}
 
 	@Override
 	public void render () {
-		if (screen != null) screen.render(Gdx.graphics.getDeltaTime());
+		if (currentScreen != null) currentScreen.render(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override
 	public void resize (int width, int height) {
-		if (screen != null) screen.resize(width, height);
+		if (currentScreen != null) currentScreen.resize(width, height);
 	}
 	
 	@Override
 	public void setScreen(Screen screen) {
-		Screen currentScreen = this.screen;
-		this.screen = screen;
-		if( currentScreen != null ) {
-			currentScreen.hide();
+		this.newScreen = screen;
+		if( this.currentScreen != null ) {
+			this.currentScreen.hide();
 		}
 		if( ! ( currentScreen instanceof AbstractScreen ) ) {
-			this.screen.show();
-			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			this.newScreen.show();
+			this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			this.currentScreen = this.newScreen;
 		}
 	}
 	
 	@Override
 	public Screen getScreen() {
-		return this.screen;
+		return this.currentScreen;
 	}
 	
 	/**
 	 * Notify the Game manager that screen is now hidden
-	 * @param screen the screen that is now hidden
+	 * @param currentScreen the screen that is now hidden
 	 */
 	public void notifyScreenHidden() {
-		if( this.screen != null ) {
-			this.screen.show();
-			this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		if( this.newScreen != null ) {
+			this.newScreen.show();
+			this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			this.currentScreen = this.newScreen;
 		}
 	}
 	
@@ -532,7 +534,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * Hides the current screen and shows the previous screen
 	 */
 	public void stopScreen() {
-		popBackstack();
+		popBackstack().dispose();
 		setScreen(peekBackStack());
 	}
 

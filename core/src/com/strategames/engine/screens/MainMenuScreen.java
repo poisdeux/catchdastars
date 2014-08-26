@@ -20,14 +20,12 @@ import com.strategames.engine.tweens.ActorAccessor;
 public class MainMenuScreen extends AbstractScreen {
 
 	private Vector2 centerPosition;
-	
+
 	private Label label;
 	private Array<TextButton> buttons;
 
 	private float buttonHeightPlusPadding;
-	
-	private int amountOfAnimations;
-	
+
 	public MainMenuScreen(Game game) {
 		super(game);
 	}
@@ -43,7 +41,7 @@ public class MainMenuScreen extends AbstractScreen {
 		float x = (centerPosition.x) - (label.getWidth() / 2f);
 		label.setPosition(x, stage.getHeight() + label.getHeight());
 		stage.addActor(label);
-		
+
 		TextButton button = new TextButton( "New game", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -55,8 +53,8 @@ public class MainMenuScreen extends AbstractScreen {
 		stage.addActor(button);
 		buttons.add(button);
 		buttonHeightPlusPadding = button.getHeight() + 20f;
-		
-		
+
+
 		button = new TextButton( "Settings", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -66,7 +64,7 @@ public class MainMenuScreen extends AbstractScreen {
 		});
 		stage.addActor(button);
 		buttons.add(button);
-		
+
 		button = new TextButton( "High Scores", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -75,7 +73,7 @@ public class MainMenuScreen extends AbstractScreen {
 		} );
 		stage.addActor(button);
 		buttons.add(button);
-		
+
 		button = new TextButton( "Game editor", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -86,33 +84,39 @@ public class MainMenuScreen extends AbstractScreen {
 		stage.addActor(button);
 		buttons.add(button);
 	}
-	
+
 	@Override
 	protected void setupActors(Stage stage) {
 	}
-	
+
 	@Override
 	protected boolean handleBackNavigation() {
 		Gdx.app.exit();
 		return true;
 	}
-		
+
+	@Override
+	public void render(float delta) {
+		super.render(delta);
+		Gdx.app.log("MainMenuScreen", "render: label (x,y)="+label.getY()+", "+label.getX());
+	}
+	
 	@Override
 	protected Timeline createShowAnimation() {
 		Stage stage = getStageUIActors();
 		Timeline timelineParallel = Timeline.createParallel();
 		Timeline timelineSequence = Timeline.createSequence();
-		float y = 600f;
 		
 		timelineParallel.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-		.target(700));
-		
+				.target(700));
+
+		float y = 600f;
 		for(TextButton button : this.buttons) {
 			timelineSequence.push(createTextButtonShowAnimation(button, y));
 			stage.addActor(button);
 			y -= buttonHeightPlusPadding;
 		}
-		
+
 		timelineParallel.push(timelineSequence);
 		return timelineParallel;
 	}
@@ -121,45 +125,31 @@ public class MainMenuScreen extends AbstractScreen {
 	protected Timeline createHideAnimation() {
 		Stage stage = getStageUIActors();
 		Timeline timeline = Timeline.createParallel();
-		
+
 		timeline.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-		.target(stage.getHeight() + label.getHeight()));
-		
+				.target(stage.getHeight() + label.getHeight()));
+
 		float y = -buttonHeightPlusPadding;
-		
-		this.amountOfAnimations = this.buttons.size;
-		
+
 		for(TextButton button : this.buttons) {
 			timeline.push(createTextButtonHideAnimation(button, y));
 			y -= buttonHeightPlusPadding;
 		}
-		
+
 		return timeline;
 	}
-	
+
 	private Tween createTextButtonShowAnimation(TextButton button, float endYposition) {
 		float x = (centerPosition.x) - (button.getWidth() / 2f);
 		button.setPosition(x, -button.getHeight());
 		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
-	    .target(endYposition);
-	}
-	
-	private Tween createTextButtonHideAnimation(TextButton button, float endYposition) {
-		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
-				.setCallback(new TweenCallback() {
-					
-					@Override
-					public void onEvent(int arg0, BaseTween<?> arg1) {
-						amountOfAnimations--;
-						if( amountOfAnimations == 0 ) {
-							Gdx.app.log("MainMenuScreen", "Last animation finished");
-						}
-					}
-				})
-	    .target(endYposition);
+				.target(endYposition);
 	}
 
-	
+	private Tween createTextButtonHideAnimation(TextButton button, float endYposition) {
+		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
+				.target(endYposition);
+	}
 }
 
 
