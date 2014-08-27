@@ -1,28 +1,13 @@
 package com.strategames.engine.screens;
 
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.tweens.ActorAccessor;
 
 public class MainMenuScreen extends AbstractScreen {
-
-//	private Vector2 centerPosition;
-
-//	private Label label;
-//	private Array<TextButton> buttons;
-
-//	private float buttonHeightPlusPadding;
 
 	public MainMenuScreen(Game game) {
 		super(game, "Welcome to Catch Da Stars!");
@@ -30,16 +15,11 @@ public class MainMenuScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-//		this.buttons = new Array<TextButton>();
 		final Game game = getGame();
-//		Skin skin = getSkin();
-//		this.centerPosition = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
 		
-//		label = new Label("Welcome to Catch Da Stars!", skin);
-//		float x = (centerPosition.x) - (label.getWidth() / 2f);
-//		label.setPosition(x, stage.getHeight() + label.getHeight());
-//		stage.addActor(label);
-
+		float x = stage.getWidth() / 2f;
+		float y = 600f;
+		
 		TextButton button = new TextButton( "New game", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -48,12 +28,10 @@ public class MainMenuScreen extends AbstractScreen {
 				game.startLevel(1);
 			}
 		});
-		button.setY(-button.getHeight());
-		addUIElement(button);
-//		stage.addActor(button);
-//		buttons.add(button);
-//		buttonHeightPlusPadding = button.getHeight() + 20f;
-
+		button.setPosition(x - (button.getWidth() / 2f), y);
+		stage.addActor(button);
+		y -= button.getHeight() + 20f;
+		
 		button = new TextButton( "Settings", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -61,22 +39,20 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showSettings();
 			}
 		});
-		button.setY(-button.getHeight());
-		addUIElement(button);
-//		stage.addActor(button);
-//		buttons.add(button);
-
+		button.setPosition(x - (button.getWidth() / 2f), y);
+		stage.addActor(button);
+		y -= button.getHeight() + 20f;
+		
 		button = new TextButton( "High Scores", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
 			}
 		} );
-		button.setY(-button.getHeight());
-		addUIElement(button);
-//		stage.addActor(button);
-//		buttons.add(button);
-
+		button.setPosition(x - (button.getWidth() / 2f), y);
+		stage.addActor(button);
+		y -= button.getHeight() + 20f;
+		
 		button = new TextButton( "Game editor", getSkin() );
 		button.addListener( new ClickListener() {
 
@@ -84,10 +60,8 @@ public class MainMenuScreen extends AbstractScreen {
 				getGame().showLevelEditorMenu();
 			}
 		} );
-		button.setY(-button.getHeight());
-		addUIElement(button);
-//		stage.addActor(button);
-//		buttons.add(button);
+		button.setPosition(x - (button.getWidth() / 2f), y);
+		stage.addActor(button);
 	}
 
 	@Override
@@ -98,61 +72,5 @@ public class MainMenuScreen extends AbstractScreen {
 	protected boolean handleBackNavigation() {
 		Gdx.app.exit();
 		return true;
-	}
-
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-//		Gdx.app.log("MainMenuScreen", "render: label (x,y)="+label.getY()+", "+label.getX());
-	}
-	
-//	@Override
-//	protected Timeline createShowAnimation() {
-//		Timeline timelineParallel = Timeline.createParallel();
-//		Timeline timelineSequence = Timeline.createSequence();
-//		
-//		timelineParallel.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-//				.target(700));
-//
-//		float y = 600f;
-//		for(TextButton button : this.buttons) {
-//			timelineSequence.push(createTextButtonShowAnimation(button, y));
-//			y -= buttonHeightPlusPadding;
-//		}
-//
-//		timelineParallel.push(timelineSequence);
-//		return timelineParallel;
-//	}
-//
-//	@Override
-//	protected Timeline createHideAnimation() {
-//		Stage stage = getStageUIActors();
-//		Timeline timeline = Timeline.createParallel();
-//
-//		timeline.push(Tween.to(label, ActorAccessor.POSITION_Y, 0.8f)
-//				.target(stage.getHeight() + label.getHeight()));
-//
-//		float y = -buttonHeightPlusPadding;
-//
-//		for(TextButton button : this.buttons) {
-//			timeline.push(createTextButtonHideAnimation(button, y));
-//			y -= buttonHeightPlusPadding;
-//		}
-//
-//		return timeline;
-//	}
-//
-//	private Tween createTextButtonShowAnimation(TextButton button, float endYposition) {
-//		float x = (centerPosition.x) - (button.getWidth() / 2f);
-//		button.setPosition(x, -button.getHeight());
-//		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
-//				.target(endYposition);
-//	}
-//
-//	private Tween createTextButtonHideAnimation(TextButton button, float endYposition) {
-//		return Tween.to(button, ActorAccessor.POSITION_Y, 0.2f)
-//				.target(endYposition);
-//	}
+	}	
 }
-
-

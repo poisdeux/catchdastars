@@ -45,8 +45,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private Actor uiElementHit;
 	private Game game;
 	private boolean testGame;
-	private LevelEditorPreferences preferences;
-	private boolean snapToGrid;
 	private Vector2 initialTouchPosition;
 
 	private Actor actorTouched;
@@ -56,7 +54,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private FilledRectangleImage rectangleImage;
 
 	private Grid grid;
-
+	private boolean snapToGrid;
+	
 	private Vector3 worldSize;
 
 	private float cameraZoomInitial;
@@ -115,7 +114,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private Tap tap = new Tap();
 
 	public LevelEditorScreen(Game game) {
-		super(game, "Level " + game.getLevelNumber());
+		super(game, null);
 
 		this.game = game;
 
@@ -128,9 +127,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		this.worldSize = this.game.getWorldSize(); 
 
-		this.preferences = new LevelEditorPreferences();
-		this.snapToGrid = this.preferences.snapToGridEnabled();
-
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 	}
 
@@ -140,7 +136,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.rectangleImage = new FilledRectangleImage(stage);
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 		stage.addActor(this.rectangleImage);
-		displayGrid(this.preferences.displayGridEnabled());
+		displayGrid(LevelEditorPreferences.displayGridEnabled());
 		setCamera();
 	}
 
@@ -362,10 +358,10 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		if( dialog instanceof LevelEditorOptionsDialog ) {
 			switch( which ) {
 			case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
-				displayGrid(this.preferences.displayGridEnabled());
+				displayGrid(LevelEditorPreferences.displayGridEnabled());
 				break;
 			case LevelEditorOptionsDialog.CHECKBOX_SNAPTOGRID:
-				this.snapToGrid = this.preferences.snapToGridEnabled();
+				this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
 				break;
 			}
 		} else if (dialog instanceof GameObjectConfigurationDialog ) {
@@ -580,7 +576,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.mainMenu.add("Options", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), preferences, LevelEditorScreen.this);
+				LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), LevelEditorScreen.this);
 				dialog.create();
 				dialog.setPosition(mainMenu.getX(), mainMenu.getY());
 				mainMenu.hide();

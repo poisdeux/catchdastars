@@ -532,9 +532,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	/**
 	 * Hides the current screen and shows the previous screen
+	 * TODO implement disposing screens when popped from backstack. This must be done after hide animation has finished
 	 */
 	public void stopScreen() {
-		popBackstack().dispose();
+		popBackstack();
 		setScreen(peekBackStack());
 	}
 

@@ -1,11 +1,6 @@
 package com.strategames.engine.screens;
 
 
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,36 +12,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.SoundEffect;
-import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Settings;
 
 public class SettingsScreen extends AbstractScreen {
 
-	private Label title;
-	private Array<Actor> actors;
-	private Vector2 centerPosition;
-	private float buttonHeightPlusPadding;
-	
 	public SettingsScreen(Game game) {
 		super(game, "Settings");
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-		this.actors = new Array<Actor>();
 		Skin skin = getSkin();
 		final Settings settings = Settings.getInstance();
-		
-		this.centerPosition = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
-		
-		this.title = new Label("Settings", skin);
-		float x = (centerPosition.x) - (title.getWidth() / 2f);
-		title.setPosition(x, stage.getHeight() + title.getHeight());
-		stage.addActor(title);
+		float x = stage.getWidth() / 2f;
+		float y = 600f;
 		
 		Table table = new Table();
 		Label label = new Label("SFX volume", skin);
@@ -64,8 +46,9 @@ public class SettingsScreen extends AbstractScreen {
 			}
 		});
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
-		actors.add(table);
+		table.setPosition(x - (table.getWidth() / 2f), y);
 		stage.addActor(table);
+		y -= 60f;
 		
 		table = new Table();
 		label = new Label("Music volume", skin);
@@ -83,8 +66,9 @@ public class SettingsScreen extends AbstractScreen {
 			}
 		});
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
-		actors.add(table);
+		table.setPosition(x - (table.getWidth() / 2f), y);
 		stage.addActor(table);
+		y -= 80f;
 		
 		Button button = new TextButton( "Select music", getSkin() );
 		button.addListener( new ClickListener() {
@@ -93,18 +77,18 @@ public class SettingsScreen extends AbstractScreen {
 				getGame().selectMusicFiles();
 			}
 		} );
-		actors.add(button);
+		button.setPosition(x - (button.getWidth() / 2f), y);
 		stage.addActor(button);
-		buttonHeightPlusPadding = button.getHeight() + 20f;
+		y -= 60f;
 		
 		button = new TextButton( "Main menu", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().stopScreen();
+				getGame().showMainMenu();
 			}
 		} );
-		actors.add(button);
+		button.setPosition(x - (button.getWidth() / 2f), y);
 		stage.addActor(button);
 	}
 	
@@ -116,13 +100,6 @@ public class SettingsScreen extends AbstractScreen {
 	public void hide() {
 		Settings.getInstance().save();
 		super.hide();
-		dispose();
-	}
-	
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-		Gdx.app.log("SettingsScreen", "button: "+actors.get(0).getY()+" title="+title.getY());
 	}
 }
 

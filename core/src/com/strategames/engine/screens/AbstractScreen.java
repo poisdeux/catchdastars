@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public abstract class AbstractScreen implements Screen, InputProcessor
 {
@@ -43,21 +44,37 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	private Label title;
 
-	private Vector2 centerPosition;
-
+	/**
+	 * 
+	 * @param game 
+	 * @param title set to null to not display the screen title
+	 */
 	public AbstractScreen(Game game, String title)
 	{
 		this.game = game;
 
-		Gdx.input.setCatchBackKey(true);
-
-		setupUI(getStageUIActors());
-		setupActors(getStageActors());
-
 		this.tweenManager = new TweenManager();
 
-		this.title = new Label(title, getSkin());
-		getStageUIActors().addActor(this.title);
+		Gdx.input.setCatchBackKey(true);
+
+		Vector2 sizeMenu = getMenuSize();
+		this.stageUIActors = new Stage(new FitViewport(sizeMenu.x, sizeMenu.y, getMenuCamera()));
+
+		Vector3 sizeWorld = this.game.getWorldSize();
+		this.stageActors = new Stage(new FitViewport(sizeWorld.x, sizeWorld.y, getGameCamera()));
+
+		if( title != null ) {
+			this.title = new Label(title, getSkin());
+			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);
+			this.stageUIActors.addActor(this.title);
+		}
+
+		this.multiplexer = new InputMultiplexer();
+		this.multiplexer.addProcessor(stageUIActors);
+		this.multiplexer.addProcessor(this);
+		
+		setupUI(stageUIActors);
+		setupActors(stageActors);
 	}
 
 	@Override
@@ -77,6 +94,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			setMenuSize(new Vector2(510, 810));
 		}
 		return menuSize;
+	}
+
+	public Label getTitle() {
+		return title;
 	}
 
 	public OrthographicCamera getGameCamera() {
@@ -121,10 +142,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{	
-		Gdx.app.log("AbstractScreen", getName()+": show: called");
-		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(getStageUIActors());
-		this.multiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(this.multiplexer);
 
 		this.tweenManager.killAll();
@@ -152,23 +169,18 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
-		Gdx.app.log("AbstractScreen", getName()+": hide: called");
 		this.multiplexer.clear();
 
 		this.tweenManager.killAll();
 		Timeline timeline = createHideAnimation();
 		if( timeline != null ) {
-			Gdx.app.log("AbstractScreen", getName()+": setting up hide animation");
 			timeline.setCallbackTriggers(TweenCallback.ANY);
 			timeline.setCallback(new TweenCallback() {
 
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
-					Gdx.app.log("AbstractScreen", getName()+": onEvent: "+arg0 );
 					if( arg0 == TweenCallback.COMPLETE ){
-						Gdx.app.log("AbstractScreen", getName()+": animation complete");
 						getGame().notifyScreenHidden();
-						//						dispose();
 					}
 				}
 			});
@@ -176,7 +188,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			timeline.start(this.tweenManager);
 		} else {
 			getGame().notifyScreenHidden();
-			dispose();
 		}
 	}
 
@@ -194,23 +205,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	public Stage getStageActors() {
-		if( stageActors == null ) {
-			OrthographicCamera camera = getGameCamera();
-			Vector3 size = this.game.getWorldSize();
-			Viewport viewport = new FitViewport(size.x, size.y, camera);
-			stageActors = new Stage(viewport);
-		}
 		return stageActors;
 	}
 
 	public Stage getStageUIActors() {
-		if( stageUIActors == null ) {
-			OrthographicCamera camera = getMenuCamera();
-			Vector2 size = getMenuSize();
-			Viewport viewport = new FitViewport(size.x, size.y, camera);
-			stageUIActors = new Stage(viewport);
-			this.centerPosition = new Vector2(size.x / 2f, size.y / 2f);
-		}
 		return stageUIActors;
 	}
 
@@ -280,28 +278,29 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return super.toString() + message;
 	}
 
-	public void addUIElement(Actor actor) {
-		getStageUIActors().addActor(actor);
-	}
-
+	/**
+	 * Called to create the animation when screen is displayed
+	 * @return Timeline timeline that contains the animation(s) or null to disable animation
+	 */
 	protected Timeline createShowAnimation() {
 		Timeline timelineParallel = Timeline.createParallel();
 		Timeline timelineSequence = Timeline.createSequence();
 		Stage stage = getStageUIActors();
 
-		float x = (centerPosition.x) - (title.getWidth() / 2f);
-		title.setPosition(x, stage.getHeight() + title.getHeight());
-		Gdx.app.log("AbstractScreen", "createShowAnimation: title: x,y="+title.getX()+","+title.getY());
-		timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
-				.target(700));
+		if(title != null) {
+			title.setY(stage.getHeight() + title.getHeight());
+			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+					.target(700));
+		}
 
-		float y = 600f;
 		Array<Actor> actors = stage.getActors();
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
 			if( actor != title ) {
-				timelineSequence.push(createActorShowAnimation(actor, y));
-				y -= actor.getHeight() + 20f;
+				float y = actor.getY();
+				actor.setY(-60f);
+				timelineSequence.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+						.target(y));
 			}
 		}
 
@@ -309,34 +308,32 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return timelineParallel;
 	}
 
+	/**
+	 * Called to create the animation when screen will be hidden
+	 * @return Timeline timeline that contains the animation(s) or null to disable animation
+	 */
 	protected Timeline createHideAnimation() {
 		Stage stage = getStageUIActors();
 		Timeline timeline = Timeline.createParallel();
 
-		timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
-				.target(stage.getHeight() + title.getHeight()));
-
+		if(title != null) {
+			timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+					.target(stage.getHeight() + title.getHeight()));
+		}
+		
 		Array<Actor> actors = getStageUIActors().getActors();
 		float y = -81f;
-		for(int i = 1; i < actors.size; i++) {
+
+		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
-			timeline.push(createActorHideAnimation(actor, y));
-			y -= actor.getHeight() + 20f;
+			if( actor != title ) {
+				timeline.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+						.target(y));
+				y -= 60f;
+			}
 		}
 
 		return timeline;
-	}
-
-	private Tween createActorShowAnimation(Actor actor, float endYposition) {
-		float x = (centerPosition.x) - (actor.getWidth() / 2f);
-		actor.setPosition(x, -actor.getHeight());
-		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-				.target(endYposition);
-	}
-
-	private Tween createActorHideAnimation(Actor actor, float endYposition) {
-		return Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-				.target(endYposition);
 	}
 
 	/**
@@ -356,16 +353,4 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * @param stage that should hold the game actors
 	 */
 	abstract protected void setupActors(Stage stage);
-
-	//	/**
-	//	 * Called to create the animation when screen is displayed
-	//	 * @return Timeline that contains the animation(s)
-	//	 */
-	//	abstract protected Timeline createShowAnimation();
-	//	
-	//	/**
-	//	 * Called to create the animation when screen will be hidden
-	//	 * @return Timeline that contains the animation(s)
-	//	 */
-	//	abstract protected Timeline createHideAnimation();
 }

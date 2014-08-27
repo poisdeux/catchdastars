@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -43,6 +44,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	protected void setupUI(Stage stage) {
+		getTitle().setY(stage.getHeight() - 60f);
 		
 		this.levels = new Levels(); 
 		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
@@ -50,8 +52,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Skin skin = getSkin();
 		this.table = new Table( skin );
 		this.table.setFillParent(true);
-		this.table.add( "Level editor" ).expand().top();
-		this.table.row();
 
 		this.levelButtonsTable = new Table(skin);
 
@@ -351,17 +351,5 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		
 		this.levels.renumberLevels();
 		fillLevelButtonsTable(this.levels.getLevels());
-	}
-
-	@Override
-	protected Timeline createShowAnimation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected Timeline createHideAnimation() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

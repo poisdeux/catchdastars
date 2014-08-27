@@ -4,30 +4,40 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
 public class LevelEditorPreferences {
-	private final String keySnapToGrid = "snapToGrid";
-	private final String keyDisplayGrid = "displayGrid";
+	private static final String keySnapToGrid = "snapToGrid";
+	private static final String keyDisplayGrid = "displayGrid";
 	
-	private Preferences preferences;
+	private static Preferences preferences;
 	
-	public LevelEditorPreferences() {
-		this.preferences = Gdx.app.getPreferences("LevelEditorPreferences");
+	private LevelEditorPreferences() {
+		
 	}
 	
-	public boolean snapToGridEnabled() {
-		return this.preferences.getBoolean(keySnapToGrid, false);
+	public static boolean snapToGridEnabled() {
+		return preferences.getBoolean(keySnapToGrid, false);
 	}
 	
-	public void snapToGrid(boolean bool) {
-		this.preferences.putBoolean(keySnapToGrid, bool);
-		this.preferences.flush();
+	public static void snapToGrid(boolean bool) {
+		getPreferences();
+		preferences.putBoolean(keySnapToGrid, bool);
+		preferences.flush();
 	}
 	
-	public boolean displayGridEnabled() {
-		return this.preferences.getBoolean(keyDisplayGrid, false);
+	public static boolean displayGridEnabled() {
+		getPreferences();
+		return preferences.getBoolean(keyDisplayGrid, false);
 	}
 	
-	public void displayGrid(boolean bool) {
-		this.preferences.putBoolean(keyDisplayGrid, bool);
-		this.preferences.flush();
+	public static void displayGrid(boolean bool) {
+		getPreferences();
+		preferences.putBoolean(keyDisplayGrid, bool);
+		preferences.flush();
+	}
+	
+	public static Preferences getPreferences() {
+		if( preferences == null ) {
+			preferences = Gdx.app.getPreferences("LevelEditorPreferences");
+		}
+		return preferences;
 	}
 }

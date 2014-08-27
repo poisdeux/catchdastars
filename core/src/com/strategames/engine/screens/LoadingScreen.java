@@ -26,7 +26,7 @@ public class LoadingScreen extends AbstractScreen {
 	 * Shows an animation which can be displayed during game loading
 	 */
 	public LoadingScreen(Game game) {
-		super(game, "Loading...");
+		super(game, null);
 	}
 
 	@Override
@@ -115,14 +115,12 @@ public class LoadingScreen extends AbstractScreen {
 	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
-		// TODO Auto-generated method stub
+	protected Timeline createHideAnimation() {
 		return null;
 	}
-
+	
 	@Override
-	protected Timeline createHideAnimation() {
-		// TODO Auto-generated method stub
+	protected Timeline createShowAnimation() {
 		return null;
 	}
 }

@@ -22,7 +22,7 @@ import com.strategames.engine.utils.Textures;
 public class SplashScreen extends AbstractScreen {
 
 	public SplashScreen(Game game) {
-		super(game, "Catch Da Stars");
+		super(game, null);
 		MusicPlayer player = MusicPlayer.getInstance();
 		player.setLibrary(getGame().getMusicSelector().getLibrary());
 	}
@@ -90,13 +90,6 @@ public class SplashScreen extends AbstractScreen {
 	}
 
 
-//	@Override
-//	public void dispose()
-//	{
-//		super.dispose();
-//		this.splashImage.remove();
-//	}
-	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub

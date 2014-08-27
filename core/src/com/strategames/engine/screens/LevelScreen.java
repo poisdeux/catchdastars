@@ -33,7 +33,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private boolean gameEnded;
 
 	public LevelScreen(Game game) {
-		super(game, "Level "+game.getLevelNumber());
+		super(game, null);
 	}
 
 	@Override
@@ -197,13 +197,11 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	
 	@Override
 	protected Timeline createShowAnimation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected Timeline createHideAnimation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
