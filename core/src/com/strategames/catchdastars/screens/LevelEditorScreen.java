@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Wall;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
@@ -153,6 +154,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public void show() {
+		super.show();
 		this.game.loadLevel(this);
 	}
 

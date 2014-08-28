@@ -21,11 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public abstract class AbstractScreen implements Screen, InputProcessor
 {
@@ -44,6 +42,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	private Label title;
 
+	private Array<Vector2> originalPositions;
+	
 	/**
 	 * 
 	 * @param game 
@@ -57,24 +57,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 		Gdx.input.setCatchBackKey(true);
 
-		Vector2 sizeMenu = getMenuSize();
-		this.stageUIActors = new Stage(new FitViewport(sizeMenu.x, sizeMenu.y, getMenuCamera()));
-
-		Vector3 sizeWorld = this.game.getWorldSize();
-		this.stageActors = new Stage(new FitViewport(sizeWorld.x, sizeWorld.y, getGameCamera()));
-
 		if( title != null ) {
 			this.title = new Label(title, getSkin());
-			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);
-			this.stageUIActors.addActor(this.title);
 		}
-
-		this.multiplexer = new InputMultiplexer();
-		this.multiplexer.addProcessor(stageUIActors);
-		this.multiplexer.addProcessor(this);
-		
-		setupUI(stageUIActors);
-		setupActors(stageActors);
 	}
 
 	@Override
@@ -119,6 +104,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	public InputMultiplexer getMultiplexer() {
+		if( this.multiplexer == null ) {
+			this.multiplexer = new InputMultiplexer();
+			this.multiplexer.addProcessor(getStageUIActors());
+			this.multiplexer.addProcessor(this);
+		}
 		return this.multiplexer;
 	}
 
@@ -142,7 +132,21 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{	
-		Gdx.input.setInputProcessor(this.multiplexer);
+		if( this.stageUIActors == null ) {
+			setupUI(getStageUIActors());
+		}
+		
+		if( this.stageActors == null ) {
+			setupActors(getStageActors());
+		}
+
+		if( this.title != null ) {
+			Vector2 sizeMenu = getMenuSize();
+			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);
+			getStageUIActors().addActor(this.title);
+		}
+
+		Gdx.input.setInputProcessor(getMultiplexer());
 
 		this.tweenManager.killAll();
 		Timeline timeline = createShowAnimation();
@@ -169,8 +173,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
-		this.multiplexer.clear();
-
 		this.tweenManager.killAll();
 		Timeline timeline = createHideAnimation();
 		if( timeline != null ) {
@@ -205,11 +207,19 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	public Stage getStageActors() {
-		return stageActors;
+		if( this.stageActors == null ) {
+			Vector3 sizeWorld = this.game.getWorldSize();
+			this.stageActors = new Stage(new FitViewport(sizeWorld.x, sizeWorld.y, getGameCamera()));
+		}
+		return this.stageActors;
 	}
 
 	public Stage getStageUIActors() {
-		return stageUIActors;
+		if( this.stageUIActors == null ) {
+			Vector2 sizeMenu = getMenuSize();
+			this.stageUIActors = new Stage(new FitViewport(sizeMenu.x, sizeMenu.y, getMenuCamera()));
+		}
+		return this.stageUIActors;
 	}
 
 	@Override
@@ -294,13 +304,20 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		}
 
 		Array<Actor> actors = stage.getActors();
+		if( this.originalPositions == null ) {
+			this.originalPositions = new Array<Vector2>(actors.size);
+			for(int i = 0; i < actors.size; i++) {
+				Actor actor = actors.get(i);
+				this.originalPositions.add(new Vector2(actor.getX(), actor.getY()));
+			}
+		}
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
 			if( actor != title ) {
-				float y = actor.getY();
+				Vector2 pos = this.originalPositions.get(i);
 				actor.setY(-60f);
 				timelineSequence.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-						.target(y));
+						.target(pos.y));
 			}
 		}
 
@@ -320,7 +337,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
 					.target(stage.getHeight() + title.getHeight()));
 		}
-		
+
 		Array<Actor> actors = getStageUIActors().getActors();
 		float y = -81f;
 
@@ -328,8 +345,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			Actor actor = actors.get(i);
 			if( actor != title ) {
 				timeline.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
-						.target(y));
-				y -= 60f;
+						.target(-actor.getHeight()));
 			}
 		}
 

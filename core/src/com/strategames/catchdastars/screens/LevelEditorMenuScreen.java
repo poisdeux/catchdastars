@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
@@ -35,7 +36,6 @@ import com.strategames.ui.widgets.TextButton;
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
 	private Table levelButtonsTable;
 	private int lastLevelNumber;
-	private Table table;
 	private Levels levels;
 
 	public LevelEditorMenuScreen(Game game) {
@@ -44,25 +44,27 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	protected void setupUI(Stage stage) {
-		getTitle().setY(stage.getHeight() - 60f);
 		
 		this.levels = new Levels(); 
 		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
 		
 		Skin skin = getSkin();
-		this.table = new Table( skin );
-		this.table.setFillParent(true);
 
 		this.levelButtonsTable = new Table(skin);
 
 		fillLevelButtonsTable(this.levels.getLevels());
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsTable, skin);
-		this.table.add(scrollPane).expand().fill().colspan(4);;
-		this.table.row();
+		scrollPane.setHeight(400f);
+		scrollPane.setWidth(stage.getWidth());
+		scrollPane.setPosition(0, 200f);
+		stage.addActor(scrollPane);
 
-		TextButton addLevel = new TextButton( "New level", skin );
-		addLevel.addListener( new ClickListener() {
+		Table bottomButtonsTable = new Table();
+		bottomButtonsTable.setWidth(stage.getWidth());
+		
+		TextButton button = new TextButton( "New level", skin );
+		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
 				Gdx.input.getTextInput(new TextInputListener() {
@@ -83,41 +85,36 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 			}
 		}); 
-
-		this.table.add( addLevel ).fillX().expand().bottom();
-
-		TextButton export = new TextButton("export", skin);
-		export.addListener(new ClickListener() {
+		bottomButtonsTable.add( button ).fillX().expand();
+		
+		button = new TextButton("export", skin);
+		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				getGame().getExporterImporter().export(levels.getJson());
 			}
 		});
-
-		this.table.add( export ).fillX().expand().bottom();
-
-		TextButton importButton = new TextButton("import", skin);
-		importButton.addListener(new ClickListener() {
+		bottomButtonsTable.add( button ).fillX().expand();
+		
+		button = new TextButton("import", skin);
+		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
 			}
 		});
+		bottomButtonsTable.add( button ).fillX().expand();
 
-		this.table.add( importButton ).fillX().expand().bottom();
-
-		TextButton mainMenu = new TextButton( "Main menu", skin);
-		mainMenu.addListener(new ClickListener() {
+		button = new TextButton( "Main menu", skin);
+		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				getGame().showMainMenu();
 			}
 		});
-		this.table.add( mainMenu ).fillX().expand().bottom();
-
-		this.table.row();
-
-		stage.addActor(this.table);
+		bottomButtonsTable.add( button ).fillX().expand();
+		bottomButtonsTable.setHeight(button.getHeight());
+		stage.addActor(bottomButtonsTable);
 	}
 
 	@Override

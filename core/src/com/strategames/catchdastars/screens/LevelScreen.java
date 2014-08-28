@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.catchdastars.screens;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Text;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;

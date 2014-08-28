@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.catchdastars.screens;
 
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Textures;
 
 public class LoadingScreen extends AbstractScreen {

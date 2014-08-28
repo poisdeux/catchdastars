@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.catchdastars.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.screens.AbstractScreen;
 
 public class MainMenuScreen extends AbstractScreen {
 
