@@ -34,6 +34,7 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 
@@ -110,7 +111,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public void setup(AbstractScreen screen) {
+	public boolean setup(AbstractScreen screen) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		super.setup(screen);
@@ -118,13 +119,13 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Level level = getLevel();
 		if( level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
-			return;
+			return false;
 		}
 
 		Array<GameObject> gameObjects = level.getGameObjects();
 		if ( gameObjects.size == 0 ) {
 			Gdx.app.log("CatchDaStars", "setup: gameobjects is empty for level="+level);
-			return;
+			return false;
 		}
 
 		//Reset world
@@ -159,6 +160,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			addGameObject(gameObject);
 		}
 
+		return true;
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
@@ -387,6 +389,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
 				stopScreen();
 				break;
+			}
+		} else  if( dialog instanceof ErrorDialog ) {
+			switch( which ) {
+			case ErrorDialog.BUTTON_CLOSE:
+				stopScreen();
 			}
 		}
 	}

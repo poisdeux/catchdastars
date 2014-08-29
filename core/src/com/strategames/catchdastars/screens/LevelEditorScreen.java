@@ -30,6 +30,7 @@ import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
+import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.dialogs.LevelEditorOptionsDialog;
 import com.strategames.ui.dialogs.ToolsPickerDialog;
@@ -138,13 +139,15 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 		stage.addActor(this.rectangleImage);
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
-		setCamera();
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
+		Gdx.app.log("LevelEditorScreen", "setupActors: ");
 		getMultiplexer().addProcessor(stage);
 
+		setCamera();
+		
 		//This is added to the actor stage as we use
 		//game objects in the menu
 		setupMenu(stage);
@@ -420,6 +423,11 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
 		camera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
 		this.cameraZoomInitial = camera.zoom;
+
+		Vector2 maxObjectSize = getMaxObjectSize();
+		//Add screenborder Wall as this is placed halfway the actual screenborder
+		maxObjectSize.x += 0.6*Wall.WIDTH;
+		maxObjectSize.y += 0.6*Wall.HEIGHT;
 		
 		boolean screenOK = false;
 		while( ! screenOK ) {
@@ -427,11 +435,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			camera.update();
 			Vector3 screenSize = new Vector3(0f, Gdx.graphics.getHeight(), 0f);
 			camera.unproject(screenSize);
-
-			Vector2 maxObjectSize = getMaxObjectSize();
-			//Add screenborder Wall as this is placed halfway the actual screenborder
-			maxObjectSize.x += 0.6*Wall.WIDTH;
-			maxObjectSize.y += 0.6*Wall.HEIGHT;
 
 			//			Gdx.app.log("LevelEditorScreen", "After camera.zoom="+camera.zoom+", screenSize="+screenSize+
 			//					", maxObjectSize="+maxObjectSize);
@@ -624,7 +627,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	private void setupMenu(Stage stage) {
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
-
+		Gdx.app.log("LevelEditorScreen", "setupMenu: gameObjects.size()="+gameObjects.size());
+		
 		Vector3 worldSize = this.game.getWorldSize();
 
 		/**
@@ -710,22 +714,27 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	public void onLevelLoaded(Level level) {
-		
-		this.game.setup(this);
-		
 		if( level == null ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
 			return;
 		}
-		
+
 		Array<GameObject> gameObjects = level.getGameObjects();
-		if ( gameObjects == null ) {
-			return;
-		}
 		
 		if( (gameObjects == null)  || ( gameObjects.size == 0 ) ) {
 			ScreenBorder.create(this.game);
 		}
-
+		
+		if( ! getGame().setup(this) ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
+		}
+		
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {
 				gameObject.initializeConfigurationItems();

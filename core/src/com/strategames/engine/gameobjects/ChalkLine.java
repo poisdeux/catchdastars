@@ -118,7 +118,7 @@ public class ChalkLine extends Image {
 	public void init() {
 		this.length = this.start.dst(this.end);
 
-		this.steps = (int) (this.duration / Game.FRAMES_PER_SECOND);
+		this.steps = (int) (this.duration / (Game.FRAMES_PER_SECOND * 1000));
 
 		if( this.steps < 1 ) { 
 			this.steps = 1;

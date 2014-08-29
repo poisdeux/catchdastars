@@ -548,9 +548,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	/**
 	 * Called by AbstractScreen when level is loaded and ready to start the game
 	 * @param screen that contains the stage with actors
+	 * @return true if setup was succesful, false otherwise
 	 */
-	public void setup(AbstractScreen screen) {
+	public boolean setup(AbstractScreen screen) {
 		this.stageActors = screen.getStageActors();
+		return true;
 	}
 
 	/**

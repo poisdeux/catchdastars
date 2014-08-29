@@ -339,7 +339,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		}
 
 		Array<Actor> actors = getStageUIActors().getActors();
-		float y = -81f;
 
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);

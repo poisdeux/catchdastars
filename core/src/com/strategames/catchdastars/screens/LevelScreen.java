@@ -3,7 +3,11 @@ package com.strategames.catchdastars.screens;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Text;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
@@ -32,7 +37,8 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private boolean imageStartAnimationFinished;
 	private boolean levelLoaded;
 	private boolean gameEnded;
-
+	private Timeline levelStartAnimation;
+	
 	public LevelScreen(Game game) {
 		super(game, null);
 	}
@@ -60,15 +66,14 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 		stage.addActor(this.levelImage);
 
-		setupStartAnimation();
-
-		game.loadLevel(this);
+//		setupStartAnimation();
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.stageActors = stage;
 		getGame().pauseGame();
+		getGame().loadLevel(this);
 	}
 
 	@Override
@@ -92,7 +97,6 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 	@Override
 	protected boolean handleBackNavigation() {
-		Gdx.app.log("LevelScreen", "handleBackNavigation");
 		if( ! getGame().isRunning() ) { // prevent pausing game when game is complete or failed
 			return true;
 		}
@@ -102,6 +106,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			this.levelPausedDialog.setOnClickListener(this);
 			this.levelPausedDialog.create();
 		}
+		
 		if( ! this.levelPausedDialog.isVisible() ) {
 			this.levelPausedDialog.show();
 		}
@@ -141,64 +146,101 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			return;
 		}
 
-		getGame().setup(this);
-
-		this.levelLoaded = true;
-
-		startScreenCloseAnimation();
+		if( getGame().setup(this) ) {
+			this.levelLoaded = true;
+			startScreenCloseAnimation();
+		} else {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
+		}
 	}
 
 	private void startScreenCloseAnimation() {
 		if( imageStartAnimationFinished && levelLoaded ) {
-			setupEndAnimation();
+			this.levelStartAnimation.resume();
 		}
 	}
 
-	private void setupStartAnimation() {
-		float x = this.levelImage.getX();
-		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
-		this.levelImage.addAction(sequence(moveTo(x, y, 1f, Interpolation.circleOut),
-				new Action() {
+//	private void setupStartAnimation() {
+//		float x = this.levelImage.getX();
+//		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
+//		this.levelImage.addAction(sequence(moveTo(x, y, 1f, Interpolation.circleOut),
+//				new Action() {
+//
+//			@Override
+//			public boolean act(float delta) {
+//				imageStartAnimationFinished = true;
+//				startScreenCloseAnimation();
+//				return true;
+//			}
+//
+//		}));
+//	}
 
-			@Override
-			public boolean act(float delta) {
-				imageStartAnimationFinished = true;
-				startScreenCloseAnimation();
-				return true;
-			}
-
-		}));
-	}
-
-	private void setupEndAnimation() {
-
-		this.filter.addAction(sequence(fadeOut(1f), 
-				new Action() {
-
-			@Override
-			public boolean act(float delta) {
-				levelImage.addAction(sequence(moveTo(levelImage.getX(), stage.getHeight() + levelImage.getHeight(), 0.5f, Interpolation.circleIn),
-						new Action() {
-
-					@Override
-					public boolean act(float delta) {
-						levelImage.remove();
-						filter.remove();
-						getGame().startGame();
-						MusicPlayer.getInstance().playNext();
-						return true;
-					}
-				}));
-				return true;
-			}
-		}));
-
-
-	}
+//	private void setupEndAnimation() {
+//
+//		this.filter.addAction(sequence(fadeOut(1f), 
+//				new Action() {
+//
+//			@Override
+//			public boolean act(float delta) {
+//				levelImage.addAction(sequence(moveTo(levelImage.getX(), stage.getHeight() + levelImage.getHeight(), 0.5f, Interpolation.circleIn),
+//						new Action() {
+//
+//					@Override
+//					public boolean act(float delta) {
+//						levelImage.remove();
+//						filter.remove();
+//						getGame().startGame();
+//						MusicPlayer.getInstance().playNext();
+//						return true;
+//					}
+//				}));
+//				return true;
+//			}
+//		}));
+//
+//
+//	}
 	
 	@Override
 	protected Timeline createShowAnimation() {
-		return null;
+		this.levelStartAnimation = Timeline.createSequence();
+		
+		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
+		Tween slideinTween = Tween.to(this.levelImage, ActorAccessor.POSITION_Y, 1f).ease(TweenEquations.easeInOutQuint).target(y);
+		slideinTween.setCallbackTriggers(TweenCallback.COMPLETE);
+		slideinTween.setCallback(new TweenCallback() {
+			
+			@Override
+			public void onEvent(int arg0, BaseTween<?> arg1) {
+				levelStartAnimation.pause();
+				imageStartAnimationFinished = true;
+				startScreenCloseAnimation();
+			}
+		});
+		this.levelStartAnimation.push(slideinTween);
+		
+		this.levelStartAnimation.push(Tween.to(this.filter, ActorAccessor.ALPHA, 0.5f).target(0f));
+		
+		y = stage.getHeight() + levelImage.getHeight();
+		Tween slideoutTween = Tween.to(this.levelImage, ActorAccessor.POSITION_Y, 0.5f).ease(TweenEquations.easeInQuint).target(y);
+		slideoutTween.setCallbackTriggers(TweenCallback.COMPLETE);
+		slideoutTween.setCallback(new TweenCallback() {
+			
+			@Override
+			public void onEvent(int arg0, BaseTween<?> arg1) {
+				levelImage.remove();
+				filter.remove();
+				MusicPlayer.getInstance().playNext();
+				getGame().startGame();
+			}
+		});
+		levelStartAnimation.push(slideoutTween);
+		
+		return this.levelStartAnimation;
 	}
 
 	@Override
