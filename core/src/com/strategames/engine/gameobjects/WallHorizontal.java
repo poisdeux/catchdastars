@@ -1,10 +1,10 @@
 package com.strategames.engine.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.strategames.engine.utils.Textures;
 
 public class WallHorizontal extends Wall {
@@ -49,12 +49,13 @@ public class WallHorizontal extends Wall {
 		if( length < WIDTH ) {
 			length = WIDTH; //Make sure length is not smaller than a single block
 		}
+		
 		super.setLength(length);
 
 		setHeight(HEIGHT);
-		setWidth(getLength());
+		setWidth(length);
 		this.amountOfParts = ((int) (length / WIDTH)) - 2;
-		if( this.amountOfParts < 2 ) {
+		if( this.amountOfParts < 0 ) {
 			this.drawSingleBrick = true;
 		} else {
 			this.drawSingleBrick = false;

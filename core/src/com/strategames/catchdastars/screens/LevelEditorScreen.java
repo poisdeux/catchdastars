@@ -143,9 +143,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	@Override
 	protected void setupActors(Stage stage) {
-		Gdx.app.log("LevelEditorScreen", "setupActors: ");
 		getMultiplexer().addProcessor(stage);
-
+		
 		setCamera();
 		
 		//This is added to the actor stage as we use
@@ -158,13 +157,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	@Override
 	public void show() {
 		super.show();
+		setCamera();
 		this.game.loadLevel(this);
-	}
-
-	@Override
-	protected boolean handleBackNavigation() {
-		saveLevel();
-		return false;
 	}
 
 	@Override
@@ -175,6 +169,18 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		}
 	}
 
+	@Override
+	public void hide() {
+		getGameCamera().zoom = this.cameraZoomInitial;
+		super.hide();
+	}
+
+	@Override
+	protected boolean handleBackNavigation() {
+		saveLevel();
+		return false;
+	}
+	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
@@ -386,12 +392,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		}
 	}
 	
-	@Override
-	public void hide() {
-		getGameCamera().zoom = this.cameraZoomInitial;
-		super.hide();
-	}
-
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
@@ -431,13 +431,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		
 		boolean screenOK = false;
 		while( ! screenOK ) {
-			camera.zoom += 0.02; 
-			camera.update();
 			Vector3 screenSize = new Vector3(0f, Gdx.graphics.getHeight(), 0f);
 			camera.unproject(screenSize);
-
-			//			Gdx.app.log("LevelEditorScreen", "After camera.zoom="+camera.zoom+", screenSize="+screenSize+
-			//					", maxObjectSize="+maxObjectSize);
 
 			/**
 			 * We always set menu at the right as on Android the action bar will 
@@ -448,6 +443,9 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			} else if ( camera.zoom > 3 ) {
 				screenOK = true;
 				//Print error
+			} else {
+				camera.zoom += 0.02; 
+				camera.update();
 			}
 		}
 	}
@@ -627,13 +625,12 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 	private void setupMenu(Stage stage) {
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
-		Gdx.app.log("LevelEditorScreen", "setupMenu: gameObjects.size()="+gameObjects.size());
 		
 		Vector3 worldSize = this.game.getWorldSize();
 
 		/**
-		 * We always set menu at the right as on Android the action bar will 
-		 * trigger when trying to pick a game object
+		 * We always set menu at the right as otherwise the action bar will 
+		 * trigger on Android when trying to pick a game object
 		 */
 		float delta = stage.getHeight() / ( gameObjects.size() + 1 );
 		float x = (float) (worldSize.x + 0.6*Wall.WIDTH);

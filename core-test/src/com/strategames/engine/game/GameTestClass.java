@@ -51,9 +51,8 @@ public class GameTestClass extends Game {
 	}
 
 	@Override
-	public void setup(AbstractScreen screen) {
-		// TODO Auto-generated method stub
-		
+	public boolean setup(AbstractScreen screen) {
+		return true;
 	}
 
 	@Override
