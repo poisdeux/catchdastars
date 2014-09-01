@@ -299,7 +299,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 		if(title != null) {
 			title.setY(stage.getHeight() + title.getHeight());
-			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
 					.target(700));
 		}
 
@@ -316,7 +316,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			if( actor != title ) {
 				Vector2 pos = this.originalPositions.get(i);
 				actor.setY(-60f);
-				timelineSequence.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+				timelineSequence.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.1f)
 						.target(pos.y));
 			}
 		}
@@ -334,7 +334,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Timeline timeline = Timeline.createParallel();
 
 		if(title != null) {
-			timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.8f)
+			timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
 					.target(stage.getHeight() + title.getHeight()));
 		}
 
@@ -343,7 +343,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
 			if( actor != title ) {
-				timeline.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.2f)
+				timeline.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.1f)
 						.target(-actor.getHeight()));
 			}
 		}
