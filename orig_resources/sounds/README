@@ -1,3 +1,12 @@
+= Creating mono sounds =
+
+ffmpeg -i stereo.mp3 -c:a libmp3lame -q:a 7 -ac 1 mono.mp3
+
+Set -q:a to a lower value to improve quality.
+
+
+= Bibliography = 
+
 http://www.freesound.org/people/Benboncan/
 112198__benboncan__rock-on-rock.wav  74445__benboncan__sorting-stones.wav
 
@@ -9,3 +18,8 @@ http://www.freesound.org/people/Robinhood76/sounds/64593/
 
 Cash register sound
 http://www.freesound.org/people/kjackson/sounds/32629/
+
+Balloon blowing up
+http://soundbible.com/1417-Balloon-Blowing-Up.html
+
+

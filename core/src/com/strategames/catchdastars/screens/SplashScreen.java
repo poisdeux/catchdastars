@@ -80,7 +80,7 @@ public class SplashScreen extends AbstractScreen {
 	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
+	protected Timeline showAnimation() {
 		this.splashImage.setOrigin(this.splashImage.getWidth() / 2f, this.splashImage.getHeight() / 2f);
 		this.splashImage.setScale(0f);
 		
@@ -104,7 +104,7 @@ public class SplashScreen extends AbstractScreen {
 	}
 
 	@Override
-	protected Timeline createHideAnimation() {
+	protected Timeline hideAnimation() {
 		Timeline timeline = Timeline.createSequence();
 		timeline.push(Tween.to(this.splashImage, ActorAccessor.ALPHA, 1f).target(0f));
 		return timeline;

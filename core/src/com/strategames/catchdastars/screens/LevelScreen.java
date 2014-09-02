@@ -206,7 +206,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 //	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
+	protected Timeline showAnimation() {
 		this.levelStartAnimation = Timeline.createSequence();
 		
 		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
@@ -244,7 +244,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	}
 
 	@Override
-	protected Timeline createHideAnimation() {
+	protected Timeline hideAnimation() {
 		return null;
 	}
 }

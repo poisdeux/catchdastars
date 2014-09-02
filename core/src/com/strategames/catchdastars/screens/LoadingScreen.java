@@ -116,12 +116,12 @@ public class LoadingScreen extends AbstractScreen {
 	}
 	
 	@Override
-	protected Timeline createHideAnimation() {
+	protected Timeline hideAnimation() {
 		return null;
 	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
+	protected Timeline showAnimation() {
 		return null;
 	}
 }

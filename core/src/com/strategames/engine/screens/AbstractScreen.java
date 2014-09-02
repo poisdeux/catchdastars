@@ -149,7 +149,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Gdx.input.setInputProcessor(getMultiplexer());
 
 		this.tweenManager.killAll();
-		Timeline timeline = createShowAnimation();
+		Timeline timeline = showAnimation();
 		if( timeline != null ) {
 			timeline.start(this.tweenManager);
 		}
@@ -174,7 +174,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void hide()
 	{
 		this.tweenManager.killAll();
-		Timeline timeline = createHideAnimation();
+		Timeline timeline = hideAnimation();
 		if( timeline != null ) {
 			timeline.setCallbackTriggers(TweenCallback.ANY);
 			timeline.setCallback(new TweenCallback() {
@@ -292,7 +292,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * Called to create the animation when screen is displayed
 	 * @return Timeline timeline that contains the animation(s) or null to disable animation
 	 */
-	protected Timeline createShowAnimation() {
+	protected Timeline showAnimation() {
 		Timeline timelineParallel = Timeline.createParallel();
 		Timeline timelineSequence = Timeline.createSequence();
 		Stage stage = getStageUIActors();
@@ -329,7 +329,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * Called to create the animation when screen will be hidden
 	 * @return Timeline timeline that contains the animation(s) or null to disable animation
 	 */
-	protected Timeline createHideAnimation() {
+	protected Timeline hideAnimation() {
 		Stage stage = getStageUIActors();
 		Timeline timeline = Timeline.createParallel();
 

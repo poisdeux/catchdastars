@@ -743,13 +743,13 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 	
 	@Override
-	protected Timeline createShowAnimation() {
+	protected Timeline showAnimation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected Timeline createHideAnimation() {
+	protected Timeline hideAnimation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
