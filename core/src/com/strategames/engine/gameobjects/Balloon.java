@@ -92,10 +92,10 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	@Override
 	public void applyForce() {
 		Game game = getGame();
-		if( game.getGameState() == game.GAME_STATE_RUNNING ) {
+//		if( game.isRunning() ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
-			super.body.applyForce(getGame().getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
-		}
+			super.body.applyForce(game.getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);
+//		}
 	}
 	
 	@Override

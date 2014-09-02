@@ -1,5 +1,6 @@
 package com.strategames.engine.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobjects.GameObject;
@@ -45,26 +46,9 @@ public class WorldThread extends Thread {
 			}
 			previousTime = System.currentTimeMillis();
 
-			synchronized (gameObjectsForAddition) {
-				for(int i = 0; i < gameObjectsForAddition.size; i++) {
-					gameObjectsForAddition.get(i).setupBody();
-				}
-				gameObjectsForAddition.clear();
-			}
-
-			synchronized (gameObjectsForDeletion) {
-				for(int i = 0; i < gameObjectsForDeletion.size; i++) {
-					gameObjectsForDeletion.get(i).getBody().setActive(false);
-				}
-				gameObjectsForDeletion.clear();
-			}
-
-			Array<GameObject> objectsInGame = this.game.getGameObjectsInGame();
-			synchronized (objectsInGame) {
-				for(int i = 0; i < objectsInGame.size; i++) {
-					objectsInGame.get(i).applyForce();
-				}
-			}
+			handleAddedGameObjectsQueue();
+			handleDeletedGameObjectsQueue();
+			applyForces();
 			
 			world.step(timeStepSeconds, velocityIterations, positionIterations);
 		}
@@ -75,14 +59,43 @@ public class WorldThread extends Thread {
 	}
 
 	public void addGameObject(GameObject object) {
+		Gdx.app.log("WorldThread", "addGameObject: object="+object);
 		synchronized (gameObjectsForAddition) {
 			gameObjectsForAddition.add(object);
 		}
 	}
 
 	public void deleteGameObject(GameObject object) {
+		Gdx.app.log("WorldThread", "deleteGameObject: object="+object);
 		synchronized (gameObjectsForDeletion) {
 			gameObjectsForDeletion.add(object);
+		}
+	}
+
+	private void handleAddedGameObjectsQueue() {
+		synchronized (gameObjectsForAddition) {
+			for(int i = 0; i < gameObjectsForAddition.size; i++) {
+				gameObjectsForAddition.get(i).setupBody();
+			}
+			gameObjectsForAddition.clear();
+		}
+	}
+	
+	private void handleDeletedGameObjectsQueue() {
+		synchronized (gameObjectsForDeletion) {
+			for(int i = 0; i < gameObjectsForDeletion.size; i++) {
+				gameObjectsForDeletion.get(i).getBody().setActive(false);
+			}
+			gameObjectsForDeletion.clear();
+		}
+	}
+	
+	private void applyForces() {
+		Array<GameObject> objectsInGame = this.game.getGameObjectsInGame();
+		synchronized (objectsInGame) {
+			for(int i = 0; i < objectsInGame.size; i++) {
+				objectsInGame.get(i).applyForce();
+			}
 		}
 	}
 }

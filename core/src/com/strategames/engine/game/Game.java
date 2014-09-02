@@ -42,12 +42,17 @@ import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 
 abstract public class Game extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
-	public final int GAME_STATE_RUNNING = 0;
-	public final int GAME_STATE_PAUSED = 1;
-	public final int GAME_STATE_COMPLETE = 2;
-	public final int GAME_STATE_FAILED = 3;
-	private int gameState = GAME_STATE_PAUSED;
+	public enum GAME_STATE {
+		NONE, RUNNING, PAUSED
+	};
+	private GAME_STATE gameState = GAME_STATE.NONE;
 
+	private enum LEVEL_STATE {
+		NONE, INPROGRESS, FAILED, COMPLETE
+	};
+	
+	private LEVEL_STATE levelState = LEVEL_STATE.NONE;
+	
 	public static final float FRAMES_PER_SECOND = 1/60f;
 	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
 	private final int BOX2D_VELOCITY_ITERATIONS = 6;
@@ -82,7 +87,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private Screen currentScreen;
 	private Screen newScreen;
-	
+
 	private int totalScore;
 
 	private Stage stageActors;
@@ -140,7 +145,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void resize (int width, int height) {
 		if (currentScreen != null) currentScreen.resize(width, height);
 	}
-	
+
 	@Override
 	public void setScreen(Screen screen) {
 		this.newScreen = screen;
@@ -153,12 +158,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.currentScreen = this.newScreen;
 		}
 	}
-	
+
 	@Override
 	public Screen getScreen() {
 		return this.currentScreen;
 	}
-	
+
 	/**
 	 * Notify the Game manager that screen is now hidden
 	 * @param currentScreen the screen that is now hidden
@@ -170,9 +175,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.currentScreen = this.newScreen;
 		}
 	}
-	
+
 	public void pauseGame() {
-		this.gameState = GAME_STATE_PAUSED;
+		this.gameState = GAME_STATE.PAUSED;
 		MusicPlayer.getInstance().pause();
 		if( this.worldThread != null ) {
 			this.worldThread.stopThread();
@@ -180,43 +185,31 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void resumeGame() {
-		this.gameState = GAME_STATE_RUNNING;
+		this.gameState = GAME_STATE.RUNNING;
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
 
 	public void startGame() {
-		this.gameState = GAME_STATE_RUNNING;
+		this.gameState = GAME_STATE.RUNNING;
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
 
 	public void setLevelCompleted() {
-		this.gameState = GAME_STATE_COMPLETE;
+		this.levelState = LEVEL_STATE.COMPLETE;
 	}
 
 	public void setLevelFailed() {
-		this.gameState = GAME_STATE_FAILED;
+		this.levelState = LEVEL_STATE.FAILED;
 	}
 
 	public boolean isRunning() {
-		return this.gameState == GAME_STATE_RUNNING;
+		return this.gameState == GAME_STATE.RUNNING;
 	}
 
 	public boolean isPaused() {
-		return this.gameState == GAME_STATE_PAUSED;
-	}
-
-	public boolean isComplete() {
-		return this.gameState == GAME_STATE_COMPLETE;
-	}
-
-	public boolean isFailed() {
-		return this.gameState == GAME_STATE_FAILED;
-	}
-
-	public int getGameState() {
-		return this.gameState;
+		return this.gameState == GAME_STATE.PAUSED;
 	}
 
 	public void setTotalScore(int totalScore) {
@@ -379,6 +372,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * @param object the GameObject to be removed
 	 */
 	public void deleteGameObject(GameObject object) {
+		Gdx.app.log("Game", "deleteGameObject: object="+object);
 		this.gameObjectsForDeletion.add(object);
 		this.worldThread.deleteGameObject(object);
 	}
@@ -393,9 +387,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void addGameObject(GameObject object) {
+		Gdx.app.log("Game", "addGameObject: object="+object);
 		object.setGame(this);
-		
-		if( isRunning() ) {
+
+		if( this.gameState == GAME_STATE.RUNNING ) {
 			this.gameObjectsForAddition.add(object);
 			this.worldThread.addGameObject(object);
 		} else {
@@ -403,11 +398,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			object.setupImage();
 			object.setupBody();
 		}
-		
+
 		synchronized (this.gameObjectsInGame) {
 			this.gameObjectsInGame.add(object);
 		}
-		
+
 		this.stageActors.addActor(object);
 	}
 
@@ -423,9 +418,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * Called by the World thread prior to calling {@link World#step(float, int, int)}
 	 */
 	public void updateWorld() {
-		
+
 	}
-	
+
 	/**
 	 * Called in game during a render cycle
 	 * @param delta time in seconds since last cycle
@@ -433,31 +428,22 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void updateScreen(float delta, Stage stage) {
 		fpsLogger.log();
-		if( this.gameState == GAME_STATE_RUNNING ) {
+		if( this.gameState == GAME_STATE.RUNNING ) {
 			//			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
-		}
+			
+			handleDeleteGameObjectsQueue();
 
-		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
-		for (GameObject object : this.gameObjectsForDeletion ) {
-			if( object.canBeRemoved() ) {
-				if( object.remove() ) {
-					object.clear();
-				}
+			handleAddGameObjectsQueue();
 
-				synchronized (this.gameObjectsInGame) {
-					this.gameObjectsInGame.removeValue(object, true);
-				}
-			} else {
-				notDeletedGameObjects.add(object);
+			if( this.levelState == LEVEL_STATE.COMPLETE ) {
+				pauseGame();
+				showLevelCompleteDialog();
+			} else if( this.levelState == LEVEL_STATE.FAILED ) {
+				pauseGame();
+				showLevelFailedDialog();
 			}
 		}
-		this.gameObjectsForDeletion = notDeletedGameObjects;
-
-		for(GameObject object : this.gameObjectsForAddition) {
-			object.setupImage();
-		}
-		this.gameObjectsForAddition.clear();
 	}
 
 	/**
@@ -468,7 +454,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public boolean handleKeyEvent(int keycode) {
 		if((keycode == Keys.BACK) 
 				|| (keycode == Keys.ESCAPE)) {
-			if( this.gameState == GAME_STATE_RUNNING ) {
+			if( this.gameState == GAME_STATE.RUNNING ) {
 				pauseGame();
 			} else {
 				stopScreen();
@@ -586,6 +572,31 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		dialog.show();
 	}
 
+	private void handleDeleteGameObjectsQueue() {
+		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
+		for (GameObject object : this.gameObjectsForDeletion ) {
+			if( object.canBeRemoved() ) {
+				if( object.remove() ) {
+					object.clear();
+				}
+
+				synchronized (this.gameObjectsInGame) {
+					this.gameObjectsInGame.removeValue(object, true);
+				}
+			} else {
+				notDeletedGameObjects.add(object);
+			}
+		}
+		this.gameObjectsForDeletion = notDeletedGameObjects;
+	}
+	
+	private void handleAddGameObjectsQueue() {
+		for(GameObject object : this.gameObjectsForAddition) {
+			object.setupImage();
+		}
+		this.gameObjectsForAddition.clear();
+	}
+	
 	private void fixedTimeStep(float delta, Stage stage) {
 		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
 		Array<Actor> actors = stage.getActors();

@@ -1,17 +1,11 @@
 package com.strategames.catchdastars.screens;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
@@ -36,7 +30,6 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private Stage stage;
 	private boolean imageStartAnimationFinished;
 	private boolean levelLoaded;
-	private boolean gameEnded;
 	private Timeline levelStartAnimation;
 	
 	public LevelScreen(Game game) {
@@ -79,20 +72,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		Game game = getGame();
-		if( game.isRunning() ) {
-			game.updateScreen(delta, this.stageActors);
-		} else {
-			if( !this.gameEnded ) {
-				if( game.isComplete() ) {
-					game.showLevelCompleteDialog();
-					this.gameEnded = true;
-				} else if( game.isFailed() ) {
-					game.showLevelFailedDialog();
-					this.gameEnded = true;
-				}
-			}
-		}
+		getGame().updateScreen(delta, this.stageActors);
 	}
 
 	@Override
@@ -162,48 +142,6 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			this.levelStartAnimation.resume();
 		}
 	}
-
-//	private void setupStartAnimation() {
-//		float x = this.levelImage.getX();
-//		float y = (stage.getHeight() + this.levelImage.getHeight()) / 2f;
-//		this.levelImage.addAction(sequence(moveTo(x, y, 1f, Interpolation.circleOut),
-//				new Action() {
-//
-//			@Override
-//			public boolean act(float delta) {
-//				imageStartAnimationFinished = true;
-//				startScreenCloseAnimation();
-//				return true;
-//			}
-//
-//		}));
-//	}
-
-//	private void setupEndAnimation() {
-//
-//		this.filter.addAction(sequence(fadeOut(1f), 
-//				new Action() {
-//
-//			@Override
-//			public boolean act(float delta) {
-//				levelImage.addAction(sequence(moveTo(levelImage.getX(), stage.getHeight() + levelImage.getHeight(), 0.5f, Interpolation.circleIn),
-//						new Action() {
-//
-//					@Override
-//					public boolean act(float delta) {
-//						levelImage.remove();
-//						filter.remove();
-//						getGame().startGame();
-//						MusicPlayer.getInstance().playNext();
-//						return true;
-//					}
-//				}));
-//				return true;
-//			}
-//		}));
-//
-//
-//	}
 	
 	@Override
 	protected Timeline showAnimation() {

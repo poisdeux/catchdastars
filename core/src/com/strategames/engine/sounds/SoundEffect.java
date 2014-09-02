@@ -20,6 +20,11 @@ abstract public class SoundEffect {
 		}
 	}
 
+	/**
+	 * This method is the reason we do not use a singleton design
+	 * We want to be able to release all sounds easily without needing
+	 * to keep a separate list of all used sounds
+	 */
 	static public void releaseAll() {
 		for( String name : soundsMap.keySet() ) {
 			soundsMap.get(name).dispose();
@@ -48,6 +53,10 @@ abstract public class SoundEffect {
 		soundEffect.play(preferenceVolumeSfx);
 	}
 
+	public void stop() {
+		soundEffect.stop();
+	}
+	
 	static public SoundEffect getSoundForIncrement(int increment) {
 		SoundEffect sound = null;
 

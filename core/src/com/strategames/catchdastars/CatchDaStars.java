@@ -20,6 +20,7 @@ import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
+import com.strategames.catchdastars.screens.GameCompleteScreen;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
@@ -102,11 +103,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 			this.world.setGravity(gravityVector);
 		}
 	}
-	
+
 	public void updateScreen(float delta, Stage stage) {
 		super.updateScreen(delta, stage);
 		Icecube.playRocksHitSound();
-		
+
 		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
@@ -115,7 +116,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		super.setup(screen);
-		
+
 		Level level = getLevel();
 		if( level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
@@ -176,24 +177,27 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void showLevelCompleteDialog() {
-		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
+		Gdx.app.log("CatchDaStars", "showLevelCompleteDialog:");
+		if( getLevelNumber() >= LevelLoader.getLastLevelNumber() ) {
+			setScreen(new GameCompleteScreen(this, ((AbstractScreen) getScreen()).getStageActors()));
+		} else {
+			LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(((AbstractScreen) getScreen()).getStageUIActors(), this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
+			Textures textures = Textures.getInstance();
+			levelCompleteDialog.add(new Image(textures.balloonBlue), this.amountOfBlueBalloons, this.scorePerBalloon);
+			levelCompleteDialog.add(new Image(textures.balloonRed), this.amountOfRedBalloons, this.scorePerBalloon);
+			levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
+			levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
+			levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
 
-		Textures textures = Textures.getInstance();
-		levelCompleteDialog.add(new Image(textures.balloonBlue), this.amountOfBlueBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(textures.balloonRed), this.amountOfRedBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
-		levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
-		levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
+			levelCompleteDialog.setOnClickListener(this);
 
-		levelCompleteDialog.setOnClickListener(this);
+			levelCompleteDialog.create();
 
-		levelCompleteDialog.create();
+			levelCompleteDialog.show();
 
-		levelCompleteDialog.show();
-
-		setTotalScore(getTotalScore() + calculateScore());
+			setTotalScore(getTotalScore() + calculateScore());
+		}
 	}
 
 	@Override
@@ -285,12 +289,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 
 		if( ( this.amountOfBlueBalloons < 1 ) && ( ! this.blueCollectables.allCollected() ) ) {
-			pauseGame();
 			setLevelFailed();
 		}
 
 		if( ( this.amountOfRedBalloons < 1 ) && ( ! this.redCollectables.allCollected() ) ) {
-			pauseGame();
 			setLevelFailed();
 		}
 
@@ -298,7 +300,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
-			pauseGame();
 			setLevelCompleted();
 		}
 	}
