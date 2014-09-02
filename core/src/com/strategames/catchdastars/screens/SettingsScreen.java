@@ -48,6 +48,7 @@ public class SettingsScreen extends AbstractScreen {
 		});
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
 		table.setPosition(x - (table.getWidth() / 2f), y);
+		table.setHeight(60f);
 		stage.addActor(table);
 		y -= 60f;
 		
@@ -68,8 +69,9 @@ public class SettingsScreen extends AbstractScreen {
 		});
 		table.add( slider ).uniform().fill().spaceBottom( 10 );
 		table.setPosition(x - (table.getWidth() / 2f), y);
+		table.setHeight(60f);
 		stage.addActor(table);
-		y -= 80f;
+		y -= 60f;
 		
 		Button button = new TextButton( "Select music", getSkin() );
 		button.addListener( new ClickListener() {

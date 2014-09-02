@@ -1,22 +1,14 @@
 package com.strategames.catchdastars.screens;
 
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-
 import java.io.FileNotFoundException;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenCallback;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
@@ -49,16 +41,20 @@ public class SplashScreen extends AbstractScreen {
 
 		this.splashImage = new Image(texture);
 
-		this.splashImage.setPosition(stage.getWidth()/2f - this.splashImage.getWidth()/2f, 
-				stage.getHeight()/2f - this.splashImage.getHeight()/2f);
+		float stageWidth = stage.getWidth();
+		float stageHeight = stage.getHeight();
+		
+		float ratio = stageWidth / this.splashImage.getWidth();
+		this.splashImage.setSize(this.splashImage.getWidth() * ratio, this.splashImage.getHeight() * ratio);
+		
+		this.splashImage.setPosition(stageWidth/2f - this.splashImage.getWidth()/2f, 
+				stageHeight/2f - this.splashImage.getHeight()/2f);
 
 		try {
 			Textures.getInstance().addAllToAssetManager(getGame().getManager());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		Sounds.getInstance().addToAssetManager(assetManager);
 		
 		stage.addActor( this.splashImage );
 	}
@@ -70,10 +66,8 @@ public class SplashScreen extends AbstractScreen {
 			try {
 				Textures.getInstance().setup();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -84,13 +78,6 @@ public class SplashScreen extends AbstractScreen {
 			}
 		} 
 	}
-
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	@Override
 	protected Timeline createShowAnimation() {
@@ -98,7 +85,6 @@ public class SplashScreen extends AbstractScreen {
 		this.splashImage.setScale(0f);
 		
 		Timeline timeline = Timeline.createParallel();
-//		timeline.push(Tween.to(this.splashImage, ActorAccessor.ROTATE, 1.5f).target(3600));
 		timeline.push(Tween.to(this.splashImage, ActorAccessor.SCALE, 1.5f).target(1f, 1f));
 		timeline.setCallbackTriggers(TweenCallback.COMPLETE);
 		timeline.setCallback(new TweenCallback() {
