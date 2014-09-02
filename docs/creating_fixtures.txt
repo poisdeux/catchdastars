@@ -1,0 +1,14 @@
+1. Start physics-body-editor
+  
+  java -jar tools/physics-body-editor/physics-body-editor.jar
+
+2. Create a new project or load an existing project in assets/fixtures/
+
+3. Add new bodies using "+ new" and select "create body from image" 
+   or "create bodies from images" if you are creating a breakable object
+
+4. For each body draw its edges. Remember the less points the edge contains
+   the less resources it needs to calculate a collision during the game
+
+5. If you are creating a breakable object consisting of multiple bodies make
+   sure the origin is set (kept) to 0,0 for all bodies.
