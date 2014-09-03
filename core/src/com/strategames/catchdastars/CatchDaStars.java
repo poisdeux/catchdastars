@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
@@ -36,7 +37,6 @@ import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
-import com.strategames.ui.dialogs.LevelCompleteDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 
 public class CatchDaStars extends Game implements OnClickListener {
@@ -177,9 +177,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void showLevelCompleteDialog() {
-		Gdx.app.log("CatchDaStars", "showLevelCompleteDialog:");
+		AbstractScreen screen = ((AbstractScreen) getScreen());
 		if( getLevelNumber() >= LevelLoader.getLastLevelNumber() ) {
-			setScreen(new GameCompleteScreen(this, ((AbstractScreen) getScreen()).getStageActors()));
+			setScreen(new GameCompleteScreen(this, screen.getStageActors()));
 		} else {
 			LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(((AbstractScreen) getScreen()).getStageUIActors(), this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 

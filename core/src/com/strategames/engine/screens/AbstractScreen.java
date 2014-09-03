@@ -44,6 +44,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	private Array<Vector2> originalPositions;
 	
+	public AbstractScreen() {
+		this(null, null);
+	}
+	
 	/**
 	 * 
 	 * @param game 
@@ -61,7 +65,20 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			this.title = new Label(title, getSkin());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param game
+	 * @param title set to null to not display the screen title
+	 * @param stageUIActors stage to use for UI elements
+	 * @param stageActors stage to use for game objects
+	 */
+	public AbstractScreen(Game game, String title, Stage stageUIActors, Stage stageActors) {
+		this(game, title);
+		this.stageUIActors = stageUIActors;
+		this.stageActors = stageActors;
+	}
+	
 	@Override
 	public void pause() {
 	}

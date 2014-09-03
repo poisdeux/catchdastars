@@ -17,15 +17,13 @@ import com.strategames.ui.widgets.TextButton;
  * @author mbrekhof
  *
  */
-abstract public class LevelStateDialog extends Dialog {
+abstract public class GameStateDialog extends Dialog {
 	public final static int BUTTON_LEFT_CLICKED = 0;
 	public final static int BUTTON_RIGHT_CLICKED = 1;
 	
 	public static enum States {
 		PAUSED, FAILED, COMPLETE
 	}
-	
-	private States state;
 	
 	private String message;
 	private Label messageLabel;
@@ -36,15 +34,10 @@ abstract public class LevelStateDialog extends Dialog {
 	
 	protected Stage stage;
 	
-	protected LevelStateDialog(String message, States state, Stage stage, Skin skin) {
+	protected GameStateDialog(String message, Stage stage, Skin skin) {
 		super(stage, skin);
 		this.message = message;
-		this.state = state;
 		this.stage = stage;
-	}
-	
-	public States getState() {
-		return state;
 	}
 	
 	public Label getMessageLabel() {
@@ -106,10 +99,13 @@ abstract public class LevelStateDialog extends Dialog {
 		table.setFillParent(true);
 		table.bottom();
 		
-		table.add(this.buttonLeft).expandX().fillX().left();
+		if( this.buttonLeft != null ) {
+			table.add(this.buttonLeft).expandX().fillX().left();
+		}
 		
-		table.add(this.buttonRight).expandX().fillX().right();
-		
+		if( this.buttonRight != null ) {
+			table.add(this.buttonRight).expandX().fillX().right();
+		}
 		addActor(table);
 		
 		setFillParent(true);

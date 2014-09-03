@@ -1,4 +1,4 @@
-package com.strategames.ui.dialogs;
+package com.strategames.catchdastars.dialogs;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
@@ -27,8 +27,10 @@ import com.strategames.engine.sounds.DrawChalkLineShort2Sound;
 import com.strategames.engine.sounds.DrawChalkLineSound;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;
+import com.strategames.ui.dialogs.GameStateDialog;
+import com.strategames.ui.dialogs.GameStateDialog.States;
 
-public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAnimationListener {
+public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAnimationListener {
 	
 	public final static int BUTTON_QUIT_CLICKED = BUTTON_LEFT_CLICKED;
 	public final static int BUTTON_NEXT_CLICKED = BUTTON_RIGHT_CLICKED;
@@ -64,7 +66,7 @@ public class LevelCompleteDialog extends LevelStateDialog implements ChalkLineAn
 	 * @param currentScore the total score minus the score of the completed level
 	 */
 	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
-		super("Level complete", States.COMPLETE, stage, skin);
+		super("Level complete", stage, skin);
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
 		this.animPosition = new Vector2();
 		this.totalScore = currentScore;
