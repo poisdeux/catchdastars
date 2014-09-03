@@ -51,8 +51,8 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 	protected Timeline showAnimation() {
 		final Timeline timeline = Timeline.createSequence();
 		
+		timeline.beginParallel();
 		Stage stage = getStageActors();
-		
 		Array<Actor> balloons = new Array<Actor>();
 		Array<Actor> actors = stage.getActors();
 		for( int i = 0; i < actors.size; i++ ) {
@@ -60,9 +60,34 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 			if( actor instanceof Balloon ) {
 				balloons.add(actor);
 				actor.setOrigin(actor.getWidth() / 2f, actor.getHeight() / 2f);
-				createBlowUpAnimation(actor, timeline);
+				timeline.push(createBlowUpAnimation(actor));
 			}
 		}
+		timeline.end();
+		
+		Tween flashTween = Tween.from(this.filter, ActorAccessor.ALPHA, 1f)
+				.target(1f)
+				.ease(TweenEquations.easeInExpo)
+				.setCallbackTriggers(TweenCallback.END)
+				.setCallback(new TweenCallback() {
+					
+					@Override
+					public void onEvent(int arg0, BaseTween<?> arg1) {
+						if( arg0 == TweenCallback.END ) {
+							GameCompleteDialog dialog = new GameCompleteDialog(getStageUIActors(), getSkin());
+							dialog.setOnClickListener(new OnClickListener() {
+								
+								@Override
+								public void onClick(Dialog dialog, int which) {
+									getGame().showMainMenu();
+								}
+							});
+							dialog.create();
+							dialog.show();
+						}
+					}
+				});
+		timeline.push(flashTween);
 		
 		//Make sure balloons are drawn last by removing
 		//and re-adding balloons to stage
@@ -75,7 +100,8 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 		return timeline;
 	}
 
-	private void createBlowUpAnimation(Actor actor, Timeline timeline) {
+	private Timeline createBlowUpAnimation(Actor actor) {
+		Timeline timeline = Timeline.createSequence();
 		Stage stage = getStageActors();
 		Vector2 origPosition = new Vector2(actor.getX(), actor.getY());
 		Vector2 center = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
@@ -151,29 +177,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 				.setCallbackTriggers(TweenCallback.START | TweenCallback.END)
 				.setCallback(this);
 		timeline.push(tweenGrow);
-		Tween flashTween = Tween.from(this.filter, ActorAccessor.ALPHA, 2f)
-				.target(1f)
-				.ease(TweenEquations.easeInExpo)
-				.setCallbackTriggers(TweenCallback.END)
-				.setCallback(new TweenCallback() {
-					
-					@Override
-					public void onEvent(int arg0, BaseTween<?> arg1) {
-						if( arg0 == TweenCallback.END ) {
-							GameCompleteDialog dialog = new GameCompleteDialog(getStageUIActors(), getSkin());
-							dialog.setOnClickListener(new OnClickListener() {
-								
-								@Override
-								public void onClick(Dialog dialog, int which) {
-									getGame().showMainMenu();
-								}
-							});
-							dialog.create();
-							dialog.show();
-						}
-					}
-				});
-		timeline.push(flashTween);
+		return timeline;
 	}
 
 	@Override

@@ -173,8 +173,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				levelImage.remove();
 				filter.remove();
 				MusicPlayer.getInstance().playNext();
-				getGame().startGame();
-			}
+				getGame().startGame();			}
 		});
 		levelStartAnimation.push(slideoutTween);
 		

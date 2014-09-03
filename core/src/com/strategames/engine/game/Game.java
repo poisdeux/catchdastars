@@ -192,6 +192,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	public void startGame() {
 		this.gameState = GAME_STATE.RUNNING;
+		this.levelState = LEVEL_STATE.INPROGRESS;
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
@@ -204,6 +205,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		this.levelState = LEVEL_STATE.FAILED;
 	}
 
+	public void setLevelInProgress() {
+		this.levelState = LEVEL_STATE.INPROGRESS;
+	}
+	
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE.RUNNING;
 	}
@@ -326,6 +331,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * level number set by {@link #setLevelNumber(int)}
 	 * <br/>
 	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
+	 * 
+	 * TODO Why do we need a listener if this call is synchronous?
 	 */
 	public void loadLevel(OnLevelLoadedListener listener) {
 		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
@@ -372,7 +379,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * @param object the GameObject to be removed
 	 */
 	public void deleteGameObject(GameObject object) {
-		Gdx.app.log("Game", "deleteGameObject: object="+object);
 		this.gameObjectsForDeletion.add(object);
 		this.worldThread.deleteGameObject(object);
 	}
@@ -387,7 +393,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void addGameObject(GameObject object) {
-		Gdx.app.log("Game", "addGameObject: object="+object);
 		object.setGame(this);
 
 		if( this.gameState == GAME_STATE.RUNNING ) {
@@ -483,11 +488,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	public void startLevel(int level) {
 		setLevelNumber(level);
+		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
 
 	public void startLevel(Level level) {
 		setLevel(level);
+		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
 

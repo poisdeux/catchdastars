@@ -178,6 +178,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	@Override
 	public void showLevelCompleteDialog() {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
+		Gdx.app.log("CatchDaStars", "getLevelNumber()="+getLevelNumber()+", LevelLoader.getLastLevelNumber()="+LevelLoader.getLastLevelNumber());
 		if( getLevelNumber() >= LevelLoader.getLastLevelNumber() ) {
 			setScreen(new GameCompleteScreen(this, screen.getStageActors()));
 		} else {
@@ -326,8 +327,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Fixture fixtureB = contact.getFixtureB();
 		GameObject collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
 		GameObject collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
-		//		this.typeCollidingGameObject1 = this.collidingGameObject1.getType();
-		//		this.typeCollidingGameObject2 = this.collidingGameObject2.getType();
 
 		if( ( collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
 			handleSensorCollision((Balloon) collidingGameObject1, collidingGameObject2);

@@ -59,14 +59,12 @@ public class WorldThread extends Thread {
 	}
 
 	public void addGameObject(GameObject object) {
-		Gdx.app.log("WorldThread", "addGameObject: object="+object);
 		synchronized (gameObjectsForAddition) {
 			gameObjectsForAddition.add(object);
 		}
 	}
 
 	public void deleteGameObject(GameObject object) {
-		Gdx.app.log("WorldThread", "deleteGameObject: object="+object);
 		synchronized (gameObjectsForDeletion) {
 			gameObjectsForDeletion.add(object);
 		}

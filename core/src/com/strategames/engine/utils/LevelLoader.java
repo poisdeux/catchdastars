@@ -10,21 +10,21 @@ import com.badlogic.gdx.utils.Json;
 public class LevelLoader {
 
 	static private int lastLevelNumber = -1;
-	
+
 	static private final String LOCAL_PATH = "levels";
 	static private final String INTERNAL_PATH = "levels";
 	static private OnLevelLoadedListener levelLoadedListener;
-	
+
 	public interface OnLevelLoadedListener {
 		public void onLevelLoaded(Level level);
 	}
-	
+
 	/**
 	 * Loads packaged level files (synchronous)
 	 * @param level
 	 * @return Level object containing the game objects
 	 */
-	static public Level loadInternalSync(int level) {
+	static private Level loadInternalSync(int level) {
 		try {
 			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + level);
 			return loadSync(file);
@@ -48,7 +48,7 @@ public class LevelLoader {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Loads local level files (asynchronous) saved using {@link #save(Stage, int)}
 	 * <br/>
@@ -56,7 +56,7 @@ public class LevelLoader {
 	 * can retrieve the Level object using {@link #getLevel()} 
 	 * @param level levelnumber to load
 	 */
-	static public void loadLocalAsync(int level, OnLevelLoadedListener listener) {
+	static private void loadLocalAsync(int level, OnLevelLoadedListener listener) {
 		levelLoadedListener = listener;
 		try {
 			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
@@ -72,21 +72,21 @@ public class LevelLoader {
 	 * @param file
 	 * @return Level object containing the game objects 
 	 */
-	static public Level loadSync(FileHandle file) {
+	static private Level loadSync(FileHandle file) {
 		Json json = new Json();
 		String text = file.readString();
 		Object root =  json.fromJson(Level.class, text);
 		return (Level) root;
 	}
-	
+
 	/**
 	 * Loads level file (asynchronous) from FileHandle.
 	 * You should never need to use this. Use {@link #loadInternalAsync(int)} or {@link #loadLocalAsync(int)} instead.
-	* @param file
+	 * @param file
 	 */
-	static public void loadAsync(final FileHandle file) {
+	static private void loadAsync(final FileHandle file) {
 		Thread thread = new Thread( new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Json json = new Json();
@@ -98,23 +98,23 @@ public class LevelLoader {
 				}
 			}
 		});
-		
+
 		thread.start();
 	}
-	
+
 	static public ArrayList<Level> loadAllLocalLevels() {
 		FileHandle dir = getLocalLevelsDir();
 		FileHandle[] files = dir.list();
-		
+
 		ArrayList<Level> levels = new ArrayList<Level>();
-		
+
 		for( FileHandle file : files ) {
 			levels.add(loadSync(file));
 		}
-		
+
 		return levels;
 	}
-	
+
 	/**
 	 * Creates an ArrayList of Level objects using jsonString as
 	 * json input
@@ -131,13 +131,13 @@ public class LevelLoader {
 			return null;
 		}
 	}
-	
+
 	static public FileHandle getLocalLevelsDir() {
 		try {
 			FileHandle dir = Gdx.files.local(LOCAL_PATH);
 			return dir;
 		} catch (Exception e) {
-//			Gdx.app.log("Level", "error");
+			//			Gdx.app.log("Level", "error");
 		}
 		return null;
 	}
@@ -147,7 +147,7 @@ public class LevelLoader {
 			FileHandle dir = Gdx.files.internal(INTERNAL_PATH);
 			return dir;
 		} catch (Exception e) {
-//			Gdx.app.log("Level", "error");
+			//			Gdx.app.log("Level", "error");
 		}
 		return null;
 	}
@@ -155,27 +155,30 @@ public class LevelLoader {
 	static public String getLocalPath() {
 		return LOCAL_PATH;
 	}
-	
+
 	static public String getLocalPath(int level) {
 		return LOCAL_PATH + "/" + level;
 	}
-	
+
 	static public String getInternalPath() {
 		return INTERNAL_PATH;
 	}
-	
+
 	static public String getInternalPath(int level) {
 		return INTERNAL_PATH + "/" + level;
 	}
-	
+
+	/**
+	 * Reads the amount of level files on disk to determine
+	 * the last level number
+	 * @return
+	 */
 	public static int getLastLevelNumber() {
-		if( lastLevelNumber == -1 ) {
-			FileHandle dir = getLocalLevelsDir();
-			FileHandle[] files = dir.list();
-			lastLevelNumber = files.length;
-		}
-		return lastLevelNumber;
+
+		FileHandle dir = getLocalLevelsDir();
+		FileHandle[] files = dir.list();
+		return files.length;
 	}
-	
-	
+
+
 }
