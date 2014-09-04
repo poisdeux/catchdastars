@@ -6,6 +6,7 @@ import java.util.Collections;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -71,6 +72,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 						Level level = new Level();
 						level.setLevelNumber(++lastLevelNumber);
 						level.setName(text);
+						level.setWorldSize(new Vector2(getGame().getWorldSize().x, getGame().getWorldSize().y));
+						level.setViewSize(new Vector2(getGame().getViewSize()));
 						addLevel(level);
 					}
 

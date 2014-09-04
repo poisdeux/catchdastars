@@ -1,4 +1,4 @@
-package com.strategames.ui.dialogs;
+package com.strategames.catchdastars.dialogs;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ScreenBorder;
+import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.widgets.TextButton;
 
 public class ToolsPickerDialog extends Dialog {
@@ -42,11 +44,13 @@ public class ToolsPickerDialog extends Dialog {
 	}
 	
 	private void createScreenBorderTool() {
-		TextButton tButton = new TextButton("Create screen border", skin);
+		TextButton tButton = new TextButton("Change world size", skin);
 		tButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				ScreenBorder.create(game);
+				ChangeWorldSizeDialog dialog = new ChangeWorldSizeDialog(stage, skin, game.getLevel());
+				dialog.create();
+				dialog.show();
 				ToolsPickerDialog.this.remove();
 			}
 		});

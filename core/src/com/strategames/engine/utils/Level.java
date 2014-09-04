@@ -3,6 +3,7 @@ package com.strategames.engine.utils;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
@@ -12,7 +13,9 @@ public class Level implements Comparable<Level> {
 	private int number;
 	private String name;
 	private Array<GameObject> gameObjects;
-
+	private Vector2 worldSize;
+	private Vector2 viewSize;
+	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 	}
@@ -102,5 +105,21 @@ public class Level implements Comparable<Level> {
 		level.setName(new String(this.name));
 		level.setLevelNumber(this.number);
 		return level;
+	}
+	
+	public void setWorldSize(Vector2 worldSize) {
+		this.worldSize = worldSize;
+	}
+	
+	public Vector2 getWorldSize() {
+		return worldSize;
+	}
+	
+	public void setViewSize(Vector2 viewSize) {
+		this.viewSize = viewSize;
+	}
+	
+	public Vector2 getViewSize() {
+		return viewSize;
 	}
 }
