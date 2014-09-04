@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.screens.AbstractScreen;
 
@@ -37,7 +38,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().showSettings();
+				((CatchDaStars) getGame()).showSettings();
 			}
 		});
 		button.setPosition(x - (button.getWidth() / 2f), y);
@@ -58,7 +59,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().showLevelEditorMenu();
+				((CatchDaStars) getGame()).showLevelEditorMenu();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

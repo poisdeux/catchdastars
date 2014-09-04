@@ -61,6 +61,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private Vector3 worldSize;
 
 	private float cameraZoomInitial;
+	private OrthographicCamera camera;
 	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
@@ -138,27 +139,29 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		this.rectangleImage = new FilledRectangleImage(stage);
 		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
 		stage.addActor(this.rectangleImage);
-		displayGrid(LevelEditorPreferences.displayGridEnabled());
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		getMultiplexer().addProcessor(stage);
-		
-		setCamera();
+		this.camera = (OrthographicCamera) stage.getCamera();
+		zoomCamera((OrthographicCamera) stage.getCamera());
 		
 		//This is added to the actor stage as we use
 		//game objects in the menu
 		setupMenu(stage);
 
 		this.game.pauseGame();
+		
+		displayGrid(LevelEditorPreferences.displayGridEnabled());
 	}
 
 	@Override
 	public void show() {
 		super.show();
-		setCamera();
+		zoomCamera(this.camera);
 		this.game.loadLevel(this);
+		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
 	}
 
 	@Override
@@ -265,7 +268,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			if( this.actorTouched != null ) {
 				Vector2 newPos = new Vector2(screenX, screenY);
 				getStageActors().screenToStageCoordinates(newPos);
-				moveActor(this.actorTouched, newPos);
+				moveActor(getStageActors(), this.actorTouched, newPos);
 			}
 
 			return true;
@@ -418,10 +421,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	/**
 	 * Positions camera to make room for menu
 	 */
-	private void setCamera() {		
-		Stage stage = getStageActors();
-		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
-		camera.position.set(worldSize.x/2f, worldSize.y/2f, 0f);
+	private void zoomCamera(OrthographicCamera camera) {
+		camera.position.set(camera.viewportWidth/2f, camera.viewportHeight/2f, 0f);
 		this.cameraZoomInitial = camera.zoom;
 
 		Vector2 maxObjectSize = getMaxObjectSize();
@@ -497,8 +498,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		LevelWriter.save(getGame().getLevel());
 	}
 
-	private Actor getActor(Rectangle rectangle) {
-		Array<Actor> actors = getStageActors().getActors();
+	private Actor getActor(Stage stage, Rectangle rectangle) {
+		Array<Actor> actors = stage.getActors();
 		for(Actor actor : actors) {
 			if( this.selectedGameObjects.contains(actor) ) continue;
 			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
@@ -515,7 +516,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	 * so make a copy before calling this method if you wish to keep
 	 * its value
 	 */
-	private void moveActor(Actor actor, Vector2 v) {
+	private void moveActor(Stage stage, Actor actor, Vector2 v) {
 		GameObject gameObject = (GameObject) actor;
 
 		if( this.snapToGrid ) {
@@ -535,7 +536,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		// position object at new X coordinate adding half the amount we
 		// subtracted from the width
 		rectangle.x = v.x + 0.01f;   
-		if( getActor(rectangle) != null ) { // check to see if new X coordinate does not overlap
+		if( getActor(stage, rectangle) != null ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
 		} else {
 			rectangle.x = v.x;
@@ -544,7 +545,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		// position object at new Y coordinate adding half the amount we
 		// subtracted from the height
 		rectangle.y = v.y + 0.01f;
-		if( getActor(rectangle) != null ) { // check to see if new Y coordinate does not overlap
+		if( getActor(stage, rectangle) != null ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
 		} else {
 			rectangle.y = v.y;
@@ -571,7 +572,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			public void clicked(InputEvent event, float x, float y) {
 				ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
 				dialog.create();
-				dialog.setPosition(mainMenu.getX(), mainMenu.getY());
+				dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
+				dialog.show();
 				mainMenu.hide();
 			}
 		});
@@ -581,7 +583,8 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			public void clicked(InputEvent event, float x, float y) {
 				LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), LevelEditorScreen.this);
 				dialog.create();
-				dialog.setPosition(mainMenu.getX(), mainMenu.getY());
+				dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
+				dialog.show();
 				mainMenu.hide();
 			}
 		});
@@ -626,15 +629,16 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	private void setupMenu(Stage stage) {
 		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
 		
-		Vector3 worldSize = this.game.getWorldSize();
+		Vector2 viewSize = this.game.getViewSize();
 
+		Gdx.app.log("LevelEditorScreen", "setupMenu: viewSize="+viewSize);
 		/**
 		 * We always set menu at the right as otherwise the action bar will 
 		 * trigger on Android when trying to pick a game object
 		 */
 		float delta = stage.getHeight() / ( gameObjects.size() + 1 );
-		float x = (float) (worldSize.x + 0.6*Wall.WIDTH);
-		float y = worldSize.y - Wall.HEIGHT;
+		float x = (float) (viewSize.x + 0.6*Wall.WIDTH);
+		float y = viewSize.y - Wall.HEIGHT;
 
 		Stage stageUIActors = getStageUIActors();
 		

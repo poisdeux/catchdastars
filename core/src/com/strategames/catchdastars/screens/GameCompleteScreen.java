@@ -60,7 +60,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 			if( actor instanceof Balloon ) {
 				balloons.add(actor);
 				actor.setOrigin(actor.getWidth() / 2f, actor.getHeight() / 2f);
-				timeline.push(createBlowUpAnimation(actor));
+				timeline.push(createBlowUpAnimation(stage, actor));
 			}
 		}
 		timeline.end();
@@ -100,9 +100,8 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 		return timeline;
 	}
 
-	private Timeline createBlowUpAnimation(Actor actor) {
+	private Timeline createBlowUpAnimation(Stage stage, Actor actor) {
 		Timeline timeline = Timeline.createSequence();
-		Stage stage = getStageActors();
 		Vector2 origPosition = new Vector2(actor.getX(), actor.getY());
 		Vector2 center = new Vector2(stage.getWidth() / 2f, stage.getHeight() / 2f);
 		float xDelta = center.x - actor.getX();

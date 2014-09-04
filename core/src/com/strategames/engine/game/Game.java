@@ -77,7 +77,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	private World world;
 
 	private Vector3 worldSize = new Vector3(0f, 0f, 0f);
-
+	private Vector2 viewSize = new Vector2(0f, 0f);
+	
 	private ExportImport exportimport;
 	private MusicSelector musicSelector;
 
@@ -288,6 +289,24 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		this.worldSize = worldSize;
 	}
 
+	/**
+	 * This is the size of the world that should be displayed. This 
+	 * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
+	 * @return
+	 */
+	public Vector2 getViewSize() {
+		return viewSize;
+	}
+	
+	/**
+	 * This is the size of the world that should be displayed. This 
+	 * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
+	 * @param viewSize
+	 */
+	public void setViewSize(Vector2 viewSize) {
+		this.viewSize = viewSize;
+	}
+	
 	/**
 	 * Use this to convert screen pixel sizes to Box2D sizes
 	 * @param x size in screen pixels
@@ -503,24 +522,6 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		if( listener != null ) {
 			listener.onLevelLoaded(getLevel());
 		}
-	}
-
-	public void showLevelEditor() {
-		Screen screen = new LevelEditorScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
-	}
-
-	public void showLevelEditorMenu() {
-		Screen screen = new LevelEditorMenuScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
-	}
-
-	public void showSettings() {
-		Screen screen = new SettingsScreen(this);
-		setScreen(screen);
-		addToBackstack(screen);
 	}
 
 	/**

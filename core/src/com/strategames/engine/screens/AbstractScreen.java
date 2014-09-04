@@ -104,7 +104,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	public OrthographicCamera getGameCamera() {
 		if( gameCamera == null ) {
-			Vector3 size = this.game.getWorldSize();
+			Vector2 size = this.game.getViewSize();
 			gameCamera = new OrthographicCamera(size.x, size.y);
 			gameCamera.position.set(size.x/2f, size.y/2f, 0f);
 		}
@@ -152,11 +152,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		if( this.stageUIActors == null ) {
 			setupUI(getStageUIActors());
 		}
-		
+	
 		if( this.stageActors == null ) {
 			setupActors(getStageActors());
 		}
-
+		
 		if( this.title != null ) {
 			Vector2 sizeMenu = getMenuSize();
 			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);

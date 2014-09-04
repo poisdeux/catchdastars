@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -22,6 +23,9 @@ import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.catchdastars.screens.GameCompleteScreen;
+import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
+import com.strategames.catchdastars.screens.LevelEditorScreen;
+import com.strategames.catchdastars.screens.SettingsScreen;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
@@ -74,6 +78,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		 * 5.1/0.3 = 17 (crosses vertically)
 		 */
 		setWorldSize(new Vector3(5.1f, 8.1f, 0f));
+		setViewSize(new Vector2(5.1f, 8.1f));
 	}
 
 	@Override
@@ -175,6 +180,24 @@ public class CatchDaStars extends Game implements OnClickListener {
 				blueBalloonsScore + redBalloonsScore;
 	}
 
+	public void showLevelEditor() {
+		Screen screen = new LevelEditorScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+
+	public void showLevelEditorMenu() {
+		Screen screen = new LevelEditorMenuScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+
+	public void showSettings() {
+		Screen screen = new SettingsScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+	
 	@Override
 	public void showLevelCompleteDialog() {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
