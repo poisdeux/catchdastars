@@ -110,6 +110,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		}
 		return gameCamera;
 	}
+	
+	public static void setGameCamera(OrthographicCamera gameCamera) {
+		AbstractScreen.gameCamera = gameCamera;
+	}
 
 	public OrthographicCamera getMenuCamera() {
 		if( menuCamera == null ) {
@@ -120,6 +124,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return menuCamera;
 	}
 
+	public static void setMenuCamera(OrthographicCamera menuCamera) {
+		AbstractScreen.menuCamera = menuCamera;
+	}
+	
 	public InputMultiplexer getMultiplexer() {
 		if( this.multiplexer == null ) {
 			this.multiplexer = new InputMultiplexer();

@@ -224,8 +224,8 @@ abstract public class Dialog extends Table {
 	}
 	
 	private void positionDialog() {
-		float x = 0;
-		float y = 0;
+		float x = getX();
+		float y = getY();
 		if( this.center ) {
 			x = (float) ((stage.getWidth()/2.0) - (getWidth()/2.0));
 			y = stage.getHeight()/2f;

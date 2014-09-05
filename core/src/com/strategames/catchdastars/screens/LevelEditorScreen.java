@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.strategames.catchdastars.dialogs.ChangeWorldSizeDialog;
 import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
 import com.strategames.engine.game.Game;
@@ -39,13 +40,13 @@ import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.MenuButton;
 
-public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
+public class LevelEditorScreen extends AbstractScreen 
+   implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private ButtonsDialog mainMenu;
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
 	private Actor uiElementHit;
-	private Game game;
 	private boolean testGame;
 	private Vector2 initialTouchPosition;
 
@@ -119,8 +120,6 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	public LevelEditorScreen(Game game) {
 		super(game, null);
 
-		this.game = game;
-
 		this.testGame = false;
 
 		this.initialTouchPosition = new Vector2();
@@ -128,7 +127,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 
 		this.selectedGameObjects = new ArrayList<GameObject>();
 
-		this.worldSize = this.game.getWorldSize(); 
+		this.worldSize = game.getWorldSize(); 
 
 		this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 	}
@@ -151,7 +150,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		//game objects in the menu
 		setupMenu(stage);
 
-		this.game.pauseGame();
+		getGame().pauseGame();
 		
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
 	}
@@ -160,7 +159,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	public void show() {
 		super.show();
 		zoomCamera(this.camera);
-		this.game.loadLevel(this);
+		getGame().loadLevel(this);
 		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
 	}
 
@@ -168,7 +167,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	public void render(float delta) {
 		super.render(delta);
 		if( testGame ) {
-			this.game.updateScreen(delta, getStageActors());
+			getGame().updateScreen(delta, getStageActors());
 		}
 	}
 
@@ -347,6 +346,11 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		return true;
 	}
 
+	@Override
+	public boolean panStop(float x, float y, int pointer, int button) {
+		return false;
+	}
+	
 	/**
 	 * Creates a copy of object and adds the copy to the game
 	 * @param object
@@ -392,7 +396,62 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				dialog.remove();
 				break;
 			}
+		} else if( dialog instanceof ChangeWorldSizeDialog ) {
+			switch( which ) {
+			case ChangeWorldSizeDialog.VALUE_CHANGED:
+				ChangeWorldSizeDialog wDialog = (ChangeWorldSizeDialog) dialog;
+				resizeWorld(wDialog.getHorizontalAmount(), wDialog.getVertialAmount());
+				break;
+			case ChangeWorldSizeDialog.BUTTON_CLOSE:
+				dialog.remove();
+				break;
+			}
 		}
+	}
+
+	@Override
+	public void onLevelLoaded(Level level) {
+		if( level == null ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
+			return;
+		}
+
+		Array<GameObject> gameObjects = level.getGameObjects();
+		
+		if( (gameObjects == null)  || ( gameObjects.size == 0 ) ) {
+			ScreenBorder.create(getGame());
+		}
+		
+		if( ! getGame().setup(this) ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			dialog.setOnClickListener(this);
+			dialog.create();
+			dialog.show();
+		}
+		
+		if( (gameObjects != null) ) {
+			for( GameObject gameObject : gameObjects ) {
+				gameObject.initializeConfigurationItems();
+				deselectGameObject(gameObject);
+			}
+		}
+		
+		super.show();
+	}
+	
+	@Override
+	protected Timeline showAnimation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Timeline hideAnimation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	private GameObject copyGameObject(GameObject object) {
@@ -452,7 +511,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private Vector2 getMaxObjectSize() {
-		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+		ArrayList<GameObject> gameObjects = getGame().getAvailableGameObjects();
 
 		Vector2 maxObjectSize = new Vector2(0, 0);
 
@@ -573,6 +632,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 				ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
 				dialog.create();
 				dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
+				dialog.setOnClickListener(LevelEditorScreen.this);
 				dialog.show();
 				mainMenu.hide();
 			}
@@ -593,6 +653,7 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				saveLevel();
+				Game game = getGame();
 				game.startLevel(game.getLevel());
 				mainMenu.hide();
 			}
@@ -627,9 +688,10 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 	}
 
 	private void setupMenu(Stage stage) {
-		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+		Game game = getGame();
+		ArrayList<GameObject> gameObjects = game.getAvailableGameObjects();
 		
-		Vector2 viewSize = this.game.getViewSize();
+		Vector2 viewSize = game.getViewSize();
 
 		Gdx.app.log("LevelEditorScreen", "setupMenu: viewSize="+viewSize);
 		/**
@@ -708,54 +770,11 @@ public class LevelEditorScreen extends AbstractScreen implements OnLevelLoadedLi
 		return true;
 	}
 
-	@Override
-	public boolean panStop(float x, float y, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public void onLevelLoaded(Level level) {
-		if( level == null ) {
-			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
-			dialog.setOnClickListener(this);
-			dialog.create();
-			dialog.show();
-			return;
-		}
-
-		Array<GameObject> gameObjects = level.getGameObjects();
-		
-		if( (gameObjects == null)  || ( gameObjects.size == 0 ) ) {
-			ScreenBorder.create(this.game);
-		}
-		
-		if( ! getGame().setup(this) ) {
-			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
-			dialog.setOnClickListener(this);
-			dialog.create();
-			dialog.show();
-		}
-		
-		if( (gameObjects != null) ) {
-			for( GameObject gameObject : gameObjects ) {
-				gameObject.initializeConfigurationItems();
-				deselectGameObject(gameObject);
-			}
-		}
-		
-		super.show();
-	}
-	
-	@Override
-	protected Timeline showAnimation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected Timeline hideAnimation() {
-		// TODO Auto-generated method stub
-		return null;
+	private void resizeWorld(int h, int v) {
+		Game game = getGame();
+		Vector2 viewSize = game.getViewSize();
+		Vector3 worldSize = game.getWorldSize();
+		game.setWorldSize(new Vector3(viewSize.x * h, viewSize.y * v, worldSize.z));
 	}
 }
 
