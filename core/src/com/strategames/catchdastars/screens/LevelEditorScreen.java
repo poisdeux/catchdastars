@@ -770,11 +770,14 @@ public class LevelEditorScreen extends AbstractScreen
 		return true;
 	}
 
-	private void resizeWorld(int h, int v) {
+	private void resizeWorld(int w, int h) {
 		Game game = getGame();
 		Vector2 viewSize = game.getViewSize();
 		Vector3 worldSize = game.getWorldSize();
-		game.setWorldSize(new Vector3(viewSize.x * h, viewSize.y * v, worldSize.z));
+		game.setWorldSize(new Vector3(viewSize.x * w, viewSize.y * h, worldSize.z));
+		OrthographicCamera camera = (OrthographicCamera) getStageActors().getCamera();
+		camera.viewportWidth =  viewSize.x * w;
+		camera.viewportHeight =  viewSize.y * h;
 	}
 }
 

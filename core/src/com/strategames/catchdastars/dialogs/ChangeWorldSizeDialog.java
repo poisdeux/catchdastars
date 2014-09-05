@@ -70,8 +70,8 @@ public class ChangeWorldSizeDialog extends Dialog {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				int newValue = Integer.parseInt(horizontalLabel.getText().toString()) - 1;
-				if( newValue < 0 ) {
-					newValue = 0;
+				if( newValue < 1 ) {
+					newValue = 1;
 				}
 				horizontalLabel.setText("" + newValue);
 				notifyListener(VALUE_CHANGED);
@@ -93,8 +93,8 @@ public class ChangeWorldSizeDialog extends Dialog {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				int newValue = Integer.parseInt(verticalLabel.getText().toString()) - 1;
-				if( newValue < 0 ) {
-					newValue = 0;
+				if( newValue < 1 ) {
+					newValue = 1;
 				}
 				verticalLabel.setText("" + newValue);
 				notifyListener(VALUE_CHANGED);
