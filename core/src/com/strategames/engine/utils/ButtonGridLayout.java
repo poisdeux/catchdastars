@@ -1,15 +1,28 @@
 package com.strategames.engine.utils;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 
-public class ButtonGridLayout {
+public class ButtonGridLayout extends Actor {
 
 	private Array<Array<Button>> rows;
-
-	public ButtonGridLayout() {
+	private Skin skin;
+	private float paddingRight = 10f;
+	private float paddingBottom = 10f;
+	
+	private Vector2 buttonSize;
+	
+	public ButtonGridLayout(Skin skin) {
 		rows = new Array<Array<Button>>();
+		this.skin = skin;
+		
+		TextButton button = new TextButton("1234", skin);
+		buttonSize = new Vector2(button.getWidth(), button.getHeight());
 	}
 
 	/**
@@ -25,8 +38,11 @@ public class ButtonGridLayout {
 		
 		Array<Button> row = new Array<Button>();
 
+		float y = ( buttonSize.y + paddingBottom ) * rows.size;
 		for(int i = 0; i < columns; i++) {
-			Button button = new Button();
+			float x = ( buttonSize.x + paddingRight ) * i;
+			Button button = new Button(skin);
+			button.setPosition(x, y);
 			row.add(button);
 		}
 
@@ -43,8 +59,13 @@ public class ButtonGridLayout {
 			rows.add(new Array<Button>());
 		}
 
+		Array<Button> column = rows.get(0);
+		float x = ( buttonSize.x + paddingRight ) * column.size;
+		
 		for(int i = 0; i < rows.size; i++) {
-			Button button = new Button();
+			float y = ( buttonSize.y + paddingBottom ) * i;
+			Button button = new Button(skin);
+			button.setPosition(x, y);
 			rows.get(i).add(button);
 		}
 	}
@@ -57,7 +78,9 @@ public class ButtonGridLayout {
 	 */
 	public Array<Button> deleteRow(int row) throws ArrayIndexOutOfBoundsException {
 		if( ( row >= 0 ) && ( row < rows.size ) ) {
-			return rows.removeIndex(row);
+			Array<Button> buttons = rows.removeIndex(row);
+			updatePositions();
+			return buttons;
 		} else {
 			throw new ArrayIndexOutOfBoundsException();
 		}
@@ -79,6 +102,7 @@ public class ButtonGridLayout {
 				throw new ArrayIndexOutOfBoundsException("Row("+i+").size="+row.size+" < column="+column);
 			}
 		}
+		updatePositions();
 		return buttons;
 	}
 	
@@ -112,5 +136,31 @@ public class ButtonGridLayout {
 			return new Vector2(0,0);
 		}
 		return new Vector2(rows.get(0).size, rows.size);
+	}
+	
+	@Override
+	public void draw(Batch batch, float parentAlpha) {
+		super.draw(batch, parentAlpha);
+		for(int i = 0; i < rows.size; i++) {
+			Array<Button> row = rows.get(i);
+			for(int j = 0; j < row.size; j++) {
+				Button button = row.get(j);
+				button.draw(batch, parentAlpha);
+			}
+		}
+	}	
+	
+	private void updatePositions() {
+		float yDelta = buttonSize.y + paddingBottom;
+		float xDelta = buttonSize.x + paddingRight;
+		for(int i = 0; i < rows.size; i++) {
+			float y = yDelta * i;
+			Array<Button> row = rows.get(i);
+			for(int j = 0; j < row.size; j++) {
+				float x = xDelta * j;
+				Button button = row.get(j);
+				button.setPosition(x, y);
+			}
+		}
 	}
 }

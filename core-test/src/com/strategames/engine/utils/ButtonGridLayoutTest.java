@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 public class ButtonGridLayoutTest {
@@ -15,7 +16,7 @@ public class ButtonGridLayoutTest {
 
 	@Before
 	public void setUp() throws Exception {
-		buttonGridLayout = new ButtonGridLayout();
+		buttonGridLayout = new ButtonGridLayout(new Skin());
 	}
 
 	@Test

@@ -18,6 +18,7 @@ import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.ButtonGridLayout;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
@@ -33,7 +34,7 @@ import com.strategames.ui.widgets.TextButton;
 
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
-	private Table levelButtonsTable;
+	private ButtonGridLayout levelButtonsTable;
 	private int lastLevelNumber;
 	private Levels levels;
 
@@ -49,7 +50,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		
 		Skin skin = getSkin();
 
-		this.levelButtonsTable = new Table(skin);
+		this.levelButtonsTable = new ButtonGridLayout(skin);
 
 		fillLevelButtonsTable(this.levels.getLevels());
 
@@ -302,6 +303,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.lastLevelNumber = 0;
 
 		if( levels.isEmpty() ) {
+			this.levelButtonsTable.addRow();
 			return;
 		}
 
