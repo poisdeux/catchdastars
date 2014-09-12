@@ -15,6 +15,7 @@ public class Level implements Comparable<Level> {
 	private Array<GameObject> gameObjects;
 	private Vector2 worldSize;
 	private Vector2 viewSize;
+	private int[] position = new int[2];
 	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
@@ -51,6 +52,19 @@ public class Level implements Comparable<Level> {
 		return this.gameObjects;
 	}
 
+	public void setPosition(int x, int y) {
+		this.position[0] = x;
+		this.position[1] = y;
+	}
+
+	/**
+	 * Position of the level in the game grid
+	 * @return int array. int[0] = x, int[1] = y
+	 */
+	public int[] getPosition() {
+		return position;
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -18,7 +18,7 @@ import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.utils.ButtonGridLayout;
+import com.strategames.engine.utils.GridLayout;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
@@ -34,7 +34,7 @@ import com.strategames.ui.widgets.TextButton;
 
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
-	private ButtonGridLayout levelButtonsTable;
+	private GridLayout levelButtonsTable;
 	private int lastLevelNumber;
 	private Levels levels;
 
@@ -45,12 +45,12 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	@Override
 	protected void setupUI(Stage stage) {
 		
-		this.levels = new Levels(); 
+		this.levels = new Levels();
 		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
 		
 		Skin skin = getSkin();
 
-		this.levelButtonsTable = new ButtonGridLayout(skin);
+		this.levelButtonsTable = new GridLayout();
 
 		fillLevelButtonsTable(this.levels.getLevels());
 
@@ -121,7 +121,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	protected void setupActors(Stage stage) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -268,8 +267,14 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		TextButton button = new TextButton(level.getLevelNumber() + ". " +level.getName(), getSkin());
 		button.setTag(level);
 		button.setListener(LevelEditorMenuScreen.this);
-		levelButtonsTable.add(button).expand();
-		levelButtonsTable.row();
+		int[] gridSize = this.levelButtonsTable.getSize();
+		int[] levelPosition = level.getPosition();
+		if( levelPosition[0] == (gridSize[0] - 1) ) {
+			this.levelButtonsTable.addColumn();
+		}
+		if( levelPosition[1] == (gridSize[1] - 1) ) {
+			this.levelButtonsTable.addRow();
+		}
 	}
 
 	private void deleteLevel(Level level) {
@@ -299,7 +304,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	 */
 
 	private void fillLevelButtonsTable(ArrayList<Level> levels) {
-		this.levelButtonsTable.clear();
 		this.lastLevelNumber = 0;
 
 		if( levels.isEmpty() ) {
@@ -314,8 +318,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			TextButton button = new TextButton(level.getLevelNumber() + ". " + level.getName(), getSkin());
 			button.setTag(level);
 			button.setListener(LevelEditorMenuScreen.this);
-			levelButtonsTable.add(button).expand();
-			levelButtonsTable.row();
+			int[] position = level.getPosition();
+			this.levelButtonsTable.set(position[0], position[1], button);
 		}
 	}
 

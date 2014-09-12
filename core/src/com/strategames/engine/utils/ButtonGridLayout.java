@@ -3,22 +3,21 @@ package com.strategames.engine.utils;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 
 public class ButtonGridLayout extends Actor {
 
-	private Array<Array<Button>> rows;
+	private Array<Array<TextButton>> rows;
 	private Skin skin;
 	private float paddingRight = 10f;
 	private float paddingBottom = 10f;
-	
+	private int buttonNumber = 0;
 	private Vector2 buttonSize;
 	
 	public ButtonGridLayout(Skin skin) {
-		rows = new Array<Array<Button>>();
+		rows = new Array<Array<TextButton>>();
 		this.skin = skin;
 		
 		TextButton button = new TextButton("1234", skin);
@@ -32,16 +31,16 @@ public class ButtonGridLayout extends Actor {
 	public void addRow() {
 		int columns = 1;
 		if( rows.size > 0 ) { 
-			Array<Button> column = rows.get(0);
+			Array<TextButton> column = rows.get(0);
 			columns = column.size;
 		}
 		
-		Array<Button> row = new Array<Button>();
+		Array<TextButton> row = new Array<TextButton>();
 
 		float y = ( buttonSize.y + paddingBottom ) * rows.size;
 		for(int i = 0; i < columns; i++) {
 			float x = ( buttonSize.x + paddingRight ) * i;
-			Button button = new Button(skin);
+			TextButton button = createButton();
 			button.setPosition(x, y);
 			row.add(button);
 		}
@@ -56,15 +55,15 @@ public class ButtonGridLayout extends Actor {
 	 */
 	public void addColumn() {
 		if( rows.size == 0 ) {
-			rows.add(new Array<Button>());
+			rows.add(new Array<TextButton>());
 		}
 
-		Array<Button> column = rows.get(0);
+		Array<TextButton> column = rows.get(0);
 		float x = ( buttonSize.x + paddingRight ) * column.size;
 		
 		for(int i = 0; i < rows.size; i++) {
 			float y = ( buttonSize.y + paddingBottom ) * i;
-			Button button = new Button(skin);
+			TextButton button = createButton();
 			button.setPosition(x, y);
 			rows.get(i).add(button);
 		}
@@ -76,9 +75,9 @@ public class ButtonGridLayout extends Actor {
 	 * @return Array<Button>
 	 * @throws ArrayIndexOutOfBoundsException
 	 */
-	public Array<Button> deleteRow(int row) throws ArrayIndexOutOfBoundsException {
+	public Array<TextButton> deleteRow(int row) throws ArrayIndexOutOfBoundsException {
 		if( ( row >= 0 ) && ( row < rows.size ) ) {
-			Array<Button> buttons = rows.removeIndex(row);
+			Array<TextButton> buttons = rows.removeIndex(row);
 			updatePositions();
 			return buttons;
 		} else {
@@ -92,10 +91,10 @@ public class ButtonGridLayout extends Actor {
 	 * @return Array<Button>
 	 * @throws ArrayIndexOutOfBoundsException 
 	 */
-	public Array<Button> deleteColumn(int column) throws ArrayIndexOutOfBoundsException {
-		Array<Button> buttons = new Array<Button>();
+	public Array<TextButton> deleteColumn(int column) throws ArrayIndexOutOfBoundsException {
+		Array<TextButton> buttons = new Array<TextButton>();
 		for(int i = 0; i < rows.size; i++) {
-			Array<Button> row = rows.get(i);
+			Array<TextButton> row = rows.get(i);
 			if( column < row.size ) { 
 				buttons.add(row.removeIndex(column));
 			} else {
@@ -106,7 +105,7 @@ public class ButtonGridLayout extends Actor {
 		return buttons;
 	}
 	
-	public Array<Button> getRow(int row) throws ArrayIndexOutOfBoundsException {	
+	public Array<TextButton> getRow(int row) throws ArrayIndexOutOfBoundsException {	
 		if( ( row >= 0 ) && ( row < rows.size ) ) {
 			return rows.get(row);
 		} else {
@@ -114,10 +113,10 @@ public class ButtonGridLayout extends Actor {
 		}
 	}
 
-	public Array<Button> getColumn(int column) throws ArrayIndexOutOfBoundsException {
-		Array<Button> buttons = new Array<Button>();
+	public Array<TextButton> getColumn(int column) throws ArrayIndexOutOfBoundsException {
+		Array<TextButton> buttons = new Array<TextButton>();
 		for(int i = 0; i < rows.size; i++) {
-			Array<Button> row = rows.get(i);
+			Array<TextButton> row = rows.get(i);
 			if( column < row.size ) { 
 				buttons.add(row.get(column));
 			} else {
@@ -142,9 +141,9 @@ public class ButtonGridLayout extends Actor {
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		for(int i = 0; i < rows.size; i++) {
-			Array<Button> row = rows.get(i);
+			Array<TextButton> row = rows.get(i);
 			for(int j = 0; j < row.size; j++) {
-				Button button = row.get(j);
+				TextButton button = row.get(j);
 				button.draw(batch, parentAlpha);
 			}
 		}
@@ -155,12 +154,17 @@ public class ButtonGridLayout extends Actor {
 		float xDelta = buttonSize.x + paddingRight;
 		for(int i = 0; i < rows.size; i++) {
 			float y = yDelta * i;
-			Array<Button> row = rows.get(i);
+			Array<TextButton> row = rows.get(i);
 			for(int j = 0; j < row.size; j++) {
 				float x = xDelta * j;
-				Button button = row.get(j);
+				TextButton button = row.get(j);
 				button.setPosition(x, y);
 			}
 		}
+	}
+	
+	private TextButton createButton() {
+		TextButton button = new TextButton(String.valueOf(buttonNumber++), skin);
+		return button;
 	}
 }

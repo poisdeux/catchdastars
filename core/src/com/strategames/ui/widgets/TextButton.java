@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import com.strategames.engine.utils.GridLayout.GridElement;
 import com.strategames.ui.interfaces.ButtonListener;
 
 /**
@@ -13,7 +14,7 @@ import com.strategames.ui.interfaces.ButtonListener;
  * @author mbrekhof
  *
  */
-public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton implements EventListener {
+public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton implements EventListener, GridElement<TextButton> {
 	private Timer timer;
 	private boolean longPress;
 	private ButtonListener listener = null;
@@ -84,5 +85,10 @@ public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton im
 	private void handleLongPress() {
 		if( this.listener != null )
 			this.listener.onLongPress(this);
+	}
+
+	@Override
+	public TextButton newInstance() {
+		return new TextButton("", null);
 	}
 }
