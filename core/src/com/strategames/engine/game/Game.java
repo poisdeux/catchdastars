@@ -70,7 +70,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private AssetManager manager;
 
-	private int levelNumber;
+	private int[] levelPosition;
 
 	private Level level; 
 
@@ -325,18 +325,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		return x * BOX_TO_WORLD;
 	}
 
-	public int getLevelNumber() {
-		return levelNumber;
+	public int[] getLevelPosition() {
+		return levelPosition;
 	}
 
-	public void setLevelNumber(int levelNumber) {
-		this.levelNumber = levelNumber;
+	public void setLevelPosition(int column, int row) {
+		this.levelPosition = levelPosition;
 	}
 
 	public void setLevel(Level level) {
 		this.level = level;
 		if( level != null ) {
-			setLevelNumber(level.getLevelNumber());
+			int[] position = level.getPosition();
+			setLevelPosition(position[0], position[1]);
 		}
 	}
 
@@ -505,8 +506,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		setScreen(new SplashScreen(this));
 	}
 
-	public void startLevel(int level) {
-		setLevelNumber(level);
+	public void startLevel(int column, int row) {
+		setLevelPosition(column, row);
 		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
@@ -518,7 +519,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	private void loadLevelSync(final OnLevelLoadedListener listener) {
-		setLevel(LevelLoader.loadLocalSync(this.levelNumber));
+		setLevel(LevelLoader.loadLocalSync(this.levelPosition[0]+","+this.levelPosition[1]));
 		if( listener != null ) {
 			listener.onLevelLoaded(getLevel());
 		}

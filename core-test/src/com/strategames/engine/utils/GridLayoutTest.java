@@ -160,9 +160,13 @@ public class GridLayoutTest {
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				assertTrue("Actor at ("+j+","+i+" not equal to actor originally set in grid", gridLayout.get(j, i) == actors.get(index++));
-				
 			}
 		}
+		
+		//Test overwriting
+		Actor actor = new Actor();
+		gridLayout.set(1, 1, actor);
+		assertTrue("Actor at (1,1) not equal to actor originally set in grid", gridLayout.get(1, 1) == actor);
 	}
 	
 	@Test

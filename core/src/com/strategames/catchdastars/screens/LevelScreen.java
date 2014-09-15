@@ -39,14 +39,14 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	@Override
 	protected void setupUI(Stage stage) {
 		this.stage = stage;
-		Game game = getGame();
+		
 		this.filter = new FilledRectangleImage(stage);
 		this.filter.setWidth(stage.getWidth());
 		this.filter.setHeight(stage.getHeight());
 		this.filter.setColor(0f, 0f, 0f, 1f);
 		stage.addActor(this.filter);
 
-		this.levelImage = new Text("Level " + game.getLevelNumber());
+		this.levelImage = new Text(getGame().getLevel().getName());
 		this.levelImage.setScale(2f);
 
 		float imageWidth = this.levelImage.getWidth();

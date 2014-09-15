@@ -201,10 +201,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 	@Override
 	public void showLevelCompleteDialog() {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
-		Gdx.app.log("CatchDaStars", "getLevelNumber()="+getLevelNumber()+", LevelLoader.getLastLevelNumber()="+LevelLoader.getLastLevelNumber());
-		if( getLevelNumber() >= LevelLoader.getLastLevelNumber() ) {
-			setScreen(new GameCompleteScreen(this, screen.getStageActors()));
-		} else {
+		/**
+		 * TODO: refactor to check if all levels have been completed
+		 */
+//		if( getLevelPosition() >= LevelLoader.getLastLevelNumber() ) {
+//			setScreen(new GameCompleteScreen(this, screen.getStageActors()));
+//		} else {
 			LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(((AbstractScreen) getScreen()).getStageUIActors(), this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
 
 			Textures textures = Textures.getInstance();
@@ -221,7 +223,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			levelCompleteDialog.show();
 
 			setTotalScore(getTotalScore() + calculateScore());
-		}
+//		}
 	}
 
 	@Override
@@ -390,14 +392,17 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( dialog instanceof LevelCompleteDialog ) {
 			switch( which ) {
 			case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
-				if( getLevelNumber() < LevelLoader.getLastLevelNumber() ) {
-					startLevel(getLevelNumber() + 1);
-				} else {
-					//Ooops. User completed game so we should not
-					//get to this point but Game end animation should
-					//be shown
-					Gdx.app.log("CatchDaStars", "onClick: end of game reached");
-				}
+				/**
+				 * TODO: reimplement using grid structure
+				 */
+//				if( getLevelNumber() < LevelLoader.getLastLevelNumber() ) {
+//					startLevel(getLevelNumber() + 1);
+//				} else {
+//					//Ooops. User completed game so we should not
+//					//get to this point but Game end animation should
+//					//be shown
+//					Gdx.app.log("CatchDaStars", "onClick: end of game reached");
+//				}
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
 				Gdx.app.log("CatchDaStars", "onClick: BUTTON_QUIT_CLICKED");

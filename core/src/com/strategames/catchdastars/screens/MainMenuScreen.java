@@ -27,7 +27,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 			public void clicked(InputEvent event, float x, float y) {
 				game.setTotalScore(0);
-				game.startLevel(1);
+				game.startLevel(0,0);
 			}
 		});
 		button.setPosition(x - (button.getWidth() / 2f), y);

@@ -24,9 +24,9 @@ public class LevelLoader {
 	 * @param level
 	 * @return Level object containing the game objects
 	 */
-	static private Level loadInternalSync(int level) {
+	static private Level loadInternalSync(String name) {
 		try {
-			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + level);
+			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + name);
 			return loadSync(file);
 		} catch (Exception e) {
 			return null;
@@ -39,9 +39,9 @@ public class LevelLoader {
 	 * @param level levelnumber to load
 	 * @return Level object containing the game objects 
 	 */
-	static public Level loadLocalSync(int level) {
+	static public Level loadLocalSync(String name) {
 		try {
-			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
+			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + name);
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,16 +156,16 @@ public class LevelLoader {
 		return LOCAL_PATH;
 	}
 
-	static public String getLocalPath(int level) {
-		return LOCAL_PATH + "/" + level;
+	static public String getLocalPath(String name) {
+		return LOCAL_PATH + "/" + name;
 	}
 
 	static public String getInternalPath() {
 		return INTERNAL_PATH;
 	}
 
-	static public String getInternalPath(int level) {
-		return INTERNAL_PATH + "/" + level;
+	static public String getInternalPath(String name) {
+		return INTERNAL_PATH + "/" + name;
 	}
 
 	/**

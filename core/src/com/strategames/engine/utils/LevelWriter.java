@@ -16,7 +16,8 @@ public class LevelWriter {
 	 * @param level
 	 */
 	static public boolean save(Level level) {
-		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level.getLevelNumber()));
+		int[] position = level.getPosition();
+		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(position[0]+","+position[1]));
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(level.getJson()), false);
@@ -64,9 +65,9 @@ public class LevelWriter {
 	 * Deletes the local file for the given level
 	 * @param level
 	 */
-	static public boolean deleteLocal(int level) {
+	static public boolean deleteLocal(String name) {
 		try {
-			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level));
+			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(name));
 			if( file.delete() ) {
 				reorderLevelFiles();
 				return true;
