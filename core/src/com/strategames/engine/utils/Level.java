@@ -90,12 +90,19 @@ public class Level implements Comparable<Level> {
 
 	@Override
 	public int compareTo(Level o) {
-		if( this.number > o.getLevelNumber() ) {
+		int[] oPosition = o.getPosition();
+		if( position[0] > oPosition[0] ) {
 			return 1;
-		} else if( this.number == o.getLevelNumber() ) {
-			return 0;
-		} else {
+		} else if( position[0] < oPosition[0] ) {
 			return -1;
+		} else {
+			if( position[1] > oPosition[1] ) {
+				return 1;
+			} else if( position[1] < oPosition[1] ) {
+				return -1;
+			} else {
+				return 0;
+			}
 		}
 	}
 

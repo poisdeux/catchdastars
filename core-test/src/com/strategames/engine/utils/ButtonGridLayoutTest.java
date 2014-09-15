@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 
 public class ButtonGridLayoutTest {
@@ -23,13 +23,13 @@ public class ButtonGridLayoutTest {
 	public void testAddRow() {
 		buttonGridLayout.addRow();
 		try {
-			Array<Button> row = buttonGridLayout.getRow(0);
+			Array<TextButton> row = buttonGridLayout.getRow(0);
 			assertTrue("row.size not 1", row.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
 		}
 		try {
-			Array<Button> column = buttonGridLayout.getColumn(0);
+			Array<TextButton> column = buttonGridLayout.getColumn(0);
 			assertTrue("column.size not 1", column.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
@@ -40,13 +40,13 @@ public class ButtonGridLayoutTest {
 	public void testAddColumn() {
 		buttonGridLayout.addColumn();
 		try {
-			Array<Button> row = buttonGridLayout.getRow(0);
+			Array<TextButton> row = buttonGridLayout.getRow(0);
 			assertTrue("row.size not 1", row.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
 		}
 		try {
-			Array<Button> column = buttonGridLayout.getColumn(0);
+			Array<TextButton> column = buttonGridLayout.getColumn(0);
 			assertTrue("column.size not 1", column.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
@@ -58,7 +58,7 @@ public class ButtonGridLayoutTest {
 		buttonGridLayout.addRow();
 		buttonGridLayout.addColumn();
 		try {
-			Array<Button> row = buttonGridLayout.getRow(0);
+			Array<TextButton> row = buttonGridLayout.getRow(0);
 			assertTrue("row.size not 2", row.size == 2);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
@@ -70,13 +70,13 @@ public class ButtonGridLayoutTest {
 		buttonGridLayout.addColumn();
 		buttonGridLayout.addRow();
 		try {
-			Array<Button> row = buttonGridLayout.getRow(0);
+			Array<TextButton> row = buttonGridLayout.getRow(0);
 			assertTrue("row.size not 1", row.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");
 		}
 		try {
-			Array<Button> row = buttonGridLayout.getRow(1);
+			Array<TextButton> row = buttonGridLayout.getRow(1);
 			assertTrue("row.size not 1", row.size == 1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			fail("Array index out of bounds exception thrown");

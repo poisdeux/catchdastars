@@ -1,11 +1,12 @@
 package com.strategames.engine.utils;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
-public class GridLayout extends Actor {
+public class GridLayout extends WidgetGroup {
 	
 	private Vector2 elementSize = new Vector2(10, 10);
 	
@@ -25,7 +26,6 @@ public class GridLayout extends Actor {
 	
 	public void setElementSize(float width, float height) {
 		this.elementSize = new Vector2(width, height);
-		updateElementPositions();
 	}
 	
 	public Vector2 getElementSize() {
@@ -34,7 +34,6 @@ public class GridLayout extends Actor {
 	
 	public void deleteRow(int row) {
 		this.rows.removeIndex(row);
-		updateElementPositions();
 	}
 	
 	public void deleteColumn(int column) {
@@ -42,9 +41,12 @@ public class GridLayout extends Actor {
 			Array<Actor> row = rows.get(i);
 			row.removeIndex(column);
 		}
-		updateElementPositions();
 	}
 	
+	/**
+	 * Adds a row to the grid. If the grid is empty
+	 * a row and a column will be created.
+	 */
 	public void addRow() {
 		int columns = 1;
 		if( rows.size > 0 ) { 
@@ -53,11 +55,17 @@ public class GridLayout extends Actor {
 		}
 		
 		Array<Actor> row = new Array<Actor>();
-		row.ensureCapacity(columns);
+		for(int i = 0; i < columns; i++) {
+			row.add(new Actor());
+		}
 		
 		rows.add(row);
 	}
 	
+	/**
+	 * Adds a column to the grid. If the grid is empty
+	 * a row and a column will be created.
+	 */
 	public void addColumn() {
 		if( rows.size == 0 ) {
 			rows.add(new Array<Actor>());
@@ -65,28 +73,46 @@ public class GridLayout extends Actor {
 
 		for(int i = 0; i < rows.size; i++) {
 			Array<Actor> row = rows.get(i);
-			row.ensureCapacity(1);
+			row.add(new Actor());
 		}
 	}
 	
-	public void set(int rowIndex, int columnIndex, Actor actor) throws ArrayIndexOutOfBoundsException {
-		if( rowIndex < rows.size) {
-			Array<Actor> row = rows.get(rowIndex);
-			if( columnIndex < row.size ) {
-				row.set(columnIndex, actor);
+	/**
+	 * Sets element at given index. If grid does not contain the
+	 * given index yet the grid size is increased to include the index
+	 * @param columnIndex column number (starting at 0)
+	 * @param rowIndex row number (starting at 0)
+	 * @param actor element to set at position rowIndex, columnIndex
+	 */
+	public void set(int columnIndex, int rowIndex, Actor actor) {
+		if( rowIndex >= rows.size) {
+			for( int i = rows.size - 1; i < rowIndex; i++ ) {
+				addRow();
 			}
 		}
-		throw new ArrayIndexOutOfBoundsException();
+		
+		Array<Actor> row = rows.get(rowIndex);
+		if( columnIndex >= row.size ) {
+			for( int i = row.size - 1; i < columnIndex; i++ ) {
+				addColumn();
+			}
+		}
+		
+		//Make sure any existing actor is removed from the group
+		row.get(columnIndex).remove();
+		
+		row.set(columnIndex, actor);
+		addActor(actor);
 	}
 	
 	/**
 	 * Returns the element at the given grid position
-	 * @param rowIndex
 	 * @param columnIndex
+	 * @param rowIndex
 	 * @return
 	 * @throws ArrayIndexOutOfBoundsException
 	 */
-	public Actor get(int rowIndex, int columnIndex) throws ArrayIndexOutOfBoundsException {
+	public Actor get(int columnIndex, int rowIndex) throws ArrayIndexOutOfBoundsException {
 		if( rowIndex < rows.size) {
 			Array<Actor> row = rows.get(rowIndex);
 			if( columnIndex < row.size ) {
@@ -99,7 +125,7 @@ public class GridLayout extends Actor {
 	/**
 	 * Returns grid position of given element
 	 * @param actor
-	 * @return position or null if not found
+	 * @return position (int[0] is columnIndex and int[1] is rowIndex) or null if not found
 	 */
 	public int[] getPosition(Actor actor) {
 		for(int i = 0; i < rows.size; i++) {
@@ -107,8 +133,8 @@ public class GridLayout extends Actor {
 			for(int j = 0; j < row.size; j++) {
 				if( row.get(j) == actor ) {
 					int[] position = new int[2];
-					position[0] = i;
-					position[1] = j;
+					position[0] = j;
+					position[1] = i;
 					return position;
 				}
 			}
@@ -132,17 +158,6 @@ public class GridLayout extends Actor {
 		return size;
 	}
 	
-	@Override
-	public void draw(Batch batch, float parentAlpha) {
-		super.draw(batch, parentAlpha);
-		for(int i = 0; i < rows.size; i++) {
-			Array<Actor> row = rows.get(i);
-			for(int j = 0; j < row.size; j++) {
-				row.get(j).draw(batch, parentAlpha);
-			}
-		}
-	}
-	
 	public Array<Actor> getRow(int row) throws ArrayIndexOutOfBoundsException {	
 		if( ( row >= 0 ) && ( row < rows.size ) ) {
 			return rows.get(row);
@@ -164,7 +179,11 @@ public class GridLayout extends Actor {
 		return elements;
 	}
 	
-	private void updateElementPositions() {
+	public void layout() {
+		setElementPositions();
+	}
+	
+	private void setElementPositions() {
 		for(int i = 0; i < rows.size; i++) {
 			float y = this.elementSize.y * i;
 			Array<Actor> row = rows.get(i);

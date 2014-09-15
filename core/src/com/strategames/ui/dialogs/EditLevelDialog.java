@@ -43,12 +43,12 @@ public class EditLevelDialog extends ButtonsDialog {
 			}
 		});
 
-		add("Change level number", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				notifyListener(BUTTON_CHANGELEVELNUMBER_CLICKED);
-			}
-		});
+//		add("Change level number", new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				notifyListener(BUTTON_CHANGELEVELNUMBER_CLICKED);
+//			}
+//		});
 
 		add("Copy level", new ClickListener() {
 			@Override
