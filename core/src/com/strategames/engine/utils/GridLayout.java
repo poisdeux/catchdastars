@@ -56,7 +56,7 @@ public class GridLayout extends WidgetGroup {
 		
 		Array<Actor> row = new Array<Actor>();
 		for(int i = 0; i < columns; i++) {
-			row.add(new Actor());
+			row.add(null);
 		}
 		
 		rows.add(row);
@@ -73,7 +73,7 @@ public class GridLayout extends WidgetGroup {
 
 		for(int i = 0; i < rows.size; i++) {
 			Array<Actor> row = rows.get(i);
-			row.add(new Actor());
+			row.add(null);
 		}
 	}
 	
@@ -98,8 +98,12 @@ public class GridLayout extends WidgetGroup {
 			}
 		}
 		
+		Actor curActor = row.get(columnIndex);
+		
 		//Make sure any existing actor is removed from the group
-		row.get(columnIndex).remove();
+		if( curActor != null ) {
+			row.get(columnIndex).remove();
+		}
 		
 		row.set(columnIndex, actor);
 		addActor(actor);
@@ -109,17 +113,16 @@ public class GridLayout extends WidgetGroup {
 	 * Returns the element at the given grid position
 	 * @param columnIndex
 	 * @param rowIndex
-	 * @return
-	 * @throws ArrayIndexOutOfBoundsException
+	 * @return Actor or null if not found
 	 */
-	public Actor get(int columnIndex, int rowIndex) throws ArrayIndexOutOfBoundsException {
+	public Actor get(int columnIndex, int rowIndex) {
 		if( rowIndex < rows.size) {
 			Array<Actor> row = rows.get(rowIndex);
 			if( columnIndex < row.size ) {
 				return row.get(columnIndex);
 			}
 		}
-		throw new ArrayIndexOutOfBoundsException();
+		return null;
 	}
 	
 	/**
@@ -189,7 +192,10 @@ public class GridLayout extends WidgetGroup {
 			Array<Actor> row = rows.get(i);
 			for(int j = 0; j < row.size; j++) {
 				float x = this.elementSize.x * j;
-				row.get(j).setPosition(x, y);
+				Actor actor = row.get(j);
+				if( actor != null ) {
+					actor.setPosition(x, y);
+				}
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package com.strategames.engine.utils;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
@@ -181,5 +182,38 @@ public class GridLayoutTest {
 		assertTrue("getPosition="+position[0]+","+position[1]+" not equal to 0,0", (position[0] == 0) && (position[1] == 0));
 		position = gridLayout.getPosition(actor2);
 		assertTrue("getPosition="+position[0]+","+position[1]+" not equal to 0,0", (position[0] == 9) && (position[1] == 13));
+	}
+	
+	@Test
+	public void testGet() {
+		Actor actor1 = new Actor();
+		gridLayout.set(0, 0, actor1);
+		
+		Actor actor2 = new Actor();
+		gridLayout.set(1, 0, actor2);
+		
+		Actor actor3 = new Actor();
+		gridLayout.set(0, 1, actor3);
+		
+		Actor actor4 = new Actor();
+		gridLayout.set(0, 2, actor4);
+		
+		Actor actor5 = new Actor();
+		gridLayout.set(0, 1, actor5);
+		
+		assertTrue("actor not found at 0,0", gridLayout.get(0,0) == actor1);
+		assertTrue("actor not found at 1,0", gridLayout.get(1, 0) == actor2);
+		assertTrue("Wrong actor found at 0,1", gridLayout.get(0,1) != actor3);
+		assertTrue("actor not found at 0,2", gridLayout.get(0,2) == actor4);
+		assertTrue("actor not found at 0,1", gridLayout.get(0,1) == actor5);
+		assertNull("actor found at 1,1", gridLayout.get(1,1));
+	}
+	
+	@Test
+	public void testLayout() {
+		Actor actor = new Actor();
+		gridLayout.set(2, 2, actor);
+		
+		gridLayout.layout();
 	}
 }

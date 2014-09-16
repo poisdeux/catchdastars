@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
@@ -255,18 +253,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
 		int[] levelPosition = level.getPosition();
-		TextButton button = new TextButton(level.getName(), getSkin());
+		TextButton button = createLevelButton(level.getName());
 		button.setTag(level);
-		button.setListener(LevelEditorMenuScreen.this);
 		this.levelButtonsGrid.set(levelPosition[0], levelPosition[1], button);
 
-		int[] gridSize = this.levelButtonsGrid.getSize();
-		if( levelPosition[0] == (gridSize[0] - 1) ) {
-			this.levelButtonsGrid.addColumn();
-		}
-		if( levelPosition[1] == (gridSize[1] - 1) ) {
-			this.levelButtonsGrid.addRow();
-		}
+		addNextLevelButtons(levelPosition[0], levelPosition[1]);
 	}
 
 	private void deleteLevel(Level level) {
@@ -296,7 +287,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	 */
 	private void fillLevelButtonsTable(ArrayList<Level> levels) {
 		this.levelButtonsGrid.setElementSize(60f, 30f);
-		
+
 		if( levels.isEmpty() ) {
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
@@ -308,31 +299,60 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				button.setTag(level);
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], button);
-			}
-			
-			//Add new level row and column with new level button
-			int[] size = this.levelButtonsGrid.getSize();
-
-			for( int i = 0; i <= size[0]; i++ ) {
-				TextButton button = createLevelButton("");
-				this.levelButtonsGrid.set(i, size[1], button);
+				addNextLevelButtons(position[0], position[1]);
 			}
 
-			for( int i = 0; i < size[1]; i++ ) {
+
+		}
+	}
+
+	private void addNextLevelButtons(int column, int row) {
+		int x;
+		int y;
+
+		//Create button right
+		x = column + 1;
+		y = row;
+		if( this.levelButtonsGrid.get(x, y) == null ) {
+			TextButton button = createLevelButton("");
+			this.levelButtonsGrid.set(x, y, button);
+		}
+
+		//Create button left
+		x = column - 1;
+		if( x >= 0 ) {
+			if( this.levelButtonsGrid.get(x, y) == null ) {
 				TextButton button = createLevelButton("");
-				this.levelButtonsGrid.set(size[0], i, button);
+				this.levelButtonsGrid.set(x, y, button);
+			}
+		}
+
+		//Create button above
+		x = column;
+		y = row + 1;
+		if( this.levelButtonsGrid.get(x, y) == null ) {
+			TextButton button = createLevelButton("");
+			this.levelButtonsGrid.set(x, y, button);
+		}
+
+		//Create button below
+		y = row - 1;
+		if( y >= 0 ) {
+			if( this.levelButtonsGrid.get(x, y) == null ) {
+				TextButton button = createLevelButton("");
+				this.levelButtonsGrid.set(x, y, button);
 			}
 		}
 	}
 
 	private TextButton createLevelButton(String name) {
-		TextButton button = new TextButton("", getSkin());
+		TextButton button = new TextButton(name, getSkin());
 		button.setListener(this);
 		button.setWidth(60f);
 		button.setHeight(30f);
 		return button;
 	}
-	
+
 	private void showErrorDialog(String title, String message) {
 		ErrorDialog dialog = new ErrorDialog(getStageUIActors(), title, getSkin());
 		dialog.setMessage(message);
