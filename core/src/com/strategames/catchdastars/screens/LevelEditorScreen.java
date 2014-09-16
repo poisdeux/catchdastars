@@ -214,6 +214,10 @@ public class LevelEditorScreen extends AbstractScreen
 		Actor actor = stageActors.hit(touchPosition.x, touchPosition.y, false);
 		//		Gdx.app.log("LevelEditorScreen", "touchDown touchPosition="+touchPosition);
 
+		if( ( actor instanceof Wall ) && ( ((Wall) actor).isBorder() ) ) {
+			return true;
+		}
+		
 		this.tap.setActor(actor);
 		this.actorTouched = actor;
 
@@ -246,9 +250,11 @@ public class LevelEditorScreen extends AbstractScreen
 				}
 			} else {
 				if( ! inGameArea(gameObject) ) {
+					getGame().getLevel().removeGameObject(gameObject);
 					gameObject.remove();
 				}
 			}
+			return true;
 		}
 		return false;
 	}

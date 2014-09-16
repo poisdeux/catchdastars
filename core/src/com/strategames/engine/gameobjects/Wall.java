@@ -85,6 +85,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	@Override
 	protected void writeValues(Json json) {
 		json.writeValue("length", this.length);
+		json.writeValue("border", this.isBorder);
 	}
 
 	@Override
