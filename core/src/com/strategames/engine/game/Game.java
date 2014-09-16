@@ -21,11 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
-import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
-import com.strategames.catchdastars.screens.LevelEditorScreen;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.MainMenuScreen;
-import com.strategames.catchdastars.screens.SettingsScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
@@ -70,7 +67,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private AssetManager manager;
 
-	private int[] levelPosition;
+	private int[] levelPosition = new int[2];
 
 	private Level level; 
 
@@ -330,7 +327,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void setLevelPosition(int column, int row) {
-		this.levelPosition = levelPosition;
+		this.levelPosition[0] = column;
+		this.levelPosition[1] = row;
 	}
 
 	public void setLevel(Level level) {
