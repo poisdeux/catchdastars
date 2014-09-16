@@ -346,7 +346,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	/**
 	 * Loads the level synchronously.
 	 * The level loaded is the level with
-	 * level number set by {@link #setLevelNumber(int)}
+	 * position set by {@link #setLevelPosition(int, int)}
 	 * <br/>
 	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
 	 * 

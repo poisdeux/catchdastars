@@ -153,13 +153,14 @@ public class LevelEditorScreen extends AbstractScreen
 		getGame().pauseGame();
 		
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
+		
+		getGame().loadLevel(this);
 	}
 
 	@Override
 	public void show() {
 		super.show();
 		zoomCamera(this.camera);
-		getGame().loadLevel(this);
 		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
 	}
 

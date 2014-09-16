@@ -42,6 +42,7 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;

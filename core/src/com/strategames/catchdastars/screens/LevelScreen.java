@@ -58,17 +58,19 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		this.levelImage.setY(-imageHeight);
 
 		stage.addActor(this.levelImage);
-
-//		setupStartAnimation();
 	}
 
 	@Override
 	protected void setupActors(Stage stage) {
 		this.stageActors = stage;
+	}
+
+	@Override
+	public void show() {
+		super.show();
 		getGame().pauseGame();
 		getGame().loadLevel(this);
 	}
-
 	@Override
 	public void render(float delta) {
 		super.render(delta);
