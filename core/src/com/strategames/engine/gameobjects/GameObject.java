@@ -145,32 +145,6 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public TextureRegion getTextureRegion() {
 		return textureRegion;
 	}
-	
-//	@Override
-//	public boolean remove() {
-//		if( super.remove() ) {
-//			return deleteBody();
-//		}
-//		return false;
-//	}
-	
-//	/**
-//	 * Deletes the Box2D body. This can only be used when {@link World#step(float, int, int)} is
-//	 * not running.
-//	 * @return
-//	 */
-//	public boolean deleteBody() {
-//		World world = this.game.getWorld();
-////		if(world.isLocked()) {
-////			return false;
-////		}
-//
-//		if( this.body != null ) {
-//			world.destroyBody(this.body);
-//			this.body = null;
-//		}
-//		return true;
-//	}
 
 	public boolean canBeRemoved() {
 		return this.canBeRemoved;

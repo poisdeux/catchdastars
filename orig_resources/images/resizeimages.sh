@@ -25,6 +25,11 @@ shift
 HEIGHT=$1
 shift
 
+if [ ! -d gameobjects ]
+then
+	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi}
+fi
+
 cat > ${TMPFILE} << 'EOF'
 (define (scale-image infile
                       outfile

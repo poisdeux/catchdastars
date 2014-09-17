@@ -19,6 +19,12 @@ function scale
 
 [ $# -lt 3 ] && usage
 
+if [ ! -d gameobjects ]
+then
+	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi}
+fi
+
+
 TMPFILE=$(mktemp)
 WIDTH=$1
 shift

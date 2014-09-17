@@ -11,4 +11,5 @@
 ./resizesvg.sh 24 24 originals/gridpoint.svg originals/icon-menu.svg
 ./resizesvg.sh 48 48 originals/star_*.svg
 ./resizesvg.sh 190 201 originals/cash_register.svg
+./resizesvg.sh 48 48 originals/passagetonextlevel.svg
 

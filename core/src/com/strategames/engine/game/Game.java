@@ -88,7 +88,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private int totalScore;
 
-	private Stage stageActors;
+//	private Stage stageActors;
 
 	private FPSLogger fpsLogger;
 
@@ -426,7 +426,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.gameObjectsInGame.add(object);
 		}
 
-		this.stageActors.addActor(object);
+		((AbstractScreen) currentScreen).getStageActors().addActor(object);
 	}
 
 	public Array<GameObject> getGameObjectsForAddition() {
@@ -543,10 +543,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * @param screen that contains the stage with actors
 	 * @return true if setup was successful, false otherwise
 	 */
-	public boolean setup(AbstractScreen screen) {
-		this.stageActors = screen.getStageActors();
-		return true;
-	}
+	abstract public boolean setup(AbstractScreen screen);
 
 	/**
 	 * Override this method to implement a dialog that should be shown

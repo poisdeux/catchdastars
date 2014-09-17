@@ -10,18 +10,19 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.utils.ConfigurationItem;
+import com.strategames.engine.utils.Textures;
 
 public class Door extends GameObject {
-
-	public Door(Vector2 size) {
-		super(size);
-		// TODO Auto-generated constructor stub
+	public final static float WIDTH = 0.30f;
+	public final static float HEIGHT = 0.30f;
+	
+	public Door() {
+		super(new Vector2(WIDTH, HEIGHT));
 	}
-
+	
 	@Override
 	protected TextureRegion createImage() {
-		// TODO Auto-generated method stub
-		return null;
+		return Textures.getInstance().passageToNextLevel;
 	}
 
 	@Override

@@ -121,8 +121,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	public boolean setup(AbstractScreen screen) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
-		super.setup(screen);
-
 		Level level = getLevel();
 		if( level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
