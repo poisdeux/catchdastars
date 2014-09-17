@@ -1,173 +1,181 @@
 
 xhdpi.png
+size: 972,504
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-cash_register
-  rotate: false
-  xy: 1, 101
-  size: 380, 402
-  orig: 380, 402
-  offset: 0, 0
-  index: -1
-aj_balloon_blue
-  rotate: false
-  xy: 383, 369
-  size: 96, 134
-  orig: 96, 134
-  offset: 0, 0
-  index: -1
-aj_balloon_red
-  rotate: false
-  xy: 383, 233
-  size: 96, 134
-  orig: 96, 134
-  offset: 0, 0
-  index: -1
-icecube-part01
-  rotate: false
-  xy: 1, 1
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube
-  rotate: false
-  xy: 1, 1
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part02
-  rotate: false
-  xy: 481, 405
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part03
-  rotate: false
-  xy: 383, 133
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part04
-  rotate: false
-  xy: 99, 1
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part05
-  rotate: false
-  xy: 481, 305
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part06
-  rotate: false
-  xy: 579, 405
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part07
-  rotate: false
-  xy: 197, 1
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part08
-  rotate: false
-  xy: 481, 205
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part09
-  rotate: false
-  xy: 579, 305
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-icecube-part10
-  rotate: false
-  xy: 677, 405
-  size: 96, 98
-  orig: 96, 98
-  offset: 0, 0
-  index: -1
-star_blue
-  rotate: false
-  xy: 579, 207
-  size: 96, 96
-  orig: 96, 96
-  offset: 0, 0
-  index: -1
-star_red
-  rotate: false
-  xy: 677, 307
-  size: 96, 96
-  orig: 96, 96
-  offset: 0, 0
-  index: -1
-star_yellow
-  rotate: false
-  xy: 775, 407
-  size: 96, 96
-  orig: 96, 96
-  offset: 0, 0
-  index: -1
 Chalk-01
   rotate: false
-  xy: 295, 51
+  xy: 296, 52
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 481, 155
+  xy: 482, 156
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 677, 257
+  xy: 776, 358
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 775, 357
+  xy: 874, 456
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 873, 455
+  xy: 296, 2
   size: 48, 48
   orig: 48, 48
+  offset: 0, 0
+  index: -1
+aj_balloon_blue
+  rotate: false
+  xy: 384, 370
+  size: 96, 134
+  orig: 96, 134
+  offset: 0, 0
+  index: -1
+aj_balloon_red
+  rotate: false
+  xy: 384, 234
+  size: 96, 134
+  orig: 96, 134
+  offset: 0, 0
+  index: -1
+cash_register
+  rotate: false
+  xy: 2, 102
+  size: 380, 402
+  orig: 380, 402
   offset: 0, 0
   index: -1
 gridpoint
   rotate: false
-  xy: 295, 1
+  xy: 776, 308
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
+icecube
+  rotate: false
+  xy: 2, 2
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part01
+  rotate: false
+  xy: 2, 2
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part02
+  rotate: false
+  xy: 482, 406
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part03
+  rotate: false
+  xy: 384, 134
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part04
+  rotate: false
+  xy: 100, 2
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part05
+  rotate: false
+  xy: 482, 306
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part06
+  rotate: false
+  xy: 580, 406
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part07
+  rotate: false
+  xy: 198, 2
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part08
+  rotate: false
+  xy: 482, 206
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part09
+  rotate: false
+  xy: 580, 306
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
+icecube-part10
+  rotate: false
+  xy: 678, 406
+  size: 96, 98
+  orig: 96, 98
+  offset: 0, 0
+  index: -1
 icon-menu
   rotate: false
-  xy: 677, 207
+  xy: 924, 456
   size: 48, 48
   orig: 48, 48
+  offset: 0, 0
+  index: -1
+passagetonextlevel
+  rotate: false
+  xy: 580, 208
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 678, 308
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 776, 408
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 678, 210
+  size: 96, 96
+  orig: 96, 96
   offset: 0, 0
   index: -1

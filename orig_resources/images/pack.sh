@@ -10,6 +10,6 @@ function usage
 
 DENSITY="$1"
 
-export CLASSPATH=../libgdx/gdx.jar:../libgdx/extensions/gdx-tools/gdx-tools.jar
+export CLASSPATH=libgdx/gdx.jar:libgdx/gdx-tools.jar
 
-java com.badlogic.gdx.tools.imagepacker.TexturePacker2 gameobjects/"${DENSITY}"/pack gameobjects/"${DENSITY}"/packed "${DENSITY}"
+java com.badlogic.gdx.tools.texturepacker.TexturePacker gameobjects/"${DENSITY}"/pack gameobjects/"${DENSITY}"/packed "${DENSITY}"

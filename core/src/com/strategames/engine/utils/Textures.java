@@ -50,6 +50,7 @@ public class Textures {
 	public TextureRegion digit9;
 	public TextureRegion gridPoint;
 	public TextureRegion menu;
+	public TextureRegion passageToNextLevel;
 	public Texture		 Loading;
 	public Texture		 dot;
 	public Texture 		 bricksHorizontal;
@@ -174,6 +175,7 @@ public class Textures {
 		digit9 = atlas.findRegion("9");
 		gridPoint = atlas.findRegion("gridpoint");
 		menu = atlas.findRegion("icon-menu");
+		passageToNextLevel = atlas.findRegion("passagetonextlevel");
 		
 		String path = "images/"+screenDensity.name();
 		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");

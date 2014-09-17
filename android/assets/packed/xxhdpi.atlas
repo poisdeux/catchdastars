@@ -1,173 +1,181 @@
 
 xxhdpi.png
+size: 1010,977
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-cash_register
-  rotate: false
-  xy: 1, 353
-  size: 570, 603
-  orig: 570, 603
-  offset: 0, 0
-  index: -1
-aj_balloon_blue
-  rotate: false
-  xy: 1, 150
-  size: 144, 201
-  orig: 144, 201
-  offset: 0, 0
-  index: -1
-aj_balloon_red
-  rotate: false
-  xy: 573, 755
-  size: 144, 201
-  orig: 144, 201
-  offset: 0, 0
-  index: -1
-icecube-part01
-  rotate: false
-  xy: 1, 1
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube
-  rotate: false
-  xy: 1, 1
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part02
-  rotate: false
-  xy: 147, 204
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part03
-  rotate: false
-  xy: 573, 606
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part04
-  rotate: false
-  xy: 719, 809
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part05
-  rotate: false
-  xy: 147, 55
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part06
-  rotate: false
-  xy: 293, 204
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part07
-  rotate: false
-  xy: 573, 457
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part08
-  rotate: false
-  xy: 719, 660
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part09
-  rotate: false
-  xy: 865, 809
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-icecube-part10
-  rotate: false
-  xy: 293, 55
-  size: 144, 147
-  orig: 144, 147
-  offset: 0, 0
-  index: -1
-star_blue
-  rotate: false
-  xy: 719, 514
-  size: 144, 144
-  orig: 144, 144
-  offset: 0, 0
-  index: -1
-star_red
-  rotate: false
-  xy: 865, 663
-  size: 144, 144
-  orig: 144, 144
-  offset: 0, 0
-  index: -1
-star_yellow
-  rotate: false
-  xy: 865, 517
-  size: 144, 144
-  orig: 144, 144
-  offset: 0, 0
-  index: -1
 Chalk-01
   rotate: false
-  xy: 439, 279
+  xy: 440, 154
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Chalk-02
   rotate: false
-  xy: 573, 383
+  xy: 574, 404
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Chalk-03
   rotate: false
-  xy: 439, 205
+  xy: 440, 80
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Chalk-04
   rotate: false
-  xy: 439, 131
+  xy: 514, 154
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 Chalk-05
   rotate: false
-  xy: 439, 57
+  xy: 514, 80
   size: 72, 72
   orig: 72, 72
+  offset: 0, 0
+  index: -1
+aj_balloon_blue
+  rotate: false
+  xy: 2, 171
+  size: 144, 201
+  orig: 144, 201
+  offset: 0, 0
+  index: -1
+aj_balloon_red
+  rotate: false
+  xy: 574, 776
+  size: 144, 201
+  orig: 144, 201
+  offset: 0, 0
+  index: -1
+cash_register
+  rotate: false
+  xy: 2, 374
+  size: 570, 603
+  orig: 570, 603
   offset: 0, 0
   index: -1
 gridpoint
   rotate: false
-  xy: 647, 383
+  xy: 648, 404
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
+icecube
+  rotate: false
+  xy: 2, 22
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part01
+  rotate: false
+  xy: 2, 22
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part02
+  rotate: false
+  xy: 148, 225
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part03
+  rotate: false
+  xy: 574, 627
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part04
+  rotate: false
+  xy: 720, 830
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part05
+  rotate: false
+  xy: 148, 76
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part06
+  rotate: false
+  xy: 294, 225
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part07
+  rotate: false
+  xy: 574, 478
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part08
+  rotate: false
+  xy: 720, 681
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part09
+  rotate: false
+  xy: 866, 830
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
+icecube-part10
+  rotate: false
+  xy: 294, 76
+  size: 144, 147
+  orig: 144, 147
+  offset: 0, 0
+  index: -1
 icon-menu
   rotate: false
-  xy: 513, 279
+  xy: 148, 2
   size: 72, 72
   orig: 72, 72
+  offset: 0, 0
+  index: -1
+passagetonextlevel
+  rotate: false
+  xy: 720, 535
+  size: 144, 144
+  orig: 144, 144
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 866, 684
+  size: 144, 144
+  orig: 144, 144
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 866, 538
+  size: 144, 144
+  orig: 144, 144
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 440, 228
+  size: 144, 144
+  orig: 144, 144
   offset: 0, 0
   index: -1

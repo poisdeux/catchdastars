@@ -26,8 +26,8 @@ pack:
 
 install:
 	for density in mdpi hdpi xhdpi xxhdpi ; do \
-		cp -r /home/mbrekhof/projects/gdx/PopDaBalloons/images/gameobjects/$$density/packed/* /home/mbrekhof/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/packed/; \
-		cp /home/mbrekhof/projects/gdx/PopDaBalloons/images/gameobjects/$$density/*.png /home/mbrekhof/projects/gdx/PopDaBalloons/my-gdx-game-android/assets/images/$$density/; \
+		cp -r gameobjects/$$density/packed/* ../../android/assets/packed/; \
+		cp gameobjects/$$density/*.png ../../android/assets/images/$$density/; \
 	done
 
 clean:
