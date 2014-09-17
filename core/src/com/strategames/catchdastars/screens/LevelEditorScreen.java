@@ -40,6 +40,11 @@ import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.MenuButton;
 
+/**
+ * TODO: when returning from playing level gameobjects are not set to their original positions
+ * @author mbrekhof
+ *
+ */
 public class LevelEditorScreen extends AbstractScreen 
    implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
