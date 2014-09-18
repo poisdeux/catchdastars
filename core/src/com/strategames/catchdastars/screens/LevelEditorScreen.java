@@ -431,7 +431,7 @@ public class LevelEditorScreen extends AbstractScreen
 			return;
 		}
 
-		if( ! getGame().setup() ) {
+		if( ! getGame().setup(getStageActors()) ) {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
 			dialog.setOnClickListener(this);
 			dialog.create();

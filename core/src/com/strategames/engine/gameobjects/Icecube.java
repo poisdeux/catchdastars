@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
@@ -157,8 +158,10 @@ public class Icecube extends GameObject {
 			Icecube icecube2 = new Icecube();
 			splitObject(this.breakOfPart, icecube1, icecube2);
 			Game game = getGame();
-			game.addGameObject(icecube1);
-			game.addGameObject(icecube2);
+			Stage stage = getStage();
+			game.addGameObject(icecube1, stage);
+			game.addGameObject(icecube2, stage);
+			
 		}
 
 		//		drawBoundingBox(batch);

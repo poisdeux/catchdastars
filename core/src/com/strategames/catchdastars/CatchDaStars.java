@@ -116,7 +116,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public boolean setup() {
+	public boolean setup(Stage stage) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		Level level = getLevel();
@@ -160,7 +160,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			} else if( gameObject instanceof Icecube ) {
 				((Icecube) gameObject).addAllParts();
 			}
-			addGameObject(gameObject);
+			addGameObject(gameObject, stage);
 		}
 
 		return true;

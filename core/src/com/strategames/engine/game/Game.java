@@ -410,8 +410,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		return gameObjectsForDeletion;
 	}
 
-	public void addGameObject(GameObject object) {
-		Gdx.app.log("Game","addGameObject: "+object);
+	public void addGameObject(GameObject object, Stage stage) {
 		object.setGame(this);
 
 		if( this.gameState == GAME_STATE.RUNNING ) {
@@ -427,7 +426,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.gameObjectsInGame.add(object);
 		}
 
-		((AbstractScreen) currentScreen).getStageActors().addActor(object);
+		stage.addActor(object);
 	}
 
 	public Array<GameObject> getGameObjectsForAddition() {
@@ -541,9 +540,10 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	/**
 	 * Called by AbstractScreen when level is loaded and ready to start the game
+	 * @param Stage stage the stage that should hold the game objects
 	 * @return true if setup was successful, false otherwise
 	 */
-	abstract public boolean setup();
+	abstract public boolean setup(Stage stage);
 
 	/**
 	 * Override this method to implement a dialog that should be shown

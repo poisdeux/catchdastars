@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Text;
 import com.strategames.engine.screens.AbstractScreen;
@@ -130,7 +129,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		
 		this.levelImage.setText(level.getName());
 		
-		if( getGame().setup() ) {
+		if( getGame().setup(getStageActors()) ) {
 			this.levelLoaded = true;
 			startScreenCloseAnimation();
 		} else {
