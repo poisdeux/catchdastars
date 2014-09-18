@@ -24,6 +24,7 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.Levels;
+import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
@@ -115,6 +116,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 					level.setViewSize(new Vector2(game.getViewSize()));
 					int[] position = levelButtonsGrid.getPosition(button);
 					level.setPosition(position[0], position[1]);
+					ScreenBorder.create(level, game);
 					addLevel(level);
 				}
 

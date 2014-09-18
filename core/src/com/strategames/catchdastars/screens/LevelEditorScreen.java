@@ -431,18 +431,14 @@ public class LevelEditorScreen extends AbstractScreen
 			return;
 		}
 
-		Array<GameObject> gameObjects = level.getGameObjects();
-		
-		if( (gameObjects == null)  || ( gameObjects.size == 0 ) ) {
-			ScreenBorder.create(getGame());
-		}
-		
-		if( ! getGame().setup(this) ) {
+		if( ! getGame().setup() ) {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
 			dialog.setOnClickListener(this);
 			dialog.create();
 			dialog.show();
 		}
+
+		Array<GameObject> gameObjects = level.getGameObjects();
 		
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {

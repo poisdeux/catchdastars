@@ -1,5 +1,6 @@
 package com.strategames.engine.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -89,7 +90,6 @@ public class WallHorizontal extends Wall {
 			batch.draw(textures.bricksHorizontal, this.startHorizontalMiddlePart, y, this.endHorizontalMiddlePart, HEIGHT, 0, 0, this.amountOfParts, -1);			
 			batch.draw(textures.bricksHorizontalEndRight, this.startHorizontalEndPart, y, WIDTH, HEIGHT);
 		}
-
 		//		drawBoundingBox(batch);
 	}
 	

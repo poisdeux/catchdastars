@@ -23,7 +23,7 @@ import com.strategames.ui.helpers.FilledRectangleImage;
 
 public class LevelScreen extends AbstractScreen implements OnClickListener, OnLevelLoadedListener
 {	
-	private Image levelImage;
+	private Text levelImage;
 	private LevelPausedDialog levelPausedDialog;
 	private Stage stageActors;
 	private FilledRectangleImage filter;
@@ -45,8 +45,8 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		this.filter.setHeight(stage.getHeight());
 		this.filter.setColor(0f, 0f, 0f, 1f);
 		stage.addActor(this.filter);
-
-		this.levelImage = new Text(getGame().getLevel().getName());
+		
+		this.levelImage = new Text();
 		this.levelImage.setScale(2f);
 
 		float imageWidth = this.levelImage.getWidth();
@@ -127,8 +127,10 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			dialog.show();
 			return;
 		}
-
-		if( getGame().setup(this) ) {
+		
+		this.levelImage.setText(level.getName());
+		
+		if( getGame().setup() ) {
 			this.levelLoaded = true;
 			startScreenCloseAnimation();
 		} else {

@@ -22,12 +22,12 @@ import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
-import com.strategames.catchdastars.screens.GameCompleteScreen;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.LevelEditorScreen;
 import com.strategames.catchdastars.screens.SettingsScreen;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
+import com.strategames.engine.gameobjects.Door;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
@@ -36,13 +36,11 @@ import com.strategames.engine.gameobjects.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
-import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
@@ -118,7 +116,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public boolean setup(AbstractScreen screen) {
+	public boolean setup() {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
 		Level level = getLevel();
@@ -258,7 +256,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 		objects.add(icecube);
 		objects.add(new WallHorizontal());
 		objects.add(new WallVertical());
-
+		objects.add(new Door());
+		
 		for(GameObject object : objects) {
 			object.setGame(this);
 			object.setupImage();

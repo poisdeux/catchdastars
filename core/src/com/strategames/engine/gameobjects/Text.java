@@ -14,9 +14,9 @@ public class Text extends Image {
 	private static BitmapFont font;
 	private static ShaderProgram fontShader;
 
-	private String text;
+	private String text = "";
 
-	public Text(String text) {
+	public Text() {
 		super();
 
 		synchronized (this) {
@@ -33,12 +33,13 @@ public class Text extends Image {
 				}
 			}
 		}
-
-		this.text = text;
-
-		updateActorSize();
 	}
 
+	public void setText(String text) {
+		this.text = text;
+		updateActorSize();
+	}
+	
 	@Override
 	public void scaleBy(float scale) {
 		super.scaleBy(scale);
@@ -62,7 +63,7 @@ public class Text extends Image {
 
 	private void updateActorSize() {
 		// Make sure actor's size is updated properly
-		TextBounds bounds = font.getBounds(text);
+		TextBounds bounds = font.getBounds(this.text);
 		setWidth(bounds.width);
 		setHeight(bounds.height);
 	}

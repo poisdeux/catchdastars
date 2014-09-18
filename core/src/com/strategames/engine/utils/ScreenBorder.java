@@ -8,8 +8,8 @@ import com.strategames.engine.gameobjects.WallVertical;
 
 public class ScreenBorder {
 
-	static public void create(Game game) {
-		Vector3 worldSize = game.getWorldSize();	
+	static public void create(Level level, Game game) {
+		Vector3 worldSize = game.getWorldSize();
 		
 		Wall wTop = new WallHorizontal();
 		wTop.setGame(game);
@@ -18,12 +18,12 @@ public class ScreenBorder {
 		wTop.setBorder(true);
 		wTop.setupImage();
 		wTop.setupBody();
-		game.getLevel().addGameObject(wTop);
+		level.addGameObject(wTop);
 		
 		Wall wBottom = (Wall) wTop.copy();
 		wBottom.setPosition(wTop.getX(), -wBottom.getHalfHeight());
 		wBottom.setBorder(true);
-		game.getLevel().addGameObject(wBottom);
+		level.addGameObject(wBottom);
 		
 		Wall wLeft = new WallVertical();
 		wLeft.setGame(game);
@@ -33,13 +33,13 @@ public class ScreenBorder {
 		wLeft.setBorder(true);
 		wLeft.setupImage();
 		wLeft.setupBody();
-		game.getLevel().addGameObject(wLeft);
+		level.addGameObject(wLeft);
 		
 		Wall wRight = (Wall) wLeft.copy();
 		wRight.setPosition(worldSize.x - wRight.getHalfWidth(), wLeft.getY());
 		wRight.setBorder(true);
 		wRight.setupImage();
 		wRight.setupBody();
-		game.getLevel().addGameObject(wRight);
+		level.addGameObject(wRight);
 	}
 }

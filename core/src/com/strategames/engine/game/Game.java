@@ -411,6 +411,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void addGameObject(GameObject object) {
+		Gdx.app.log("Game","addGameObject: "+object);
 		object.setGame(this);
 
 		if( this.gameState == GAME_STATE.RUNNING ) {
@@ -540,10 +541,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	/**
 	 * Called by AbstractScreen when level is loaded and ready to start the game
-	 * @param screen that contains the stage with actors
 	 * @return true if setup was successful, false otherwise
 	 */
-	abstract public boolean setup(AbstractScreen screen);
+	abstract public boolean setup();
 
 	/**
 	 * Override this method to implement a dialog that should be shown
