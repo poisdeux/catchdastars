@@ -200,7 +200,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setupBody() {
 		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
 			this.body = createBody();
-			this.body.setUserData(this);
+			if( this.body != null ) {
+				this.body.setUserData(this);
+			}
 		} else {
 			Gdx.app.log("GameObject", "setupBody: game or world is null for "+getName());
 		}
