@@ -22,14 +22,15 @@ import com.strategames.catchdastars.dialogs.ChangeWorldSizeDialog;
 import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobjects.Door;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Wall;
+import com.strategames.engine.gameobjects.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
-import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -40,13 +41,8 @@ import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ButtonListener;
 import com.strategames.ui.widgets.MenuButton;
 
-/**
- * TODO: when returning from playing level gameobjects are not set to their original positions
- * @author mbrekhof
- *
- */
 public class LevelEditorScreen extends AbstractScreen 
-   implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
+implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
 
 	private ButtonsDialog mainMenu;
 	private Vector2 dragDirection;
@@ -63,12 +59,12 @@ public class LevelEditorScreen extends AbstractScreen
 
 	private Grid grid;
 	private boolean snapToGrid;
-	
+
 	private Vector3 worldSize;
 
 	private float cameraZoomInitial;
 	private OrthographicCamera camera;
-	
+
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
@@ -150,13 +146,13 @@ public class LevelEditorScreen extends AbstractScreen
 		getMultiplexer().addProcessor(stage);
 		this.camera = (OrthographicCamera) stage.getCamera();
 		zoomCamera((OrthographicCamera) stage.getCamera());
-		
+
 		//This is added to the actor stage as we use
 		//game objects in the menu
 		setupMenu(stage);
 
 		getGame().pauseGame();
-		
+
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
 	}
 
@@ -187,7 +183,7 @@ public class LevelEditorScreen extends AbstractScreen
 		saveLevel();
 		return false;
 	}
-	
+
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
@@ -211,7 +207,7 @@ public class LevelEditorScreen extends AbstractScreen
 
 		Stage stageUIActors = getStageUIActors();
 		Stage stageActors = getStageActors();
-		
+
 		stageUIActors.screenToStageCoordinates(touchPosition);
 		this.uiElementHit = stageUIActors.hit(touchPosition.x, touchPosition.y, false);
 		touchPosition.set(x, y);   //reset vector as we use different metrics for actor stage
@@ -222,7 +218,7 @@ public class LevelEditorScreen extends AbstractScreen
 		if( ( actor instanceof Wall ) && ( ((Wall) actor).isBorder() ) ) {
 			return true;
 		}
-		
+
 		this.tap.setActor(actor);
 		this.actorTouched = actor;
 
@@ -238,30 +234,57 @@ public class LevelEditorScreen extends AbstractScreen
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if( this.actorTouched != null ) {
-			GameObject gameObject = (GameObject) this.actorTouched;
+		if( this.actorTouched == null ) {
+			return false;
+		}
+		
+		GameObject gameObject = (GameObject) this.actorTouched;
 
-			//If menu item create new menu item at initial position
-			if( gameObject.isMenuItem() ) {
-				Vector2 v = gameObject.getInitialPosition();
-				if( inGameArea(gameObject) ) {
-					gameObject.setMenuItem(false);
-					gameObject.setSaveToFile(true);
-					getGame().getLevel().addGameObject(gameObject);
-					addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
-				} else {
-					//return menu item to its original position
-					gameObject.moveTo(v.x, v.y);
-				}
+		//If gameObject came from the menu create a new menu item
+		if( gameObject.isMenuItem() ) {
+			Vector2 v = gameObject.getInitialPosition();
+			if( inGameArea(gameObject) ) {
+				gameObject.setMenuItem(false);
+				gameObject.setSaveToFile(true);
+				getGame().getLevel().addGameObject(gameObject);
+				addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
 			} else {
-				if( ! inGameArea(gameObject) ) {
-					getGame().getLevel().removeGameObject(gameObject);
-					gameObject.remove();
+				//return menu item to its original position
+				gameObject.moveTo(v.x, v.y);
+			}
+		} 
+
+		//Make sure Door is positioned on a Wall
+		if( gameObject instanceof Door ) {
+			Gdx.app.log("LevelEditorScreen", "touchUp: actor=Door");
+
+			//check if Door is at a Wall
+			Vector2 v = getStageActors().screenToStageCoordinates(new Vector2(screenX, screenY));
+			Array<Actor> actors = getActorsAt(v.x, v.y);
+			Actor wallActor = null;
+			for(int i = 0; i < actors.size; i++) {
+				Gdx.app.log("LevelEditorScreen", "touchUp: actor="+actors.get(i));
+				if( actors.get(i) instanceof Wall ) {
+					wallActor = actors.get(i);
 				}
 			}
-			return true;
+			if( wallActor == null ) {
+				getGame().getLevel().removeGameObject(gameObject);
+				gameObject.remove();
+			} else {
+				if( wallActor instanceof WallVertical ) {
+					gameObject.moveTo(wallActor.getX(), gameObject.getY());
+				} else {
+					gameObject.moveTo(gameObject.getX(), wallActor.getY());
+				}
+			}
 		}
-		return false;
+		
+		if( ! inGameArea(gameObject) ) {
+			getGame().getLevel().removeGameObject(gameObject);
+			gameObject.remove();
+		}
+		return true;
 	}
 
 	@Override
@@ -361,7 +384,7 @@ public class LevelEditorScreen extends AbstractScreen
 	public boolean panStop(float x, float y, int pointer, int button) {
 		return false;
 	}
-	
+
 	/**
 	 * Creates a copy of object and adds the copy to the game
 	 * @param object
@@ -438,17 +461,17 @@ public class LevelEditorScreen extends AbstractScreen
 		}
 
 		Array<GameObject> gameObjects = level.getGameObjects();
-		
+
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {
 				gameObject.initializeConfigurationItems();
 				deselectGameObject(gameObject);
 			}
 		}
-		
+
 		super.show();
 	}
-	
+
 	@Override
 	protected Timeline showAnimation() {
 		// TODO Auto-generated method stub
@@ -460,7 +483,7 @@ public class LevelEditorScreen extends AbstractScreen
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
@@ -495,7 +518,7 @@ public class LevelEditorScreen extends AbstractScreen
 		//Add screenborder Wall as this is placed halfway the actual screenborder
 		maxObjectSize.x += 0.6*Wall.WIDTH;
 		maxObjectSize.y += 0.6*Wall.HEIGHT;
-		
+
 		boolean screenOK = false;
 		while( ! screenOK ) {
 			Vector3 screenSize = new Vector3(0f, Gdx.graphics.getHeight(), 0f);
@@ -589,6 +612,14 @@ public class LevelEditorScreen extends AbstractScreen
 			this.grid.map(v);
 		}		
 
+		if( ! ( actor instanceof Door ) ) {
+			v = alignGameObject(stage, gameObject, v);
+		}
+
+		gameObject.moveTo(v.x, v.y);
+	}
+
+	private Vector2 alignGameObject(Stage stage, GameObject gameObject, Vector2 v) {
 		Rectangle rectangle = gameObject.getBoundingRectangle();
 		float curX = rectangle.x;
 		float curY = rectangle.y;
@@ -616,10 +647,8 @@ public class LevelEditorScreen extends AbstractScreen
 		} else {
 			rectangle.y = v.y;
 		}
-
-		gameObject.moveTo(rectangle.x, rectangle.y);
+		return new Vector2(rectangle.x, rectangle.y);
 	}
-
 	private void displayGrid(boolean display) {
 		if( display ) {
 			getStageActors().addActor(this.grid);
@@ -630,7 +659,7 @@ public class LevelEditorScreen extends AbstractScreen
 
 	private void createMainMenu() {
 		final Stage stageUIActors = getStageUIActors();
-		
+
 		this.mainMenu = new ButtonsDialog(stageUIActors, getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 
 		this.mainMenu.add("Tools", new ClickListener() {
@@ -697,7 +726,7 @@ public class LevelEditorScreen extends AbstractScreen
 	private void setupMenu(Stage stage) {
 		Game game = getGame();
 		ArrayList<GameObject> gameObjects = game.getAvailableGameObjects();
-		
+
 		Vector2 viewSize = game.getViewSize();
 
 		Gdx.app.log("LevelEditorScreen", "setupMenu: viewSize="+viewSize);
@@ -710,7 +739,7 @@ public class LevelEditorScreen extends AbstractScreen
 		float y = viewSize.y - Wall.HEIGHT;
 
 		Stage stageUIActors = getStageUIActors();
-		
+
 		Vector3 screenCoords =  stage.getCamera().project(new Vector3(x, Wall.HEIGHT, 0f));
 		Vector3 stageUICoords = stageUIActors.getCamera().unproject(screenCoords);
 		//Add menu button
@@ -785,6 +814,22 @@ public class LevelEditorScreen extends AbstractScreen
 		OrthographicCamera camera = (OrthographicCamera) getStageActors().getCamera();
 		camera.viewportWidth =  viewSize.x * w;
 		camera.viewportHeight =  viewSize.y * h;
+	}
+
+	private Array<Actor> getActorsAt(float x, float y) {
+		Array<Actor> actors = getStageActors().getActors();
+		Array<Actor> actorsHit = new Array<Actor>();
+		Vector2 point = new Vector2();
+		for(int i = 0; i < actors.size; i++) {
+			Actor actor = actors.get(i);
+			actor.parentToLocalCoordinates(point.set(x, y));
+			Gdx.app.log("LevelEditorScreen", "getActorsAt: testing at ("+x+","+y+") actor="+actors.get(i));
+			if( actor.hit(point.x, point.y, false) != null ) {
+				Gdx.app.log("LevelEditorScreen", "getActorsAt: actor hit");
+				actorsHit.add(actor);
+			}
+		}
+		return actorsHit;
 	}
 }
 
