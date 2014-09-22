@@ -11,10 +11,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -64,7 +71,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private int amountOfRedBalloons;
 
 	private Array<Door> doors;
-	
+
 	private final int scorePerBalloon = 10;
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
@@ -152,7 +159,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		this.doors = new Array<Door>();
 		Array<Wall> border = new Array<Wall>();
-		
+
 		for(GameObject gameObject : gameObjects ) {
 			if( gameObject instanceof Door ) {
 				this.doors.add((Door) gameObject);
@@ -182,7 +189,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				addGameObject(gameObject, stage);
 			}
 		}
-		
+
 		//Setup doors
 		for(int i = 0; i < this.doors.size; i++) {
 			Door door = this.doors.get(i);
@@ -195,7 +202,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				}
 			}
 		}
-		
+
 		return true;
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
@@ -230,48 +237,91 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void levelComplete() {
-		//Open doors
 		openDoors();
 		//Place sensors at doors
 		//showLevelCompleteDialog when user passes through door
 	}
-	
+
 	private void openDoors() {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
 		Stage stage = screen.getStageActors();
-		
+
 		for(int i = 0; i < this.doors.size; i++) {
 			Door door = this.doors.get(i);
-			Vector2 v = new Vector2(door.getX(), door.getY());
+			Vector2 cutPoint = new Vector2(door.getX(), door.getY());
 			Wall w = door.getWall();
 			if(w instanceof WallVertical) {
-				Gdx.app.log("CatchDaStars", "openDoors: vertical");
-				//Open wall vertically
-				Wall bottom = new WallVertical();
-				bottom.setPosition(w.getX(), w.getY());
-				bottom.setLength(v.y - w.getY());
-				addGameObject(bottom, stage);
-				
-				Wall top = new WallVertical();
-				top.setPosition(v.x, v.y);
-				top.setLength(w.getLength() - bottom.getLength());
-				addGameObject(top, stage);
-				
-//				Gdx.app.log("CatchDaStars", "openDoors: bottom="+bottom+"\ntop="+top+"\nw="+w);
-				w.setCanBeRemoved(true);
-				deleteGameObject(w);
-				
-				Timeline timeline = Timeline.createSequence();
-				timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
-						.target(v.y + Wall.HEIGHT));
-				screen.startTimeline(timeline);
+				openVerticalWall(w, cutPoint, screen, stage);
 			} else {
-				//Open wall horizontally
-				Gdx.app.log("CatchDaStars", "openDoors: horizontal");
+				openHorizontalWall(w, cutPoint, screen, stage);
 			}
 		}
+
+		createLeaveWorldSensor();
 	}
-	
+
+	private void createLeaveWorldSensor() {
+		//create sensor around world to detect if user leaves level
+		Vector3 worldSize = getWorldSize();
+		Vector2 beginning = new Vector2(worldSize.x, worldSize.y).add(-Wall.WIDTH, -Wall.HEIGHT);
+		Vector2 end = new Vector2(worldSize.x, worldSize.y).add(Wall.WIDTH, Wall.HEIGHT);
+
+		Vector2 leftBottom = new Vector2(beginning.x, beginning.y);
+		Vector2 rightBottom = new Vector2(end.x, beginning.y);
+		Vector2 rightTop = new Vector2(end.x, end.y);
+		Vector2 leftTop = new Vector2(beginning.x, end.y);
+
+		ChainShape chain = new ChainShape();
+		chain.createChain(new Vector2[] {leftBottom, rightBottom, rightTop, leftTop});
+
+		BodyDef bd = new BodyDef();  
+		bd.position.set(beginning);
+		bd.type = BodyType.StaticBody;
+		Body body = getWorld().createBody(bd);
+		Fixture fixture = body.createFixture(chain, 0.0f);
+		fixture.setSensor(true);
+	}
+
+	private void openVerticalWall(Wall w, Vector2 cutPoint, AbstractScreen screen, Stage stage) {
+		Wall bottom = new WallVertical();
+		bottom.setPosition(w.getX(), w.getY());
+		bottom.setLength(cutPoint.y - w.getY());
+		addGameObject(bottom, stage);
+
+		Wall top = new WallVertical();
+		top.setPosition(cutPoint.x, cutPoint.y);
+		top.setLength(w.getLength() - bottom.getLength());
+		addGameObject(top, stage);
+
+		w.setCanBeRemoved(true);
+		deleteGameObject(w);
+
+		Timeline timeline = Timeline.createSequence();
+		timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
+				.target(cutPoint.y + Wall.HEIGHT));
+		screen.startTimeline(timeline);
+	}
+
+	private void openHorizontalWall(Wall w, Vector2 cutPoint, AbstractScreen screen, Stage stage) {
+		Wall left = new WallHorizontal();
+		left.setPosition(w.getX(), w.getY());
+		left.setLength(v.x - w.getX());
+		addGameObject(left, stage);
+
+		Wall right = new WallHorizontal();
+		right.setPosition(v.x, v.y);
+		right.setLength(w.getLength() - left.getLength());
+		addGameObject(right, stage);
+
+		w.setCanBeRemoved(true);
+		deleteGameObject(w);
+
+		Timeline timeline = Timeline.createSequence();
+		timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
+				.target(v.x + Wall.WIDTH));
+		screen.startTimeline(timeline);
+	}
+
 	private void showLevelCompleteDialog() {
 		/**
 		 * TODO: refactor to check if all levels have been completed
