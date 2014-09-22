@@ -92,6 +92,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private FPSLogger fpsLogger;
 
+	private boolean levelCompleteCalled = false;
+	
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -191,6 +193,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void startGame() {
 		this.gameState = GAME_STATE.RUNNING;
 		this.levelState = LEVEL_STATE.INPROGRESS;
+		this.levelCompleteCalled = false;
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
@@ -394,6 +397,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	/**
 	 * Queues a game object for removal. Note that this happens asynchronously.
+	 * <BR/>
+	 * Note that objects will only be removed is {@link GameObject#setCanBeRemoved(boolean)} has been
+	 * called and set to true
 	 * @param object the GameObject to be removed
 	 */
 	public void deleteGameObject(GameObject object) {
@@ -459,9 +465,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 			handleAddGameObjectsQueue();
 
-			if( this.levelState == LEVEL_STATE.COMPLETE ) {
-				pauseGame();
-				showLevelCompleteDialog();
+			if( ( this.levelState == LEVEL_STATE.COMPLETE ) && ( levelCompleteCalled == false ) ){
+				levelComplete();
+				levelCompleteCalled = true;
 			} else if( this.levelState == LEVEL_STATE.FAILED ) {
 				pauseGame();
 				showLevelFailedDialog();
@@ -546,10 +552,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	abstract public boolean setup(Stage stage);
 
 	/**
-	 * Override this method to implement a dialog that should be shown
-	 * when game is in state {@link #GAME_STATE_COMPLETE}
+	 * Override this method to create a custom action when level is completed 
 	 */
-	public void showLevelCompleteDialog() {
+	public void levelComplete() {
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
 
 		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());

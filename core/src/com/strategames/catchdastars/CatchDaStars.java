@@ -2,9 +2,13 @@ package com.strategames.catchdastars;
 
 import java.util.ArrayList;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -31,9 +35,11 @@ import com.strategames.engine.gameobjects.Door;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Icecube;
 import com.strategames.engine.gameobjects.Star;
+import com.strategames.engine.gameobjects.Wall;
 import com.strategames.engine.gameobjects.WallHorizontal;
 import com.strategames.engine.gameobjects.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Textures;
@@ -57,8 +63,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private int amountOfBlueBalloons;
 	private int amountOfRedBalloons;
 
-	private Array<GameObject> doors;
-
+	private Array<Door> doors;
+	
 	private final int scorePerBalloon = 10;
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
@@ -144,11 +150,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		this.doors = new Array<GameObject>();
+		this.doors = new Array<Door>();
+		Array<Wall> border = new Array<Wall>();
 		
 		for(GameObject gameObject : gameObjects ) {
 			if( gameObject instanceof Door ) {
-				this.doors.add(gameObject);
+				this.doors.add((Door) gameObject);
 			} else {
 				if( gameObject instanceof Star ) {
 					if( gameObject instanceof StarBlue ) {
@@ -166,10 +173,29 @@ public class CatchDaStars extends Game implements OnClickListener {
 					}
 				} else if( gameObject instanceof Icecube ) {
 					((Icecube) gameObject).addAllParts();
+				} else if( gameObject instanceof Wall ) {
+					Wall w = (Wall) gameObject;
+					if(w.isBorder()) {
+						border.add(w);
+					}
 				}
 				addGameObject(gameObject, stage);
 			}
 		}
+		
+		//Setup doors
+		for(int i = 0; i < this.doors.size; i++) {
+			Door door = this.doors.get(i);
+			Rectangle rectangle = door.getBoundingRectangle();
+			for(int j = 0; j < border.size; j++) {
+				Wall wall = border.get(j);
+				Rectangle rectangleBorder = wall.getBoundingRectangle();
+				if(rectangle.overlaps(rectangleBorder)) {
+					door.setWall(wall);
+				}
+			}
+		}
+		
 		return true;
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
@@ -203,8 +229,50 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public void showLevelCompleteDialog() {
+	public void levelComplete() {
+		//Open doors
+		openDoors();
+		//Place sensors at doors
+		//showLevelCompleteDialog when user passes through door
+	}
+	
+	private void openDoors() {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
+		Stage stage = screen.getStageActors();
+		
+		for(int i = 0; i < this.doors.size; i++) {
+			Door door = this.doors.get(i);
+			Vector2 v = new Vector2(door.getX(), door.getY());
+			Wall w = door.getWall();
+			if(w instanceof WallVertical) {
+				Gdx.app.log("CatchDaStars", "openDoors: vertical");
+				//Open wall vertically
+				Wall bottom = new WallVertical();
+				bottom.setPosition(w.getX(), w.getY());
+				bottom.setLength(v.y - w.getY());
+				addGameObject(bottom, stage);
+				
+				Wall top = new WallVertical();
+				top.setPosition(v.x, v.y);
+				top.setLength(w.getLength() - bottom.getLength());
+				addGameObject(top, stage);
+				
+//				Gdx.app.log("CatchDaStars", "openDoors: bottom="+bottom+"\ntop="+top+"\nw="+w);
+				w.setCanBeRemoved(true);
+				deleteGameObject(w);
+				
+				Timeline timeline = Timeline.createSequence();
+				timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
+						.target(v.y + Wall.HEIGHT));
+				screen.startTimeline(timeline);
+			} else {
+				//Open wall horizontally
+				Gdx.app.log("CatchDaStars", "openDoors: horizontal");
+			}
+		}
+	}
+	
+	private void showLevelCompleteDialog() {
 		/**
 		 * TODO: refactor to check if all levels have been completed
 		 */
@@ -227,7 +295,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		levelCompleteDialog.show();
 
 		setTotalScore(getTotalScore() + calculateScore());
-		//		}
 	}
 
 	@Override

@@ -222,6 +222,20 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		setPosition(x, y);
 	}
 	
+	public void moveX(float x) {
+		if( this.body != null ) {
+			this.body.setTransform(x, getY(), this.body.getAngle());
+		} 
+		setX(x);
+	}
+	
+	public void moveY(float y) {
+		if( this.body != null ) {
+			this.body.setTransform(getX(), y, this.body.getAngle());
+		} 
+		setY(y);
+	}
+	
 	/**
 	 * Returns the bounding rectangle for this game object.
 	 * If you reposition or resize the game object you should again call this

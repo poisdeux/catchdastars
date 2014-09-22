@@ -231,6 +231,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		SoundEffect.releaseAll();
 	}
 
+	public void startTimeline(Timeline timeline) {
+		timeline.start(this.tweenManager);
+	}
+	
 	public Stage getStageActors() {
 		if( this.stageActors == null ) {
 			Vector3 sizeWorld = this.game.getWorldSize();

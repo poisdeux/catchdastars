@@ -571,8 +571,6 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		LevelWriter.save(getGame().getLevel());
 	}
 
-
-
 	/**
 	 * Moves actor to position v.
 	 * @param actor
@@ -581,9 +579,6 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	 * its value
 	 */
 	private void moveActor(Stage stage, Actor actor, Vector2 v) {
-		Gdx.app.log("LevelEditorScreen", "moveActor before actor="+actor+", v="+v);
-		
-		
 		GameObject gameObject = (GameObject) actor;
 
 		if( this.snapToGrid ) {
@@ -594,7 +589,6 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 			v = alignGameObject(stage, gameObject, v);
 		}
 
-		Gdx.app.log("LevelEditorScreen", "moveActor after actor="+actor+", v="+v);
 		gameObject.moveTo(v.x, v.y);
 	}
 

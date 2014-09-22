@@ -17,6 +17,8 @@ public class Door extends GameObject {
 	public final static float WIDTH = 0.30f;
 	public final static float HEIGHT = 0.30f;
 	
+	private Wall wall;
+	
 	public Door() {
 		super(new Vector2(WIDTH, HEIGHT));
 	}
@@ -88,5 +90,12 @@ public class Door extends GameObject {
 	public void applyForce() {
 		
 	}
-
+	
+	public Wall getWall() {
+		return wall;
+	}
+	
+	public void setWall(Wall wall) {
+		this.wall = wall;
+	}
 }

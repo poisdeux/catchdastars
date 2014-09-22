@@ -93,6 +93,8 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 		String name = jsonData.name();
 		if( name.contentEquals("length")) {
 			setLength(jsonData.asFloat());
+		} else if ( name.contentEquals("border")) {
+			setBorder(jsonData.asBoolean());
 		}
 	}
 
