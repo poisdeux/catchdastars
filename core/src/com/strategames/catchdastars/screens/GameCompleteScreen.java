@@ -8,12 +8,12 @@ import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.dialogs.GameCompleteDialog;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.sounds.BalloonGrowSound;
 import com.strategames.engine.sounds.BalloonPopSound;

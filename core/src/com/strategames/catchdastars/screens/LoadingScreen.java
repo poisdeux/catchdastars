@@ -8,7 +8,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.screens.AbstractScreen;

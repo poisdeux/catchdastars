@@ -6,9 +6,9 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobjects.Text;
+import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.Level;

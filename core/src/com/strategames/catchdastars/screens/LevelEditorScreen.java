@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -26,6 +25,7 @@ import com.strategames.engine.gameobjects.Door;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Wall;
 import com.strategames.engine.gameobjects.WallVertical;
+import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
@@ -147,10 +147,6 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		this.camera = (OrthographicCamera) stage.getCamera();
 		zoomCamera((OrthographicCamera) stage.getCamera());
 
-		//This is added to the actor stage as we use
-		//game objects in the menu
-		setupMenu(stage);
-
 		getGame().pauseGame();
 
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
@@ -237,35 +233,29 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		if( this.actorTouched == null ) {
 			return false;
 		}
-		
+
 		GameObject gameObject = (GameObject) this.actorTouched;
 
 		//If gameObject came from the menu create a new menu item
 		if( gameObject.isMenuItem() ) {
 			Vector2 v = gameObject.getInitialPosition();
-			if( inGameArea(gameObject) ) {
-				gameObject.setMenuItem(false);
-				gameObject.setSaveToFile(true);
-				getGame().getLevel().addGameObject(gameObject);
-				addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
-			} else {
-				//return menu item to its original position
-				gameObject.moveTo(v.x, v.y);
-			}
+			gameObject.setMenuItem(false);
+			gameObject.setSaveToFile(true);
+			getGame().getLevel().addGameObject(gameObject);
+			addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
 		} 
 
 		//Make sure Door is positioned on a Wall
 		if( gameObject instanceof Door ) {
-			Gdx.app.log("LevelEditorScreen", "touchUp: actor=Door");
-
 			//check if Door is at a Wall
-			Vector2 v = getStageActors().screenToStageCoordinates(new Vector2(screenX, screenY));
-			Array<Actor> actors = getActorsAt(v.x, v.y);
+			Array<Actor> actors = getStageActors().getActorsOverlapping(gameObject);
 			Actor wallActor = null;
 			for(int i = 0; i < actors.size; i++) {
-				Gdx.app.log("LevelEditorScreen", "touchUp: actor="+actors.get(i));
-				if( actors.get(i) instanceof Wall ) {
-					wallActor = actors.get(i);
+				Actor actor = actors.get(i);
+				if( actor instanceof Wall ) {
+					if(! ((Wall) actor).isMenuItem() ) {
+						wallActor = actors.get(i);
+					}
 				}
 			}
 			if( wallActor == null ) {
@@ -278,9 +268,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 					gameObject.moveTo(gameObject.getX(), wallActor.getY());
 				}
 			}
-		}
-		
-		if( ! inGameArea(gameObject) ) {
+		} else if( ! inGameArea(gameObject) ) {
 			getGame().getLevel().removeGameObject(gameObject);
 			gameObject.remove();
 		}
@@ -469,7 +457,8 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 			}
 		}
 
-		super.show();
+		//We setup menu last to make sure menu items are drawn on top
+		setupMenu(getStageActors());
 	}
 
 	@Override
@@ -587,16 +576,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		LevelWriter.save(getGame().getLevel());
 	}
 
-	private Actor getActor(Stage stage, Rectangle rectangle) {
-		Array<Actor> actors = stage.getActors();
-		for(Actor actor : actors) {
-			if( this.selectedGameObjects.contains(actor) ) continue;
-			Rectangle rectangleActor = new Rectangle(actor.getX(), actor.getY(), 
-					actor.getWidth(), actor.getHeight());
-			if( rectangle.overlaps(rectangleActor) ) return actor;
-		}
-		return null;
-	}
+
 
 	/**
 	 * Moves actor to position v.
@@ -633,7 +613,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		// position object at new X coordinate adding half the amount we
 		// subtracted from the width
 		rectangle.x = v.x + 0.01f;   
-		if( getActor(stage, rectangle) != null ) { // check to see if new X coordinate does not overlap
+		if( stage.getActorsInRectangle(rectangle) != null ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
 		} else {
 			rectangle.x = v.x;
@@ -642,13 +622,14 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		// position object at new Y coordinate adding half the amount we
 		// subtracted from the height
 		rectangle.y = v.y + 0.01f;
-		if( getActor(stage, rectangle) != null ) { // check to see if new Y coordinate does not overlap
+		if( stage.getActorsInRectangle(rectangle) != null ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
 		} else {
 			rectangle.y = v.y;
 		}
 		return new Vector2(rectangle.x, rectangle.y);
 	}
+
 	private void displayGrid(boolean display) {
 		if( display ) {
 			getStageActors().addActor(this.grid);
@@ -729,7 +710,6 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 
 		Vector2 viewSize = game.getViewSize();
 
-		Gdx.app.log("LevelEditorScreen", "setupMenu: viewSize="+viewSize);
 		/**
 		 * We always set menu at the right as otherwise the action bar will 
 		 * trigger on Android when trying to pick a game object
@@ -816,21 +796,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		camera.viewportHeight =  viewSize.y * h;
 	}
 
-	private Array<Actor> getActorsAt(float x, float y) {
-		Array<Actor> actors = getStageActors().getActors();
-		Array<Actor> actorsHit = new Array<Actor>();
-		Vector2 point = new Vector2();
-		for(int i = 0; i < actors.size; i++) {
-			Actor actor = actors.get(i);
-			actor.parentToLocalCoordinates(point.set(x, y));
-			Gdx.app.log("LevelEditorScreen", "getActorsAt: testing at ("+x+","+y+") actor="+actors.get(i));
-			if( actor.hit(point.x, point.y, false) != null ) {
-				Gdx.app.log("LevelEditorScreen", "getActorsAt: actor hit");
-				actorsHit.add(actor);
-			}
-		}
-		return actorsHit;
-	}
+
 }
 
 
