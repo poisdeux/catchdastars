@@ -441,19 +441,14 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 			return;
 		}
 
-		if( ! getGame().setup(getStageActors()) ) {
-			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
-			dialog.setOnClickListener(this);
-			dialog.create();
-			dialog.show();
-		}
-
+		Game game = getGame();
+		Stage stage = getStageActors();
 		Array<GameObject> gameObjects = level.getGameObjects();
-
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {
 				gameObject.initializeConfigurationItems();
 				deselectGameObject(gameObject);
+				game.addGameObject(gameObject, stage);
 			}
 		}
 
@@ -586,6 +581,9 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	 * its value
 	 */
 	private void moveActor(Stage stage, Actor actor, Vector2 v) {
+		Gdx.app.log("LevelEditorScreen", "moveActor before actor="+actor+", v="+v);
+		
+		
 		GameObject gameObject = (GameObject) actor;
 
 		if( this.snapToGrid ) {
@@ -596,6 +594,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 			v = alignGameObject(stage, gameObject, v);
 		}
 
+		Gdx.app.log("LevelEditorScreen", "moveActor after actor="+actor+", v="+v);
 		gameObject.moveTo(v.x, v.y);
 	}
 
@@ -612,8 +611,8 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 
 		// position object at new X coordinate adding half the amount we
 		// subtracted from the width
-		rectangle.x = v.x + 0.01f;   
-		if( stage.getActorsInRectangle(rectangle) != null ) { // check to see if new X coordinate does not overlap
+		rectangle.x = v.x + 0.01f;
+		if( stage.getActorsInRectangle(rectangle).size > 0 ) { // check to see if new X coordinate does not overlap
 			rectangle.x = curX;
 		} else {
 			rectangle.x = v.x;
@@ -622,7 +621,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		// position object at new Y coordinate adding half the amount we
 		// subtracted from the height
 		rectangle.y = v.y + 0.01f;
-		if( stage.getActorsInRectangle(rectangle) != null ) { // check to see if new Y coordinate does not overlap
+		if( stage.getActorsInRectangle(rectangle).size > 0 ) { // check to see if new Y coordinate does not overlap
 			rectangle.y = curY;
 		} else {
 			rectangle.y = v.y;
