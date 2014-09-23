@@ -2,6 +2,7 @@ package com.strategames.engine.tweens;
 
 import aurelienribon.tweenengine.TweenAccessor;
 
+import com.badlogic.gdx.Gdx;
 import com.strategames.engine.gameobjects.GameObject;
 
 public class GameObjectAccessor implements TweenAccessor<GameObject> {
@@ -35,7 +36,8 @@ public class GameObjectAccessor implements TweenAccessor<GameObject> {
     @Override
     public void setValues(GameObject target, int tweenType, float[] newValues) {
         switch (tweenType) {
-            case POSITION_X: 
+            case POSITION_X:
+            	Gdx.app.log("GameObjectAccessor", "wordt dit aangeroepen?");
             	target.moveX(newValues[0]);
             	break;
             case POSITION_Y: 

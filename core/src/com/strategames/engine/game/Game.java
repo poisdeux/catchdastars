@@ -30,6 +30,7 @@ import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
+import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
@@ -197,7 +198,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
-
+	
 	public void setLevelCompleted() {
 		this.levelState = LEVEL_STATE.COMPLETE;
 	}
@@ -686,6 +687,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private void registerTweens() {
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
+		Tween.registerAccessor(GameObject.class, new GameObjectAccessor());
 	}
 
 	private void startBox2DThread() {

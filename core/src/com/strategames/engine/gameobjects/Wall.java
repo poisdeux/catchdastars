@@ -49,6 +49,7 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 
 	@Override
 	protected Body createBody() {
+		Gdx.app.log("Wall", "createBody for "+this);
 		PolygonShape box = new PolygonShape();  
 		box.setAsBox(super.halfWidth, super.halfHeight, new Vector2(super.halfWidth, super.halfHeight), 0f);
 
@@ -162,14 +163,6 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void moveTo(float x, float y) {
-		if( this.body != null ) {
-			this.body.setTransform(x, y, this.body.getAngle());
-		}
-		setPosition(x, y);
 	}
 	
 	@Override

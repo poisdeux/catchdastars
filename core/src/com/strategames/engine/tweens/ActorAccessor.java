@@ -35,7 +35,8 @@ public class ActorAccessor implements TweenAccessor<Actor> {
     @Override
     public void setValues(Actor target, int tweenType, float[] newValues) {
         switch (tweenType) {
-            case POSITION_X: target.setX(newValues[0]); break;
+            case POSITION_X:
+            	target.setX(newValues[0]); break;
             case POSITION_Y: target.setY(newValues[0]); break;
             case POSITION_XY:
                 target.setX(newValues[0]);

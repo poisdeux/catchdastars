@@ -14,8 +14,8 @@ import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Textures;
 
 public class Door extends GameObject {
-	public final static float WIDTH = 0.30f;
-	public final static float HEIGHT = 0.30f;
+	public final static float WIDTH = 0.35f;
+	public final static float HEIGHT = 0.35f;
 	
 	private Wall wall;
 	

@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -21,6 +20,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.interfaces.SensorObject;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -34,11 +34,11 @@ import com.strategames.engine.utils.ConfigurationItem;
  * <br/>
  * and make sure your images and bodies are aligned. You can check this by calling
  * {@link #drawBoundingBox(SpriteBatch)} in {@link #draw(SpriteBatch, float)}.
- * 
+ *  
  * @author martijn brekhof
  *
  */
-abstract public class GameObject extends Image implements Json.Serializable {
+abstract public class GameObject extends Image implements Json.Serializable, SensorObject {
 	protected Body body;
 	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
@@ -174,6 +174,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.isHit;
 	}
 	
+	@Override
+	public void setHit(boolean hit) {
+		this.isHit = hit;
+	}
+	
 	/**
 	 * Setup the image and body for this game object.
 	 * <br/>
@@ -223,7 +228,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 	
 	public void moveX(float x) {
+		Gdx.app.log("GameObject", "moveX");
 		if( this.body != null ) {
+			Gdx.app.log("GameObject", "moving body");
 			this.body.setTransform(x, getY(), this.body.getAngle());
 		} 
 		setX(x);
@@ -419,7 +426,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	/**
 	 * Use this to remove object from game during gameplay. It starts the {@link #destroyAction()}
-	 * and sets {@link #isHit} to true.
+	 * and sets {@link #isHit} to true. 
+	 * <br/>
+	 * Note that is {@link #isHit} is true {@link #destroyAction()} will not be called.
 	 */
 	synchronized public void startRemoveAnimation() {
 		if( this.isHit ) { //prevent object from being destroyed multiple times during a removal animation
