@@ -34,15 +34,14 @@ import com.strategames.engine.gameobjects.Balloon;
 import com.strategames.engine.gameobjects.Door;
 import com.strategames.engine.gameobjects.GameObject;
 import com.strategames.engine.gameobjects.Icecube;
+import com.strategames.engine.gameobjects.LeaveScreenSensor;
 import com.strategames.engine.gameobjects.Star;
 import com.strategames.engine.gameobjects.Wall;
 import com.strategames.engine.gameobjects.WallHorizontal;
 import com.strategames.engine.gameobjects.WallVertical;
-import com.strategames.engine.interfaces.SensorObject;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
-import com.strategames.engine.utils.LeaveScreenSensor;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
@@ -75,6 +74,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private Box2DDebugRenderer debugRenderer;
 
 	private boolean showScore;
+
+	private int[] nextLevelPosition;
 	
 	public CatchDaStars() {
 		super();
@@ -128,10 +129,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 			showScore = false;
 			showLevelCompleteDialog();
 		}
-		
+
 		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
-	
+
 	@Override
 	public void startGame() {
 		showScore = false;
@@ -256,6 +257,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		for(int i = 0; i < this.doors.size; i++) {
 			Door door = this.doors.get(i);
+			door.setOpen(true);
 			Wall w = door.getWall();
 			if(w instanceof WallVertical) {
 				openVerticalWall(w, door, screen, stage);
@@ -264,12 +266,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 			}
 		}
 
-		LeaveScreenSensor.create(this);
+		addGameObject(new LeaveScreenSensor(null), stage);
 	}
 
 	private void openVerticalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
 		Vector2 cutPoint = new Vector2(door.getX(), door.getY());
-		
+
 		Wall bottom = new WallVertical();
 		bottom.setPosition(w.getX(), w.getY());
 		bottom.setLength(cutPoint.y - w.getY());
@@ -291,7 +293,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private void openHorizontalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
 		Vector2 cutPoint = new Vector2(door.getX(), door.getY());
-		
+
 		Wall left = new WallHorizontal();
 		left.setPosition(w.getX(), w.getY());
 		left.setLength(cutPoint.x - w.getX());
@@ -393,7 +395,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		}
 	}
 
-	private void handleSensorCollision(Balloon balloon, SensorObject object) {
+	private void handleSensorCollision(Balloon balloon, GameObject object) {
 		if( ! isRunning() ) {
 			return;
 		}
@@ -421,6 +423,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 			} else {
 				destroyBalloon(balloon);
 			}
+		} else if( object instanceof Door ) {
+			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof LeaveScreenSensor ) {
 			if( ! object.isHit() ) {
 				object.setHit(true);
@@ -464,13 +468,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 	public void beginContact(Contact contact) {
 		Fixture fixtureA = contact.getFixtureA();
 		Fixture fixtureB = contact.getFixtureB();
-		Object collidingGameObject1 = fixtureA.getBody().getUserData();
-		Object collidingGameObject2 = fixtureB.getBody().getUserData();
-
+		GameObject collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
+		GameObject collidingGameObject2 = (GameObject) fixtureB.getBody().getUserData();
 		if( ( collidingGameObject1 instanceof Balloon ) && ( fixtureB.isSensor() ) ) {
-			handleSensorCollision((Balloon) collidingGameObject1, (SensorObject) collidingGameObject2);
+			handleSensorCollision((Balloon) collidingGameObject1, collidingGameObject2);
 		} else if(( collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
-			handleSensorCollision((Balloon) collidingGameObject2, (SensorObject) collidingGameObject1);
+			handleSensorCollision((Balloon) collidingGameObject2, collidingGameObject1);
 		}
 	}
 
@@ -507,16 +510,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 			switch( which ) {
 			case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
 				/**
-				 * TODO: reimplement using grid structure
+				 * TODO: determine game completed and create scroll animation to new level
 				 */
-				//				if( getLevelNumber() < LevelLoader.getLastLevelNumber() ) {
-				//					startLevel(getLevelNumber() + 1);
-				//				} else {
-				//					//Ooops. User completed game so we should not
-				//					//get to this point but Game end animation should
-				//					//be shown
-				//					Gdx.app.log("CatchDaStars", "onClick: end of game reached");
-				//				}
+				startLevel(this.nextLevelPosition[0], this.nextLevelPosition[1]);
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
 				Gdx.app.log("CatchDaStars", "onClick: BUTTON_QUIT_CLICKED");

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
@@ -48,14 +49,13 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	}
 
 	@Override
-	protected Body createBody() {
-		Gdx.app.log("Wall", "createBody for "+this);
+	protected Body createBody(World world) {
 		PolygonShape box = new PolygonShape();  
 		box.setAsBox(super.halfWidth, super.halfHeight, new Vector2(super.halfWidth, super.halfHeight), 0f);
 
 		BodyDef groundBodyDef = new BodyDef();
 		groundBodyDef.position.set(getX(), getY());
-		Body body = getGame().getWorld().createBody(groundBodyDef);
+		Body body = world.createBody(groundBodyDef);
 		body.createFixture(box, 0.0f);
 		box.dispose();
 

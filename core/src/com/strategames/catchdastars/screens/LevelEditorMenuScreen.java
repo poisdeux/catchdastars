@@ -235,7 +235,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			@Override
 			public void input(String text) {
 				level.setName(text);
-				button.setText(level.getLevelNumber() + ". "+level.getName());
+				button.setText(level.getName());
 				LevelWriter.save(level);
 			}
 
@@ -249,9 +249,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void copyLevel(Level level) {
 		Level newLevel = level.copy();
 		newLevel.setName("(copy) "+ newLevel.getName());
-		newLevel.setLevelNumber(level.getLevelNumber() + 1);
 		addLevel(newLevel);
-		reorderLevels(newLevel, level.getLevelNumber() + 1);
 	}
 
 	private void addLevel(Level level) {
@@ -268,7 +266,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void deleteLevel(Level level) {
 		LevelWriter.deleteLocal(level.getName());
 		this.levels.deleteLevel(level);
-		this.levels.renumberLevels();
 		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
@@ -364,31 +361,5 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		dialog.setCenter(true);
 		dialog.create();
 		dialog.show();
-	}
-
-	private void reorderLevels(Level level, int newLevelNumber) {
-		int currentLevelNumber = level.getLevelNumber();
-		if( currentLevelNumber > newLevelNumber ) {
-			//moving backwards so we need to move elements forwards to make room
-			for( Level l : this.levels.getLevels() ) {
-				int lNumber = l.getLevelNumber();
-				if( ( lNumber >= newLevelNumber ) && ( lNumber < currentLevelNumber ) ) {
-					l.setLevelNumber(lNumber + 1);
-				}
-			}
-			level.setLevelNumber(newLevelNumber);
-		} else if ( currentLevelNumber < newLevelNumber ) {
-			//moving forward so we need to move elements backwards to make room
-			for( Level l : this.levels.getLevels() ) {
-				int lNumber = l.getLevelNumber();
-				if( ( lNumber <= newLevelNumber ) && ( lNumber > currentLevelNumber ) ) {
-					l.setLevelNumber(lNumber - 1);
-				}
-			}
-			level.setLevelNumber(newLevelNumber);
-		}
-
-		this.levels.renumberLevels();
-		fillLevelButtonsTable(this.levels.getLevels());
 	}
 }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -20,7 +21,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.interfaces.SensorObject;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -35,10 +35,12 @@ import com.strategames.engine.utils.ConfigurationItem;
  * and make sure your images and bodies are aligned. You can check this by calling
  * {@link #drawBoundingBox(SpriteBatch)} in {@link #draw(SpriteBatch, float)}.
  *  
+ *  TODO: create subclasses DynamicObject and StaticObject replacing createBody with createFixture 
+ *  and applyForce and handleCollision only available in DynamicObject
  * @author martijn brekhof
  *
  */
-abstract public class GameObject extends Image implements Json.Serializable, SensorObject {
+abstract public class GameObject extends Image implements Json.Serializable {
 	protected Body body;
 	private ArrayList<ConfigurationItem> configurationItems;
 	protected float halfWidth;
@@ -57,9 +59,9 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	protected Vector2 size = new Vector2();
 
 	private boolean saveToFile = true;
-	
+
 	private TextureRegion textureRegion;
-	
+
 	/**
 	 * Constructor for creating a game object
 	 * @param size in meters. size.x = width, size.y = height. 
@@ -68,8 +70,10 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	 */
 	public GameObject(Vector2 size) {
 		this.size = size;
-		setWidth(this.size.x);
-		setHeight(this.size.y);
+		if( size != null ) {
+			setWidth(this.size.x);
+			setHeight(this.size.y);
+		}
 		setName(getClass().getSimpleName());
 	}
 
@@ -141,7 +145,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	public void setTextureRegion(TextureRegion textureRegion) {
 		this.textureRegion = textureRegion;
 	}
-	
+
 	public TextureRegion getTextureRegion() {
 		return textureRegion;
 	}
@@ -149,7 +153,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	public boolean canBeRemoved() {
 		return this.canBeRemoved;
 	}
-	
+
 	/**
 	 * Use this to mark this object for deletion.
 	 * @param delete
@@ -169,16 +173,15 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
-	
+
 	public boolean isHit() {
 		return this.isHit;
 	}
-	
-	@Override
+
 	public void setHit(boolean hit) {
 		this.isHit = hit;
 	}
-	
+
 	/**
 	 * Setup the image and body for this game object.
 	 * <br/>
@@ -190,7 +193,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	 */
 	public void setupImage() {
 		this.textureRegion = createImage();
-//		Gdx.app.debug("GameObject", "setup: gameObject="+this+", trd="+trd);
+		//		Gdx.app.debug("GameObject", "setup: gameObject="+this+", trd="+trd);
 		if( this.textureRegion != null ) {
 			setDrawable(new TextureRegionDrawable(this.textureRegion));
 			setScaling(Scaling.stretch);
@@ -203,16 +206,22 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	}
 
 	public void setupBody() {
-		if( ( this.game != null ) && ( this.game.getWorld() != null ) ) {
-			this.body = createBody();
-			if( this.body != null ) {
-				this.body.setUserData(this);
+
+		if( this.game != null ) {
+			World world = this.game.getWorld();
+			if ( world != null )  {
+				this.body = createBody(world);
+				if( this.body != null ) {
+					this.body.setUserData(this);
+				}
+			} else {
+				Gdx.app.log("GameObject", "setupBody: world is null for "+getName());
 			}
 		} else {
-			Gdx.app.log("GameObject", "setupBody: game or world is null for "+getName());
+			Gdx.app.log("GameObject", "setupBody: game is null for "+getName());
 		}
 	}
-	
+
 	/**
 	 * Moves a gameobject to location x, y. Note that you should use
 	 * {@link Actor#setPosition(float, float)} if you only want to change
@@ -226,7 +235,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 		} 
 		setPosition(x, y);
 	}
-	
+
 	public void moveX(float x) {
 		Gdx.app.log("GameObject", "moveX");
 		if( this.body != null ) {
@@ -235,14 +244,14 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 		} 
 		setX(x);
 	}
-	
+
 	public void moveY(float y) {
 		if( this.body != null ) {
 			this.body.setTransform(getX(), y, this.body.getAngle());
 		} 
 		setY(y);
 	}
-	
+
 	/**
 	 * Returns the bounding rectangle for this game object.
 	 * If you reposition or resize the game object you should again call this
@@ -262,7 +271,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 		this.shapeRenderer = new ShapeRenderer();
 		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
 	}
-	
+
 	public void drawBoundingBox(SpriteBatch batch) {
 		if( this.shapeRenderer == null ) {
 			Gdx.app.log("GameObject", "Run enableDebugMode() on gameobject before using drawBoundingBox(...)"); 
@@ -304,7 +313,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 		this.shapeRenderer.end();
 		batch.begin();
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer messageBuffer = new StringBuffer();
@@ -315,7 +324,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 		messageBuffer.append(", halfHeight="+this.halfHeight);
 		return messageBuffer.toString();
 	}
-	
+
 	/**
 	 * Called to create the image for the game object
 	 */
@@ -325,7 +334,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
-	abstract protected Body createBody();
+	abstract protected Body createBody(World world);
 
 	/**
 	 * Use this to write specific object properties to file(s)
@@ -395,13 +404,13 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	}
 
 	abstract public GameObject copy();
-	
+
 	/**
 	 * Should create the most basic instance of this gameobject
 	 * @return new instance of GameObject
 	 */
 	abstract protected GameObject newInstance();
-	
+
 	public void initializeConfigurationItems() {
 		this.configurationItems = createConfigurationItems();
 	}
@@ -445,7 +454,7 @@ abstract public class GameObject extends Image implements Json.Serializable, Sen
 	 * safely be removed from game. Otherwise object will not be removed.
 	 */
 	abstract protected void destroyAction();
-	
+
 	/**
 	 * Depending on the game engine this gets called when object collides with another object
 	 * @param gameObject object that collided

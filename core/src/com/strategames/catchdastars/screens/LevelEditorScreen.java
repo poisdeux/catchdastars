@@ -145,7 +145,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	protected void setupActors(Stage stage) {
 		getMultiplexer().addProcessor(stage);
 		this.camera = (OrthographicCamera) stage.getCamera();
-		zoomCamera((OrthographicCamera) stage.getCamera());
+		zoomCamera(this.camera);
 
 		getGame().pauseGame();
 
@@ -154,9 +154,11 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 
 	@Override
 	public void show() {
+		resetStageActors();
 		super.show();
-		zoomCamera(this.camera);
+		
 		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
+		
 		getGame().loadLevel(this);
 	}
 

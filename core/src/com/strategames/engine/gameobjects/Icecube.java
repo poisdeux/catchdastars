@@ -114,9 +114,8 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	protected Body createBody() {
+	protected Body createBody(World world) {
 //		Gdx.app.debug("Icecube", "0");
-		World world = getGame().getWorld();
 		
 		bodyDef.position.set(getX(), getY());
 		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;

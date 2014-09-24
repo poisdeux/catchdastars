@@ -43,11 +43,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private Label title;
 
 	private Array<Vector2> originalPositions;
-	
+
 	public AbstractScreen() {
 		this(null, null);
 	}
-	
+
 	/**
 	 * 
 	 * @param game 
@@ -65,7 +65,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			this.title = new Label(title, getSkin());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param game
@@ -78,7 +78,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		this.stageUIActors = stageUIActors;
 		this.stageActors = stageActors;
 	}
-	
+
 	@Override
 	public void pause() {
 	}
@@ -110,7 +110,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		}
 		return gameCamera;
 	}
-	
+
 	public static void setGameCamera(OrthographicCamera gameCamera) {
 		AbstractScreen.gameCamera = gameCamera;
 	}
@@ -127,7 +127,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public static void setMenuCamera(OrthographicCamera menuCamera) {
 		AbstractScreen.menuCamera = menuCamera;
 	}
-	
+
 	public InputMultiplexer getMultiplexer() {
 		if( this.multiplexer == null ) {
 			this.multiplexer = new InputMultiplexer();
@@ -160,11 +160,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		if( this.stageUIActors == null ) {
 			setupUI(getStageUIActors());
 		}
-	
+
 		if( this.stageActors == null ) {
 			setupActors(getStageActors());
 		}
-		
+
 		if( this.title != null ) {
 			Vector2 sizeMenu = getMenuSize();
 			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);
@@ -234,7 +234,17 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void startTimeline(Timeline timeline) {
 		timeline.start(this.tweenManager);
 	}
-	
+
+	/**
+	 * Clears the stage for actors
+	 */
+	public void resetStageActors() {
+		if( this.stageActors != null ) {
+			this.stageActors.clear();
+			this.stageActors = null;
+		}
+	}
+
 	public Stage getStageActors() {
 		if( this.stageActors == null ) {
 			Vector3 sizeWorld = this.game.getWorldSize();

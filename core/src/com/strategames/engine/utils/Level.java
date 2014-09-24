@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobjects.GameObject;
 
 public class Level implements Comparable<Level> {
-	private int number;
 	private String name;
 	private Array<GameObject> gameObjects;
 	private Vector2 worldSize;
@@ -73,14 +72,6 @@ public class Level implements Comparable<Level> {
 		return this.name;
 	}
 
-	public void setLevelNumber(int number) {
-		this.number = number;
-	}
-
-	public int getLevelNumber() {
-		return this.number;
-	}
-
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
@@ -108,7 +99,7 @@ public class Level implements Comparable<Level> {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d %s, #gameobjects=%d", this.number, this.name, this.gameObjects.size );
+		return String.format( Locale.US, "%d,%d %s, #gameobjects=%d", this.position[0], this.position[1], this.name, this.gameObjects.size );
 	}
 
 	public Level copy() {
@@ -124,7 +115,7 @@ public class Level implements Comparable<Level> {
 			level.setGameObjects(copyGameObjects);
 		}
 		level.setName(new String(this.name));
-		level.setLevelNumber(this.number);
+		level.setPosition(this.position[0], this.position[1]);
 		return level;
 	}
 	

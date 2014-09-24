@@ -68,29 +68,9 @@ public class LevelWriter {
 	static public boolean deleteLocal(String name) {
 		try {
 			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(name));
-			if( file.delete() ) {
-				reorderLevelFiles();
-				return true;
-			}
-			return false;
+			return file.delete();
 		} catch (Exception e) {
 			return false;
-		}
-	}
-	
-	static private void reorderLevelFiles() {
-		ArrayList<Level> levels = LevelLoader.loadAllLocalLevels();
-		Collections.sort(levels);
-		
-		if(! LevelWriter.deleteLocalLevelsDir()) {
-			return;
-		}
-		
-		int levelNumber = 1;
-		
-		for(Level level : levels) {
-			level.setLevelNumber(levelNumber++);
-			LevelWriter.save(level);
 		}
 	}
 }

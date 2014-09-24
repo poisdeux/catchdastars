@@ -59,8 +59,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	}
 
 	@Override
-	protected Body createBody() {
-		World world = getGame().getWorld();
+	protected Body createBody(World world) {
 
 		/**
 		 * TODO do we really need a separate loader for each object? Replace with static?

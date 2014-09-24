@@ -37,19 +37,4 @@ public class Levels {
 	public Level getLevel(int number) {
 		return this.levels.get(number);
 	}
-	
-	/**
-	 * Renumbers all levels so the numbering is sequential again
-	 * after deleting one or more levels
-	 */
-	public void renumberLevels() {
-		Collections.sort(this.levels);
-		
-		int levelNumber = 1;
-		
-		for(Level level : this.levels) {
-			level.setLevelNumber(levelNumber++);
-			LevelWriter.save(level);
-		}
-	}
 }

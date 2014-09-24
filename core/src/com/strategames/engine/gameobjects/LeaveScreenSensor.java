@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -14,32 +15,36 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.engine.utils.Textures;
 
-public class Door extends GameObject {
-	public final static float WIDTH = 0.35f;
-	public final static float HEIGHT = 0.35f;
-	
-	private Wall wall;
-	private boolean open;
-	private int[] nextLevelPosition = new int[2];
-	
-	public Door() {
-		super(new Vector2(WIDTH, HEIGHT));
+public class LeaveScreenSensor extends GameObject {
+
+	/**
+	 * Create a sensor object surrounding world
+	 * @param size is ignored so passing null would be best
+	 */
+	public LeaveScreenSensor(Vector2 size) {
+		super(size);
 	}
 	
 	@Override
 	protected TextureRegion createImage() {
-		return Textures.getInstance().passageToNextLevel;
+		return null;
 	}
-	
+
 	@Override
 	protected Body createBody(World world) {
-		Vector2 leftBottom = new Vector2(0, 0);
-		Vector2 rightBottom = new Vector2(WIDTH, 0);
-		Vector2 rightTop = new Vector2(WIDTH, HEIGHT);
-		Vector2 leftTop = new Vector2(0, HEIGHT);
+		Game game = getGame();
+		
+		Vector3 worldSize = game.getWorldSize();
+		Vector2 beginning = new Vector2(0, 0).add(-Wall.WIDTH, -Wall.HEIGHT);
+		Vector2 end = new Vector2(worldSize.x, worldSize.y).add(Wall.WIDTH, Wall.HEIGHT);
+
+		Vector2 leftBottom = new Vector2(beginning.x, beginning.y);
+		Vector2 rightBottom = new Vector2(end.x, beginning.y);
+		Vector2 rightTop = new Vector2(end.x, end.y);
+		Vector2 leftTop = new Vector2(beginning.x, end.y);
 		
 		ChainShape chain = new ChainShape();
 		chain.createLoop(new Vector2[] {leftBottom, rightBottom, rightTop, leftTop});
@@ -50,89 +55,76 @@ public class Door extends GameObject {
 		body = world.createBody(bd);
 		Fixture fixture = body.createFixture(chain, 0.0f);
 		fixture.setSensor(true);
+		
 		return body;
 	}
 
 	@Override
 	protected void writeValues(Json json) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public GameObject copy() {
-		Door door = new Door();
-		door.setPosition(getX(), getY());
-		return door;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	protected GameObject newInstance() {
-		return new Door();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	protected ArrayList<ConfigurationItem> createConfigurationItems() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void increaseSize() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void decreaseSize() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void destroyAction() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse,
 			GameObject gameObject) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void loadSounds() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void applyForce() {
+		// TODO Auto-generated method stub
 		
 	}
+
 	
-	public Wall getWall() {
-		return wall;
-	}
-	
-	public void setWall(Wall wall) {
-		this.wall = wall;
-	}
-	
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-	
-	public boolean isOpen() {
-		return open;
-	}
-	
-	public void setNextLevelPosition(int x, int y) {
-		this.nextLevelPosition[0] = x;
-		this.nextLevelPosition[1] = y;
-	}
-	
-	public int[] getNextLevelPosition() {
-		return nextLevelPosition;
-	}
 }
