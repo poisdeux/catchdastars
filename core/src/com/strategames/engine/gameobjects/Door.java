@@ -55,18 +55,26 @@ public class Door extends GameObject {
 
 	@Override
 	protected void writeValues(Json json) {
-		
+		json.writeArrayStart("nextLevelPosition");
+		json.writeValue(nextLevelPosition[0]);
+		json.writeValue(nextLevelPosition[1]);
+		json.writeArrayEnd();
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
-		
+		String name = jsonData.name();
+		if( name.contentEquals("nextLevelPosition")) {
+			this.nextLevelPosition = jsonData.asIntArray();
+		}
 	}
 
 	@Override
 	public GameObject copy() {
 		Door door = new Door();
 		door.setPosition(getX(), getY());
+		int[] pos = getNextLevelPosition();
+		door.setNextLevelPosition(pos[0], pos[1]);
 		return door;
 	}
 

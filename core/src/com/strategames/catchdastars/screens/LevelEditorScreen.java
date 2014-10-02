@@ -3,6 +3,8 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import sun.security.action.GetLongAction;
+
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.Gdx;
@@ -250,25 +252,22 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		//Make sure Door is positioned on a Wall
 		if( gameObject instanceof Door ) {
 			//check if Door is at a Wall
-			Array<Actor> actors = getStageActors().getActorsOverlapping(gameObject);
-			Actor wallActor = null;
+			Door door = (Door) gameObject;
+			Array<Actor> actors = getStageActors().getActorsOverlapping(door);
+			Wall wall = null;
 			for(int i = 0; i < actors.size; i++) {
 				Actor actor = actors.get(i);
 				if( actor instanceof Wall ) {
 					if(! ((Wall) actor).isMenuItem() ) {
-						wallActor = actors.get(i);
+						wall = (Wall) actors.get(i);
 					}
 				}
 			}
-			if( wallActor == null ) {
-				getGame().getLevel().removeGameObject(gameObject);
+			if( wall == null ) {
+				getGame().getLevel().removeGameObject(door);
 				gameObject.remove();
 			} else {
-				if( wallActor instanceof WallVertical ) {
-					gameObject.moveTo(wallActor.getX(), gameObject.getY());
-				} else {
-					gameObject.moveTo(gameObject.getX(), wallActor.getY());
-				}
+				placeDoor(door, wall);
 			}
 		} else if( ! inGameArea(gameObject) ) {
 			getGame().getLevel().removeGameObject(gameObject);
@@ -470,6 +469,38 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		return null;
 	}
 
+	private void placeDoor(Door door, Wall wall) {
+		Vector3 worldSize = getGame().getWorldSize();
+		
+		if( wall instanceof WallVertical ) {
+			float wallX = wall.getX();
+			door.moveTo(wallX, door.getY());
+			
+			if( wall.isBorder() ) {
+				int[] currentLevelPosition = getGame().getLevelPosition();
+				float middle = worldSize.x / 2f;
+				if( wallX < middle ) { //If left border set next level to left
+					door.setNextLevelPosition(currentLevelPosition[0] - 1, currentLevelPosition[1]);
+				} else { // set next level to right
+					door.setNextLevelPosition(currentLevelPosition[0] + 1, currentLevelPosition[1]);
+				}
+			}
+		} else {
+			float wallY = wall.getY();
+			door.moveTo(door.getX(), wallY);
+			
+			if( wall.isBorder() ) {
+				int[] currentLevelPosition = getGame().getLevelPosition();
+				float middle = worldSize.x / 2f;
+				if( wallY < middle ) { //If bottom border set next level to bottom
+					door.setNextLevelPosition(currentLevelPosition[0], currentLevelPosition[1] - 1);
+				} else { // set next level to top
+					door.setNextLevelPosition(currentLevelPosition[0], currentLevelPosition[1] + 1);
+				}
+			}
+		}
+	}
+	
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
