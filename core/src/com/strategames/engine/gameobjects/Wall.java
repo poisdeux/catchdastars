@@ -16,7 +16,7 @@ import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 
-abstract public class Wall extends GameObject implements OnConfigurationItemChangedListener {
+abstract public class Wall extends StaticBody implements OnConfigurationItemChangedListener {
 	public final static float WIDTH = 0.30f;
 	public final static float HEIGHT = 0.30f;
 
@@ -49,17 +49,11 @@ abstract public class Wall extends GameObject implements OnConfigurationItemChan
 	}
 
 	@Override
-	protected Body createBody(World world) {
+	protected void setupBody(Body body) {
 		PolygonShape box = new PolygonShape();  
 		box.setAsBox(super.halfWidth, super.halfHeight, new Vector2(super.halfWidth, super.halfHeight), 0f);
-
-		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.position.set(getX(), getY());
-		Body body = world.createBody(groundBodyDef);
 		body.createFixture(box, 0.0f);
 		box.dispose();
-
-		return body;
 	}
 
 	/**

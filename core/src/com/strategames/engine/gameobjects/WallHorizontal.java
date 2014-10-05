@@ -97,8 +97,4 @@ public class WallHorizontal extends Wall {
 		this.endHorizontalMiddlePart = getLength() - (2 * WIDTH);
 		this.startHorizontalEndPart = this.startHorizontalMiddlePart + this.endHorizontalMiddlePart;
 	}
-	
-	@Override
-	public void applyForce() {
-	}
 }

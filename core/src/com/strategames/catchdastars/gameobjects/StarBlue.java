@@ -23,8 +23,4 @@ public class StarBlue extends Star {
 	protected SoundEffect getSoundCollected() {
 		return new GlassSound();
 	}
-	
-	@Override
-	public void applyForce() {
-	}
 }

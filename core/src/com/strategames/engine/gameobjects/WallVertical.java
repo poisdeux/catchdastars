@@ -54,8 +54,4 @@ public class WallVertical extends Wall {
 		wall.setPartSize(HEIGHT);
 		return wall;
 	}
-	
-	@Override
-	public void applyForce() {
-	}
 }

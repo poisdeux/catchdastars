@@ -33,7 +33,7 @@ import com.strategames.engine.utils.Textures;
  * TODO Now fixtures get recreated when object is split. 
  *      We might want to reuse fixtures of parent object.
  */
-public class Icecube extends GameObject {
+public class Icecube extends DynamicBody {
 	private final static float WIDTH = 0.30f; 
 
 	private ArrayList<Part> parts;
@@ -51,8 +51,6 @@ public class Icecube extends GameObject {
 	private static ArrayList<Part> availableParts;
 
 	private static FixtureDef fixtureDef;
-
-	private static BodyDef bodyDef;
 
 	private static RockBreakSound rockBreakSound = new RockBreakSound();
 	private static RockHitSound rockHitSound = new RockHitSound();
@@ -114,28 +112,19 @@ public class Icecube extends GameObject {
 	}
 
 	@Override
-	protected Body createBody(World world) {
+	protected void setupBody(Body body) {
 //		Gdx.app.debug("Icecube", "0");
 		
-		bodyDef.position.set(getX(), getY());
-		bodyDef.angle = getRotation() * MathUtils.degreesToRadians;
+		body.setTransform(body.getPosition(), getRotation() * MathUtils.degreesToRadians);
 
-//		Gdx.app.debug("Icecube", "1");
-		Body body = world.createBody(bodyDef);
-//		Gdx.app.debug("Icecube", "2");
-		
 		int size = this.parts.size();
 		for(int i = 0; i < size; i++) {
 			Part part = this.parts.get(i);
 			String name = part.getName();
 			loader.attachFixture(body, name, i, fixtureDef);
 		}
-//		Gdx.app.debug("Icecube", "3");
 		
 		body.setSleepingAllowed(false);
-		
-//		Gdx.app.debug("Icecube", "4");
-		return body;
 	}
 
 	@Override
@@ -397,11 +386,6 @@ public class Icecube extends GameObject {
 		fixtureDef.density = 931f;  // Ice density 0.931 g/cm3 == 931 kg/m3
 		fixtureDef.friction = 0.8f;
 		fixtureDef.restitution = 0.01f; // Make it bounce a little bit
-
-
-		bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.angularDamping = 0.1f;
 	}
 
 	@Override

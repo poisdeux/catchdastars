@@ -2,23 +2,19 @@ package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.Textures;
 
-public class Door extends GameObject {
+public class Door extends StaticBody {
 	public final static float WIDTH = 0.35f;
 	public final static float HEIGHT = 0.35f;
 	
@@ -36,7 +32,7 @@ public class Door extends GameObject {
 	}
 	
 	@Override
-	protected Body createBody(World world) {
+	protected void setupBody(Body body) {
 		Vector2 leftBottom = new Vector2(0, 0);
 		Vector2 rightBottom = new Vector2(WIDTH, 0);
 		Vector2 rightTop = new Vector2(WIDTH, HEIGHT);
@@ -45,13 +41,8 @@ public class Door extends GameObject {
 		ChainShape chain = new ChainShape();
 		chain.createLoop(new Vector2[] {leftBottom, rightBottom, rightTop, leftTop});
 
-		BodyDef bd = new BodyDef();
-		bd.position.set(getX(), getY());
-		bd.type = BodyType.StaticBody;
-		body = world.createBody(bd);
 		Fixture fixture = body.createFixture(chain, 0.0f);
 		fixture.setSensor(true);
-		return body;
 	}
 
 	@Override
@@ -112,11 +103,6 @@ public class Door extends GameObject {
 
 	@Override
 	public void loadSounds() {
-		
-	}
-
-	@Override
-	public void applyForce() {
 		
 	}
 	

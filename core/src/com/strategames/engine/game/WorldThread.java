@@ -3,6 +3,7 @@ package com.strategames.engine.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.strategames.engine.gameobjects.DynamicBody;
 import com.strategames.engine.gameobjects.GameObject;
 
 public class WorldThread extends Thread {
@@ -88,11 +89,18 @@ public class WorldThread extends Thread {
 		}
 	}
 	
+	/**
+	 * TODO create separate arrays for dynamic and static gameobjects to minimize 
+	 * this loop
+	 */
 	private void applyForces() {
 		Array<GameObject> objectsInGame = this.game.getGameObjectsInGame();
 		synchronized (objectsInGame) {
 			for(int i = 0; i < objectsInGame.size; i++) {
-				objectsInGame.get(i).applyForce();
+				GameObject object = objectsInGame.get(i);
+				if( object instanceof DynamicBody ) {
+					((DynamicBody) object).applyForce();
+				}
 			}
 		}
 	}

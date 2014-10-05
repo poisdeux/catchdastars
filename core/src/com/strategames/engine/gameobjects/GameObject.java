@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
@@ -467,9 +468,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract public void loadSounds();
 
-	/**
-	 * Called prior to updating the physics world (Box2D) so you can
-	 * apply forces to the gameobject.
-	 */
-	abstract public void applyForce();
+//	/**
+//	 * Called prior to updating the physics world (Box2D) so you can
+//	 * apply forces to the gameobject.
+//	 */
+//	abstract public void applyForce();
 }

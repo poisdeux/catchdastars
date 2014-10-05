@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
@@ -20,7 +17,7 @@ import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 
-abstract public class Balloon extends GameObject implements OnConfigurationItemChangedListener {
+abstract public class Balloon extends DynamicBody implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 2f;
 	private static final float DEFAULT_LIFTFACTOR = 1.4f;
@@ -59,7 +56,7 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 	}
 
 	@Override
-	protected Body createBody(World world) {
+	protected void setupBody(Body body) {
 
 		/**
 		 * TODO do we really need a separate loader for each object? Replace with static?
@@ -68,13 +65,9 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		loader.setupVertices("Balloon", WIDTH);
 
 		//Balloon body
-		BodyDef bd = new BodyDef();
-		bd.position.set(getX(), getY());
-		bd.type = BodyType.DynamicBody;
-		bd.angularDamping = 1f;
-		bd.linearDamping=1f;
-		Body body = world.createBody(bd);
-
+		body.setAngularDamping(1f);
+		body.setLinearDamping(1f);
+		
 		FixtureDef fixtureBalloon = new FixtureDef();
 		fixtureBalloon.density = 0.1786f;  // Helium density 0.1786 g/l == 0.1786 kg/m3
 		fixtureBalloon.friction = 0.6f;
@@ -85,7 +78,6 @@ abstract public class Balloon extends GameObject implements OnConfigurationItemC
 		this.upwardLiftPosition.y += 0.1f;
 
 		this.upwardLift = -body.getMass() * this.liftFactor;
-		return body;
 	}
 
 	@Override
