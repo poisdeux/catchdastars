@@ -3,8 +3,6 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import sun.security.action.GetLongAction;
-
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.Gdx;
@@ -23,10 +21,10 @@ import com.strategames.catchdastars.dialogs.ChangeWorldSizeDialog;
 import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobjects.Door;
-import com.strategames.engine.gameobjects.GameObject;
-import com.strategames.engine.gameobjects.Wall;
-import com.strategames.engine.gameobjects.WallVertical;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.gameobject.types.Wall;
+import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;

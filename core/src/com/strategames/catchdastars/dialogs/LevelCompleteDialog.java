@@ -19,8 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobjects.ChalkLine;
-import com.strategames.engine.gameobjects.ChalkLine.ChalkLineAnimationListener;
+import com.strategames.engine.gameobject.types.ChalkLine;
+import com.strategames.engine.gameobject.types.ChalkLine.ChalkLineAnimationListener;
 import com.strategames.engine.sounds.CashRegisterOpenSound;
 import com.strategames.engine.sounds.DrawChalkLineShort1Sound;
 import com.strategames.engine.sounds.DrawChalkLineShort2Sound;
@@ -28,7 +28,6 @@ import com.strategames.engine.sounds.DrawChalkLineSound;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.GameStateDialog;
-import com.strategames.ui.dialogs.GameStateDialog.States;
 
 public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAnimationListener {
 	

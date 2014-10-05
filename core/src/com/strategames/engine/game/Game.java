@@ -24,7 +24,7 @@ import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
 import com.strategames.catchdastars.screens.LevelScreen;
 import com.strategames.catchdastars.screens.MainMenuScreen;
 import com.strategames.catchdastars.screens.SplashScreen;
-import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;

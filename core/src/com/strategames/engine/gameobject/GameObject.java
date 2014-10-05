@@ -1,4 +1,4 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
@@ -69,7 +68,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * <br/>
 	 * If size.y < 0 height of the game object is calculated using size.x and image size when {@link #setup()} is called. 
 	 */
-	public GameObject(Vector2 size) {
+	GameObject(Vector2 size) {
 		this.size = size;
 		if( size != null ) {
 			setWidth(this.size.x);
@@ -335,7 +334,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
-	abstract protected Body createBody(World world);
+	abstract Body createBody(World world);
 
 	/**
 	 * Use this to write specific object properties to file(s)

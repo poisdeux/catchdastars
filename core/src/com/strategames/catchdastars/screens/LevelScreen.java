@@ -7,7 +7,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobjects.Text;
+import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;

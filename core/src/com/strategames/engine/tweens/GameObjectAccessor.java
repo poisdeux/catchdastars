@@ -3,7 +3,7 @@ package com.strategames.engine.tweens;
 import aurelienribon.tweenengine.TweenAccessor;
 
 import com.badlogic.gdx.Gdx;
-import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobject.GameObject;
 
 public class GameObjectAccessor implements TweenAccessor<GameObject> {
 

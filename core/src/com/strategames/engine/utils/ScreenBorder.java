@@ -2,9 +2,9 @@ package com.strategames.engine.utils;
 
 import com.badlogic.gdx.math.Vector3;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobjects.Wall;
-import com.strategames.engine.gameobjects.WallHorizontal;
-import com.strategames.engine.gameobjects.WallVertical;
+import com.strategames.engine.gameobject.types.Wall;
+import com.strategames.engine.gameobject.types.WallHorizontal;
+import com.strategames.engine.gameobject.types.WallVertical;
 
 public class ScreenBorder {
 

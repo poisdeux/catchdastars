@@ -1,4 +1,4 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject.types;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobject.DynamicBody;
+import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.sounds.BalloonBounceSound;
 import com.strategames.engine.sounds.BalloonPopSound;
 import com.strategames.engine.utils.BodyEditorLoader;

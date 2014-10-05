@@ -6,9 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
@@ -20,7 +17,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.game.GameTestClass;
-import com.strategames.engine.gameobjects.Icecube.Part;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Icecube;
+import com.strategames.engine.gameobject.types.Icecube.Part;
 
 
 

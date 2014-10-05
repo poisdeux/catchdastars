@@ -3,8 +3,8 @@ package com.strategames.engine.screens;
 import java.io.FileNotFoundException;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.utils.Textures;
 
 public class ScreenTestClass extends AbstractScreen {

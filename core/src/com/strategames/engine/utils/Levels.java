@@ -1,8 +1,6 @@
 package com.strategames.engine.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 

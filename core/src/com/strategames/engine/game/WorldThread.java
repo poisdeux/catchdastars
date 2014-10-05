@@ -1,10 +1,9 @@
 package com.strategames.engine.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.engine.gameobjects.DynamicBody;
-import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobject.DynamicBody;
+import com.strategames.engine.gameobject.GameObject;
 
 public class WorldThread extends Thread {
 

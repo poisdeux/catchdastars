@@ -2,7 +2,7 @@ package com.strategames.engine.utils;
 
 import java.util.HashSet;
 
-import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobject.GameObject;
 
 public class Collectable {
 	private int total;

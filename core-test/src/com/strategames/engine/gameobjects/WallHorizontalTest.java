@@ -12,6 +12,9 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.GameTestClass;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Wall;
+import com.strategames.engine.gameobject.types.WallHorizontal;
 
 
 public class WallHorizontalTest extends GameObjectTestAbstractClass {

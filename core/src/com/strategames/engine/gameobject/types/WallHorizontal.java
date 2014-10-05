@@ -1,9 +1,10 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject.types;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.utils.Textures;
 
 public class WallHorizontal extends Wall {

@@ -1,8 +1,8 @@
 package com.strategames.catchdastars.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.strategames.engine.gameobjects.GameObject;
-import com.strategames.engine.gameobjects.Star;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Star;
 import com.strategames.engine.sounds.GlassSound;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;

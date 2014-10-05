@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.strategames.engine.gameobjects.GameObject;
+import com.strategames.engine.gameobject.GameObject;
 
 public class Level implements Comparable<Level> {
 	private String name;

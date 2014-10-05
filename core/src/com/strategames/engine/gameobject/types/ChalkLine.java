@@ -1,4 +1,4 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject.types;
 
 import java.util.ArrayList;
 import java.util.Random;

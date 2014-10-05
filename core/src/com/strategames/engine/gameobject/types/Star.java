@@ -1,4 +1,4 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject.types;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
@@ -12,15 +12,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.StaticBody;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.ConfigurationItem;
 
@@ -29,7 +29,7 @@ import com.strategames.engine.utils.ConfigurationItem;
  * 
  */
 
-abstract public class Star extends GameObject {
+abstract public class Star extends StaticBody {
 	private final static float WIDTH = 0.30f;
 	private float rotationSpeed;
 
@@ -75,21 +75,16 @@ abstract public class Star extends GameObject {
 	}
 
 	@Override
-	protected Body createBody(World world) {
+	protected void setupBody(Body body) {
 		float radius = getHalfWidth() * 0.7f;
 
 		CircleShape circle = new CircleShape();
 		circle.setRadius(radius);
 		circle.setPosition(new Vector2(getHalfWidth(), getHalfHeight()));
-		BodyDef bd = new BodyDef();  
-		bd.position.set(getX(), getY());
-		Body body = world.createBody(bd);  
 		Fixture fixture = body.createFixture(circle, 0.0f);
 		fixture.setSensor(true);
 
 		circle.dispose();
-
-		return body;
 	}
 
 	@Override

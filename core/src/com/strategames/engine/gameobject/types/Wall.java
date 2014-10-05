@@ -1,18 +1,18 @@
-package com.strategames.engine.gameobjects;
+package com.strategames.engine.gameobject.types;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.StaticBody;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
 

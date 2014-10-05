@@ -3,6 +3,8 @@ package com.strategames.engine.gameobjects;
 import static org.junit.Assert.assertTrue;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Star;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;
 
@@ -43,11 +45,6 @@ public class StarTest extends GameObjectTestAbstractClass {
 		@Override
 		protected SoundEffect getSoundCollected() {
 			return null;
-		}
-
-		@Override
-		public void applyForce() {
-			
 		}
 	}
 }
