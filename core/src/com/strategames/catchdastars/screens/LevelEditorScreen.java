@@ -601,6 +601,14 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	}
 
 	private void saveLevel() {
+		Level level = getGame().getLevel();
+		Array<GameObject> objects  = level.getGameObjects();
+		for(GameObject object : objects) {
+			if( object instanceof Door ) {
+				Gdx.app.log("LevelEditorScreen", "saveLevel: Door="+object);
+			}
+		}
+		
 		LevelWriter.save(getGame().getLevel());
 	}
 

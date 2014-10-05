@@ -2,6 +2,7 @@ package com.strategames.engine.gameobjects;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -44,8 +45,8 @@ public class Door extends GameObject {
 		ChainShape chain = new ChainShape();
 		chain.createLoop(new Vector2[] {leftBottom, rightBottom, rightTop, leftTop});
 
-		BodyDef bd = new BodyDef();  
-//		bd.position.set(beginning);
+		BodyDef bd = new BodyDef();
+		bd.position.set(getX(), getY());
 		bd.type = BodyType.StaticBody;
 		body = world.createBody(bd);
 		Fixture fixture = body.createFixture(chain, 0.0f);
