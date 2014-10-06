@@ -1,7 +1,6 @@
 package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
@@ -14,8 +13,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
@@ -36,7 +38,8 @@ import com.strategames.ui.widgets.TextButton;
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ButtonListener, OnLevelsReceivedListener {
 	private GridLayout levelButtonsGrid;
 	private Levels levels;
-
+	private Level editingLevel;
+	
 	public LevelEditorMenuScreen(Game game) {
 		super(game, "Level editor");
 	}
@@ -50,8 +53,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Skin skin = getSkin();
 
 		this.levelButtonsGrid = new GridLayout();
-
-		fillLevelButtonsTable(this.levels.getLevels());
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
@@ -97,6 +98,18 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	@Override
+	public void show() {
+		super.show();
+		if( editingLevel != null ) {
+			ArrayList<Level> levelsArrayList = this.levels.getLevels();
+			int index = levelsArrayList.indexOf(editingLevel);
+			Level levelReloaded = LevelLoader.loadLocalSync(editingLevel.getPositionAsString());
+			levelsArrayList.set(index, levelReloaded);
+		}
+		fillLevelButtonsTable(this.levels.getLevels());
+	}
+	
+	@Override
 	public void onTap(final Button button) {
 		if( ! ( button instanceof TextButton ) ) {
 			return;
@@ -128,6 +141,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		} else if( tag instanceof Level ) {
 			CatchDaStars game = (CatchDaStars) getGame();
 			game.setLevel((Level) tag);
+			this.editingLevel = (Level) tag;
 			game.showLevelEditor(); 
 		}
 	}
@@ -161,26 +175,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			final Level level = ((EditLevelDialog) dialog).getLevel();
 			final Button button = (Button) dialog.getTag();
 			switch(which) {
-			//			case EditLevelDialog.BUTTON_CHANGELEVELNUMBER_CLICKED:
-			//				WheelSpinnerDialog levelNumberDialog = createChangeLevelNumberDialog(level.getLevelNumber());
-			//				levelNumberDialog.setOnClickListener(new OnClickListener() {
-			//					
-			//					@Override
-			//					public void onClick(Dialog dialog, int which) {
-			//						int selectedItem = ((WheelSpinnerDialog) dialog).getSelectedItem();
-			//						switch(which) {
-			//						case WheelSpinnerDialog.ITEM_SELECTED:
-			//							reorderLevels(level, selectedItem);
-			//							break;
-			//						}
-			//						dialog.remove();
-			//						button.setColor(colorWhite);
-			//					}
-			//				});
-			//				levelNumberDialog.setPosition(dialog.getX(), dialog.getY());
-			//				levelNumberDialog.show();
-			//				dialog.remove();
-			//				break;
 			case EditLevelDialog.BUTTON_CHANGENAME_CLICKED:
 				changeLevelName(level, (TextButton) button);
 				dialog.remove();
@@ -249,7 +243,13 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void copyLevel(Level level) {
 		Level newLevel = level.copy();
 		newLevel.setName("(copy) "+ newLevel.getName());
-		addLevel(newLevel);
+		/**
+		 * TODO
+		 * User should select other level
+		 * If level is already filled ask user for confirmation
+		 * otherwise simply create a copy at new position
+		 */
+		
 	}
 
 	private void addLevel(Level level) {
@@ -259,8 +259,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		TextButton button = createLevelButton(level.getName());
 		button.setTag(level);
 		this.levelButtonsGrid.set(levelPosition[0], levelPosition[1], button);
-
-		addNextLevelButtons(levelPosition[0], levelPosition[1]);
 	}
 
 	private void deleteLevel(Level level) {
@@ -268,21 +266,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levels.deleteLevel(level);
 		fillLevelButtonsTable(this.levels.getLevels());
 	}
-
-	//	private WheelSpinnerDialog createChangeLevelNumberDialog(int levelNumber) {
-	//		String[] levelNumbers = new String[this.lastLevelNumber - 1];
-	//		int index = 0;
-	//		for(int i = 1; i <= this.lastLevelNumber; i++) {
-	//			if( levelNumber != i) {
-	//				levelNumbers[index++] = String.valueOf(i);
-	//			}
-	//		}
-	//
-	//		WheelSpinnerDialog spinner = new WheelSpinnerDialog(getStageUIActors(), getSkin(),
-	//				"Select a number", levelNumbers);
-	//		spinner.create();
-	//		return spinner;
-	//	}
 
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level position and name.
@@ -294,55 +277,29 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
 		} else {
-			Collections.sort(levels);
-
 			for( Level level : levels ) {
 				TextButton button = createLevelButton(level.getName());
 				button.setTag(level);
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], button);
-				addNextLevelButtons(position[0], position[1]);
+				addNextLevelButtons(level);
 			}
 
 
 		}
 	}
 
-	private void addNextLevelButtons(int column, int row) {
-		int x;
-		int y;
-
-		//Create button right
-		x = column + 1;
-		y = row;
-		if( this.levelButtonsGrid.get(x, y) == null ) {
-			TextButton button = createLevelButton("");
-			this.levelButtonsGrid.set(x, y, button);
-		}
-
-		//Create button left
-		x = column - 1;
-		if( x >= 0 ) {
-			if( this.levelButtonsGrid.get(x, y) == null ) {
-				TextButton button = createLevelButton("");
-				this.levelButtonsGrid.set(x, y, button);
-			}
-		}
-
-		//Create button above
-		x = column;
-		y = row + 1;
-		if( this.levelButtonsGrid.get(x, y) == null ) {
-			TextButton button = createLevelButton("");
-			this.levelButtonsGrid.set(x, y, button);
-		}
-
-		//Create button below
-		y = row - 1;
-		if( y >= 0 ) {
-			if( this.levelButtonsGrid.get(x, y) == null ) {
-				TextButton button = createLevelButton("");
-				this.levelButtonsGrid.set(x, y, button);
+	private void addNextLevelButtons(Level level) {
+		Array<GameObject> gameObjects = level.getGameObjects();
+		for(GameObject gameObject : gameObjects ) {
+			Gdx.app.log("LevelEditorMenuScreen", "addNextLevelButtons: levelName="+level.getName()+", gameObject="+gameObject);
+			if( gameObject instanceof Door ) {
+				Door door = (Door) gameObject;
+				int[] nextLevelPosition = door.getNextLevelPosition();
+				if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
+					TextButton button = createLevelButton("");
+					this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], button);
+				}
 			}
 		}
 	}

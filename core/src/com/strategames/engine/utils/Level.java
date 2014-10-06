@@ -64,6 +64,15 @@ public class Level implements Comparable<Level> {
 		return position;
 	}
 	
+	/**
+	 * Position of the level in the game grid
+	 * @return String representing the position as x,y where , is used as separator.
+	 * E.g. 1,4 is column 1 row 4
+	 */
+	public String getPositionAsString() {
+		return position[0]+","+position[1];
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
