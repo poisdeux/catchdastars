@@ -132,4 +132,9 @@ public class Door extends StaticBody {
 	public int[] getNextLevelPosition() {
 		return nextLevelPosition;
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + ", nextLevelPosition="+nextLevelPosition[0]+","+nextLevelPosition[1];
+	}
 }

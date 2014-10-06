@@ -5,43 +5,48 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * TODO make gridlayout handle negative rows and columns
+ * @author mbrekhof
+ *
+ */
 public class GridLayout extends WidgetGroup {
-	
+
 	private Vector2 elementSize = new Vector2(10, 10);
-	
+
 	public interface GridElement<T> {
 		public T newInstance();
 	}
-	
+
 	private Array<Array<Actor>> rows = new Array<Array<Actor>>();
 
 	public void setGrid(Array<Array<Actor>> elements) {
 		this.rows = elements;
 	}
-	
+
 	public Array<Array<Actor>> getElements() {
 		return rows;
 	}
-	
+
 	public void setElementSize(float width, float height) {
 		this.elementSize = new Vector2(width, height);
 	}
-	
+
 	public Vector2 getElementSize() {
 		return elementSize;
 	}
-	
+
 	public void deleteRow(int row) {
 		this.rows.removeIndex(row);
 	}
-	
+
 	public void deleteColumn(int column) {
 		for(int i = 0; i < rows.size; i++) {
 			Array<Actor> row = rows.get(i);
 			row.removeIndex(column);
 		}
 	}
-	
+
 	/**
 	 * Adds a row to the grid. If the grid is empty
 	 * a row and a column will be created.
@@ -52,15 +57,15 @@ public class GridLayout extends WidgetGroup {
 			Array<Actor> column = rows.get(0);
 			columns = column.size;
 		}
-		
+
 		Array<Actor> row = new Array<Actor>();
 		for(int i = 0; i < columns; i++) {
 			row.add(null);
 		}
-		
+
 		rows.add(row);
 	}
-	
+
 	/**
 	 * Adds a column to the grid. If the grid is empty
 	 * a row and a column will be created.
@@ -75,7 +80,7 @@ public class GridLayout extends WidgetGroup {
 			row.add(null);
 		}
 	}
-	
+
 	/**
 	 * Sets element at given index. If grid does not contain the
 	 * given index yet the grid size is increased to include the index
@@ -89,23 +94,43 @@ public class GridLayout extends WidgetGroup {
 				addRow();
 			}
 		}
-		
+
 		Array<Actor> row = rows.get(rowIndex);
 		if( columnIndex >= row.size ) {
 			for( int i = row.size - 1; i < columnIndex; i++ ) {
 				addColumn();
 			}
 		}
-		
+
 		Actor curActor = row.get(columnIndex);
-		
+
 		//Make sure any existing actor is removed from the group
 		if( curActor != null ) {
 			row.get(columnIndex).remove();
 		}
-		
+
 		row.set(columnIndex, actor);
 		addActor(actor);
+	}
+
+	/**
+	 * Removes actor at given position
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @return removed actor or null if failed
+	 */
+	public Actor remove(int columnIndex, int rowIndex) {
+		if( rowIndex < rows.size ) {
+			try {
+				Array<Actor> row = rows.get(rowIndex);
+				if( columnIndex < row.size ) {
+					return row.removeIndex(columnIndex);
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -115,15 +140,19 @@ public class GridLayout extends WidgetGroup {
 	 * @return Actor or null if not found
 	 */
 	public Actor get(int columnIndex, int rowIndex) {
-		if( rowIndex < rows.size) {
-			Array<Actor> row = rows.get(rowIndex);
-			if( columnIndex < row.size ) {
-				return row.get(columnIndex);
+		if( rowIndex < rows.size ) {
+			try {
+				Array<Actor> row = rows.get(rowIndex);
+				if( columnIndex < row.size ) {
+					return row.get(columnIndex);
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns grid position of given element
 	 * @param actor
@@ -143,7 +172,7 @@ public class GridLayout extends WidgetGroup {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the amount of columns and rows of the grid
 	 * @return int[0] = columns, int[1] = rows.
@@ -159,7 +188,7 @@ public class GridLayout extends WidgetGroup {
 		}
 		return size;
 	}
-	
+
 	public Array<Actor> getRow(int row) throws ArrayIndexOutOfBoundsException {	
 		if( ( row >= 0 ) && ( row < rows.size ) ) {
 			return rows.get(row);
@@ -180,11 +209,11 @@ public class GridLayout extends WidgetGroup {
 		}
 		return elements;
 	}
-	
+
 	public void layout() {
 		setElementPositions();
 	}
-	
+
 	private void setElementPositions() {
 		for(int i = 0; i < rows.size; i++) {
 			float y = this.elementSize.y * i;

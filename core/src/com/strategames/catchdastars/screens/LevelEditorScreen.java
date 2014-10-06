@@ -262,7 +262,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 				}
 			}
 			if( wall == null ) {
-				getGame().getLevel().removeGameObject(door);
+				getGame().getLevel().removeDoor(door);
 				gameObject.remove();
 			} else {
 				placeDoor(door, wall);
@@ -451,6 +451,15 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 			}
 		}
 
+		Array<Door> doors = level.getDoors();
+		if( (doors != null) ) {
+			for( Door door : doors ) {
+				door.initializeConfigurationItems();
+				deselectGameObject(door);
+				game.addGameObject(door, stage);
+			}
+		}
+		
 		//We setup menu last to make sure menu items are drawn on top
 		setupMenu(getStageActors());
 	}

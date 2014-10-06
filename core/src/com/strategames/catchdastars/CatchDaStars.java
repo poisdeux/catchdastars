@@ -64,8 +64,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private int amountOfBlueBalloons;
 	private int amountOfRedBalloons;
 
-	private Array<Door> doors;
-
 	private final int scorePerBalloon = 10;
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
@@ -76,7 +74,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private boolean showScore;
 
 	private int[] nextLevelPosition;
-	
+
 	public CatchDaStars() {
 		super();
 		setTitle("Catch Da Stars");
@@ -166,42 +164,38 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
-		this.doors = new Array<Door>();
 		Array<Wall> border = new Array<Wall>();
 
 		for(GameObject gameObject : gameObjects ) {
-			if( gameObject instanceof Door ) {
-				this.doors.add((Door) gameObject);
-			} else {
-				if( gameObject instanceof Star ) {
-					if( gameObject instanceof StarBlue ) {
-						this.blueCollectables.add();
-					} else if( gameObject instanceof StarRed ) {
-						this.redCollectables.add();
-					} else if( gameObject instanceof StarYellow ) {
-						this.goldCollectables.add();
-					}
-				} else if( gameObject instanceof Balloon ) {
-					if( gameObject instanceof BalloonBlue ) {
-						this.amountOfBlueBalloons++;
-					} else if( gameObject instanceof BalloonRed ) {
-						this.amountOfRedBalloons++;
-					}
-				} else if( gameObject instanceof Icecube ) {
-					((Icecube) gameObject).addAllParts();
-				} else if( gameObject instanceof Wall ) {
-					Wall w = (Wall) gameObject;
-					if(w.isBorder()) {
-						border.add(w);
-					}
+			if( gameObject instanceof Star ) {
+				if( gameObject instanceof StarBlue ) {
+					this.blueCollectables.add();
+				} else if( gameObject instanceof StarRed ) {
+					this.redCollectables.add();
+				} else if( gameObject instanceof StarYellow ) {
+					this.goldCollectables.add();
 				}
-				addGameObject(gameObject, stage);
+			} else if( gameObject instanceof Balloon ) {
+				if( gameObject instanceof BalloonBlue ) {
+					this.amountOfBlueBalloons++;
+				} else if( gameObject instanceof BalloonRed ) {
+					this.amountOfRedBalloons++;
+				}
+			} else if( gameObject instanceof Icecube ) {
+				((Icecube) gameObject).addAllParts();
+			} else if( gameObject instanceof Wall ) {
+				Wall w = (Wall) gameObject;
+				if(w.isBorder()) {
+					border.add(w);
+				}
 			}
+			addGameObject(gameObject, stage);
 		}
 
+		Array<Door> doors = level.getDoors();
 		//Setup doors
-		for(int i = 0; i < this.doors.size; i++) {
-			Door door = this.doors.get(i);
+		for(int i = 0; i < doors.size; i++) {
+			Door door = doors.get(i);
 			Rectangle rectangle = door.getBoundingRectangle();
 			for(int j = 0; j < border.size; j++) {
 				Wall wall = border.get(j);
@@ -255,8 +249,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
 		Stage stage = screen.getStageActors();
 
-		for(int i = 0; i < this.doors.size; i++) {
-			Door door = this.doors.get(i);
+		Array<Door> doors = getLevel().getDoors();
+		for(int i = 0; i < doors.size; i++) {
+			Door door = doors.get(i);
 			door.setOpen(true);
 			Wall w = door.getWall();
 			if(w instanceof WallVertical) {

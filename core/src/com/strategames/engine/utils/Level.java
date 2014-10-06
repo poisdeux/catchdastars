@@ -8,16 +8,19 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Door;
 
 public class Level implements Comparable<Level> {
 	private String name;
 	private Array<GameObject> gameObjects;
+	private Array<Door> doors;
 	private Vector2 worldSize;
 	private Vector2 viewSize;
 	private int[] position = new int[2];
 	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
+		this.doors = new Array<Door>();
 	}
 	
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
@@ -28,6 +31,9 @@ public class Level implements Comparable<Level> {
 		
 		for( GameObject object : gameObjects ) {
 			addGameObject(object);
+			if( object instanceof Door ) {
+				this.doors.add((Door) object);
+			}
 		}
 	}
 
@@ -39,7 +45,11 @@ public class Level implements Comparable<Level> {
 	 */
 	public void addGameObject(GameObject object) {
 		if( object.getSaveToFile() ){
-			this.gameObjects.add(object);
+			if( object instanceof Door ) {
+				this.doors.add((Door) object);
+			} else {
+				this.gameObjects.add(object);
+			}
 		}
 	}
 	
@@ -51,6 +61,20 @@ public class Level implements Comparable<Level> {
 		return this.gameObjects;
 	}
 
+	public void addDoor(Door door) {
+		if( door.getSaveToFile() ){
+			this.doors.add((Door) door);
+		}
+	}
+	
+	public void removeDoor(Door door) {
+		this.doors.removeValue(door, true);
+	}
+	
+	public Array<Door> getDoors() {
+		return doors;
+	}
+	
 	public void setPosition(int x, int y) {
 		this.position[0] = x;
 		this.position[1] = y;
@@ -108,7 +132,7 @@ public class Level implements Comparable<Level> {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d,%d %s, #gameobjects=%d", this.position[0], this.position[1], this.name, this.gameObjects.size );
+		return String.format( Locale.US, "%d,%d %s, #gameobjects=%d. #doors=%d", this.position[0], this.position[1], this.name, this.gameObjects.size, this.doors.size );
 	}
 
 	public Level copy() {
