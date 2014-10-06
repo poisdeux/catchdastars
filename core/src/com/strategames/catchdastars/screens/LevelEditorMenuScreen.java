@@ -323,7 +323,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	private void adjacentRoomsAccessible(Level level) {
 		int[] position = level.getPosition();
-		Gdx.app.log("LevelEditorMenu", "adjacentRoomsAccessible: position=("+position[0]+","+position[1]+")");
+		Gdx.app.log("LevelEditorMenuScreen", "adjacentRoomsAccessible: position=("+position[0]+","+position[1]+")");
 
 		Array<int[]> unreachableLevelsFromCurrentLevel = new Array<int[]>();
 		unreachableLevelsFromCurrentLevel.add(new int[]{position[0]+1, position[1]});
@@ -332,7 +332,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		unreachableLevelsFromCurrentLevel.add(new int[]{position[0], position[1]-1});
 
 		for(Door door : level.getDoors()) {
-			Gdx.app.log("LevelEditorMenu", "adjacentRoomsAccessible: position="+position+", checking door: "+door);
+			Gdx.app.log("LevelEditorMenuScreen", "adjacentRoomsAccessible:position=("+position[0]+","+position[1]+")"+", checking door: "+door);
 			int[] nextLevelPosition = door.getNextLevelPosition();
 			for(int i = 0; i < unreachableLevelsFromCurrentLevel.size; i++) {
 				int[] pos = unreachableLevelsFromCurrentLevel.get(i);
@@ -347,7 +347,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		//a different door
 		for(int i = 0; i < unreachableLevelsFromCurrentLevel.size; i++) {
 			int[] pos = unreachableLevelsFromCurrentLevel.get(i);
-			Gdx.app.log("LevelEditorMenu", "adjacentRoomsAccessible: pos=("+pos[0]+","+pos[1]+")");
+			Gdx.app.log("LevelEditorMenuScreen", "adjacentRoomsAccessible: pos=("+pos[0]+","+pos[1]+")");
 
 			Actor actor = this.levelButtonsGrid.get(pos[0], pos[1]);
 			if( ( actor != null ) && ( actor instanceof TextButton ) ) {
@@ -364,32 +364,39 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				} else {
 					//Remove inaccessible empty level
 					this.levelButtonsGrid.remove(pos[0], pos[1]).remove();
-					
+
 				}
 			}
 		}
 	}
 
 	private Array<Door> getDoorsAccessingLevel(Level level) {
+		Gdx.app.log("LevelEditorMenuScreen", "getDoorsAccessingLevel: level="+level);
 		Array<Door> doorsToThisLevel = new Array<Door>();
 
 		int[] position = level.getPosition();
 		Array<int[]> nextLevels = new Array<int[]>();
 		nextLevels.add(new int[]{position[0]+1, position[1]});
-		nextLevels.add(new int[]{position[0]+1, position[1]+1});
 		nextLevels.add(new int[]{position[0], position[1]+1});
-		nextLevels.add(new int[]{position[0], position[1]});
+		nextLevels.add(new int[]{position[0]-1, position[1]});
+		nextLevels.add(new int[]{position[0], position[1]-1});
 
 		for(int i = 0; i < nextLevels.size; i++) {
 			int[] pos = nextLevels.get(i);
 			Actor actor = this.levelButtonsGrid.get(pos[0], pos[1]);
 			if( ( actor != null ) && ( actor instanceof TextButton ) ) {
-				Array<Door> doors = ((Level) ((TextButton) actor).getTag()).getDoors();
-				if( doors != null ) {
-					for(Door door : doors) {
-						int[] nextPos = door.getNextLevelPosition();
-						if( ( nextPos[0] == position[0 ] ) && ( nextPos[1] == position[1] ) ) {
-							doorsToThisLevel.add(door);
+				Level adjacentLevel = (Level) ((TextButton) actor).getTag();
+				if( adjacentLevel != null ) {
+					Array<Door> doors = adjacentLevel.getDoors();
+					Gdx.app.log("LevelEditorMenuScreen", "getDoorsAccessingLevel: checking adjacentLevel="+adjacentLevel);
+					if( doors != null ) {
+						for(Door door : doors) {
+							Gdx.app.log("LevelEditorMenuScreen", "getDoorsAccessingLevel: checking door="+door);
+							int[] nextPos = door.getNextLevelPosition();
+							if( ( nextPos[0] == pos[0] ) && ( nextPos[1] == pos[1] ) ) {
+								doorsToThisLevel.add(door);
+								Gdx.app.log("LevelEditorMenuScreen", "getDoorsAccessingLevel: DoorsToThisLevel.add: "+door);
+							}
 						}
 					}
 				}
