@@ -1,11 +1,12 @@
 package com.strategames.engine.utils;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.SerializationException;
 
 public class LevelLoader {
 
@@ -74,9 +75,16 @@ public class LevelLoader {
 	 */
 	static private Level loadSync(FileHandle file) {
 		Json json = new Json();
-		String text = file.readString();
-		Object root =  json.fromJson(Level.class, text);
-		return (Level) root;
+		try {
+			String text = file.readString();
+			Object root =  json.fromJson(Level.class, text);
+			return (Level) root;
+		} catch (GdxRuntimeException e) {
+			Gdx.app.log("LevelLoader", "Runtime error while loading level: "+e.getMessage());
+		} catch (SerializationException e) {
+			Gdx.app.log("LevelLoader", "Serialization error while loading level: "+e.getMessage());
+		}
+		return null;
 	}
 
 	/**
@@ -102,14 +110,17 @@ public class LevelLoader {
 		thread.start();
 	}
 
-	static public ArrayList<Level> loadAllLocalLevels() {
+	static public Array<Level> loadAllLocalLevels() {
 		FileHandle dir = getLocalLevelsDir();
 		FileHandle[] files = dir.list();
 
-		ArrayList<Level> levels = new ArrayList<Level>();
+		Array<Level> levels = new Array<Level>();
 
 		for( FileHandle file : files ) {
-			levels.add(loadSync(file));
+			Level level = loadSync(file);
+			if( level != null ) {
+				levels.add(level);
+			}
 		}
 
 		return levels;
@@ -121,7 +132,7 @@ public class LevelLoader {
 	 * @param jsonString the json input containing a Levels block with one or more levels
 	 * @return ArrayList of type Level
 	 */
-	static public ArrayList<Level> getLevels(String jsonString) {
+	static public Array<Level> getLevels(String jsonString) {
 		Json json = new Json();
 		try {
 			Levels levels = json.fromJson(Levels.class, jsonString);

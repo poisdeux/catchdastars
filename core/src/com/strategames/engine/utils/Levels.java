@@ -1,20 +1,20 @@
 package com.strategames.engine.utils;
 
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 
 public class Levels {
-	private ArrayList<Level> levels;
+	private Array<Level> levels;
 	
 	public Levels() {
 	}
 	
-	public void setLevels(ArrayList<Level> levels) {
+	public void setLevels(Array<Level> levels) {
 		this.levels = levels;
 	}
 	
-	public ArrayList<Level> getLevels() {
+	public Array<Level> getLevels() {
 		return levels;
 	}
 	
@@ -25,7 +25,7 @@ public class Levels {
 	}
 	
 	public void deleteLevel(Level level) {
-		this.levels.remove(level);
+		this.levels.removeValue(level, true);
 	}
 	
 	public void addLevel(Level level) {

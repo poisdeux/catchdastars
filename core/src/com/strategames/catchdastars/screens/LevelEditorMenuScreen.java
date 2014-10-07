@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
@@ -43,16 +42,16 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	public LevelEditorMenuScreen(Game game) {
 		super(game, "Level editor");
+		this.levels = new Levels();
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-
-		this.levels = new Levels();
-		this.levels.setLevels(LevelLoader.loadAllLocalLevels());
-
 		Skin skin = getSkin();
 
+		Array<Level> localLevels = LevelLoader.loadAllLocalLevels();
+		this.levels.setLevels(localLevels);
+		
 		this.levelButtonsGrid = new GridLayout();
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
@@ -104,8 +103,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		Gdx.app.log("LevelEditorMenuScreen", "show(): editingLevel="+editingLevel);
 		if( editingLevel != null ) { // reload level to include added gameobjects
-			ArrayList<Level> levelsArrayList = this.levels.getLevels();
-			int index = levelsArrayList.indexOf(editingLevel);
+			Array<Level> levelsArrayList = this.levels.getLevels();
+			int index = levelsArrayList.indexOf(editingLevel, true);
 			editingLevel = LevelLoader.loadLocalSync(editingLevel.getPositionAsString());
 			levelsArrayList.set(index, editingLevel);
 
@@ -206,16 +205,16 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	public void levelsReceived(String json) {
-		ArrayList<Level> levels = LevelLoader.getLevels(json);
+		Array<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
-			ArrayList<Level> levelsFailedToSave = null;
+			Array<Level> levelsFailedToSave = null;
 			if( LevelWriter.deleteLocalLevelsDir() ) {
 				levelsFailedToSave = LevelWriter.save(levels);
 			} else {
 				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
 			}
 			if( levelsFailedToSave != null ) {
-				if( levelsFailedToSave.size() == 0 ) {
+				if( levelsFailedToSave.size == 0 ) {
 					fillLevelButtonsTable(levels);
 				} else {
 					for(Level level : levelsFailedToSave) {
@@ -277,10 +276,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level position and name.
 	 */
-	private void fillLevelButtonsTable(ArrayList<Level> levels) {
+	private void fillLevelButtonsTable(Array<Level> levels) {
 		this.levelButtonsGrid.setElementSize(60f, 30f);
-
-		if( levels.isEmpty() ) {
+		if( ( levels == null ) || ( levels.size == 0 ) ) {
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
 		} else {

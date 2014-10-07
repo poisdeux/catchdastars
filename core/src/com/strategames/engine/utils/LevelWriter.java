@@ -1,8 +1,10 @@
 package com.strategames.engine.utils;
 
 import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 
 public class LevelWriter {
@@ -31,8 +33,8 @@ public class LevelWriter {
 	 * @param levels to save
 	 * @return ArrayList of levels that failed to save
 	 */
-	static public ArrayList<Level> save(ArrayList<Level> levels) {
-		ArrayList<Level> levelsFailed = new ArrayList<Level>();
+	static public Array<Level> save(Array<Level> levels) {
+		Array<Level> levelsFailed = new Array<Level>();
 		for(Level level : levels) {
 			if( ! LevelWriter.save(level) ) {
 				Gdx.app.log("LevelWriter", "save: Failed to save level: "+level);
