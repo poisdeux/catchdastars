@@ -101,6 +101,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	public void show() {
 		super.show();
 
+		fillLevelButtonsTable(this.levels.getLevels());
+		
 		Gdx.app.log("LevelEditorMenuScreen", "show(): editingLevel="+editingLevel);
 		if( editingLevel != null ) { // reload level to include added gameobjects
 			Array<Level> levelsArrayList = this.levels.getLevels();
@@ -111,8 +113,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			//Check if adjacent rooms are still accessible
 			adjacentRoomsAccessible(editingLevel);
 		}
-
-		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
 	@Override
@@ -133,6 +133,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 					level.setName(text);
 					level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
 					level.setViewSize(new Vector2(game.getViewSize()));
+					level.setReachable(true); //asume level can only be created if reachable
 					int[] position = levelButtonsGrid.getPosition(button);
 					level.setPosition(position[0], position[1]);
 					ScreenBorder.create(level, game);
@@ -287,7 +288,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				button.setTag(level);
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], button);
-				addNextLevelButtons(level);
+				if( level.isReachable() ) {
+					addNextLevelButtons(level);
+				} else {
+					button.setColor(1f, 0.2f, 0.2f, 1f);
+				}
 			}
 		}
 	}
@@ -329,6 +334,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		unreachableLevelsFromCurrentLevel.add(new int[]{position[0], position[1]+1});
 		unreachableLevelsFromCurrentLevel.add(new int[]{position[0], position[1]-1});
 
+		//Get levels not accessible from current level
 		for(Door door : level.getDoors()) {
 			Gdx.app.log("LevelEditorMenuScreen", "adjacentRoomsAccessible:position=("+position[0]+","+position[1]+")"+", checking door: "+door);
 			int[] nextLevelPosition = door.getNextLevelPosition();
@@ -345,6 +351,10 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		//a different door
 		for(int i = 0; i < unreachableLevelsFromCurrentLevel.size; i++) {
 			int[] pos = unreachableLevelsFromCurrentLevel.get(i);
+			if( ( pos[0] == 0 ) && ( pos[1] == 0 ) ) {
+				continue; //skip start level
+			}
+			
 			Gdx.app.log("LevelEditorMenuScreen", "adjacentRoomsAccessible: pos=("+pos[0]+","+pos[1]+")");
 
 			Actor actor = this.levelButtonsGrid.get(pos[0], pos[1]);
@@ -353,16 +363,13 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				if( adjacentLevel != null ) {
 					Array<Door> doorsToThisLevel = getDoorsAccessingLevel(adjacentLevel);
 					if( doorsToThisLevel.size == 0 ) {
-						//Mark button to indicate level unreachable
-						((TextButton) actor).setColor(1f, 0f, 0f, 1f);
+						adjacentLevel.setReachable(false);
 					} else {
-						//Mark button to indicate level reachable
-						((TextButton) actor).setColor(0f, 1f, 0f, 1f);
+						adjacentLevel.setReachable(true);
 					}
 				} else {
 					//Remove inaccessible empty level
 					this.levelButtonsGrid.remove(pos[0], pos[1]).remove();
-
 				}
 			}
 		}

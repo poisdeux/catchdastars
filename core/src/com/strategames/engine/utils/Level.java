@@ -17,6 +17,7 @@ public class Level implements Comparable<Level> {
 	private Vector2 worldSize;
 	private Vector2 viewSize;
 	private int[] position = new int[2];
+	private boolean reachable;
 	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
@@ -73,6 +74,14 @@ public class Level implements Comparable<Level> {
 	
 	public Array<Door> getDoors() {
 		return doors;
+	}
+	
+	public void setReachable(boolean reachable) {
+		this.reachable = reachable;
+	}
+	
+	public boolean isReachable() {
+		return reachable;
 	}
 	
 	public void setPosition(int x, int y) {
