@@ -20,6 +20,12 @@ public class GridLayout extends WidgetGroup {
 
 	private Array<Array<Actor>> rows = new Array<Array<Actor>>();
 
+	@Override
+	public void clear() {
+		rows.clear();
+		super.clear();
+	}
+	
 	public void setGrid(Array<Array<Actor>> elements) {
 		this.rows = elements;
 	}

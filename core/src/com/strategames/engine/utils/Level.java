@@ -3,6 +3,7 @@ package com.strategames.engine.utils;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -117,7 +118,6 @@ public class Level implements Comparable<Level> {
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
-//		Gdx.app.log("Level", "getJson: json="+json.toJson(this));
 		return json.toJson(this);
 	}
 
@@ -158,6 +158,7 @@ public class Level implements Comparable<Level> {
 		}
 		level.setName(new String(this.name));
 		level.setPosition(this.position[0], this.position[1]);
+		level.setReachable(isReachable());
 		return level;
 	}
 	
