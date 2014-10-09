@@ -3,7 +3,6 @@ package com.strategames.catchdastars.screens;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import sun.security.action.GetLongAction;
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.Gdx;

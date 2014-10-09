@@ -9,6 +9,7 @@ public class Levels {
 	private Array<Level> levels;
 	
 	public Levels() {
+		this.levels = new Array<Level>();
 	}
 	
 	public void setLevels(Array<Level> levels) {
