@@ -99,20 +99,6 @@ project(":core") {
     }
 }
 
-project(":core-test") {
-    apply plugin: "java"
-
-    dependencies {
-        compile project(":core")
-	testCompile "junit:junit:4.+"
-        testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        testCompile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        testCompile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-    }
-}
-
 tasks.eclipse.doLast {
     delete ".project"
 }
