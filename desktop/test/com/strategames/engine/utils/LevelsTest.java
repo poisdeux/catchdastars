@@ -1,11 +1,14 @@
 package com.strategames.engine.utils;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Iterator;
 
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobject.types.Door;
 
@@ -71,12 +74,14 @@ public class LevelsTest {
 			Level level = itr.next();
 			for(int i = 0; i < positions.length; i++) {
 				int[] pos = level.getPosition();
-				if((pos[0] == positions[i][0]) && (pos[1] == positions[i][0])) {
+				if((pos[0] == positions[i][0]) && (pos[1] == positions[i][1])) {
+					System.out.println("LevelsTest removed "+pos[0]+","+pos[1]);
 					itr.remove();
 					levelNotFound = false;
+					break;
 				}
 			}
-			assertTrue("Level="+level+" not found in levels", levelNotFound);
+			assertFalse("Level="+level+" not found in levels", levelNotFound);
 		}
 		assertTrue("getLevels() does not return all levels", levels.size == 0);
 	}
