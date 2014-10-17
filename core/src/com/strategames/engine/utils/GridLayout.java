@@ -5,11 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * TODO make gridlayout handle negative rows and columns
- * @author mbrekhof
- *
- */
 public class GridLayout extends WidgetGroup {
 
 	private Vector2 elementSize = new Vector2(10, 10);
@@ -18,20 +13,20 @@ public class GridLayout extends WidgetGroup {
 		public T newInstance();
 	}
 
-	private Array<Array<Actor>> rows = new Array<Array<Actor>>();
-
+	private Array<Holder> elements = new Array<Holder>();
+	
 	@Override
 	public void clear() {
-		rows.clear();
+		elements.clear();
 		super.clear();
 	}
-	
-	public void setGrid(Array<Array<Actor>> elements) {
-		this.rows = elements;
-	}
 
-	public Array<Array<Actor>> getElements() {
-		return rows;
+	public Array<Actor> getElements() {
+		Array<Actor> actors = new Array<Actor>();
+		for(Holder holder : elements) {
+			actors.add(holder.getActor());
+		}
+		return actors;
 	}
 
 	public void setElementSize(float width, float height) {
@@ -42,118 +37,64 @@ public class GridLayout extends WidgetGroup {
 		return elementSize;
 	}
 
-	public void deleteRow(int row) {
-		this.rows.removeIndex(row);
-	}
-
-	public void deleteColumn(int column) {
-		for(int i = 0; i < rows.size; i++) {
-			Array<Actor> row = rows.get(i);
-			row.removeIndex(column);
-		}
-	}
-
 	/**
-	 * Adds a row to the grid. If the grid is empty
-	 * a row and a column will be created.
+	 * Sets element at given index.
+	 * @param x 
+	 * @param y 
+	 * @param actor element to set at position x, y
 	 */
-	public void addRow() {
-		int columns = 1;
-		if( rows.size > 0 ) { 
-			Array<Actor> column = rows.get(0);
-			columns = column.size;
-		}
-
-		Array<Actor> row = new Array<Actor>();
-		for(int i = 0; i < columns; i++) {
-			row.add(null);
-		}
-
-		rows.add(row);
-	}
-
-	/**
-	 * Adds a column to the grid. If the grid is empty
-	 * a row and a column will be created.
-	 */
-	public void addColumn() {
-		if( rows.size == 0 ) {
-			rows.add(new Array<Actor>());
-		}
-
-		for(int i = 0; i < rows.size; i++) {
-			Array<Actor> row = rows.get(i);
-			row.add(null);
-		}
-	}
-
-	/**
-	 * Sets element at given index. If grid does not contain the
-	 * given index yet the grid size is increased to include the index
-	 * @param columnIndex column number (starting at 0)
-	 * @param rowIndex row number (starting at 0)
-	 * @param actor element to set at position rowIndex, columnIndex
-	 */
-	public void set(int columnIndex, int rowIndex, Actor actor) {
-		if( rowIndex >= rows.size) {
-			for( int i = rows.size - 1; i < rowIndex; i++ ) {
-				addRow();
+	public void set(int x, int y, Actor actor) {
+		Holder setElement = null;
+		
+		for(Holder element : this.elements) {
+			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
+				element.getActor().remove();
+				element.setActor(actor);
+				setElement = element;
 			}
 		}
 
-		Array<Actor> row = rows.get(rowIndex);
-		if( columnIndex >= row.size ) {
-			for( int i = row.size - 1; i < columnIndex; i++ ) {
-				addColumn();
-			}
+		if( setElement == null ) {
+			setElement = new Holder(actor, x, y);
+			this.elements.add(setElement);
 		}
-
-		Actor curActor = row.get(columnIndex);
-
-		//Make sure any existing actor is removed from the group
-		if( curActor != null ) {
-			row.get(columnIndex).remove();
+		
+		float xActor = setElement.x * this.elementSize.x;
+		float yActor = setElement.y * this.elementSize.y;
+		if( actor != null ) {
+			actor.setPosition(xActor + getX(), yActor + getY());
+			addActor(actor);
 		}
-
-		row.set(columnIndex, actor);
-		addActor(actor);
 	}
 
 	/**
 	 * Removes actor at given position
-	 * @param columnIndex
-	 * @param rowIndex
+	 * @param x
+	 * @param y
 	 * @return removed actor or null if failed
 	 */
-	public Actor remove(int columnIndex, int rowIndex) {
-		if( rowIndex < rows.size ) {
-			try {
-				Array<Actor> row = rows.get(rowIndex);
-				if( columnIndex < row.size ) {
-					return row.removeIndex(columnIndex);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return null;
+	public Actor remove(int x, int y) {
+		for(Holder element : this.elements) {
+			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
+				Actor actor = element.getActor();
+				actor.remove();
+				return actor; 
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the element at the given grid position
-	 * @param columnIndex
-	 * @param rowIndex
+	 * @param x
+	 * @param y
 	 * @return Actor or null if not found
 	 */
-	public Actor get(int columnIndex, int rowIndex) {
-		if( rowIndex < rows.size ) {
-			try {
-				Array<Actor> row = rows.get(rowIndex);
-				if( columnIndex < row.size ) {
-					return row.get(columnIndex);
-				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return null;
+	public Actor get(int x, int y) {
+		for(Holder element : this.elements) {
+			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
+				Actor actor = element.getActor();
+				return actor; 
 			}
 		}
 		return null;
@@ -162,75 +103,42 @@ public class GridLayout extends WidgetGroup {
 	/**
 	 * Returns grid position of given element
 	 * @param actor
-	 * @return position (int[0] is columnIndex and int[1] is rowIndex) or null if not found
+	 * @return position (int[0] is x and int[1] is y) or null if not found
 	 */
 	public int[] getPosition(Actor actor) {
-		for(int i = 0; i < rows.size; i++) {
-			Array<Actor> row = rows.get(i);
-			for(int j = 0; j < row.size; j++) {
-				if( row.get(j) == actor ) {
-					int[] position = new int[2];
-					position[0] = j;
-					position[1] = i;
-					return position;
-				}
+		for(Holder element : this.elements) {
+			if( ( element.getActor() == actor ) ) {
+				return new int[] {element.getX(), element.getY()}; 
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * Returns the amount of columns and rows of the grid
-	 * @return int[0] = columns, int[1] = rows.
-	 */
-	public int[] getSize() {
-		int[] size = new int[2];
-		if( rows.size == 0 ) {
-			size[0] = 0;
-			size[1] = 0;
-		} else {
-			size[0] = rows.get(0).size;
-			size[1] = rows.size;
+	private class Holder {
+		private int x;
+		private int y;
+		private Actor actor;
+
+		public Holder(Actor actor, int x, int y) {
+			this.actor = actor;
+			this.x = x;
+			this.y = y;
 		}
-		return size;
-	}
 
-	public Array<Actor> getRow(int row) throws ArrayIndexOutOfBoundsException {	
-		if( ( row >= 0 ) && ( row < rows.size ) ) {
-			return rows.get(row);
-		} else {
-			throw new ArrayIndexOutOfBoundsException();
+		public int getX() {
+			return x;
 		}
-	}
 
-	public Array<Actor> getColumn(int column) throws ArrayIndexOutOfBoundsException {
-		Array<Actor> elements = new Array<Actor>();
-		for(int i = 0; i < rows.size; i++) {
-			Array<Actor> row = rows.get(i);
-			if( column < row.size ) { 
-				elements.add(row.get(column));
-			} else {
-				throw new ArrayIndexOutOfBoundsException("Row("+i+").size="+row.size+" < column="+column);
-			}
+		public int getY() {
+			return y;
 		}
-		return elements;
-	}
 
-	public void layout() {
-		setElementPositions();
-	}
+		public Actor getActor() {
+			return actor;
+		}
 
-	private void setElementPositions() {
-		for(int i = 0; i < rows.size; i++) {
-			float y = this.elementSize.y * i;
-			Array<Actor> row = rows.get(i);
-			for(int j = 0; j < row.size; j++) {
-				float x = this.elementSize.x * j;
-				Actor actor = row.get(j);
-				if( actor != null ) {
-					actor.setPosition(x, y);
-				}
-			}
+		public void setActor(Actor actor) {
+			this.actor = actor;
 		}
 	}
 }

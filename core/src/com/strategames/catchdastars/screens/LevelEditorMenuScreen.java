@@ -1,13 +1,10 @@
 package com.strategames.catchdastars.screens;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -53,13 +50,14 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levels.setLevels(localLevels);
 
 		this.levelButtonsGrid = new GridLayout();
-
+				
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
 		scrollPane.setWidth(stage.getWidth());
 		scrollPane.setPosition(0, 200f);
 		stage.addActor(scrollPane);
 
+		
 		Table bottomButtonsTable = new Table();
 		bottomButtonsTable.setWidth(stage.getWidth());
 
@@ -280,7 +278,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void fillLevelButtonsTable(Array<Level> levels) {
 		this.levelButtonsGrid.clear();
 		
+		//Center button grid in scrollpane
+		this.levelButtonsGrid.setPosition((getStageUIActors().getWidth() / 2f)-30f, 185f);
+				
 		this.levelButtonsGrid.setElementSize(60f, 30f);
+		
 		if( ( levels == null ) || ( levels.size == 0 ) ) {
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
