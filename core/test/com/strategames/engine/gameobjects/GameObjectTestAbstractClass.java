@@ -16,10 +16,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.game.GameTestClass;
 import com.strategames.engine.gameobject.GameObject;
-import com.strategames.engine.screens.GdxTestRunner2;
+import com.strategames.engine.screens.GdxTestRunner;
 import com.strategames.engine.utils.ConfigurationItem;
 
-@RunWith(GdxTestRunner2.class)
+@RunWith(GdxTestRunner.class)
 abstract public class GameObjectTestAbstractClass {
 	private GameObject gameObject;
 
