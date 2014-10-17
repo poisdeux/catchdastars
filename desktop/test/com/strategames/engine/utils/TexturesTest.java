@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.strategames.engine.screens.GdxTestRunner;
+import com.strategames.engine.screens.GdxTestRunner2;
 
-@RunWith(GdxTestRunner.class)
+@RunWith(GdxTestRunner2.class)
 public class TexturesTest {
 
 	@Test
