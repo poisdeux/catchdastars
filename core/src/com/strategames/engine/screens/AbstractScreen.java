@@ -56,7 +56,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private Label title;
 	private ButtonsDialog mainMenu;
 	private MenuButton menuButton;
-	
+
 	private Array<Vector2> originalPositions;
 
 	public AbstractScreen() {
@@ -190,7 +190,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			this.menuButton = new MenuButton();
 			this.menuButton.setPosition(450f, 700f);
 			this.menuButton.setListener( new ButtonListener() {
-				
+
 				@Override
 				public void onTap(Button button) {
 					if( mainMenu.isVisible() ) {
@@ -199,11 +199,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 						mainMenu.show();
 					}
 				}
-				
+
 				@Override
 				public void onLongPress(Button button) {	}
 			});
-			
+
 			this.mainMenu.create();
 			this.mainMenu.setPosition(this.menuButton.getX() - this.mainMenu.getWidth(), 
 					this.menuButton.getY() - ( this.mainMenu.getHeight() - this.menuButton.getHeight() ) );
@@ -351,7 +351,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		if( this.mainMenu == null ) {
 			this.mainMenu = new ButtonsDialog(getStageUIActors(), getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
 		}
-		
+
 		this.mainMenu.add(text, new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -363,7 +363,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public ButtonsDialog getMainMenu() {
 		return mainMenu;
 	}
-	
+
 	/**
 	 * Override to handle menu item selections
 	 * @param text of menu item as created using {@link #addMenuItem(String)}
@@ -406,17 +406,25 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 					.target(700));
 		}
 
+		if(this.menuButton != null) {
+			title.setY(stage.getHeight() + this.menuButton.getHeight());
+			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
+					.target(700));
+		}
+
 		Array<Actor> actors = stage.getActors();
 		if( this.originalPositions == null ) {
 			this.originalPositions = new Array<Vector2>(actors.size);
 			for(int i = 0; i < actors.size; i++) {
 				Actor actor = actors.get(i);
-				this.originalPositions.add(new Vector2(actor.getX(), actor.getY()));
+				if( ( actor != this.title ) && ( actor != this.menuButton ) ) {
+					this.originalPositions.add(new Vector2(actor.getX(), actor.getY()));
+				}
 			}
 		}
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
-			if( actor != title ) {
+			if( ( actor != this.title ) && ( actor != this.menuButton ) ) {
 				Vector2 pos = this.originalPositions.get(i);
 				actor.setY(-60f);
 				timelineSequence.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.1f)
@@ -445,7 +453,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			timeline.push(Tween.to(this.menuButton, ActorAccessor.POSITION_Y, 0.4f)
 					.target(stage.getHeight() + this.menuButton.getHeight()));
 		}
-		
+
 		Array<Actor> actors = getStageUIActors().getActors();
 
 		for(int i = 0; i < actors.size; i++) {

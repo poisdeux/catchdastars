@@ -12,6 +12,10 @@ public class Levels {
 		this.levels = new Array<Level>();
 	}
 	
+	public void clear() {
+		this.levels = new Array<Level>();
+	}
+	
 	public void setLevels(Array<Level> levels) {
 		this.levels = levels;
 	}

@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.screens;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
@@ -225,9 +227,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void deleteLevel(Level level) {
-		LevelWriter.deleteLocal(level.getName());
+		LevelWriter.deleteLocal(level);
 		this.levels.deleteLevel(level);
-		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
 	/**
@@ -364,7 +365,16 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		} else if(text.contentEquals("Export levels")) {
 			getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
 		} else if(text.contentEquals("Delete game")) {
-
+			Iterator<Level> itr = this.levels.getLevels().iterator();
+			while(itr.hasNext()) {
+				Level level = itr.next();
+				if( LevelWriter.deleteLocal(level)) {
+					itr.remove();
+				} else {
+					Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getName());
+				}
+			}
+			fillLevelButtonsTable(this.levels.getLevels());
 		}
 		getMainMenu().remove();
 	}

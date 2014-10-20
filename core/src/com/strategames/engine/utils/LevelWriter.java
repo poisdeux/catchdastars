@@ -1,7 +1,5 @@
 package com.strategames.engine.utils;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -65,9 +63,9 @@ public class LevelWriter {
 	 * Deletes the local file for the given level
 	 * @param level
 	 */
-	static public boolean deleteLocal(String name) {
+	static public boolean deleteLocal(Level level) {
 		try {
-			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(name));
+			FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(level.getPositionAsString()));
 			return file.delete();
 		} catch (Exception e) {
 			return false;
