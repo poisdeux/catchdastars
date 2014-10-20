@@ -16,15 +16,28 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
+import com.strategames.ui.dialogs.ButtonsDialog;
+import com.strategames.ui.interfaces.ButtonListener;
+import com.strategames.ui.widgets.MenuButton;
 
+/**
+ * TODO dialogs do not take exclusive focus which means that user can still select
+ * buttons. This may result in application crashing as the dialog may still be in 
+ * the stage. We should either make sure the dialog takes complete focus or stages
+ * are properly cleared when switching screens.
+ *
+ */
 public abstract class AbstractScreen implements Screen, InputProcessor
 {
 	private Game game;
@@ -41,7 +54,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private TweenManager tweenManager;
 
 	private Label title;
-
+	private ButtonsDialog mainMenu;
+	private MenuButton menuButton;
+	
 	private Array<Vector2> originalPositions;
 
 	public AbstractScreen() {
@@ -169,6 +184,30 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			Vector2 sizeMenu = getMenuSize();
 			this.title.setPosition((sizeMenu.x / 2f) - (this.title.getWidth() / 2f), 700f);
 			getStageUIActors().addActor(this.title);
+		}
+
+		if( this.mainMenu != null ) {
+			this.menuButton = new MenuButton();
+			this.menuButton.setPosition(450f, 700f);
+			this.menuButton.setListener( new ButtonListener() {
+				
+				@Override
+				public void onTap(Button button) {
+					if( mainMenu.isVisible() ) {
+						mainMenu.hide();
+					} else {
+						mainMenu.show();
+					}
+				}
+				
+				@Override
+				public void onLongPress(Button button) {	}
+			});
+			
+			this.mainMenu.create();
+			this.mainMenu.setPosition(this.menuButton.getX() - this.mainMenu.getWidth(), 
+					this.menuButton.getY() - ( this.mainMenu.getHeight() - this.menuButton.getHeight() ) );
+			getStageUIActors().addActor(this.menuButton);
 		}
 
 		Gdx.input.setInputProcessor(getMultiplexer());
@@ -308,13 +347,29 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return false;
 	}
 
+	public void addMenuItem(final String text) {
+		if( this.mainMenu == null ) {
+			this.mainMenu = new ButtonsDialog(getStageUIActors(), getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);
+		}
+		
+		this.mainMenu.add(text, new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				onMenuItemSelected(text);
+			}
+		});
+	}
+
+	public ButtonsDialog getMainMenu() {
+		return mainMenu;
+	}
+	
 	/**
-	 * Implement to override default back navigation handling
-	 * by Game class
-	 * @return true if handled, false to pass key to game class as well
+	 * Override to handle menu item selections
+	 * @param text of menu item as created using {@link #addMenuItem(String)}
 	 */
-	protected boolean handleBackNavigation() {
-		return false;
+	public void onMenuItemSelected(String text) {
+
 	}
 
 	@Override
@@ -325,6 +380,15 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 				", gameCamera="+gameCamera+
 				"\nmenuSize="+menuSize;
 		return super.toString() + message;
+	}
+
+	/**
+	 * Implement to override default back navigation handling
+	 * by Game class
+	 * @return true if handled, false to pass key to game class as well
+	 */
+	protected boolean handleBackNavigation() {
+		return false;
 	}
 
 	/**
@@ -372,16 +436,21 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Stage stage = getStageUIActors();
 		Timeline timeline = Timeline.createParallel();
 
-		if(title != null) {
-			timeline.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
-					.target(stage.getHeight() + title.getHeight()));
+		if(this.title != null) {
+			timeline.push(Tween.to(this.title, ActorAccessor.POSITION_Y, 0.4f)
+					.target(stage.getHeight() + this.title.getHeight()));
 		}
 
+		if(this.menuButton != null) {
+			timeline.push(Tween.to(this.menuButton, ActorAccessor.POSITION_Y, 0.4f)
+					.target(stage.getHeight() + this.menuButton.getHeight()));
+		}
+		
 		Array<Actor> actors = getStageUIActors().getActors();
 
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
-			if( actor != title ) {
+			if( ( actor != this.title ) && ( actor != this.menuButton ) ) {
 				timeline.push(Tween.to(actor, ActorAccessor.POSITION_Y, 0.1f)
 						.target(-actor.getHeight()));
 			}

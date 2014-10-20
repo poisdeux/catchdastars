@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
@@ -24,7 +23,9 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.Levels;
 import com.strategames.engine.utils.ScreenBorder;
+import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.interfaces.ButtonListener;
@@ -46,6 +47,10 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	protected void setupUI(Stage stage) {
 		Skin skin = getSkin();
 
+		addMenuItem("Import levels");
+		addMenuItem("Export levels");
+		addMenuItem("Delete game");
+
 		Array<Level> localLevels = LevelLoader.loadAllLocalLevels();
 		this.levels.setLevels(localLevels);
 
@@ -53,44 +58,23 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		//Center button grid in scrollpane
 		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
 		this.levelButtonsGrid.setElementSize(60f, 30f);
-				
+
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
 		scrollPane.setWidth(stage.getWidth());
 		scrollPane.setPosition(0, 200f);
 		stage.addActor(scrollPane);
 
-		Table bottomButtonsTable = new Table();
-		bottomButtonsTable.setWidth(stage.getWidth());
+		TextButton button = new TextButton( "Main menu", skin);
+		button.setWidth(stage.getWidth());
 
-		TextButton button = new TextButton("export", skin);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				getGame().getExporterImporter().export(levels.getJson());
-			}
-		});
-		bottomButtonsTable.add( button ).fillX().expand();
-
-		button = new TextButton("import", skin);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
-			}
-		});
-		bottomButtonsTable.add( button ).fillX().expand();
-
-		button = new TextButton( "Main menu", skin);
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				getGame().showMainMenu();
 			}
 		});
-		bottomButtonsTable.add( button ).fillX().expand();
-		bottomButtonsTable.setHeight(button.getHeight());
-		stage.addActor(bottomButtonsTable);
+		stage.addActor(button);
 	}
 
 	@Override
@@ -117,42 +101,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	public void onTap(final Button button) {
-		if( ! ( button instanceof TextButton ) ) {
-			return;
-		}
-
-		Object tag = ((TextButton) button).getTag();
-		if( tag == null ) {
-			//Add a new level
-			Gdx.input.getTextInput(new TextInputListener() {
-				@Override
-				public void input(String text) {
-					CatchDaStars game = (CatchDaStars) getGame();
-					Vector3 worldSize = game.getWorldSize();
-					Level level = new Level();
-					level.setName(text);
-					level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
-					level.setViewSize(new Vector2(game.getViewSize()));
-					level.setReachable(true); //assume level can only be created if reachable
-					int[] position = levelButtonsGrid.getPosition(button);
-					level.setPosition(position[0], position[1]);
-					ScreenBorder.create(level, game);
-					addLevel(level);
-					game.setLevel(level);
-					editingLevel = level;
-					game.showLevelEditor(); 
-				}
-
-				@Override
-				public void canceled() {
-
-				}
-			}, "Enter name for new level", "");
-		} else if( tag instanceof Level ) {
-			CatchDaStars game = (CatchDaStars) getGame();
-			game.setLevel((Level) tag);
-			this.editingLevel = (Level) tag;
-			game.showLevelEditor(); 
+		if( button instanceof TextButton ) {
+			handleTextButtonTap((TextButton) button);
 		}
 	}
 
@@ -347,5 +297,75 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		for(Level l : reachableLevels) {
 			l.setReachable(true);
 		}
+	}
+
+	private void handleTextButtonTap(final TextButton button) {
+		Object tag = button.getTag();
+		if( tag == null ) {
+			//Add a new level
+			Gdx.input.getTextInput(new TextInputListener() {
+				@Override
+				public void input(String text) {
+					CatchDaStars game = (CatchDaStars) getGame();
+					Vector3 worldSize = game.getWorldSize();
+					Level level = new Level();
+					level.setName(text);
+					level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
+					level.setViewSize(new Vector2(game.getViewSize()));
+					level.setReachable(true); //assume level can only be created if reachable
+					int[] position = levelButtonsGrid.getPosition(button);
+					level.setPosition(position[0], position[1]);
+					ScreenBorder.create(level, game);
+					addLevel(level);
+					game.setLevel(level);
+					editingLevel = level;
+					game.showLevelEditor(); 
+				}
+
+				@Override
+				public void canceled() {
+
+				}
+			}, "Enter name for new level", "");
+		} else if( tag instanceof Level ) {
+			CatchDaStars game = (CatchDaStars) getGame();
+			game.setLevel((Level) tag);
+			this.editingLevel = (Level) tag;
+			game.showLevelEditor(); 
+		}
+	}
+
+	@Override
+	public void onMenuItemSelected(String text) {
+		if(text.contentEquals("Import levels")) {
+			if( this.levels.getLevels().size > 0 ) {
+				//ask for confirmation
+				ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "Importing will delete current game", getSkin());
+				dialog.setPositiveButton("Import", new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						dialog.remove();
+						getGame().getExporterImporter().export(levels.getJson());
+					}
+				});
+				dialog.setNegativeButton("Cancel", new OnClickListener() {
+					
+					@Override
+					public void onClick(Dialog dialog, int which) {
+						dialog.remove();
+					}
+				});
+				dialog.create();
+				dialog.show();
+			} else {
+				getGame().getExporterImporter().export(levels.getJson());
+			}
+		} else if(text.contentEquals("Export levels")) {
+			getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
+		} else if(text.contentEquals("Delete game")) {
+
+		}
+		getMainMenu().remove();
 	}
 }

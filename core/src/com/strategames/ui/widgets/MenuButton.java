@@ -37,6 +37,10 @@ public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implem
 		}
 	}
 
+	/**
+	 * Sets the listener on which {@link ButtonListener#onTap(com.badlogic.gdx.scenes.scene2d.ui.Button)}} will be called
+	 * @param listener
+	 */
 	public void setListener(ButtonListener listener) {
 			this.listener = listener;
 	}
