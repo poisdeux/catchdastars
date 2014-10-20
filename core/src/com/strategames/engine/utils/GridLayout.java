@@ -1,5 +1,6 @@
 package com.strategames.engine.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
@@ -8,7 +9,8 @@ import com.badlogic.gdx.utils.Array;
 public class GridLayout extends WidgetGroup {
 
 	private Vector2 elementSize = new Vector2(10, 10);
-
+	private Vector2 offset = new Vector2();
+	
 	public interface GridElement<T> {
 		public T newInstance();
 	}
@@ -37,6 +39,14 @@ public class GridLayout extends WidgetGroup {
 		return elementSize;
 	}
 
+	public void setOffset(Vector2 offset) {
+		this.offset = offset;
+	}
+	
+	public Vector2 getOffset() {
+		return offset;
+	}
+	
 	/**
 	 * Sets element at given index.
 	 * @param x 
@@ -44,29 +54,26 @@ public class GridLayout extends WidgetGroup {
 	 * @param actor element to set at position x, y
 	 */
 	public void set(int x, int y, Actor actor) {
-		Holder setElement = null;
 		
-		for(Holder element : this.elements) {
-			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
-				element.getActor().remove();
-				element.setActor(actor);
-				setElement = element;
-			}
-		}
-
-		if( setElement == null ) {
-			setElement = new Holder(actor, x, y);
-			this.elements.add(setElement);
+		Holder element = getHolderAt(x, y);
+		
+		if( element == null ) {
+			element = new Holder(actor, x, y);
+			this.elements.add(element);
+		} else {
+			element.getActor().remove();
+			element.setActor(actor);
 		}
 		
-		float xActor = setElement.x * this.elementSize.x;
-		float yActor = setElement.y * this.elementSize.y;
+		float xActor = element.x * this.elementSize.x;
+		float yActor = element.y * this.elementSize.y;
 		if( actor != null ) {
-			actor.setPosition(xActor + getX(), yActor + getY());
+			actor.setPosition(xActor + offset.x, yActor + offset.y);
 			addActor(actor);
 		}
 	}
 
+	
 	/**
 	 * Removes actor at given position
 	 * @param x
@@ -114,6 +121,17 @@ public class GridLayout extends WidgetGroup {
 		return null;
 	}
 
+	private Holder getHolderAt(int x, int y) {
+		Holder holder = null;
+		
+		for(Holder element : this.elements) {
+			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
+				holder = element;
+			}
+		}
+		return holder;
+	}
+	
 	private class Holder {
 		private int x;
 		private int y;

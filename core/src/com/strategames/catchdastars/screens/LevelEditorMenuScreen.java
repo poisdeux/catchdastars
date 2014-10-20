@@ -50,6 +50,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levels.setLevels(localLevels);
 
 		this.levelButtonsGrid = new GridLayout();
+		//Center button grid in scrollpane
+		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
+		this.levelButtonsGrid.setElementSize(60f, 30f);
 				
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
@@ -57,7 +60,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		scrollPane.setPosition(0, 200f);
 		stage.addActor(scrollPane);
 
-		
 		Table bottomButtonsTable = new Table();
 		bottomButtonsTable.setWidth(stage.getWidth());
 
@@ -93,7 +95,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	protected void setupActors(Stage stage) {
-		
+
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		//Check if adjacent rooms are still accessible
 		markLevelsReachable();
-		
+
 		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
@@ -125,17 +127,20 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			Gdx.input.getTextInput(new TextInputListener() {
 				@Override
 				public void input(String text) {
-					Game game = getGame();
+					CatchDaStars game = (CatchDaStars) getGame();
 					Vector3 worldSize = game.getWorldSize();
 					Level level = new Level();
 					level.setName(text);
 					level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
 					level.setViewSize(new Vector2(game.getViewSize()));
-					level.setReachable(true); //asume level can only be created if reachable
+					level.setReachable(true); //assume level can only be created if reachable
 					int[] position = levelButtonsGrid.getPosition(button);
 					level.setPosition(position[0], position[1]);
 					ScreenBorder.create(level, game);
 					addLevel(level);
+					game.setLevel(level);
+					editingLevel = level;
+					game.showLevelEditor(); 
 				}
 
 				@Override
@@ -258,12 +263,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void addLevel(Level level) {
+		Gdx.app.log("LevelEditorMenuScreen", "addLevel: level="+level+", levelButtonsGrid.position="+
+				levelButtonsGrid.getX()+","+levelButtonsGrid.getY());
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
 		int[] levelPosition = level.getPosition();
 		TextButton button = createLevelButton(level.getName());
 		button.setTag(level);
 		this.levelButtonsGrid.set(levelPosition[0], levelPosition[1], button);
+		this.levelButtonsGrid.layout();
 	}
 
 	private void deleteLevel(Level level) {
@@ -277,12 +285,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	 */
 	private void fillLevelButtonsTable(Array<Level> levels) {
 		this.levelButtonsGrid.clear();
-		
-		//Center button grid in scrollpane
-		this.levelButtonsGrid.setPosition((getStageUIActors().getWidth() / 2f)-30f, 185f);
-				
-		this.levelButtonsGrid.setElementSize(60f, 30f);
-		
+
 		if( ( levels == null ) || ( levels.size == 0 ) ) {
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
@@ -305,7 +308,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
 			int[] nextLevelPosition = door.getNextLevelPosition();
-			Gdx.app.log("LevelEditorMenuScreen", "addNextLevelButtons: level="+level+", door="+door+", grid="+this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]));
 			if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
 				TextButton button = createLevelButton("");
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], button);
