@@ -148,6 +148,10 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				button.setColor(colorWhite);
 				break;
 			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
+				/**
+				 * TODO Add check to see if deleting level does not make
+				 * other levels unreachable
+				 */
 				deleteLevel(level);
 				dialog.remove();
 				break;
@@ -215,8 +219,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void addLevel(Level level) {
-		Gdx.app.log("LevelEditorMenuScreen", "addLevel: level="+level+", levelButtonsGrid.position="+
-				levelButtonsGrid.getX()+","+levelButtonsGrid.getY());
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
 		int[] levelPosition = level.getPosition();

@@ -172,10 +172,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void show()
 	{	
+
+		Gdx.app.log("AbstractScreen", "show(): "+getName()+", stageUIActors="+this.stageUIActors);
 		if( this.stageUIActors == null ) {
 			setupUI(getStageUIActors());
+			setupMenu();
 		}
 
+		Gdx.app.log("AbstractScreen", "show(): "+getName()+", stageActors="+this.stageActors);
 		if( this.stageActors == null ) {
 			setupActors(getStageActors());
 		}
@@ -186,29 +190,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			getStageUIActors().addActor(this.title);
 		}
 
-		if( this.mainMenu != null ) {
-			this.menuButton = new MenuButton();
-			this.menuButton.setPosition(450f, 700f);
-			this.menuButton.setListener( new ButtonListener() {
 
-				@Override
-				public void onTap(Button button) {
-					if( mainMenu.isVisible() ) {
-						mainMenu.hide();
-					} else {
-						mainMenu.show();
-					}
-				}
-
-				@Override
-				public void onLongPress(Button button) {	}
-			});
-
-			this.mainMenu.create();
-			this.mainMenu.setPosition(this.menuButton.getX() - this.mainMenu.getWidth(), 
-					this.menuButton.getY() - ( this.mainMenu.getHeight() - this.menuButton.getHeight() ) );
-			getStageUIActors().addActor(this.menuButton);
-		}
 
 		Gdx.input.setInputProcessor(getMultiplexer());
 
@@ -400,28 +382,32 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		Timeline timelineSequence = Timeline.createSequence();
 		Stage stage = getStageUIActors();
 
-		if(title != null) {
-			title.setY(stage.getHeight() + title.getHeight());
-			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
+		if(this.title != null) {
+			this.title.setY(stage.getHeight() + this.title.getHeight());
+			timelineParallel.push(Tween.to(this.title, ActorAccessor.POSITION_Y, 0.4f)
 					.target(700));
 		}
 
 		if(this.menuButton != null) {
-			title.setY(stage.getHeight() + this.menuButton.getHeight());
-			timelineParallel.push(Tween.to(title, ActorAccessor.POSITION_Y, 0.4f)
+			this.menuButton.setY(stage.getHeight() + this.menuButton.getHeight());
+			timelineParallel.push(Tween.to(this.menuButton, ActorAccessor.POSITION_Y, 0.4f)
 					.target(700));
 		}
 
 		Array<Actor> actors = stage.getActors();
+
+		/**
+		 * Hiding will move actors out of screen. If we want to re-show
+		 * the screen we need to know where they were originally.
+		 */
 		if( this.originalPositions == null ) {
 			this.originalPositions = new Array<Vector2>(actors.size);
 			for(int i = 0; i < actors.size; i++) {
 				Actor actor = actors.get(i);
-				if( ( actor != this.title ) && ( actor != this.menuButton ) ) {
-					this.originalPositions.add(new Vector2(actor.getX(), actor.getY()));
-				}
+				this.originalPositions.add(new Vector2(actor.getX(), actor.getY()));
 			}
 		}
+
 		for(int i = 0; i < actors.size; i++) {
 			Actor actor = actors.get(i);
 			if( ( actor != this.title ) && ( actor != this.menuButton ) ) {
@@ -484,4 +470,33 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * @param stage that should hold the game actors
 	 */
 	abstract protected void setupActors(Stage stage);
+
+	private void setupMenu() {
+		if( this.mainMenu != null ) {
+
+			if( this.menuButton == null ) {
+				this.menuButton = new MenuButton();
+				this.menuButton.setPosition(450f, 700f);
+				this.menuButton.setListener( new ButtonListener() {
+
+					@Override
+					public void onTap(Button button) {
+						if( mainMenu.isVisible() ) {
+							mainMenu.hide();
+						} else {
+							mainMenu.show();
+						}
+					}
+
+					@Override
+					public void onLongPress(Button button) {	}
+				});
+				getStageUIActors().addActor(this.menuButton);
+			}
+
+			this.mainMenu.create();
+			this.mainMenu.setPosition(this.menuButton.getX() - this.mainMenu.getWidth(), 
+					this.menuButton.getY() - ( this.mainMenu.getHeight() - this.menuButton.getHeight() ) );
+		}
+	}
 }
