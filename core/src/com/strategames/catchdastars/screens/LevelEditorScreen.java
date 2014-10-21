@@ -31,6 +31,7 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
+import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -466,13 +467,11 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 
 	@Override
 	protected Timeline showAnimation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected Timeline hideAnimation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -545,7 +544,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 
 		boolean screenOK = false;
 		while( ! screenOK ) {
-			Vector3 screenSize = new Vector3(0f, Gdx.graphics.getHeight(), 0f);
+			Vector3 screenSize = new Vector3(0f, 0f, 0f);
 			camera.unproject(screenSize);
 
 			/**
@@ -608,7 +607,30 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	}
 
 	private void saveLevel() {
-		LevelWriter.save(getGame().getLevel());
+		Level level = getGame().getLevel();
+		LevelWriter.save(level);
+		
+		Vector2 worldSize = level.getWorldSize().cpy();
+		worldSize.y = 0f;
+		getStageActors().stageToScreenCoordinates(worldSize);
+		Gdx.app.log("LevelEditorScreen", "saveLevel: converted worldOrigin="+worldSize);
+		
+		Vector2 worldOrigin = level.getWorldSize().cpy();
+		worldOrigin.x = 0f;
+		getStageActors().stageToScreenCoordinates(worldOrigin);
+		Gdx.app.log("LevelEditorScreen", "saveLevel: converted worldOrigin="+worldOrigin);
+		
+		worldSize.x -= worldOrigin.x;
+		worldSize.y -= worldOrigin.y;
+		
+		boolean success = ScreenshotFactory.saveScreenshot(level.getPositionAsString(), (int) worldOrigin.x, (int) worldOrigin.y, (int) worldSize.x, (int) worldSize.y);
+		
+		if( ! success ) {
+			//notify user saving failed
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
+			dialog.create();
+			dialog.show();
+		}
 	}
 
 	/**

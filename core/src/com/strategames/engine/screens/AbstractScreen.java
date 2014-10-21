@@ -49,7 +49,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private static OrthographicCamera menuCamera;
 	private static OrthographicCamera gameCamera;
 
-	private static Vector2 menuSize;
+	private static Vector2 menuSize = new Vector2(510, 810);
 
 	private TweenManager tweenManager;
 
@@ -107,9 +107,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	public Vector2 getMenuSize() {
-		if( menuSize == null ) {
-			setMenuSize(new Vector2(510, 810));
-		}
 		return menuSize;
 	}
 
@@ -173,13 +170,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public void show()
 	{	
 
-		Gdx.app.log("AbstractScreen", "show(): "+getName()+", stageUIActors="+this.stageUIActors);
 		if( this.stageUIActors == null ) {
 			setupUI(getStageUIActors());
 			setupMenu();
 		}
 
-		Gdx.app.log("AbstractScreen", "show(): "+getName()+", stageActors="+this.stageActors);
 		if( this.stageActors == null ) {
 			setupActors(getStageActors());
 		}
@@ -219,6 +214,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	@Override
 	public void hide()
 	{
+		if( this.mainMenu != null ) {
+			this.mainMenu.remove();
+			this.mainMenu.setVisible(false);
+		}
+		
 		this.tweenManager.killAll();
 		Timeline timeline = hideAnimation();
 		if( timeline != null ) {
@@ -350,7 +350,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * Override to handle menu item selections
 	 * @param text of menu item as created using {@link #addMenuItem(String)}
 	 */
-	public void onMenuItemSelected(String text) {
+	protected void onMenuItemSelected(String text) {
 
 	}
 

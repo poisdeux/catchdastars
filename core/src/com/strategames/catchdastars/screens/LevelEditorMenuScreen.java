@@ -304,32 +304,20 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	private void handleTextButtonTap(final TextButton button) {
 		Object tag = button.getTag();
-		if( tag == null ) {
-			//Add a new level
-			Gdx.input.getTextInput(new TextInputListener() {
-				@Override
-				public void input(String text) {
-					CatchDaStars game = (CatchDaStars) getGame();
-					Vector3 worldSize = game.getWorldSize();
-					Level level = new Level();
-					level.setName(text);
-					level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
-					level.setViewSize(new Vector2(game.getViewSize()));
-					level.setReachable(true); //assume level can only be created if reachable
-					int[] position = levelButtonsGrid.getPosition(button);
-					level.setPosition(position[0], position[1]);
-					ScreenBorder.create(level, game);
-					addLevel(level);
-					game.setLevel(level);
-					editingLevel = level;
-					game.showLevelEditor(); 
-				}
-
-				@Override
-				public void canceled() {
-
-				}
-			}, "Enter name for new level", "");
+		if( tag == null ) { // Create a new level
+			CatchDaStars game = (CatchDaStars) getGame();
+			Vector3 worldSize = game.getWorldSize();
+			Level level = new Level();
+			level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
+			level.setViewSize(new Vector2(game.getViewSize()));
+			level.setReachable(true); //assume level can only be created if reachable
+			int[] position = levelButtonsGrid.getPosition(button);
+			level.setPosition(position[0], position[1]);
+			ScreenBorder.create(level, game);
+			addLevel(level);
+			game.setLevel(level);
+			editingLevel = level;
+			game.showLevelEditor(); 
 		} else if( tag instanceof Level ) {
 			CatchDaStars game = (CatchDaStars) getGame();
 			game.setLevel((Level) tag);
@@ -338,14 +326,27 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 	}
 
+	private void deleteAllLevels() {
+		Iterator<Level> itr = this.levels.getLevels().iterator();
+		while(itr.hasNext()) {
+			Level level = itr.next();
+			if( LevelWriter.deleteLocal(level)) {
+				itr.remove();
+			} else {
+				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getName());
+			}
+		}
+		fillLevelButtonsTable(this.levels.getLevels());
+	}
+
 	@Override
-	public void onMenuItemSelected(String text) {
+	protected void onMenuItemSelected(String text) {
 		if(text.contentEquals("Import levels")) {
 			if( this.levels.getLevels().size > 0 ) {
 				//ask for confirmation
 				ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "Importing will delete current game", getSkin());
 				dialog.setPositiveButton("Import", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						dialog.remove();
@@ -353,7 +354,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 					}
 				});
 				dialog.setNegativeButton("Cancel", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(Dialog dialog, int which) {
 						dialog.remove();
@@ -367,17 +368,27 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		} else if(text.contentEquals("Export levels")) {
 			getGame().getExporterImporter().importLevels(LevelEditorMenuScreen.this);
 		} else if(text.contentEquals("Delete game")) {
-			Iterator<Level> itr = this.levels.getLevels().iterator();
-			while(itr.hasNext()) {
-				Level level = itr.next();
-				if( LevelWriter.deleteLocal(level)) {
-					itr.remove();
-				} else {
-					Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getName());
+			//ask for confirmation
+			ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "This will delete all levels", getSkin());
+			dialog.setPositiveButton("Delete", new OnClickListener() {
+
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					dialog.remove();
+					deleteAllLevels();
 				}
-			}
-			fillLevelButtonsTable(this.levels.getLevels());
+			});
+			dialog.setNegativeButton("Cancel", new OnClickListener() {
+
+				@Override
+				public void onClick(Dialog dialog, int which) {
+					dialog.remove();
+				}
+			});
+			dialog.create();
+			dialog.show();
+
 		}
-		getMainMenu().remove();
+		getMainMenu().hide();
 	}
 }
