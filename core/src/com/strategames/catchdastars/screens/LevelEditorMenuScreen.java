@@ -7,12 +7,16 @@ import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.types.Door;
@@ -25,6 +29,7 @@ import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.Levels;
 import com.strategames.engine.utils.ScreenBorder;
+import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -59,7 +64,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levelButtonsGrid = new GridLayout();
 		//Center button grid in scrollpane
 		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
-		this.levelButtonsGrid.setElementSize(60f, 30f);
+		this.levelButtonsGrid.setElementSize(25, 40f);
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
@@ -238,20 +243,37 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	 */
 	private void fillLevelButtonsTable(Array<Level> levels) {
 		this.levelButtonsGrid.clear();
-
+		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
+		
 		if( ( levels == null ) || ( levels.size == 0 ) ) {
 			TextButton button = createLevelButton("");
 			this.levelButtonsGrid.set(0, 0, button);
 		} else {
-			for( Level level : levels ) {
-				TextButton button = createLevelButton(level.getName());
-				button.setTag(level);
+			for( final Level level : levels ) {
+				Image image = new Image(ScreenshotFactory.loadScreenShot(level));
+				image.addListener(new EventListener() {
+					
+					@Override
+					public boolean handle(Event arg0) {
+						CatchDaStars game = (CatchDaStars) getGame();
+						game.setLevel(level);
+						editingLevel = level;
+						game.showLevelEditor();
+						return true;
+					}
+				});
+				image.setScaling(Scaling.fit);
+				image.setSize(elementSize.x, elementSize.y);
+				
+//				TextButton button = createLevelButton(level.getName());
+//				button.setTag(level);
+				
 				int[] position = level.getPosition();
-				this.levelButtonsGrid.set(position[0], position[1], button);
+				this.levelButtonsGrid.set(position[0], position[1], image);
 				if( level.isReachable() ) {
 					addNextLevelButtons(level);
 				} else {
-					button.setColor(1f, 0.2f, 0.2f, 1f);
+					image.setColor(1f, 0.2f, 0.2f, 1f);
 				}
 			}
 		}
@@ -303,23 +325,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void handleTextButtonTap(final TextButton button) {
+		CatchDaStars game = (CatchDaStars) getGame();
 		Object tag = button.getTag();
 		if( tag == null ) { // Create a new level
-			CatchDaStars game = (CatchDaStars) getGame();
-			Vector3 worldSize = game.getWorldSize();
-			Level level = new Level();
-			level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
-			level.setViewSize(new Vector2(game.getViewSize()));
-			level.setReachable(true); //assume level can only be created if reachable
-			int[] position = levelButtonsGrid.getPosition(button);
-			level.setPosition(position[0], position[1]);
-			ScreenBorder.create(level, game);
+			Level level = createNewLevel(this.levelButtonsGrid.getPosition(button));
 			addLevel(level);
 			game.setLevel(level);
 			editingLevel = level;
 			game.showLevelEditor(); 
 		} else if( tag instanceof Level ) {
-			CatchDaStars game = (CatchDaStars) getGame();
 			game.setLevel((Level) tag);
 			this.editingLevel = (Level) tag;
 			game.showLevelEditor(); 
@@ -327,15 +341,24 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void deleteAllLevels() {
+		Boolean success = true;
 		Iterator<Level> itr = this.levels.getLevels().iterator();
 		while(itr.hasNext()) {
 			Level level = itr.next();
 			if( LevelWriter.deleteLocal(level)) {
-				itr.remove();
+				if(ScreenshotFactory.deleteScreenshot(level)) {
+					itr.remove();
+				}
 			} else {
+				success = false;
 				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getName());
 			}
 		}
+		if( ! success ) {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to delete some levels", getSkin());
+			dialog.create().show();
+		}
+		
 		fillLevelButtonsTable(this.levels.getLevels());
 	}
 
@@ -390,5 +413,17 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		}
 		getMainMenu().hide();
+	}
+
+	private Level createNewLevel(int[] position) {
+		CatchDaStars game = (CatchDaStars) getGame();
+		Vector3 worldSize = game.getWorldSize();
+		Level level = new Level();
+		level.setWorldSize(new Vector2(worldSize.x, worldSize.y));
+		level.setViewSize(new Vector2(game.getViewSize()));
+		level.setReachable(true); //assume level can only be created if reachable
+		level.setPosition(position[0], position[1]);
+		ScreenBorder.create(level, game);
+		return level;
 	}
 }

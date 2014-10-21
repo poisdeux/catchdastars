@@ -45,7 +45,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 	}
 	
 	@Override
-	public void create() {
+	public Dialog create() {
 		setCenter(true);
 		setBottom(true);
 		
@@ -64,7 +64,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 			}
 		});
 
-		super.create();
+		return super.create();
 	}
 	
 	private void addButton(String text, final int index) {

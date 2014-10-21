@@ -82,7 +82,7 @@ abstract public class GameStateDialog extends Dialog {
 	}
 	
 	@Override
-	public void create() {
+	public Dialog create() {
 		this.filter = new FilledRectangleImage(this.stage);
 		this.filter.setWidth(this.stage.getWidth());
 		this.filter.setHeight(this.stage.getHeight());
@@ -110,7 +110,7 @@ abstract public class GameStateDialog extends Dialog {
 		
 		setFillParent(true);
 		
-		super.create();
+		return super.create();
 	}
 	
 	@Override

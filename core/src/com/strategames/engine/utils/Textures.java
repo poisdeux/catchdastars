@@ -60,12 +60,6 @@ public class Textures {
 	
 	private boolean texturesLoaded = false;
 	
-	public enum ScreenDensity {
-		mdpi, hdpi, xhdpi, xxhdpi
-	}
-	
-	private ScreenDensity screenDensity;
-	
 	private String atlasFilename;
 	private AssetManager assetManager;
 	
@@ -95,13 +89,9 @@ public class Textures {
 	 * @throws FileNotFoundException
 	 */
 	public void addAllToAssetManager(AssetManager manager) throws FileNotFoundException {
-		if( this.screenDensity == null ) {
-			this.screenDensity = getScreenDensity();
-		}
-
 		this.assetManager = manager;
 		
-		atlasFilename = "packed/"+screenDensity.name()+".atlas";
+		atlasFilename = "packed/"+ScreenDensity.getDensityName()+".atlas";
 		if( Gdx.files.internal(atlasFilename).exists() ) {
 			this.assetManager.load(atlasFilename, TextureAtlas.class);
 		} else {
@@ -177,7 +167,7 @@ public class Textures {
 		menu = atlas.findRegion("icon-menu");
 		passageToNextLevel = atlas.findRegion("passagetonextlevel");
 		
-		String path = "images/"+screenDensity.name();
+		String path = "images/"+ScreenDensity.getDensityName();
 		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");
 		bricksHorizontalEndRight = new Texture(path+"/bricks-texture-horizontal-right-end.png");
 		bricksHorizontalEndLeft = new Texture(path+"/bricks-texture-horizontal-left-end.png");
@@ -188,47 +178,6 @@ public class Textures {
 	}
 
 	public Texture getSplashScreen() {
-		if( this.screenDensity == null ) {
-			this.screenDensity = getScreenDensity();
-		}
-
-		return new Texture( "images/"+screenDensity.name()+"/splashscreen.png" );
-	}
-
-	public ScreenDensity getScreenDensity() {
-		ScreenDensity densityModifier = ScreenDensity.mdpi;
-
-		float density = Gdx.graphics.getDensity();
-
-		/**
-		 *  we originally designed the game for a 800x480 hdpi screen
-		 *  mdpi	533.33333
-		 *  hdpi	800
-		 *  xhdpi	1066.66666
-		 *  xxhdpi	1600	
-		 */
-
-		//		float width = Gdx.graphics.getWidth();
-		//		float height = Gdx.graphics.getHeight();
-		//		float size = width > height ? width : height;
-		//		if( size >= 1599 ) {
-		//			densityModifier = "xxhdpi";
-		//		} else if ( size >= 1066 ) {
-		//			densityModifier = "xhdpi";
-		//		} else if ( size >= 799 ) {
-		//			densityModifier = "hdpi";
-		//		}
-		if( density >= 3 ) {
-			densityModifier = ScreenDensity.xxhdpi;
-		} else if ( density >= 2 ) {
-			densityModifier = ScreenDensity.xhdpi;
-		} else if ( density >= 1.5 ) {
-			densityModifier = ScreenDensity.hdpi;
-		}
-		return densityModifier;
-	}
-	
-	public void setScreenDensity(ScreenDensity screenDensity) {
-		this.screenDensity = screenDensity;
+		return new Texture( "images/"+ScreenDensity.getDensityName()+"/splashscreen.png" );
 	}
 }

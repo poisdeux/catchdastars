@@ -35,7 +35,7 @@ public class ButtonsDialog extends Dialog {
 	 * Use this to create the actual dialog.
 	 * Note that this needs to be called before {@link #
 	 */
-	public void create() {
+	public Dialog create() {
 		defaults().spaceBottom(10);
 		defaults().spaceTop(10);
 		
@@ -52,6 +52,6 @@ public class ButtonsDialog extends Dialog {
 			}
 		}
 		pack();
-		super.create();
+		return super.create();
 	}
 }

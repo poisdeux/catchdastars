@@ -36,7 +36,7 @@ public class WheelSpinnerDialog extends Dialog {
 		return selectedItem;
 	}
 	
-	public void create() {
+	public Dialog create() {
 		setWidth(150);
 		setHeight(200);
 		
@@ -69,6 +69,6 @@ public class WheelSpinnerDialog extends Dialog {
 
 		setNegativeButton("Cancel");
 		
-		super.create();
+		return super.create();
 	}
 }

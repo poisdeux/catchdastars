@@ -28,7 +28,7 @@ public class EditLevelDialog extends ButtonsDialog {
 	 * Use this to create and add the actual dialog to the stage.
 	 * @param stage the stage this dialog should be added to as an Actor
 	 */
-	public void create() {
+	public Dialog create() {
 		add("Delete level", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -65,7 +65,7 @@ public class EditLevelDialog extends ButtonsDialog {
 			}
 		});
 		
-		super.create();
+		return super.create();
 	}
 	
 	

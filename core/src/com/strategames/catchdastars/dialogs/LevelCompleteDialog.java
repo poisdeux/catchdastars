@@ -27,6 +27,7 @@ import com.strategames.engine.sounds.DrawChalkLineShort2Sound;
 import com.strategames.engine.sounds.DrawChalkLineSound;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.Textures;
+import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.GameStateDialog;
 
 public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAnimationListener {
@@ -84,7 +85,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		}
 	}
 
-	public void create() {
+	public Dialog create() {
 		super.create();
 		
 		this.animationPhase = -1;
@@ -95,8 +96,9 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		
 		this.maxImageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
 		
-		
 		animationController();
+		
+		return this;
 	}
 	
 	private void animationController() {

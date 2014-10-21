@@ -610,21 +610,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 		Level level = getGame().getLevel();
 		LevelWriter.save(level);
 		
-		Vector2 worldSize = level.getWorldSize().cpy();
-		worldSize.y = 0f;
-		getStageActors().stageToScreenCoordinates(worldSize);
-		Gdx.app.log("LevelEditorScreen", "saveLevel: converted worldOrigin="+worldSize);
-		
-		Vector2 worldOrigin = level.getWorldSize().cpy();
-		worldOrigin.x = 0f;
-		getStageActors().stageToScreenCoordinates(worldOrigin);
-		Gdx.app.log("LevelEditorScreen", "saveLevel: converted worldOrigin="+worldOrigin);
-		
-		worldSize.x -= worldOrigin.x;
-		worldSize.y -= worldOrigin.y;
-		
-		boolean success = ScreenshotFactory.saveScreenshot(level.getPositionAsString(), (int) worldOrigin.x, (int) worldOrigin.y, (int) worldSize.x, (int) worldSize.y);
-		
+		boolean success = ScreenshotFactory.saveScreenshot(getStageActors(), level);
 		if( ! success ) {
 			//notify user saving failed
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
