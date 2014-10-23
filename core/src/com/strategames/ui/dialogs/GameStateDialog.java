@@ -3,13 +3,14 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.ui.helpers.FilledRectangleImage;
-import com.strategames.ui.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.TextButton;
 
 /**
@@ -46,15 +47,15 @@ abstract public class GameStateDialog extends Dialog {
 	
 	public void setLeftButton(String text) {
 		this.buttonLeft = new TextButton(text, skin);
-		this.buttonLeft.setListener(new ButtonListener() {
+		this.buttonLeft.setListener(new ActorListener() {
 			
 			@Override
-			public void onTap(Button button) {
+			public void onTap(Actor actor) {
 				notifyListener(BUTTON_LEFT_CLICKED);
 			}
 			
 			@Override
-			public void onLongPress(Button button) {
+			public void onLongPress(Actor actor) {
 				
 			}
 		});
@@ -65,15 +66,15 @@ abstract public class GameStateDialog extends Dialog {
 	
 	public void setRightButton(String text) {
 		this.buttonRight = new TextButton(text, skin);
-		this.buttonRight.setListener(new ButtonListener() {
+		this.buttonRight.setListener(new ActorListener() {
 			
 			@Override
-			public void onTap(Button button) {
+			public void onTap(Actor actor) {
 				notifyListener(BUTTON_RIGHT_CLICKED);
 			}
 			
 			@Override
-			public void onLongPress(Button button) {
+			public void onLongPress(Actor actor) {
 				
 			}
 		});

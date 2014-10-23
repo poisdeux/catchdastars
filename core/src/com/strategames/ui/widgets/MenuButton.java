@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.utils.Textures;
-import com.strategames.ui.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ActorListener;
 
 public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implements EventListener {
-	private ButtonListener listener = null;
+	private ActorListener listener = null;
 	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
 	private static Drawable drawable = new TextureRegionDrawable(Textures.getInstance().menu);
 	
@@ -38,10 +38,10 @@ public class MenuButton extends com.badlogic.gdx.scenes.scene2d.ui.Button implem
 	}
 
 	/**
-	 * Sets the listener on which {@link ButtonListener#onTap(com.badlogic.gdx.scenes.scene2d.ui.Button)}} will be called
+	 * Sets the listener on which {@link ActorListener#onTap(com.badlogic.gdx.scenes.scene2d.ui.Button)}} will be called
 	 * @param listener
 	 */
-	public void setListener(ButtonListener listener) {
+	public void setListener(ActorListener listener) {
 			this.listener = listener;
 	}
 }

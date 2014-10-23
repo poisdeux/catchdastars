@@ -28,7 +28,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.ui.dialogs.ButtonsDialog;
-import com.strategames.ui.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.MenuButton;
 
 /**
@@ -477,10 +477,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			if( this.menuButton == null ) {
 				this.menuButton = new MenuButton();
 				this.menuButton.setPosition(450f, 700f);
-				this.menuButton.setListener( new ButtonListener() {
+				this.menuButton.setListener( new ActorListener() {
 
 					@Override
-					public void onTap(Button button) {
+					public void onTap(Actor actor) {
 						if( mainMenu.isVisible() ) {
 							mainMenu.hide();
 						} else {
@@ -489,7 +489,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 					}
 
 					@Override
-					public void onLongPress(Button button) {	}
+					public void onLongPress(Actor actor) {	}
 				});
 				getStageUIActors().addActor(this.menuButton);
 			}

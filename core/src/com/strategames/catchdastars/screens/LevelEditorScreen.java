@@ -39,11 +39,11 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Grid;
-import com.strategames.ui.interfaces.ButtonListener;
+import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.MenuButton;
 
 public class LevelEditorScreen extends AbstractScreen 
-implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClickListener {
+implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClickListener {
 
 	private ButtonsDialog mainMenu;
 	private Vector2 dragDirection;
@@ -796,12 +796,12 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	}
 
 	@Override
-	public void onTap(Button button) {
-		if( button instanceof MenuButton ) {
+	public void onTap(Actor actor) {
+		if( actor instanceof MenuButton ) {
 			if( this.mainMenu == null ) {
 				createMainMenu();
-				this.mainMenu.setPosition(button.getX() - this.mainMenu.getWidth(), 
-						button.getY() - ( this.mainMenu.getHeight() - button.getHeight() ) );
+				this.mainMenu.setPosition(actor.getX() - this.mainMenu.getWidth(), 
+						actor.getY() - ( this.mainMenu.getHeight() - actor.getHeight() ) );
 			}
 
 			if( this.mainMenu.isVisible() ) {
@@ -813,7 +813,7 @@ implements OnLevelLoadedListener, ButtonListener, GestureListener, Dialog.OnClic
 	}
 
 	@Override
-	public void onLongPress(Button button) {
+	public void onLongPress(Actor actor) {
 
 	}
 
