@@ -5,10 +5,11 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -44,7 +45,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private GridLayout levelButtonsGrid;
 	private Levels levels;
 	private Level editingLevel;
-
+	private Pixmap nextLevelImage;
+	
 	public LevelEditorMenuScreen(Game game) {
 		super(game, "Level editor");
 		this.levels = new Levels();
@@ -64,8 +66,12 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levelButtonsGrid = new GridLayout();
 		//Center button grid in scrollpane
 		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
-		this.levelButtonsGrid.setElementSize(25, 40f);
+		this.levelButtonsGrid.setElementSize(25f, 40f);
 
+		nextLevelImage = new Pixmap(25, 40, Format.RGBA8888);
+		nextLevelImage.setColor(0, 1, 0, 0.3f);
+		nextLevelImage.fill();
+		
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
 		scrollPane.setWidth(stage.getWidth());
@@ -108,9 +114,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	public void onTap(final Button button) {
-		if( button instanceof TextButton ) {
-			handleTextButtonTap((TextButton) button);
-		}
+		
 	}
 
 	@Override
@@ -281,10 +285,21 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void addNextLevelButtons(Level level) {
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
-			int[] nextLevelPosition = door.getNextLevelPosition();
+			final int[] nextLevelPosition = door.getNextLevelPosition();
 			if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
-				TextButton button = createLevelButton("");
-				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], button);
+				Image image = new Image(new Texture(nextLevelImage));
+				image.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						CatchDaStars game = (CatchDaStars) getGame();
+						Level level = createNewLevel(nextLevelPosition);
+						addLevel(level);
+						game.setLevel(level);
+						editingLevel = level;
+						game.showLevelEditor(); 
+					}
+				});
+				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], image);	
 			}
 		}
 	}
@@ -320,22 +335,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levels.getLevelsReachable(startLevel, reachableLevels);
 		for(Level l : reachableLevels) {
 			l.setReachable(true);
-		}
-	}
-
-	private void handleTextButtonTap(final TextButton button) {
-		CatchDaStars game = (CatchDaStars) getGame();
-		Object tag = button.getTag();
-		if( tag == null ) { // Create a new level
-			Level level = createNewLevel(this.levelButtonsGrid.getPosition(button));
-			addLevel(level);
-			game.setLevel(level);
-			editingLevel = level;
-			game.showLevelEditor(); 
-		} else if( tag instanceof Level ) {
-			game.setLevel((Level) tag);
-			this.editingLevel = (Level) tag;
-			game.showLevelEditor(); 
 		}
 	}
 
