@@ -251,17 +251,16 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		} else {
 			for( final Level level : levels ) {
 				Image image = new Image(ScreenshotFactory.loadScreenShot(level));
-				image.addListener(new EventListener() {
-					
+				image.addListener(new ClickListener() {
 					@Override
-					public boolean handle(Event arg0) {
+					public void clicked(InputEvent event, float x, float y) {
 						CatchDaStars game = (CatchDaStars) getGame();
 						game.setLevel(level);
 						editingLevel = level;
 						game.showLevelEditor();
-						return true;
 					}
 				});
+				
 				image.setScaling(Scaling.fit);
 				image.setSize(elementSize.x, elementSize.y);
 				
