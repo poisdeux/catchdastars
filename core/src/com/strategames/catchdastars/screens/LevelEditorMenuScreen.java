@@ -47,7 +47,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private GridLayout levelButtonsGrid;
 	private Levels levels;
 	private Level editingLevel;
-	private Pixmap nextLevelImage;
+	private Pixmap emptyLevelImage;
 
 	public LevelEditorMenuScreen(Game game) {
 		super(game, "Level editor");
@@ -70,9 +70,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
 		this.levelButtonsGrid.setElementSize(25f, 40f);
 
-		nextLevelImage = new Pixmap(25, 40, Format.RGBA8888);
-		nextLevelImage.setColor(0, 1, 0, 0.3f);
-		nextLevelImage.fill();
+		emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
+		emptyLevelImage.setColor(0, 1, 0, 0.3f);
+		emptyLevelImage.fill();
 
 		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
 		scrollPane.setHeight(400f);
@@ -116,6 +116,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	public void onTap(final Actor actor) {
+		Gdx.app.log("LevelEditorMenu", "onTap: actor="+actor);
 		if( actor instanceof ScreenshotImage ) {
 			ScreenshotImage image = (ScreenshotImage) actor;
 			
@@ -126,13 +127,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			
 			CatchDaStars game = (CatchDaStars) getGame();
 			
-			if( tag instanceof Position? ) {
-				Level level = createNewLevel(((Position?) tag).getPosition());
-				addLevel(level);
-				game.setLevel(level);
-				editingLevel = level;
-				game.showLevelEditor();
-			} else if( tag instanceof Level ) {
+			if( tag instanceof Level ) {
 				Level level = (Level) tag;
 				game.setLevel(level);
 				editingLevel = level;
@@ -253,11 +248,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void addLevel(Level level) {
 		this.levels.addLevel(level);
 		LevelWriter.save(level);
-		int[] levelPosition = level.getPosition();
-		TextButton button = createLevelButton(level.getName());
-		button.setTag(level);
-		this.levelButtonsGrid.set(levelPosition[0], levelPosition[1], button);
-		this.levelButtonsGrid.layout();
 	}
 
 	private void deleteLevel(Level level) {
@@ -273,24 +263,22 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 
 		if( ( levels == null ) || ( levels.size == 0 ) ) {
-			TextButton button = createLevelButton("");
-			this.levelButtonsGrid.set(0, 0, button);
+			int[] pos = new int[] {0,0};
+			Level level = createNewLevel(pos);
+			addLevel(level);
+			
+			Texture texture = new Texture(emptyLevelImage);
+			ScreenshotImage image = createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
+
+			this.levelButtonsGrid.set(pos[0], pos[1], image);
 		} else {
 			for( final Level level : levels ) {
-				ScreenshotImage image = new ScreenshotImage(ScreenshotFactory.loadScreenShot(level));
-				image.setListener(this);
-				image.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						
-					}
-				});
-
-				image.setScaling(Scaling.fit);
-				image.setSize(elementSize.x, elementSize.y);
-
-				//				TextButton button = createLevelButton(level.getName());
-				//				button.setTag(level);
+				ScreenshotImage image;
+				Texture texture = ScreenshotFactory.loadScreenShot(level);
+				if( texture == null ) {
+					texture = new Texture(emptyLevelImage);
+				}
+				image = createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
 
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], image);
@@ -308,18 +296,13 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		for(Door door : doors ) {
 			final int[] nextLevelPosition = door.getNextLevelPosition();
 			if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
-				Image image = new Image(new Texture(nextLevelImage));
+				Level nextLevel = createNewLevel(nextLevelPosition);
+				addLevel(nextLevel);
+				ScreenshotImage image = new ScreenshotImage(new Texture(emptyLevelImage));
+				image.setTag(nextLevel);
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], image);	
 			}
 		}
-	}
-
-	private TextButton createLevelButton(String name) {
-		TextButton button = new TextButton(name, getSkin());
-		button.setListener(this);
-		button.setWidth(60f);
-		button.setHeight(30f);
-		return button;
 	}
 
 	private void showErrorDialog(String title, String message) {
@@ -333,6 +316,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private void markLevelsReachable() {
 		Level startLevel = null;
 		for(Level l : this.levels.getLevels()) {
+			Gdx.app.log("LevelEditorMenusScreen", "markLevelsReachable: l="+l);
 			int[] pos = l.getPosition();
 			if( ( pos[0] == 0 ) && ( pos[1] == 0 ) ) {
 				startLevel = l;
@@ -433,5 +417,14 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		level.setPosition(position[0], position[1]);
 		ScreenBorder.create(level, game);
 		return level;
+	}
+	
+	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
+		ScreenshotImage image = new ScreenshotImage(texture);
+		image.setListener(this);
+		image.setTag(level);
+		image.setScaling(Scaling.fit);
+		image.setSize(width, height);
+		return image;
 	}
 }

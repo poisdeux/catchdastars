@@ -179,8 +179,24 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	protected boolean handleBackNavigation() {
-		saveLevel();
-		return false;
+		if(saveLevel()) {
+			return false;
+		}
+		
+		//notify user saving failed
+		ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
+		dialog.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				dialog.remove();
+				getGame().stopScreen();
+			}
+		});
+		dialog.create();
+		dialog.show();
+				
+		return true;
 	}
 
 	@Override
@@ -606,17 +622,15 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		this.selectedGameObjects.clear();
 	}
 
-	private void saveLevel() {
+	private boolean saveLevel() {
 		Level level = getGame().getLevel();
+		if( level == null ) {
+			return false;
+		}
 		LevelWriter.save(level);
 		
-		boolean success = ScreenshotFactory.saveScreenshot(getStageActors(), level);
-		if( ! success ) {
-			//notify user saving failed
-			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
-			dialog.create();
-			dialog.show();
-		}
+		
+		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 
 	/**
