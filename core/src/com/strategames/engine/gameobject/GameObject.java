@@ -68,7 +68,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * <br/>
 	 * If size.y < 0 height of the game object is calculated using size.x and image size when {@link #setup()} is called. 
 	 */
-	GameObject(Vector2 size) {
+	public GameObject(Vector2 size) {
 		this.size = size;
 		if( size != null ) {
 			setWidth(this.size.x);
@@ -77,6 +77,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		setName(getClass().getSimpleName());
 	}
 
+	protected GameObject() {
+		this(new Vector2(0.3f, -1));
+	}
+	
 	public Game getGame() {
 		return game;
 	}
@@ -322,9 +326,36 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		messageBuffer.append(", position=("+getX()+","+getY()+")");
 		messageBuffer.append(", halfWidth="+this.halfWidth);
 		messageBuffer.append(", halfHeight="+this.halfHeight);
+		messageBuffer.append(", saveToFile="+this.saveToFile);
 		return messageBuffer.toString();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		GameObject object;
+		if( obj instanceof GameObject ) {
+			object = (GameObject) obj;
+		} else {
+			return false;
+		}
+		
+		if( ( body != null ) && (! body.equals(object.getBody())) ) {
+			return false;
+		} else if( object.getBody() != null ) {
+			return false;
+		}
+		
+		return (
+				(getX() == object.getX()) &&
+				(getY() == object.getY()) &&
+				(getWidth() == object.getWidth()) &&
+				(getHeight() == object.getHeight()) &&
+				(getRotation() == object.getRotation()) &&
+				(isCollectible == object.isCollectible) &&
+				(halfWidth == object.getHalfWidth()) &&
+				(halfHeight == object.getHalfHeight())
+				);
+	}
 	/**
 	 * Called to create the image for the game object
 	 */
@@ -334,7 +365,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
 	 * @return the created body
 	 */
-	abstract Body createBody(World world);
+	abstract protected Body createBody(World world);
 
 	/**
 	 * Use this to write specific object properties to file(s)

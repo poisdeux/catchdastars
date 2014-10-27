@@ -16,10 +16,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.game.GameTestClass;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Icecube;
 import com.strategames.engine.gameobject.types.Icecube.Part;
+import com.strategames.libgdx.junit.GameTestClass;
 
 
 

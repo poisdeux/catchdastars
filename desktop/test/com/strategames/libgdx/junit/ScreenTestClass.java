@@ -1,10 +1,11 @@
-package com.strategames.engine.screens;
+package com.strategames.libgdx.junit;
 
 import java.io.FileNotFoundException;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Textures;
 
 public class ScreenTestClass extends AbstractScreen {

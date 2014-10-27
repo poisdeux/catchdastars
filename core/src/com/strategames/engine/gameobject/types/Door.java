@@ -137,4 +137,17 @@ public class Door extends StaticBody {
 	public String toString() {
 		return super.toString() + ", nextLevelPosition="+nextLevelPosition[0]+","+nextLevelPosition[1];
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		Door door;
+		if( obj instanceof Door ) {
+			door = (Door) obj;
+		} else {
+			return false;
+		}
+		int[] pos = door.getNextLevelPosition();
+		return pos[0] == nextLevelPosition[0] && pos[1] == nextLevelPosition[1] && 
+				super.equals(obj);
+	}
 }

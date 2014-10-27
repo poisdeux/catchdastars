@@ -14,10 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.strategames.engine.game.Game;
-import com.strategames.engine.game.GameTestClass;
 import com.strategames.engine.gameobject.GameObject;
-import com.strategames.engine.screens.GdxTestRunner;
 import com.strategames.engine.utils.ConfigurationItem;
+import com.strategames.libgdx.junit.GameTestClass;
+import com.strategames.libgdx.junit.GdxTestRunner;
 
 @RunWith(GdxTestRunner.class)
 abstract public class GameObjectTestAbstractClass {

@@ -12,25 +12,25 @@ import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
 
 public class Level implements Comparable<Level> {
-	private String name;
+	private String name = "noname";
 	private Array<GameObject> gameObjects;
 	private Array<Door> doors;
-	private Vector2 worldSize;
-	private Vector2 viewSize;
+	private Vector2 worldSize = new Vector2(0, 0);
+	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
 	private boolean reachable;
-	
+
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 		this.doors = new Array<Door>();
 	}
-	
+
 	public void setGameObjects(ArrayList<GameObject> gameObjects) {
 		if( gameObjects == null )
 			return;
-		
+
 		this.gameObjects = new Array<GameObject>();
-		
+
 		for( GameObject object : gameObjects ) {
 			addGameObject(object);
 			if( object instanceof Door ) {
@@ -48,17 +48,18 @@ public class Level implements Comparable<Level> {
 	public void addGameObject(GameObject object) {
 		if( object.getSaveToFile() ){
 			if( object instanceof Door ) {
+				Gdx.app.log("Level", "addGameObject: Door="+object);
 				this.doors.add((Door) object);
 			} else {
 				this.gameObjects.add(object);
 			}
 		}
 	}
-	
+
 	public void removeGameObject(GameObject object) {
 		this.gameObjects.removeValue(object, true);
 	}
-	
+
 	public Array<GameObject> getGameObjects() {
 		return this.gameObjects;
 	}
@@ -68,23 +69,27 @@ public class Level implements Comparable<Level> {
 			this.doors.add((Door) door);
 		}
 	}
-	
+
 	public void removeDoor(Door door) {
 		this.doors.removeValue(door, true);
 	}
-	
+
 	public Array<Door> getDoors() {
 		return doors;
 	}
-	
+
+	public void setDoors(Array<Door> doors) {
+		this.doors = doors;
+	}
+
 	public void setReachable(boolean reachable) {
 		this.reachable = reachable;
 	}
-	
+
 	public boolean isReachable() {
 		return reachable;
 	}
-	
+
 	public void setPosition(int x, int y) {
 		this.position[0] = x;
 		this.position[1] = y;
@@ -97,7 +102,7 @@ public class Level implements Comparable<Level> {
 	public int[] getPosition() {
 		return position;
 	}
-	
+
 	/**
 	 * Position of the level in the game grid
 	 * @return String representing the position as x,y where , is used as separator.
@@ -106,7 +111,7 @@ public class Level implements Comparable<Level> {
 	public String getPositionAsString() {
 		return position[0]+","+position[1];
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -159,22 +164,83 @@ public class Level implements Comparable<Level> {
 		level.setName(new String(this.name));
 		level.setPosition(this.position[0], this.position[1]);
 		level.setReachable(isReachable());
+
+		Array<Door> doors = level.getDoors();
+		for(Door door : doors) {
+			level.addDoor(door);
+		}
+
 		return level;
 	}
-	
+
 	public void setWorldSize(Vector2 worldSize) {
 		this.worldSize = worldSize;
 	}
-	
+
 	public Vector2 getWorldSize() {
 		return worldSize;
 	}
-	
+
 	public void setViewSize(Vector2 viewSize) {
 		this.viewSize = viewSize;
 	}
-	
+
 	public Vector2 getViewSize() {
 		return viewSize;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		Level level;
+		if( obj == null ) {
+			Gdx.app.log("Level", "equals: obj="+obj);
+		}
+		if( obj instanceof Level ) {
+			level = (Level) obj;
+		} else {
+			return false;
+		}
+
+		if( ! (
+				( worldSize.equals(level.getWorldSize()) ) &&
+				( viewSize.equals(level.getViewSize()) ) &&
+				( position.equals(level.getPosition()) ) &&
+				( reachable == level.isReachable() )
+				) ) {
+			return false;
+		} 
+		
+		/**
+		 * true if name == null AND level.getName() == null 
+		 *   OR
+		 *   name.contentEquals(level.getName()) == true
+		 */
+		if( ( name != null ) && ( ! name.contentEquals(level.getName()) ) ) {
+			return false;
+		} else if( level.getName() != null ) {
+			return false;
+		}
+		
+		return arrayGameObjectsEquals(level.getGameObjects(), this.gameObjects) &&
+				arrayDoorsEquals(level.getDoors(), this.doors);	
+
+	}
+
+	private boolean arrayGameObjectsEquals(Array<GameObject> array1, Array<GameObject> array2) {
+		for(GameObject object : array2) {
+			if( ! array1.contains(object, false) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean arrayDoorsEquals(Array<Door> array1, Array<Door> array2) {
+		for(Door object : array2) {
+			if( ! array1.contains(object, false) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

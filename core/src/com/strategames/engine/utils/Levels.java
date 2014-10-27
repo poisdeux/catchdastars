@@ -68,4 +68,23 @@ public class Levels {
 			}
 		}
 	}
+	
+	public void markLevelsReachable() {
+		Level startLevel = null;
+		for(Level l : levels) {
+			int[] pos = l.getPosition();
+			if( ( pos[0] == 0 ) && ( pos[1] == 0 ) ) {
+				startLevel = l;
+				l.setReachable(true);
+			} else {
+				l.setReachable(false);
+			}
+		}
+
+		Array<Level> reachableLevels = new Array<Level>();
+		getLevelsReachable(startLevel, reachableLevels);
+		for(Level l : reachableLevels) {
+			l.setReachable(true);
+		}
+	}
 }

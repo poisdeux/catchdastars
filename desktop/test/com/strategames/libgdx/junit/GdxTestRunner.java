@@ -1,4 +1,4 @@
-package com.strategames.engine.screens;
+package com.strategames.libgdx.junit;
 
 import java.io.FileNotFoundException;
 import java.lang.Thread.UncaughtExceptionHandler;

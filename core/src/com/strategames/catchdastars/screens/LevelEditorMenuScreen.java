@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -101,22 +100,22 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	public void show() {
 		super.show();
 
+		Array<Level> levelsArrayList = this.levels.getLevels();
+		
 		if( editingLevel != null ) { // reload level to include added gameobjects
-			Array<Level> levelsArrayList = this.levels.getLevels();
 			int index = levelsArrayList.indexOf(editingLevel, true);
 			editingLevel = LevelLoader.loadLocalSync(editingLevel.getPositionAsString());
 			levelsArrayList.set(index, editingLevel);
 		}
 
 		//Check if adjacent rooms are still accessible
-		markLevelsReachable();
+		this.levels.markLevelsReachable();
 
-		fillLevelButtonsTable(this.levels.getLevels());
+		fillLevelButtonsTable(levelsArrayList);
 	}
 
 	@Override
 	public void onTap(final Actor actor) {
-		Gdx.app.log("LevelEditorMenu", "onTap: actor="+actor);
 		if( actor instanceof ScreenshotImage ) {
 			ScreenshotImage image = (ScreenshotImage) actor;
 			
@@ -128,6 +127,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			CatchDaStars game = (CatchDaStars) getGame();
 			
 			if( tag instanceof Level ) {
+				Gdx.app.log("LevelEditorMenu", "onTap: tag="+tag);
 				Level level = (Level) tag;
 				game.setLevel(level);
 				editingLevel = level;
@@ -311,25 +311,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		dialog.setCenter(true);
 		dialog.create();
 		dialog.show();
-	}
-
-	private void markLevelsReachable() {
-		Level startLevel = null;
-		for(Level l : this.levels.getLevels()) {
-			Gdx.app.log("LevelEditorMenusScreen", "markLevelsReachable: l="+l);
-			int[] pos = l.getPosition();
-			if( ( pos[0] == 0 ) && ( pos[1] == 0 ) ) {
-				startLevel = l;
-			} else {
-				l.setReachable(false);
-			}
-		}
-
-		Array<Level> reachableLevels = new Array<Level>();
-		this.levels.getLevelsReachable(startLevel, reachableLevels);
-		for(Level l : reachableLevels) {
-			l.setReachable(true);
-		}
 	}
 
 	private void deleteAllLevels() {

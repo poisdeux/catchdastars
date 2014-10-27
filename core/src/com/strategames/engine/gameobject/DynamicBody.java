@@ -21,7 +21,7 @@ abstract public class DynamicBody extends GameObject {
 	}
 
 	@Override
-	Body createBody(World world) {
+	protected Body createBody(World world) {
 		BodyDef bd = new BodyDef();
 		bd.position.set(getX(), getY());
 		bd.type = BodyType.DynamicBody;
