@@ -10,8 +10,6 @@ import com.badlogic.gdx.utils.SerializationException;
 
 public class LevelLoader {
 
-	static private int lastLevelNumber = -1;
-
 	static private final String LOCAL_PATH = "levels";
 	static private final String INTERNAL_PATH = "levels";
 	static private OnLevelLoadedListener levelLoadedListener;

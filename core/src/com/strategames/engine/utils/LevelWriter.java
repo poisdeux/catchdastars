@@ -16,7 +16,6 @@ public class LevelWriter {
 	static public boolean save(Level level) {
 		int[] position = level.getPosition();
 		FileHandle file = Gdx.files.local(LevelLoader.getLocalPath(position[0]+","+position[1]));
-		Gdx.app.log("LevelWriter", "save: saving level="+level+" to "+file.path());
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(level.getJson()), false);

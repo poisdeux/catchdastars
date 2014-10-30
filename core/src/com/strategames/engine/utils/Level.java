@@ -195,32 +195,38 @@ public class Level implements Comparable<Level> {
 		if( obj == null ) {
 			Gdx.app.log("Level", "equals: obj="+obj);
 		}
+		
 		if( obj instanceof Level ) {
 			level = (Level) obj;
 		} else {
 			return false;
 		}
 
+		int[] levelPosition = level.getPosition();
+
+		if( ( position[0] != levelPosition[0] ) || ( position[1] != levelPosition[1] ) ) {
+			return false;
+		}
+
 		if( ! (
 				( worldSize.equals(level.getWorldSize()) ) &&
 				( viewSize.equals(level.getViewSize()) ) &&
-				( position.equals(level.getPosition()) ) &&
 				( reachable == level.isReachable() )
 				) ) {
 			return false;
 		} 
-		
+
 		/**
 		 * true if name == null AND level.getName() == null 
 		 *   OR
 		 *   name.contentEquals(level.getName()) == true
 		 */
-		if( ( name != null ) && ( ! name.contentEquals(level.getName()) ) ) {
+		if( ( name != null ) && ( ! name.contentEquals(level.getName()) ) )  {
 			return false;
-		} else if( level.getName() != null ) {
+		} else if( ( level.getName() != null ) && ( name == null ) ) {
 			return false;
 		}
-		
+
 		return arrayGameObjectsEquals(level.getGameObjects(), this.gameObjects) &&
 				arrayDoorsEquals(level.getDoors(), this.doors);	
 
