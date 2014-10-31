@@ -25,7 +25,7 @@ public class Level implements Comparable<Level> {
 		this.doors = new Array<Door>();
 	}
 
-	public void setGameObjects(ArrayList<GameObject> gameObjects) {
+	public void setGameObjects(Array<GameObject> gameObjects) {
 		if( gameObjects == null )
 			return;
 
@@ -152,7 +152,7 @@ public class Level implements Comparable<Level> {
 	public Level copy() {
 		Level level = new Level();
 		if( this.gameObjects != null ) {
-			ArrayList<GameObject> copyGameObjects = new ArrayList<GameObject>();
+			Array<GameObject> copyGameObjects = new Array<GameObject>();
 			for( GameObject gameObject : this.gameObjects ) {
 				GameObject copy = gameObject.copy();
 				copy.setupImage();

@@ -1,34 +1,65 @@
 package com.strategames.engine.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
-import com.strategames.libgdx.junit.LevelsTestHelper;
+import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Door;
+import com.strategames.libgdx.junit.GameObjectTestClass;
+import com.strategames.libgdx.junit.LevelTestHelper;
 
 public class LevelTest {
-	Level level;
-	
-	@Before
-	public void setUp() throws Exception {
-		this.level = createLevel();
-	}
-	
 	@Test
 	public void equalTest() {
-		fail("Not yet implemented");
+		Level level1 = LevelTestHelper.createRandomLevel();
+		Level level2 = LevelTestHelper.createRandomLevel();
+		assertFalse("Different levels are considered equal", level1.equals(level2));
+
+		level1 = LevelTestHelper.createLevel();
+		level2 = LevelTestHelper.createLevel();
+		testEqual(level1, level2);
+		
+		String oldName = level1.getName();
+		level1.setName("YourLevel");
+		testNotEqual(level1, level2);
+		level1.setName(oldName);
+		
+		int[] oldPos = level1.getPosition();
+		level1.setPosition(oldPos[0] + 1, oldPos[0]);
+		testNotEqual(level1, level2);
+		level1.setPosition(oldPos[0], oldPos[1]);
+		
+		Door door = new Door();
+		level1.addDoor(door);
+		testNotEqual(level1, level2);
+		level1.removeDoor(door);
+		
+		GameObject object = new GameObjectTestClass();
+		level1.addGameObject(object);
+		testNotEqual(level1, level2);
+		level1.removeGameObject(object);
+		
+		Vector2 v = level1.getViewSize();
+		level1.setViewSize(v.add(0, 1));
+		testNotEqual(level1, level2);
+		level1.setViewSize(v.sub(0, 1));
+		
+		Vector2 w = level1.getWorldSize();
+		level1.setWorldSize(w.add(0, 1));
+		testNotEqual(level1, level2);
+		level1.setWorldSize(w.sub(0, 1));
 	}
 
+	private void testEqual(Level level1, Level level2) {
+		assertTrue("Level1 is not considered equal to level2", level1.equals(level2));
+		assertTrue("Level2 is not considered equal to level1", level2.equals(level1));
+	}
 	
-	private Level createLevel() {
-		Level level = new Level();
-		level.setPosition(2, 4);
-		level.setName("MyLevel");
-		level.setReachable(false);
-		level.setViewSize(new Vector2(3, 5));
-		level.setWorldSize(new Vector2(1, 2));
-		return level;
+	private void testNotEqual(Level level1, Level level2) {
+		assertFalse("Level1 is not considered equal to level2", level1.equals(level2));
+		assertFalse("Level2 is not considered equal to level1", level2.equals(level1));
 	}
 }
