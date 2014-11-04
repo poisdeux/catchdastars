@@ -31,7 +31,6 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -44,6 +43,11 @@ project(":desktop") {
         testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         testCompile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         testCompile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    }
+
+    task copyToLib(type: Copy) {
+        into "lib"
+        from configurations.runtime
     }
 }
 
@@ -66,7 +70,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
-				compile fileTree(dir: '../libs', include: '*.jar')
+        compile fileTree(dir: '../libs', include: '*.jar')
     }
 }
 
@@ -85,11 +89,15 @@ project(":ios") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-ios"
     }
+
+    task copyToLib(type: Copy) {
+        into "lib"
+        from configurations.runtime
+    }
 }
 
 project(":core") {
     apply plugin: "java"
-
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -97,8 +105,14 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 	compile fileTree(dir: '../libs', include: '*.jar')
     }
+
+    task copyToLib(type: Copy) {
+        into "lib"
+        from configurations.runtime
+    }
 }
 
 tasks.eclipse.doLast {
     delete ".project"
 }
+

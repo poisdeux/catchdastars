@@ -33,12 +33,48 @@
 
 == VIM ==
 
-1. Install eclimd
+1. Setup pathogen
 
-2. Run eclimd
+   mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+   curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
-   /opt/adt-bundle-linux-latest/eclipse/eclimd
+2. Add following to .vimrc
 
-3. Start vim
+   execute pathogen#infect()
 
+3. Install plugins:
 
+   cd ~/.vim/bundle
+   git clone https://github.com/scrooloose/syntastic.git
+   git clone https://github.com/adragomir/javacomplete.git
+   git clone https://github.com/scrooloose/nerdtree.git
+
+4. Make sure libraries are available
+
+   ./gradlew copyToLib
+
+5. Include classpaths
+
+   export CLASSPATH=$CLASSPATH:desktop/lib/*:core/lib/*
+
+6. Execute vim from project's top dir
+
+7. (Extra) Zenburn color scheme
+
+   cd ~/.vim
+   git clone https://github.com/jnurmine/Zenburn.git
+   mv Zenburn/colors .
+   rm -rf Zenburn
+
+8. (Extra) Add folowing to .vimrc to use Zenburn color scheme
+
+   colors zenburn
+
+9. (Extra) Setup powerline
+
+   cd ~/.vim/bundle
+   git clone https://github.com/Lokaltog/powerline.git
+
+10. (Extra) Add following to .vimrc to use poweline
+
+   set rtp+=/home/martijn/.vim/bundle/powerline/bindings/vim

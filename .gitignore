@@ -64,3 +64,6 @@ screenshots/
 levels/
 bin/
 gen/
+core/lib/
+desktop/lib/
+ios/lib/
