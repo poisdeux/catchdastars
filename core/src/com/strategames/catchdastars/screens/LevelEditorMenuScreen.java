@@ -127,7 +127,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			CatchDaStars game = (CatchDaStars) getGame();
 			
 			if( tag instanceof Level ) {
-				Gdx.app.log("LevelEditorMenu", "onTap: tag="+tag);
 				Level level = (Level) tag;
 				game.setLevel(level);
 				editingLevel = level;
@@ -257,31 +256,28 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level position, doors, and name.
+	 * Also add caching to prevent loading the complete game from scratch each time we show this screen
 	 */
 	private void fillLevelButtonsTable(Array<Level> levels) {
 		this.levelButtonsGrid.clear();
-		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 
 		if( ( levels == null ) || ( levels.size == 0 ) ) {
 			int[] pos = new int[] {0,0};
 			Level level = createNewLevel(pos);
 			addLevel(level);
 			
-			Texture texture = new Texture(emptyLevelImage);
-			ScreenshotImage image = createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
+			ScreenshotImage image = createLevelImage(level);
 
 			this.levelButtonsGrid.set(pos[0], pos[1], image);
 		} else {
 			for( final Level level : levels ) {
-				ScreenshotImage image;
-				Texture texture = ScreenshotFactory.loadScreenShot(level);
-				if( texture == null ) {
-					texture = new Texture(emptyLevelImage);
-				}
-				image = createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
-
 				int[] position = level.getPosition();
-				this.levelButtonsGrid.set(position[0], position[1], image);
+				this.levelButtonsGrid.set(position[0], position[1], createLevelImage(level));
+			}
+			
+			for( Level level : levels ) {
+				int[] position = level.getPosition();
+				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 				if( level.isReachable() ) {
 					addNextLevelButtons(level);
 				} else {
@@ -291,14 +287,24 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 	}
 
+	private ScreenshotImage createLevelImage(Level level) {
+		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
+		Texture texture = ScreenshotFactory.loadScreenShot(level);
+		if( texture == null ) {
+			texture = new Texture(emptyLevelImage);
+		}
+		return createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
+	}
+	
 	private void addNextLevelButtons(Level level) {
+		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
 			final int[] nextLevelPosition = door.getNextLevelPosition();
 			if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
 				Level nextLevel = createNewLevel(nextLevelPosition);
 				addLevel(nextLevel);
-				ScreenshotImage image = new ScreenshotImage(new Texture(emptyLevelImage));
+				ScreenshotImage image = createScreenshotImage(new Texture(emptyLevelImage), level, (int) elementSize.x, (int) elementSize.y);
 				image.setTag(nextLevel);
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], image);	
 			}
