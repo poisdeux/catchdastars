@@ -19,32 +19,49 @@ import com.strategames.engine.utils.ConfigurationItem;
 
 public class LeaveScreenSensor extends StaticBody {
 
+	private Vector2 end;
+	private Vector2 start;
+
 	/**
-	 * Create a sensor object surrounding world
-	 * @param size is ignored so passing null would be best
+	 * Create a rectangular sensor object. By default its size will be that
+	 * of the world as set in Game. Use {@link #setStart(Vector2)} and {@link #setEnd(Vector2)} to change size 
+	 * @param size is ignored so passing null would be best. 
 	 */
 	public LeaveScreenSensor(Vector2 size) {
 		super(size);
 	}
-	
+
 	@Override
 	protected TextureRegion createImage() {
 		return null;
 	}
 
+	public void setEnd(Vector2 end) {
+		this.end = end;
+	}
+
+	public void setStart(Vector2 start) {
+		this.start = start;
+	}
+
 	@Override
 	protected void setupBody(Body body) {
-		Game game = getGame();
-		
-		Vector3 worldSize = game.getWorldSize();
-		Vector2 beginning = new Vector2(0, 0).add(-Wall.WIDTH, -Wall.HEIGHT);
-		Vector2 end = new Vector2(worldSize.x, worldSize.y).add(Wall.WIDTH, Wall.HEIGHT);
 
-		Vector2 leftBottom = new Vector2(beginning.x, beginning.y);
-		Vector2 rightBottom = new Vector2(end.x, beginning.y);
-		Vector2 rightTop = new Vector2(end.x, end.y);
-		Vector2 leftTop = new Vector2(beginning.x, end.y);
+		if( this.start == null ) {
+			this.start = new Vector2(0, 0);
+		}
 		
+		if( this.end == null ) {
+			Game game = getGame();
+			Vector3 worldSize = game.getWorldSize();
+			this.end = new Vector2(worldSize.x, worldSize.y).add(Wall.WIDTH, Wall.HEIGHT);
+		}
+		
+		Vector2 leftBottom = new Vector2(start.x, start.y);
+		Vector2 rightBottom = new Vector2(end.x, start.y);
+		Vector2 rightTop = new Vector2(end.x, end.y);
+		Vector2 leftTop = new Vector2(start.x, end.y);
+
 		ChainShape chain = new ChainShape();
 		chain.createLoop(new Vector2[] {leftBottom, rightBottom, rightTop, leftTop});
 		Fixture fixture = body.createFixture(chain, 0.0f);
@@ -54,13 +71,13 @@ public class LeaveScreenSensor extends StaticBody {
 	@Override
 	protected void writeValues(Json json) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void readValue(JsonValue jsonData) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -84,31 +101,31 @@ public class LeaveScreenSensor extends StaticBody {
 	@Override
 	public void increaseSize() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void decreaseSize() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void destroyAction() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleCollision(Contact contact, ContactImpulse impulse,
 			GameObject gameObject) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void loadSounds() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

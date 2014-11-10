@@ -98,7 +98,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
-		this.debugRenderer = new Box2DDebugRenderer();
+//		this.debugRenderer = new Box2DDebugRenderer();
 
 		//We create a dummy world to make sure Box2D library is loaded before
 		//we create any game objects. This might be fixed in a future version
@@ -128,7 +128,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			showLevelCompleteDialog();
 		}
 
-		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -204,6 +204,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 					door.setWall(wall);
 				}
 			}
+			door.setVisible(false);
+			addGameObject(door, stage);
 		}
 
 		return true;
@@ -261,7 +263,13 @@ public class CatchDaStars extends Game implements OnClickListener {
 			}
 		}
 
-		addGameObject(new LeaveScreenSensor(null), stage);
+		//Setup screen leaving sensor. We must make sure balloon is out of screen when
+		//sensor is hit
+		float margin = Wall.WIDTH * 1.6f;
+		LeaveScreenSensor sensor = new LeaveScreenSensor(null);
+		sensor.setStart(new Vector2(-margin, -margin));
+		sensor.setEnd(new Vector2(getWorldSize().x, getWorldSize().y).add(margin, margin));
+		addGameObject(sensor, stage);
 	}
 
 	private void openVerticalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {

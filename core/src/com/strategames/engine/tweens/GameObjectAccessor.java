@@ -37,7 +37,6 @@ public class GameObjectAccessor implements TweenAccessor<GameObject> {
     public void setValues(GameObject target, int tweenType, float[] newValues) {
         switch (tweenType) {
             case POSITION_X:
-            	Gdx.app.log("GameObjectAccessor", "wordt dit aangeroepen?");
             	target.moveX(newValues[0]);
             	break;
             case POSITION_Y: 
