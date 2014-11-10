@@ -1,7 +1,5 @@
 package com.strategames.catchdastars;
 
-import java.util.ArrayList;
-
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
@@ -34,7 +32,7 @@ import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.gameobject.types.Icecube;
-import com.strategames.engine.gameobject.types.LeaveScreenSensor;
+import com.strategames.engine.gameobject.types.RectangularSensor;
 import com.strategames.engine.gameobject.types.Star;
 import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallHorizontal;
@@ -178,36 +176,59 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		//Setup any balloons from a previous level
 		for(Balloon balloon : balloons) {
-			addBalloon(balloon);
+			addBalloon(balloon, stage);
 		}
 
 		Array<Wall> border = new Array<Wall>();
 
 		for(GameObject gameObject : gameObjects ) {
 			if( gameObject instanceof Star ) {
-				if( gameObject instanceof StarBlue ) {
-					this.blueCollectables.add();
-				} else if( gameObject instanceof StarRed ) {
-					this.redCollectables.add();
-				} else if( gameObject instanceof StarYellow ) {
-					this.goldCollectables.add();
-				}
+				addStar((Star) gameObject, stage);
 			} else if( gameObject instanceof Balloon ) {
-				addBalloon((Balloon) gameObject);
+				addBalloon((Balloon) gameObject, stage);
 				balloons.add((Balloon) gameObject);
 			} else if( gameObject instanceof Icecube ) {
-				((Icecube) gameObject).addAllParts();
+				addIcecube((Icecube) gameObject, stage);
 			} else if( gameObject instanceof Wall ) {
 				Wall w = (Wall) gameObject;
+				addWall(w, stage);
 				if(w.isBorder()) {
 					border.add(w);
 				}
 			}
-			addGameObject(gameObject, stage);
 		}
 
-		this.amountBalloonsInGame = balloons.size;
+		addDoors(level, border, stage);
 
+		setupLeaveScreenSensor(balloons.get(0), stage);
+		
+		return true;
+		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
+	}
+
+	private void addStar(Star star, Stage stage) {
+		if( star instanceof StarBlue ) {
+			this.blueCollectables.add();
+		} else if( star instanceof StarRed ) {
+			this.redCollectables.add();
+		} else if( star instanceof StarYellow ) {
+			this.goldCollectables.add();
+		}
+		addGameObject(star, stage);
+	}
+
+	private void addBalloon(Balloon balloon, Stage stage) {
+		Gdx.app.log("CatchDaStars", "addBalloon: balloon="+balloon);
+		if( balloon instanceof BalloonBlue ) {
+			this.amountOfBlueBalloons++;
+		} else if( balloon instanceof BalloonRed ) {
+			this.amountOfRedBalloons++;
+		}
+		this.amountBalloonsInGame++;
+		addGameObject(balloon, stage);
+	}
+
+	private void addDoors(Level level, Array<Wall> border, Stage stage) {
 		Array<Door> doors = level.getDoors();
 		//Setup doors
 		for(int i = 0; i < doors.size; i++) {
@@ -223,19 +244,27 @@ public class CatchDaStars extends Game implements OnClickListener {
 			door.setVisible(false);
 			addGameObject(door, stage);
 		}
-
-		return true;
-		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
 	}
 
-	private void addBalloon(Balloon balloon) {
-		if( balloon instanceof BalloonBlue ) {
-			this.amountOfBlueBalloons++;
-		} else if( balloon instanceof BalloonRed ) {
-			this.amountOfRedBalloons++;
-		}
+	private void addIcecube(Icecube icecube, Stage stage) {
+		icecube.addAllParts();
+		addGameObject(icecube, stage);
 	}
 
+	private void addWall(Wall wall, Stage stage) {
+		addGameObject(wall, stage);
+	}
+
+	private void setupLeaveScreenSensor(Balloon balloon, Stage stage) {
+		//We must make sure balloon is out of screen when
+		//sensor is hit 
+		float margin = (balloon.getHeight() + Wall.WIDTH / 2f);
+		RectangularSensor sensor = new RectangularSensor(null);
+		sensor.setStart(new Vector2(-margin, -margin));
+		sensor.setEnd(new Vector2(stage.getWidth(), stage.getHeight()).add(margin, margin));
+		addGameObject(sensor, stage);
+	}
+	
 	private int calculateScore() {
 		int blueCollectablesScore = this.amountOfBlueBalloons * this.blueCollectables.getCollected().size() * this.scorePerBlueStar;
 		int redCollectablesScore = this.amountOfRedBalloons * this.redCollectables.getCollected().size() * this.scorePerRedStar;
@@ -267,8 +296,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 	@Override
 	public void levelComplete() {
 		openDoors();
-		//Place sensors at doors
-		//showLevelCompleteDialog when user passes through door
 	}
 
 	private void openDoors() {
@@ -286,14 +313,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 				openHorizontalWall(w, door, screen, stage);
 			}
 		}
-
-		//Setup screen leaving sensor. We must make sure balloon is out of screen when
-		//sensor is hit
-		float margin = Wall.WIDTH * 1.6f;
-		LeaveScreenSensor sensor = new LeaveScreenSensor(null);
-		sensor.setStart(new Vector2(-margin, -margin));
-		sensor.setEnd(new Vector2(getWorldSize().x, getWorldSize().y).add(margin, margin));
-		addGameObject(sensor, stage);
 	}
 
 	private void openVerticalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
@@ -411,24 +430,23 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	private void destroyBalloon(Balloon balloon) {
-		synchronized (balloon) {
-			balloon.startRemoveAnimation();
-			deleteGameObject(balloon);
-			if( balloon instanceof BalloonBlue ) {
-				this.amountOfBlueBalloons--;
-			} else if( balloon instanceof BalloonBlue ) {
-				this.amountOfRedBalloons--;
-			}
-			this.amountBalloonsInGame--;
+		balloon.startRemoveAnimation();
+		deleteGameObject(balloon);
+		if( balloon instanceof BalloonBlue ) {
+			this.amountOfBlueBalloons--;
+		} else if( balloon instanceof BalloonBlue ) {
+			this.amountOfRedBalloons--;
 		}
+		this.amountBalloonsInGame--;
+		balloons.removeValue(balloon, true);
 	}
 
 	private void handleSensorCollision(Balloon balloon, GameObject object) {
 		if( ! isRunning() ) {
 			return;
 		}
-		
-		Gdx.app.log("CatchDaStars", "handleSensorCollision: balloon="+balloon+"\nobject="+object);
+
+		//		Gdx.app.log("CatchDaStars", "handleSensorCollision: balloon="+balloon+"\nobject="+object);
 
 
 		if( object instanceof Star ) {
@@ -456,11 +474,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 			}
 		} else if( object instanceof Door ) {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
-		} else if ( object instanceof LeaveScreenSensor ) {
-			Gdx.app.log("CatchDaStars", "handleSensorCollision: this.amountBalloonsInGame="+this.amountBalloonsInGame+", balloon="+balloon);
-
+		} else if ( object instanceof RectangularSensor ) {
 			if( balloon.isInGame() ) {
-				getWorldThread().setGameObjectInactive(object);
+				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);
 				if( --this.amountBalloonsInGame < 1 ) {
 					showScore = true;

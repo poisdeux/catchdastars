@@ -17,7 +17,8 @@ public class WorldThread extends Thread {
 	private boolean stopThread = false;
 	private Array<GameObject> gameObjectsForAddition;
 	private Array<GameObject> gameObjectsToSetInactive;
-
+	private Array<GameObject> gameObjectsForDeletion;
+	
 	public WorldThread(Game game, float timeStepSeconds, int velocityIterations, int positionIterations) {
 		super();
 		this.game = game;
@@ -28,6 +29,7 @@ public class WorldThread extends Thread {
 		this.timeStepMillis = (long) (timeStepSeconds * 1000f);
 		this.gameObjectsForAddition = new Array<GameObject>();
 		this.gameObjectsToSetInactive = new Array<GameObject>();
+		this.gameObjectsForDeletion = new Array<GameObject>();
 	}
 
 	@Override
@@ -48,6 +50,7 @@ public class WorldThread extends Thread {
 
 			handleAddedGameObjectsQueue();
 			handleGameObjectsToSetInactiveQueue();
+			handleDeletedGameObjectsQueue();
 			applyForces();
 			
 			world.step(timeStepSeconds, velocityIterations, positionIterations);
@@ -64,6 +67,12 @@ public class WorldThread extends Thread {
 		}
 	}
 
+	public void deleteGameObject(GameObject object) {
+		synchronized (gameObjectsForDeletion) {
+			gameObjectsForDeletion.add(object);
+		}
+	}
+	
 	public void setGameObjectInactive(GameObject object) {
 		synchronized (gameObjectsToSetInactive) {
 			gameObjectsToSetInactive.add(object);
@@ -76,6 +85,15 @@ public class WorldThread extends Thread {
 				gameObjectsForAddition.get(i).setupBody();
 			}
 			gameObjectsForAddition.clear();
+		}
+	}
+	
+	private void handleDeletedGameObjectsQueue() {
+		synchronized (gameObjectsForDeletion) {
+			for(int i = 0; i < gameObjectsForDeletion.size; i++) {
+				world.destroyBody(gameObjectsForDeletion.get(i).getBody());
+			}
+			gameObjectsForDeletion.clear();
 		}
 	}
 	

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;

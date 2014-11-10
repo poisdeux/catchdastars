@@ -17,7 +17,7 @@ import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.StaticBody;
 import com.strategames.engine.utils.ConfigurationItem;
 
-public class LeaveScreenSensor extends StaticBody {
+public class RectangularSensor extends StaticBody {
 
 	private Vector2 end;
 	private Vector2 start;
@@ -27,7 +27,7 @@ public class LeaveScreenSensor extends StaticBody {
 	 * of the world as set in Game. Use {@link #setStart(Vector2)} and {@link #setEnd(Vector2)} to change size 
 	 * @param size is ignored so passing null would be best. 
 	 */
-	public LeaveScreenSensor(Vector2 size) {
+	public RectangularSensor(Vector2 size) {
 		super(size);
 	}
 

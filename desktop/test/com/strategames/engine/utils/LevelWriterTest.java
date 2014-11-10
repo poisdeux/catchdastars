@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.libgdx.junit.GdxTestRunner;
 import com.strategames.libgdx.junit.LevelsTestHelper;
