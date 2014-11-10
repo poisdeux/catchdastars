@@ -54,7 +54,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private World world;
 
-	private ArrayList<GameObject> availableGameObjects;
+	private Array<GameObject> availableGameObjects;
 
 	private boolean accelerometerAvailable;
 
@@ -63,11 +63,14 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private Collectable goldCollectables;
 	private int amountOfBlueBalloons;
 	private int amountOfRedBalloons;
+	private int amountBalloonsInGame;
 
 	private final int scorePerBalloon = 10;
 	private final int scorePerBlueStar = 1;
 	private final int scorePerRedStar = 1;
 	private final int scorePerGoldStar = 5;
+
+	private static Array<Balloon> balloons = new Array<Balloon>();
 
 	private Box2DDebugRenderer debugRenderer;
 
@@ -98,7 +101,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
-//		this.debugRenderer = new Box2DDebugRenderer();
+		//		this.debugRenderer = new Box2DDebugRenderer();
 
 		//We create a dummy world to make sure Box2D library is loaded before
 		//we create any game objects. This might be fixed in a future version
@@ -107,6 +110,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 		setWorld(this.world);
 
 		super.create();
+	}
+
+	@Override
+	public void reset() {
+		for(Balloon balloon : balloons) {
+			deleteGameObject(balloon);
+		}
+		balloons.clear();
+		super.reset();
 	}
 
 	@Override
@@ -128,7 +140,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			showLevelCompleteDialog();
 		}
 
-//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
+		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
 	}
 
 	@Override
@@ -164,6 +176,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
 
+		//Setup any balloons from a previous level
+		for(Balloon balloon : balloons) {
+			addBalloon(balloon);
+		}
+
 		Array<Wall> border = new Array<Wall>();
 
 		for(GameObject gameObject : gameObjects ) {
@@ -176,11 +193,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 					this.goldCollectables.add();
 				}
 			} else if( gameObject instanceof Balloon ) {
-				if( gameObject instanceof BalloonBlue ) {
-					this.amountOfBlueBalloons++;
-				} else if( gameObject instanceof BalloonRed ) {
-					this.amountOfRedBalloons++;
-				}
+				addBalloon((Balloon) gameObject);
+				balloons.add((Balloon) gameObject);
 			} else if( gameObject instanceof Icecube ) {
 				((Icecube) gameObject).addAllParts();
 			} else if( gameObject instanceof Wall ) {
@@ -191,6 +205,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 			}
 			addGameObject(gameObject, stage);
 		}
+
+		this.amountBalloonsInGame = balloons.size;
 
 		Array<Door> doors = level.getDoors();
 		//Setup doors
@@ -210,6 +226,14 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 		return true;
 		//		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
+	}
+
+	private void addBalloon(Balloon balloon) {
+		if( balloon instanceof BalloonBlue ) {
+			this.amountOfBlueBalloons++;
+		} else if( balloon instanceof BalloonRed ) {
+			this.amountOfRedBalloons++;
+		}
 	}
 
 	private int calculateScore() {
@@ -357,12 +381,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 	 * is called!
 	 */
 	@Override
-	public ArrayList<GameObject> getAvailableGameObjects() {
+	public Array<GameObject> getAvailableGameObjects() {
 		if( this.availableGameObjects != null ) {
 			return this.availableGameObjects;
 		}
 
-		ArrayList<GameObject> objects = new ArrayList<GameObject>();
+		Array<GameObject> objects = new Array<GameObject>();
 
 		objects.add(new BalloonBlue());
 		objects.add(new BalloonRed());
@@ -395,6 +419,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			} else if( balloon instanceof BalloonBlue ) {
 				this.amountOfRedBalloons--;
 			}
+			this.amountBalloonsInGame--;
 		}
 	}
 
@@ -402,6 +427,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( ! isRunning() ) {
 			return;
 		}
+		
+		Gdx.app.log("CatchDaStars", "handleSensorCollision: balloon="+balloon+"\nobject="+object);
+
 
 		if( object instanceof Star ) {
 			GameObject star = (Star) object;
@@ -429,9 +457,14 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if( object instanceof Door ) {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof LeaveScreenSensor ) {
-			if( ! object.isHit() ) {
-				object.setHit(true);
-				showScore = true;
+			Gdx.app.log("CatchDaStars", "handleSensorCollision: this.amountBalloonsInGame="+this.amountBalloonsInGame+", balloon="+balloon);
+
+			if( balloon.isInGame() ) {
+				getWorldThread().setGameObjectInactive(object);
+				balloon.setInGame(false);
+				if( --this.amountBalloonsInGame < 1 ) {
+					showScore = true;
+				}
 			}
 		}
 

@@ -578,7 +578,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	}
 
 	private Vector2 getMaxObjectSize() {
-		ArrayList<GameObject> gameObjects = getGame().getAvailableGameObjects();
+		Array<GameObject> gameObjects = getGame().getAvailableGameObjects();
 
 		Vector2 maxObjectSize = new Vector2(0, 0);
 
@@ -759,7 +759,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	private void setupMenu(Stage stage) {
 		Game game = getGame();
-		ArrayList<GameObject> gameObjects = game.getAvailableGameObjects();
+		Array<GameObject> gameObjects = game.getAvailableGameObjects();
 
 		Vector2 viewSize = game.getViewSize();
 
@@ -767,7 +767,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		 * We always set menu at the right as otherwise the action bar will 
 		 * trigger on Android when trying to pick a game object
 		 */
-		float delta = stage.getHeight() / ( gameObjects.size() + 1 );
+		float delta = stage.getHeight() / ( gameObjects.size + 1 );
 		float x = (float) (viewSize.x + 0.6*Wall.WIDTH);
 		float y = viewSize.y - Wall.HEIGHT;
 

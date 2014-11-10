@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.ui.widgets.TextButton;
@@ -37,7 +38,7 @@ public class GameObjectPickerDialog extends Dialog {
 		defaults().spaceBottom(2);
 		row();
 		
-		ArrayList<GameObject> gameObjects = this.game.getAvailableGameObjects();
+		Array<GameObject> gameObjects = this.game.getAvailableGameObjects();
 		
 		for(GameObject object : gameObjects ) {
 			final GameObject gameObject = object;

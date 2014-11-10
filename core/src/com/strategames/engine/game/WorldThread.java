@@ -16,7 +16,7 @@ public class WorldThread extends Thread {
 	private long previousTime;
 	private boolean stopThread = false;
 	private Array<GameObject> gameObjectsForAddition;
-	private Array<GameObject> gameObjectsForDeletion;
+	private Array<GameObject> gameObjectsToSetInactive;
 
 	public WorldThread(Game game, float timeStepSeconds, int velocityIterations, int positionIterations) {
 		super();
@@ -27,7 +27,7 @@ public class WorldThread extends Thread {
 		this.positionIterations = positionIterations;
 		this.timeStepMillis = (long) (timeStepSeconds * 1000f);
 		this.gameObjectsForAddition = new Array<GameObject>();
-		this.gameObjectsForDeletion = new Array<GameObject>();
+		this.gameObjectsToSetInactive = new Array<GameObject>();
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class WorldThread extends Thread {
 			previousTime = System.currentTimeMillis();
 
 			handleAddedGameObjectsQueue();
-			handleDeletedGameObjectsQueue();
+			handleGameObjectsToSetInactiveQueue();
 			applyForces();
 			
 			world.step(timeStepSeconds, velocityIterations, positionIterations);
@@ -64,9 +64,9 @@ public class WorldThread extends Thread {
 		}
 	}
 
-	public void deleteGameObject(GameObject object) {
-		synchronized (gameObjectsForDeletion) {
-			gameObjectsForDeletion.add(object);
+	public void setGameObjectInactive(GameObject object) {
+		synchronized (gameObjectsToSetInactive) {
+			gameObjectsToSetInactive.add(object);
 		}
 	}
 
@@ -79,12 +79,12 @@ public class WorldThread extends Thread {
 		}
 	}
 	
-	private void handleDeletedGameObjectsQueue() {
-		synchronized (gameObjectsForDeletion) {
-			for(int i = 0; i < gameObjectsForDeletion.size; i++) {
-				gameObjectsForDeletion.get(i).getBody().setActive(false);
+	private void handleGameObjectsToSetInactiveQueue() {
+		synchronized (gameObjectsToSetInactive) {
+			for(int i = 0; i < gameObjectsToSetInactive.size; i++) {
+				gameObjectsToSetInactive.get(i).getBody().setActive(false);
 			}
-			gameObjectsForDeletion.clear();
+			gameObjectsToSetInactive.clear();
 		}
 	}
 	

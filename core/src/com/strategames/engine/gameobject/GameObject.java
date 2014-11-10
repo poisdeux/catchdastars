@@ -62,6 +62,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	private TextureRegion textureRegion;
 
+	private boolean inGame;
+	
 	/**
 	 * Constructor for creating a game object
 	 * @param size in meters. size.x = width, size.y = height. 
@@ -174,6 +176,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return body;
 	}
 
+	public void setInGame(boolean inGame) {
+		this.inGame = inGame;
+	}
+	
+	public boolean isInGame() {
+		return inGame;
+	}
+	
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}

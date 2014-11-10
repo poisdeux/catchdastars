@@ -1,13 +1,12 @@
 package com.strategames.libgdx.junit;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.ui.dialogs.Dialog;
@@ -45,7 +44,7 @@ public class GameTestClass extends Game {
 	}
 
 	@Override
-	public ArrayList<GameObject> getAvailableGameObjects() {
+	public Array<GameObject> getAvailableGameObjects() {
 		// TODO Auto-generated method stub
 		return null;
 	}

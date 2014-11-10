@@ -29,7 +29,7 @@ abstract public class DynamicBody extends GameObject {
 		setupBody(body);
 		return body;
 	}
-
+	
 	/**
 	 * Called prior to updating the physics world (Box2D) so you can
 	 * apply forces to the gameobject.

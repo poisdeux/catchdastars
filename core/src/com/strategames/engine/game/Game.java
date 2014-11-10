@@ -1,6 +1,5 @@
 package com.strategames.engine.game;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
@@ -52,7 +51,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	private LEVEL_STATE levelState = LEVEL_STATE.NONE;
 	
 	public static final float FRAMES_PER_SECOND = 1/60f;
-	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
+	public static final float BOX2D_UPDATE_FREQUENCY = 1f/20f;
 	private final int BOX2D_VELOCITY_ITERATIONS = 6;
 	private final int BOX2D_POSITION_ITERATIONS = 3;
 	private WorldThread worldThread;
@@ -147,6 +146,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		if (currentScreen != null) currentScreen.resize(width, height);
 	}
 
+	
 	@Override
 	public void setScreen(Screen screen) {
 		this.newScreen = screen;
@@ -405,9 +405,13 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void deleteGameObject(GameObject object) {
 		this.gameObjectsForDeletion.add(object);
-		this.worldThread.deleteGameObject(object);
+		this.worldThread.setGameObjectInactive(object);
 	}
 
+	public WorldThread getWorldThread() {
+		return worldThread;
+	}
+	
 	/**
 	 * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
 	 * to be deleted
@@ -433,6 +437,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.gameObjectsInGame.add(object);
 		}
 
+		object.setInGame(true);
+		
 		stage.addActor(object);
 	}
 
@@ -457,7 +463,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * @param stage stage that holds the game actors
 	 */
 	public void updateScreen(float delta, Stage stage) {
-		fpsLogger.log();
+//		fpsLogger.log();
 		if( this.gameState == GAME_STATE.RUNNING ) {
 			//			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
@@ -498,6 +504,8 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * Resets the game by reloading the level
 	 */
 	public void reset() {
+		setTotalScore(0);
+		setLevelPosition(0, 0);
 		setScreen( new LevelScreen(this) );
 	}
 
@@ -702,5 +710,5 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * This should return one game object for each type used in the game.
 	 * @return
 	 */
-	abstract public ArrayList<GameObject> getAvailableGameObjects();
+	abstract public Array<GameObject> getAvailableGameObjects();
 }
