@@ -49,7 +49,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean canBeRemoved;
 	protected boolean isHit;
 	protected boolean isCollectible;
-
+	private boolean isNew = true;
+	
 	protected Vector2 initialPosition = new Vector2(); 
 
 	private boolean isMenuItem;
@@ -124,6 +125,25 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.halfWidth = width/2f;
 	}
 
+	/**
+	 * Specifies if this object should be added as new object to the game
+	 * <br/>
+	 * Default set to true
+	 * @param isNew
+	 */
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	
+	/**
+	 * Returns if this object should be added as a new object to the game
+	 * during setup
+	 * @return
+	 */
+	public boolean isNew() {
+		return isNew;
+	}
+	
 	/**
 	 * Specify this gameobject as menu item
 	 * @param isMenuItem true if object is part of a menu
@@ -404,6 +424,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		json.writeValue("x", position.x);
 		json.writeValue("y", position.y);
 
+		json.writeValue("isNew", isNew);
+		
 		writeValues(json);
 		json.writeObjectEnd();
 	}
@@ -435,6 +457,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 					float value = element.asFloat();
 					setY(value);
 					this.initialPosition.y = value;
+				}  else if ( name.contentEquals("isNew")) {
+					setNew(element.asBoolean());
 				} else {
 					readValue(element);
 				}
