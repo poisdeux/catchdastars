@@ -20,6 +20,7 @@ import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallVertical;
@@ -27,6 +28,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
+import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.ScreenshotFactory;
@@ -35,7 +37,6 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
-import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.MenuButton;
@@ -47,14 +48,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private Vector2 dragDirection;
 	private float previousZoomDistance;
 	private Actor uiElementHit;
-	private boolean testGame;
 	private Vector2 initialTouchPosition;
 
 	private Actor actorTouched;
 
 	private ArrayList<GameObject> selectedGameObjects;
-
-	private FilledRectangleImage rectangleImage;
 
 	private Grid grid;
 	private boolean snapToGrid;
@@ -120,8 +118,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	public LevelEditorScreen(Game game) {
 		super(game, null);
 
-		this.testGame = false;
-
 		this.initialTouchPosition = new Vector2();
 		this.dragDirection = new Vector2();
 
@@ -135,9 +131,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	@Override
 	protected void setupUI(Stage stage) {
 		getMultiplexer().addProcessor(new GestureDetector(this));
-		this.rectangleImage = new FilledRectangleImage(stage);
-		this.rectangleImage.setColor(1f, 0.25f, 0.25f, 0.5f);
-		stage.addActor(this.rectangleImage);
+		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
 	}
 
 	@Override
@@ -149,24 +143,14 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		getGame().pauseGame();
 
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
+		
+		getGame().loadLevel(this);
 	}
 
 	@Override
 	public void show() {
 		resetStageActors();
 		super.show();
-		
-		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
-		
-		getGame().loadLevel(this);
-	}
-
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-		if( testGame ) {
-			getGame().updateScreen(delta, getStageActors());
-		}
 	}
 
 	@Override
@@ -201,17 +185,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
-		if( this.testGame ) { //do not handle event in game mode
-			return false;
-		}
-
 		this.dragDirection.x = x;
 		this.dragDirection.y = y;
 		this.initialTouchPosition.x = x;
 		this.initialTouchPosition.y = y;
-		this.rectangleImage.setPosition(x, y);
-		this.rectangleImage.setWidth(0f);
-		this.rectangleImage.setHeight(0f);
 
 		this.previousZoomDistance = 0f; // reset zoom distance
 		this.state = States.NONE;
@@ -349,10 +326,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
-		if( this.testGame ) { //do not handle event in game mode
-			return false;
-		}
-
 		if( ( this.state == States.ZOOM) || 
 				( this.state == States.NONE ) ) {
 			this.state = States.ZOOM;
@@ -455,6 +428,12 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			return;
 		}
 
+		Array<Level> adjLevels = getAdjacentLevels(level);
+		Array<Balloon> balloons = new Array<Balloon>();
+		for(Level l : adjLevels) {
+			balloons.addAll(getBalloons(l));
+		}
+		
 		Game game = getGame();
 		Stage stage = getStageActors();
 		Array<GameObject> gameObjects = level.getGameObjects();
@@ -463,6 +442,14 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 				gameObject.initializeConfigurationItems();
 				deselectGameObject(gameObject);
 				game.addGameObject(gameObject, stage);
+				
+				/**
+				 * If gameobject is a balloon remove a
+				 * corresponding colored balloon from balloons
+				 * any balloons left in balloons array should
+				 * be added. Any additional balloons in current
+				 * level should be set to new: setNew(true)
+				 */
 			}
 		}
 
@@ -479,6 +466,32 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		setupMenu(getStageActors());
 	}
 
+	private Array<Level> getAdjacentLevels(Level level) {
+		Array<Level> levels = new Array<Level>();
+		int[] pos = level.getPosition();
+		pos[0]+=1;
+		levels.add(LevelLoader.loadLocalSync(pos));
+		pos[0]-=2;
+		levels.add(LevelLoader.loadLocalSync(pos));
+		pos[0]+=1;
+		pos[1]+=1;
+		levels.add(LevelLoader.loadLocalSync(pos));
+		pos[1]-=2;
+		levels.add(LevelLoader.loadLocalSync(pos));
+		return levels;
+	}
+	
+	private Array<Balloon> getBalloons(Level level) {
+		Array<Balloon> balloons = new Array<Balloon>();
+		Array<GameObject> objects = level.getGameObjects();
+		for(GameObject object : objects) {
+			if( object instanceof Balloon ) {
+				balloons.add((Balloon) object);
+			}
+		}
+		return balloons;
+	}
+	
 	@Override
 	protected Timeline showAnimation() {
 		return null;

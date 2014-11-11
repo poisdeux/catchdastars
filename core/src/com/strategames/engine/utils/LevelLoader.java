@@ -20,7 +20,7 @@ public class LevelLoader {
 
 	/**
 	 * Loads packaged level files (synchronous)
-	 * @param level
+	 * @param name name of the level file
 	 * @return Level object containing the game objects
 	 */
 	static private Level loadInternalSync(String name) {
@@ -34,7 +34,16 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link #save(Stage, int)}
+	 * Loads local level files (synchronous) saved using {@link LevelWriter#save(Stage, int)}
+	 * @param pos position of the level
+	 * @return Level object containing the game objects 
+	 */
+	static public Level loadLocalSync(int[] pos) {
+		return loadLocalSync(pos[0]+","+pos[1]);
+	}
+	
+	/**
+	 * Loads local level files (synchronous) saved using {@link LevelWriter#save(Stage, int)}
 	 * @param level levelnumber to load
 	 * @return Level object containing the game objects 
 	 */
