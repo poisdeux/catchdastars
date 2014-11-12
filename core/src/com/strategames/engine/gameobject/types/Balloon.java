@@ -119,6 +119,12 @@ abstract public class Balloon extends DynamicBody implements OnConfigurationItem
 
 		items.add(item);
 
+		item = new ConfigurationItem(this);
+		item.setName("new");
+		item.setType(ConfigurationItem.Type.BOOLEAN);
+		item.setValueBoolean(false);
+		
+		items.add(item);
 		return items;
 	}
 
@@ -165,6 +171,8 @@ abstract public class Balloon extends DynamicBody implements OnConfigurationItem
 	public void onConfigurationItemChanged(ConfigurationItem item) {
 		if( item.getName().contentEquals("lift") ) {
 			setLiftFactor(item.getValueNumeric());
+		} else if ( item.getName().contentEquals("new") ) {
+			setNew(item.getValueBoolean());
 		}
 	}
 

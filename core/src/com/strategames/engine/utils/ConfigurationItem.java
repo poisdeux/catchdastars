@@ -10,6 +10,7 @@ public class ConfigurationItem {
 	private String name;
 	private float valueNumeric;
 	private String valueText;
+	private boolean valueBoolean;
 	private float minValue;
 	private float maxValue;
 	private float stepSize;
@@ -21,7 +22,7 @@ public class ConfigurationItem {
 	}
 	
 	public static enum Type {
-		TEXT, NUMERIC, NUMERIC_RANGE
+		TEXT, NUMERIC, NUMERIC_RANGE, BOOLEAN
 	}
 	
 	public void setMaxValue(float maxValue) {
@@ -50,6 +51,11 @@ public class ConfigurationItem {
 		this.listener.onConfigurationItemChanged(this);
 	}
 	
+	public void setValueBoolean(boolean valueBoolean) {
+		this.valueBoolean = valueBoolean;
+		this.listener.onConfigurationItemChanged(this);
+	}
+	
 	public float getMaxValue() {
 		return maxValue;
 	}
@@ -72,6 +78,10 @@ public class ConfigurationItem {
 	
 	public String getValueText() {
 		return valueText;
+	}
+	
+	public boolean getValueBoolean() {
+		return valueBoolean;
 	}
 	
 	public void setType(Type type) {
