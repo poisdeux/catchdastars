@@ -1,10 +1,10 @@
 package com.strategames.catchdastars.screens;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import aurelienribon.tweenengine.Timeline;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -28,7 +28,6 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
-import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.ScreenshotFactory;
@@ -130,8 +129,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	protected void setupUI(Stage stage) {
-		getMultiplexer().addProcessor(new GestureDetector(this));
 		this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
+		GestureDetector d = new GestureDetector(this);
+		d.setTapSquareSize(60f);
+		getMultiplexer().addProcessor(d);
 	}
 
 	@Override
@@ -143,7 +144,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		getGame().pauseGame();
 
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
-		
+
 		getGame().loadLevel(this);
 	}
 
@@ -164,11 +165,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		if(saveLevel()) {
 			return false;
 		}
-		
+
 		//notify user saving failed
 		ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
 		dialog.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				dialog.remove();
@@ -177,13 +178,13 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		});
 		dialog.create();
 		dialog.show();
-				
+
 		return true;
 	}
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		this.dragDirection.x = x;
 		this.dragDirection.y = y;
@@ -211,12 +212,13 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 		this.tap.setActor(actor);
 		this.actorTouched = actor;
-
+		Gdx.app.log("LevelEditorScreen", "touchDown actor="+actor);
+		
 		if( actor != null ) { // actor selected
-			deselectAllGameObjects();
+//			deselectAllGameObjects();
 			selectGameObject((GameObject) this.actorTouched);
 		} else if( this.uiElementHit == null ) { // empty space selected
-			deselectAllGameObjects();
+//			deselectAllGameObjects();
 		}
 
 		return true;
@@ -294,13 +296,13 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	public boolean tap(final float x, final float y, int count, int button) {
-		this.tap.tap();
+		Gdx.app.log("LevelEditorScreen", "tap: (x,y)="+x+","+y+"), count="+count+", actorTouched="+this.actorTouched);
+//		this.tap.tap();
 
-		GameObject gameObject = (GameObject) this.tap.getActor();
-
-		if( ( gameObject != null ) && ( this.uiElementHit == null ) ){
-			if( tap.doubleTapped() ) {
-				showGameObjectCongfigurationDialog(gameObject);
+//		GameObject gameObject = (GameObject) this.tap.getActor();
+		if( ( this.actorTouched != null ) && ( this.uiElementHit == null ) ){
+			if( count > 1 ) {
+				showGameObjectCongfigurationDialog((GameObject) this.actorTouched);
 				return true;
 			} 
 
@@ -428,28 +430,17 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			return;
 		}
 
-		Array<Level> adjLevels = getAdjacentLevels(level);
-		Array<Balloon> balloons = new Array<Balloon>();
-		for(Level l : adjLevels) {
-			balloons.addAll(getBalloons(l));
-		}
-		
 		Game game = getGame();
 		Stage stage = getStageActors();
 		Array<GameObject> gameObjects = level.getGameObjects();
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {
 				gameObject.initializeConfigurationItems();
-				deselectGameObject(gameObject);
+//				deselectGameObject(gameObject);
 				game.addGameObject(gameObject, stage);
-				
-				/**
-				 * If gameobject is a balloon remove a
-				 * corresponding colored balloon from balloons
-				 * any balloons left in balloons array should
-				 * be added. Any additional balloons in current
-				 * level should be set to new: setNew(true)
-				 */
+				if( ! gameObject.isNew() ) {
+					gameObject.setColor(1f, 1f, 1f, 0.3f);
+				}
 			}
 		}
 
@@ -457,41 +448,15 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		if( (doors != null) ) {
 			for( Door door : doors ) {
 				door.initializeConfigurationItems();
-				deselectGameObject(door);
+//				deselectGameObject(door);
 				game.addGameObject(door, stage);
 			}
 		}
-		
+
 		//We setup menu last to make sure menu items are drawn on top
 		setupMenu(getStageActors());
 	}
 
-	private Array<Level> getAdjacentLevels(Level level) {
-		Array<Level> levels = new Array<Level>();
-		int[] pos = level.getPosition();
-		pos[0]+=1;
-		levels.add(LevelLoader.loadLocalSync(pos));
-		pos[0]-=2;
-		levels.add(LevelLoader.loadLocalSync(pos));
-		pos[0]+=1;
-		pos[1]+=1;
-		levels.add(LevelLoader.loadLocalSync(pos));
-		pos[1]-=2;
-		levels.add(LevelLoader.loadLocalSync(pos));
-		return levels;
-	}
-	
-	private Array<Balloon> getBalloons(Level level) {
-		Array<Balloon> balloons = new Array<Balloon>();
-		Array<GameObject> objects = level.getGameObjects();
-		for(GameObject object : objects) {
-			if( object instanceof Balloon ) {
-				balloons.add((Balloon) object);
-			}
-		}
-		return balloons;
-	}
-	
 	@Override
 	protected Timeline showAnimation() {
 		return null;
@@ -504,11 +469,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	private void placeDoor(Door door, Wall wall) {
 		Vector3 worldSize = getGame().getWorldSize();
-		
+
 		if( wall instanceof WallVertical ) {
 			float wallX = wall.getX();
 			door.moveTo(wallX, door.getY());
-			
+
 			if( wall.isBorder() ) {
 				int[] currentLevelPosition = getGame().getLevelPosition();
 				float middle = worldSize.x / 2f;
@@ -521,7 +486,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		} else {
 			float wallY = wall.getY();
 			door.moveTo(door.getX(), wallY);
-			
+
 			if( wall.isBorder() ) {
 				int[] currentLevelPosition = getGame().getLevelPosition();
 				float middle = worldSize.x / 2f;
@@ -533,7 +498,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			}
 		}
 	}
-	
+
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
@@ -552,7 +517,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		copy.setupBody();
 		getGame().getLevel().addGameObject(copy);
 		getStageActors().addActor(copy);
-		deselectGameObject(object);
+//		deselectGameObject(object);
 		selectGameObject(copy);
 		return copy;
 	}
@@ -611,27 +576,27 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private void selectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
-		gameObject.setColor(1f, 1f, 1f, 1.0f);
+//		gameObject.setColor(1f, 1f, 1f, 1.0f);
 		this.selectedGameObjects.add(gameObject);
 	}
 
-	private void deselectGameObject(GameObject gameObject) {
-		if( gameObject == null) return;
-
-		this.selectedGameObjects.remove(gameObject);
-
-		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
-	}
-
-	private void deselectAllGameObjects() {
-		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
-		while(itr.hasNext()) {
-			GameObject object = (GameObject) itr.next();
-			itr.remove();
-			deselectGameObject(object);
-		}
-		this.selectedGameObjects.clear();
-	}
+//	private void deselectGameObject(GameObject gameObject) {
+//		if( gameObject == null) return;
+//
+//		this.selectedGameObjects.remove(gameObject);
+//
+//		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+//	}
+//
+//	private void deselectAllGameObjects() {
+//		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
+//		while(itr.hasNext()) {
+//			GameObject object = (GameObject) itr.next();
+//			itr.remove();
+//			deselectGameObject(object);
+//		}
+//		this.selectedGameObjects.clear();
+//	}
 
 	private boolean saveLevel() {
 		Level level = getGame().getLevel();
@@ -639,8 +604,8 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			return false;
 		}
 		LevelWriter.save(level);
-		
-		
+
+
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 
@@ -797,8 +762,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		y-=delta;
 
 		for(GameObject object : gameObjects ) {
-			addGameObjectToMenu(stage, object, x, y);
-			y -= delta;
+			if( !  ( object instanceof Balloon ) ) { // do not add balloons to menu as only two balloons are allowed maximum
+				addGameObjectToMenu(stage, object, x, y);
+				y -= delta;
+			}
 		}
 	}
 
@@ -813,7 +780,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		GameObject gameObject = object.copy();
 		gameObject.setSaveToFile(false);
 		gameObject.setMenuItem(true);
-		deselectGameObject(gameObject);
+//		deselectGameObject(gameObject);
 		gameObject.moveTo(x, y);
 		gameObject.setInitialPosition(new Vector2(x, y));
 		gameObject.setupImage();

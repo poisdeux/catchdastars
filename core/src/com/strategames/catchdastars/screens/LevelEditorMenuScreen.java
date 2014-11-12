@@ -19,8 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.CatchDaStars;
+import com.strategames.catchdastars.gameobjects.BalloonBlue;
+import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.engine.game.Game;
+import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
@@ -403,6 +407,21 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		level.setReachable(true); //assume level can only be created if reachable
 		level.setPosition(position[0], position[1]);
 		ScreenBorder.create(level, game);
+		
+		
+		Balloon balloon = new BalloonBlue();
+		float x = worldSize.x / 3f;
+		float y = 1f;
+		
+		balloon.setPosition(x, y);
+		balloon.setNew(false);
+		level.addGameObject(balloon);
+		
+		balloon = new BalloonRed();
+		balloon.setPosition(x + x, y);
+		balloon.setNew(false);
+		level.addGameObject(balloon);
+		
 		return level;
 	}
 	

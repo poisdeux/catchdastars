@@ -17,7 +17,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -143,8 +142,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	public InputMultiplexer getMultiplexer() {
 		if( this.multiplexer == null ) {
 			this.multiplexer = new InputMultiplexer();
-			this.multiplexer.addProcessor(getStageUIActors());
-			this.multiplexer.addProcessor(this);
 		}
 		return this.multiplexer;
 	}
@@ -171,6 +168,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	{	
 
 		if( this.stageUIActors == null ) {
+			getMultiplexer().addProcessor(getStageUIActors());
 			setupUI(getStageUIActors());
 			setupMenu();
 		}
@@ -185,8 +183,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 			getStageUIActors().addActor(this.title);
 		}
 
-
-
+		getMultiplexer().addProcessor(this);
 		Gdx.input.setInputProcessor(getMultiplexer());
 
 		this.tweenManager.killAll();

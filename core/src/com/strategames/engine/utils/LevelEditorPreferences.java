@@ -14,7 +14,7 @@ public class LevelEditorPreferences {
 	}
 	
 	public static boolean snapToGridEnabled() {
-		return preferences.getBoolean(keySnapToGrid, false);
+		return getPreferences().getBoolean(keySnapToGrid, false);
 	}
 	
 	public static void snapToGrid(boolean bool) {
