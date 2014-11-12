@@ -3,8 +3,11 @@ package com.strategames.ui.dialogs;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -149,6 +152,22 @@ public class GameObjectConfigurationDialog extends Dialog {
 						}
 					});
 					add(slider);
+				} else if( item.getType() == ConfigurationItem.Type.BOOLEAN ) {
+					final CheckBox cb = new CheckBox("", skin);
+					cb.setChecked(item.getValueBoolean());
+					cb.addListener(new ClickListener() {
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							cb.setChecked( ! cb.isChecked() );
+							
+							ConfigurationItem nItem = getConfigurationItemFromSelectedObject(type);
+							if( nItem != null ) {
+								nItem.setValueBoolean( cb.isChecked() );
+							}
+						}
+					});
+					
+					add(cb);
 				}
 
 				row();
