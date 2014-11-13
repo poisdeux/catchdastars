@@ -122,7 +122,7 @@ abstract public class Balloon extends DynamicBody implements OnConfigurationItem
 		item = new ConfigurationItem(this);
 		item.setName("new");
 		item.setType(ConfigurationItem.Type.BOOLEAN);
-		item.setValueBoolean(false);
+		item.setValueBoolean(isNew());
 		
 		items.add(item);
 		return items;

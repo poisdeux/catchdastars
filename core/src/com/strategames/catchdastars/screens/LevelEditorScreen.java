@@ -67,53 +67,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	private States state;
 
-	private class Tap {
-		private long tapTime1;
-		private long tapTime2;
-		private Actor actor;
-
-		private int tapDelay = 200;
-
-		public Tap() {
-		}
-
-		public void tap() {
-			tapTime1 = tapTime2;
-			tapTime2 = System.currentTimeMillis();
-		}
-
-		public boolean doubleTapped() {
-			return ( tapTime2 - tapTime1 ) < tapDelay;
-		}
-
-		/**
-		 * Set the actor to monitor for double tapping.
-		 * <br/>
-		 * Note that this resets the tap time if the actor being set is different from the one currently being monitored
-		 * @param actor
-		 */
-		public void setActor(Actor actor) {
-			if( actor == this.actor ) {
-				return;
-			}
-
-			tapTime1 = -1 * (tapDelay + 1); // make sure doubleTapped is not true when setting the actor
-			tapTime2 = 0;
-			this.actor = actor;
-		}
-
-		public Actor getActor() {
-			return actor;
-		}
-
-		@Override
-		public String toString() {
-			return "tapTime1="+tapTime1+", tapTime2="+tapTime2+", actor="+actor;
-		}
-	}
-
-	private Tap tap = new Tap();
-
 	public LevelEditorScreen(Game game) {
 		super(game, null);
 
@@ -184,7 +137,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		this.dragDirection.x = x;
 		this.dragDirection.y = y;
@@ -210,9 +163,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			return true;
 		}
 
-		this.tap.setActor(actor);
 		this.actorTouched = actor;
-		Gdx.app.log("LevelEditorScreen", "touchDown actor="+actor);
 		
 		if( actor != null ) { // actor selected
 //			deselectAllGameObjects();
@@ -297,15 +248,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	@Override
 	public boolean tap(final float x, final float y, int count, int button) {
 		Gdx.app.log("LevelEditorScreen", "tap: (x,y)="+x+","+y+"), count="+count+", actorTouched="+this.actorTouched);
-//		this.tap.tap();
-
-//		GameObject gameObject = (GameObject) this.tap.getActor();
 		if( ( this.actorTouched != null ) && ( this.uiElementHit == null ) ){
-			if( count > 1 ) {
+			if( count > 1 ) { //double tap
 				showGameObjectCongfigurationDialog((GameObject) this.actorTouched);
 				return true;
 			} 
-
 		}
 
 		return false;
@@ -731,10 +678,14 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
 		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(getStageUIActors(), gameObject, getSkin());
 		dialog.setOnClickListener(this);
+		if( ! ( gameObject instanceof Balloon ) ) { // make sure we cannot delete balloons
+			dialog.setNegativeButton("Delete");
+		}
+		dialog.setNeutralButton("Copy");
 		dialog.create();
 		dialog.show();
 	}
-
+	
 	private void setupMenu(Stage stage) {
 		Game game = getGame();
 		Array<GameObject> gameObjects = game.getAvailableGameObjects();

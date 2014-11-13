@@ -3,8 +3,6 @@ package com.strategames.ui.dialogs;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -18,24 +16,30 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.utils.ConfigurationItem;
-import com.strategames.ui.widgets.TextButton;
 
 public class GameObjectConfigurationDialog extends Dialog {
 	public final static int BUTTON_COPY_CLICKED = 1;
 	public final static int BUTTON_DELETE_CLICKED = 2;
 	public final static int BUTTON_CLOSE_CLICKED = BUTTON_POSITIVE;
-	
+
 	private GameObject gameObject;
 
 	public GameObjectConfigurationDialog(Stage stage, final GameObject object, Skin skin) {
 		super(stage, skin);
 		this.gameObject = object;
+		setPositiveButton("Close", new OnClickListener() {
+
+			@Override
+			public void onClick(Dialog dialog, int which) {
+				dialog.remove();
+			}
+		});
 	}
 
 	public GameObject getGameObject() {
 		return gameObject;
 	}
-	
+
 	/**
 	 * Sets the gameobject the dialog should edit. This can be useful
 	 * if you need to change the gameobject while the dialog is still open.
@@ -46,41 +50,40 @@ public class GameObjectConfigurationDialog extends Dialog {
 	public void setGameObject(GameObject gameObject) {
 		this.gameObject = gameObject;
 	}
-	
+
 	@Override
 	public Dialog create() {
 		setCenter(true);
 		setBottom(true);
-		
+
 		row().fill().expandX();
 
 		setupConfigurationItems();
 
-		addButton("Copy ", BUTTON_COPY_CLICKED);
-		addButton("Delete ", BUTTON_DELETE_CLICKED);
-		
-		setPositiveButton("Close", new OnClickListener() {
-			
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				dialog.remove();
-			}
-		});
-
 		return super.create();
 	}
-	
-	private void addButton(String text, final int index) {
-		TextButton button = new TextButton(text, this.skin);
-		button.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				notifyListener(index);
-			}
-		});
-		add(button).fill().expandX();
+
+	/**
+	 * By default the positive button is used to set a Close button.
+	 * Call this method to replace the close button
+	 */
+	@Override
+	public void setPositiveButton(String text) {
+		// TODO Auto-generated method stub
+		super.setPositiveButton(text);
 	}
-	
+
+
+	/**
+	 * By default the positive button is used to set a Close button.
+	 * Call this method to replace the close button
+	 */
+	@Override
+	public void setPositiveButton(String text, OnClickListener onClickListener) {
+		// TODO Auto-generated method stub
+		super.setPositiveButton(text, onClickListener);
+	}
+
 	private void setupConfigurationItems() {
 		gameObject.initializeConfigurationItems();
 
@@ -90,10 +93,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 			for( ConfigurationItem item : configurationItems ) {
 				final ConfigurationItem.Type type = item.getType();
 
-				Label label = new Label(item.getName(), super.skin);
-				add(label);
-
 				if( item.getType() == ConfigurationItem.Type.TEXT ) {
+					Label label = new Label(item.getName(), super.skin);
+					add(label);
+
 					TextField tf = new TextField(String.valueOf(item.getValueText()), skin);
 					final StringBuffer buffer = new StringBuffer();
 					tf.setTextFieldListener(new TextFieldListener() {
@@ -112,6 +115,9 @@ public class GameObjectConfigurationDialog extends Dialog {
 					});
 					add(tf);
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC ) {
+					Label label = new Label(item.getName(), super.skin);
+					add(label);
+
 					TextField tf = new TextField(String.valueOf(item.getValueNumeric()), skin);
 					tf.setTextFieldFilter( new TextFieldFilter() {
 						@Override
@@ -137,6 +143,9 @@ public class GameObjectConfigurationDialog extends Dialog {
 					});
 					add(tf);
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC_RANGE ) {
+					Label label = new Label(item.getName(), super.skin);
+					add(label);
+
 					Slider slider = new Slider(item.getMinValue(), 
 							item.getMaxValue(), item.getStepSize(), false, skin);
 					slider.setValue(item.getValueNumeric());
@@ -153,20 +162,18 @@ public class GameObjectConfigurationDialog extends Dialog {
 					});
 					add(slider);
 				} else if( item.getType() == ConfigurationItem.Type.BOOLEAN ) {
-					final CheckBox cb = new CheckBox("", skin);
+					final CheckBox cb = new CheckBox(item.getName(), super.skin);
 					cb.setChecked(item.getValueBoolean());
 					cb.addListener(new ClickListener() {
 						@Override
 						public void clicked(InputEvent event, float x, float y) {
-							cb.setChecked( ! cb.isChecked() );
-							
 							ConfigurationItem nItem = getConfigurationItemFromSelectedObject(type);
 							if( nItem != null ) {
 								nItem.setValueBoolean( cb.isChecked() );
 							}
 						}
 					});
-					
+
 					add(cb);
 				}
 
@@ -174,7 +181,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 			}
 		}
 	}
-	
+
 	private ConfigurationItem getConfigurationItemFromSelectedObject(ConfigurationItem.Type type) {
 		ArrayList<ConfigurationItem> configurationItems = this.gameObject.getConfigurationItems();
 
