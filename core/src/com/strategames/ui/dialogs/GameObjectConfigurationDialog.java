@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
@@ -85,6 +86,8 @@ public class GameObjectConfigurationDialog extends Dialog {
 	}
 
 	private void setupConfigurationItems() {
+		Table table = new Table(super.skin);
+		
 		gameObject.initializeConfigurationItems();
 
 		ArrayList<ConfigurationItem> configurationItems = gameObject.getConfigurationItems();
@@ -95,7 +98,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 
 				if( item.getType() == ConfigurationItem.Type.TEXT ) {
 					Label label = new Label(item.getName(), super.skin);
-					add(label);
+					table.add(label);
 
 					TextField tf = new TextField(String.valueOf(item.getValueText()), skin);
 					final StringBuffer buffer = new StringBuffer();
@@ -113,10 +116,11 @@ public class GameObjectConfigurationDialog extends Dialog {
 							buffer.append(key);
 						}
 					});
-					add(tf);
+					table.add(tf).left();
+					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC ) {
 					Label label = new Label(item.getName(), super.skin);
-					add(label);
+					table.add(label).left();
 
 					TextField tf = new TextField(String.valueOf(item.getValueNumeric()), skin);
 					tf.setTextFieldFilter( new TextFieldFilter() {
@@ -141,10 +145,11 @@ public class GameObjectConfigurationDialog extends Dialog {
 							buffer.append(key);
 						}
 					});
-					add(tf);
+					table.add(tf).left();
+					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC_RANGE ) {
 					Label label = new Label(item.getName(), super.skin);
-					add(label);
+					table.add(label).left();
 
 					Slider slider = new Slider(item.getMinValue(), 
 							item.getMaxValue(), item.getStepSize(), false, skin);
@@ -160,9 +165,13 @@ public class GameObjectConfigurationDialog extends Dialog {
 							}
 						}
 					});
-					add(slider);
+					table.add(slider).left();
+					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.BOOLEAN ) {
-					final CheckBox cb = new CheckBox(item.getName(), super.skin);
+					Label label = new Label(item.getName(), super.skin);
+					table.add(label).left();
+					
+					final CheckBox cb = new CheckBox("", super.skin);
 					cb.setChecked(item.getValueBoolean());
 					cb.addListener(new ClickListener() {
 						@Override
@@ -174,9 +183,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 						}
 					});
 
-					add(cb);
+					table.add(cb).left();
+					table.row();
 				}
-
+				add(table);
 				row();
 			}
 		}

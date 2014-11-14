@@ -179,15 +179,18 @@ abstract public class Dialog extends Table {
 			row();
 		}
 		
+		Table table = new Table(skin);
 		if( this.buttonNegative != null ) {
-			add(this.buttonNegative).expand().bottom().right();
+			table.add(this.buttonNegative).expandX();
 		}
 		if( this.buttonNeutral != null ) {
-			add(this.buttonNeutral).expand().bottom().right();
+			table.add(this.buttonNeutral).expandX();
 		}
 		if( this.buttonPositive != null ) {
-			add(this.buttonPositive).expand().bottom().right();
+			table.add(this.buttonPositive).expandX();
 		}
+		add(table).right();
+		
 		row();
 
 		pack();
