@@ -19,8 +19,6 @@ import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.utils.ConfigurationItem;
 
 public class GameObjectConfigurationDialog extends Dialog {
-	public final static int BUTTON_COPY_CLICKED = 1;
-	public final static int BUTTON_DELETE_CLICKED = 2;
 	public final static int BUTTON_CLOSE_CLICKED = BUTTON_POSITIVE;
 
 	private GameObject gameObject;

@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.dialogs.ChangeWorldSizeDialog;
 import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
+import com.strategames.catchdastars.gameobjects.BalloonBlue;
+import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
@@ -342,12 +344,12 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			}
 		} else if (dialog instanceof GameObjectConfigurationDialog ) {
 			switch( which ) {
-			case GameObjectConfigurationDialog.BUTTON_COPY_CLICKED:
+			case GameObjectConfigurationDialog.BUTTON_NEUTRAL:
 				GameObject original = ((GameObjectConfigurationDialog) dialog).getGameObject();
 				GameObject copy = copyGameObject(original);
 				((GameObjectConfigurationDialog) dialog).setGameObject(copy);
 				break;
-			case GameObjectConfigurationDialog.BUTTON_DELETE_CLICKED:
+			case GameObjectConfigurationDialog.BUTTON_NEGATIVE:
 				GameObject gameObject = ((GameObjectConfigurationDialog) dialog).getGameObject();
 				gameObject.remove();
 				getGame().getLevel().removeGameObject(gameObject);
@@ -445,7 +447,28 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			}
 		}
 	}
-
+	
+	/**
+	 * Returns if the amount of red and blue balloons is greater than the
+	 * given amount 
+	 * @param amountOfBlue -1 to not take blue balloons into account
+	 * @param amountOfRed -1 to not take red balloons into account
+	 * @return true if the amount of both blue and red balloons is greater than amountOfBlue and amountOfRed
+	 */
+	private boolean amountOfBalloonsLargerThan(int amountOfBlue, int amountOfRed) {
+		int nBlue = 0;
+		int nRed = 0;
+		Array<GameObject> gameObjects = getGame().getLevel().getGameObjects();
+		for( GameObject gameObject : gameObjects ) {
+			if( gameObject instanceof BalloonBlue ) {
+				nBlue++;
+			} else if ( gameObject instanceof BalloonRed ) {
+				nRed++;
+			}
+		}
+		return ( nBlue > amountOfBlue ) && ( nRed > amountOfRed ); 
+	}
+	
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
@@ -678,7 +701,17 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private void showGameObjectCongfigurationDialog(GameObject gameObject) {
 		GameObjectConfigurationDialog dialog = new GameObjectConfigurationDialog(getStageUIActors(), gameObject, getSkin());
 		dialog.setOnClickListener(this);
-		if( ! ( gameObject instanceof Balloon ) ) { // make sure we cannot delete balloons
+		if( gameObject instanceof Balloon ) { // make sure we cannot delete all balloons
+			if( gameObject instanceof BalloonBlue ) {
+				if( amountOfBalloonsLargerThan(1, -1) ) {
+					dialog.setNegativeButton("Delete");
+				}
+			} else if ( gameObject instanceof BalloonRed ) {
+				if( amountOfBalloonsLargerThan(-1, 1) ) {
+					dialog.setNegativeButton("Delete");
+				}
+			}
+		} else {
 			dialog.setNegativeButton("Delete");
 		}
 		dialog.setNeutralButton("Copy");
