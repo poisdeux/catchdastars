@@ -96,9 +96,13 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		
 		this.maxImageHeight = height < IMAGEHEIGHT ? height : IMAGEHEIGHT;
 		
-		animationController();
-		
 		return this;
+	}
+	
+	@Override
+	public void show() {
+		super.show();
+		animationController();
 	}
 	
 	private void animationController() {

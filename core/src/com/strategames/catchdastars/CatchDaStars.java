@@ -480,9 +480,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if( object instanceof Door ) {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof RectangularSensor ) {
-			Gdx.app.log("CatchDaStars", "balloon hit sensor: amountBalloonsInGame="+amountBalloonsInGame+
-					", amountOfRedBalloons="+amountOfRedBalloons+
-					", amountOfBlueBalloons="+amountOfBlueBalloons);
 			if( balloon.isInGame() ) {
 				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);
@@ -571,7 +568,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 				startLevel(this.nextLevelPosition[0], this.nextLevelPosition[1]);
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
-				Gdx.app.log("CatchDaStars", "onClick: BUTTON_QUIT_CLICKED");
 				stopScreen();
 				break;
 			}

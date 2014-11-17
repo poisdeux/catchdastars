@@ -47,11 +47,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	private enum LEVEL_STATE {
 		NONE, INPROGRESS, FAILED, COMPLETE
 	};
-	
+
 	private LEVEL_STATE levelState = LEVEL_STATE.NONE;
-	
+
 	public static final float FRAMES_PER_SECOND = 1/60f;
-	public static final float BOX2D_UPDATE_FREQUENCY = 1f/20f;
+	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
 	private final int BOX2D_VELOCITY_ITERATIONS = 6;
 	private final int BOX2D_POSITION_ITERATIONS = 3;
 	private WorldThread worldThread;
@@ -75,7 +75,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private Vector3 worldSize = new Vector3(0f, 0f, 0f);
 	private Vector2 viewSize = new Vector2(0f, 0f);
-	
+
 	private ExportImport exportimport;
 	private MusicSelector musicSelector;
 
@@ -88,12 +88,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private int totalScore;
 
-//	private Stage stageActors;
+	//	private Stage stageActors;
 
 	private FPSLogger fpsLogger;
 
 	private boolean levelCompleteCalled = false;
-	
+
 	public Game() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
@@ -146,7 +146,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		if (currentScreen != null) currentScreen.resize(width, height);
 	}
 
-	
+
 	@Override
 	public void setScreen(Screen screen) {
 		this.newScreen = screen;
@@ -198,7 +198,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		MusicPlayer.getInstance().resume();
 		startBox2DThread();
 	}
-	
+
 	public void setLevelCompleted() {
 		this.levelState = LEVEL_STATE.COMPLETE;
 	}
@@ -210,7 +210,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void setLevelInProgress() {
 		this.levelState = LEVEL_STATE.INPROGRESS;
 	}
-	
+
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE.RUNNING;
 	}
@@ -298,7 +298,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public Vector2 getViewSize() {
 		return viewSize;
 	}
-	
+
 	/**
 	 * This is the size of the world that should be displayed. This 
 	 * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
@@ -307,7 +307,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public void setViewSize(Vector2 viewSize) {
 		this.viewSize = viewSize;
 	}
-	
+
 	/**
 	 * Use this to convert screen pixel sizes to Box2D sizes
 	 * @param x size in screen pixels
@@ -411,7 +411,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	public WorldThread getWorldThread() {
 		return worldThread;
 	}
-	
+
 	/**
 	 * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
 	 * to be deleted
@@ -438,7 +438,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		}
 
 		object.setInGame(true);
-		
+
 		stage.addActor(object);
 	}
 
@@ -463,11 +463,11 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 * @param stage stage that holds the game actors
 	 */
 	public void updateScreen(float delta, Stage stage) {
-//		fpsLogger.log();
+		//		fpsLogger.log();
 		if( this.gameState == GAME_STATE.RUNNING ) {
 			//			fixedTimeStep(delta, stage);
 			fixedTimeStepInterpolated(delta, stage);
-			
+
 			handleDeleteGameObjectsQueue();
 
 			handleAddGameObjectsQueue();
@@ -607,14 +607,14 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		}
 		this.gameObjectsForDeletion = notDeletedGameObjects;
 	}
-	
+
 	private void handleAddGameObjectsQueue() {
 		for(GameObject object : this.gameObjectsForAddition) {
 			object.setupImage();
 		}
 		this.gameObjectsForAddition.clear();
 	}
-	
+
 	private void fixedTimeStep(float delta, Stage stage) {
 		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
 		Array<Actor> actors = stage.getActors();
@@ -622,18 +622,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 		for(int i = 0; i < size; i++) {
 			GameObject gameObject = (GameObject) actors.get(i);
-			Body body = gameObject.getBody();
-			if (body != null) {
-				if ( body.getType() == BodyDef.BodyType.DynamicBody ) {
-
-					Vector2 currentPosition = body.getPosition();
-
-					gameObject.setX( currentPosition.x );
-					gameObject.setY( currentPosition.y );
-
-					gameObject.setRotation( MathUtils.radiansToDegrees * body.getAngle() );
-				}
-			}
+			
 		}
 	}
 
@@ -655,7 +644,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		if( delta > BOX2D_UPDATE_FREQUENCY ) {
 			//Rendering running slower than world updates
 			//Should we also use Toast to notify user?
-			Gdx.app.log("Game", "Renderer took "+delta+" secondes while world is updated each "+BOX2D_UPDATE_FREQUENCY+" seconds");
+			Gdx.app.log("Game", "Renderer took "+delta+" seconds while world is updated each "+BOX2D_UPDATE_FREQUENCY+" seconds");
 		}
 		interpolateGameObjectsCurrentPosition(delta/BOX2D_UPDATE_FREQUENCY, stage);
 	}
@@ -665,20 +654,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		int size = actors.size;
 
 		for(int i = 0; i < size; i++) {
-			GameObject gameObject = (GameObject) actors.get(i);
-			Body body = gameObject.getBody();
-			if (body != null) {
-				if ( body.getType() == BodyDef.BodyType.DynamicBody ) {
-
-					Vector2 currentPosition = body.getPosition();
-
-					//---- interpolate: currentState*alpha + previousState * ( 1.0 - alpha )
-					gameObject.setX( currentPosition.x * alpha + gameObject.getX() * (1.0f - alpha) );
-					gameObject.setY( currentPosition.y * alpha + gameObject.getY() * (1.0f - alpha) );
-
-					gameObject.setRotation( (MathUtils.radiansToDegrees * body.getAngle()) * alpha + gameObject.getRotation() * (1.0f - alpha) );
-				}
-			}
+			((GameObject) actors.get(i)).interpolate(alpha);
 		}
 	}
 

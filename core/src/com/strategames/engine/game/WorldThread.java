@@ -91,7 +91,8 @@ public class WorldThread extends Thread {
 	private void handleDeletedGameObjectsQueue() {
 		synchronized (gameObjectsForDeletion) {
 			for(int i = 0; i < gameObjectsForDeletion.size; i++) {
-				world.destroyBody(gameObjectsForDeletion.get(i).getBody());
+//				world.destroyBody(gameObjectsForDeletion.get(i).getBody());
+				gameObjectsForDeletion.get(i).deleteBody(world);
 			}
 			gameObjectsForDeletion.clear();
 		}
@@ -100,7 +101,7 @@ public class WorldThread extends Thread {
 	private void handleGameObjectsToSetInactiveQueue() {
 		synchronized (gameObjectsToSetInactive) {
 			for(int i = 0; i < gameObjectsToSetInactive.size; i++) {
-				gameObjectsToSetInactive.get(i).getBody().setActive(false);
+				gameObjectsToSetInactive.get(i).setActive(false);
 			}
 			gameObjectsToSetInactive.clear();
 		}

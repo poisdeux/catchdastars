@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.World;
@@ -50,7 +52,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected boolean isHit;
 	protected boolean isCollectible;
 	private boolean isNew = true;
-	
+
 	protected Vector2 initialPosition = new Vector2(); 
 
 	private boolean isMenuItem;
@@ -64,7 +66,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private TextureRegion textureRegion;
 
 	private boolean inGame;
-	
+
 	/**
 	 * Constructor for creating a game object
 	 * @param size in meters. size.x = width, size.y = height. 
@@ -83,7 +85,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected GameObject() {
 		this(new Vector2(0.3f, -1));
 	}
-	
+
 	public Game getGame() {
 		return game;
 	}
@@ -125,6 +127,31 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this.halfWidth = width/2f;
 	}
 
+	//---- 
+	/**
+	 * Calculates the new position on the current position and the position of the Body
+	 * using alpha to determine the weight of the current and body position according to
+	 * the following formula:
+	 * <br/>
+	 * <code>currentState*alpha + previousState * ( 1.0 - alpha )</code>
+	 * @param alpha
+	 */
+	public void interpolate(float alpha) {
+		if( body == null )
+			return;
+
+		synchronized (body) {
+			if ( body.getType() != BodyDef.BodyType.DynamicBody)
+				return;
+
+			Vector2 v = this.body.getPosition();
+			float negAlpha = 1.0f - alpha;
+			setX( ( v.x * alpha ) + ( getX() * negAlpha ) );
+			setY( ( v.y * alpha ) + ( getY() * negAlpha ) );
+			setRotation( ( (MathUtils.radiansToDegrees * body.getAngle()) * alpha ) + ( getRotation() * (negAlpha) ) );
+		}
+	}
+
 	/**
 	 * Specifies if this object should be added as new object to the game
 	 * <br/>
@@ -134,7 +161,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public void setNew(boolean isNew) {
 		this.isNew = isNew;
 	}
-	
+
 	/**
 	 * Returns if this object should be added as a new object to the game
 	 * during setup
@@ -143,7 +170,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	public boolean isNew() {
 		return isNew;
 	}
-	
+
 	/**
 	 * Specify this gameobject as menu item
 	 * @param isMenuItem true if object is part of a menu
@@ -189,21 +216,32 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	}
 
 	public void setBody(Body body) {
-		this.body = body;
+		synchronized (this.body) {
+			this.body = body;
+		}
 	}
 
 	public Body getBody() {
 		return body;
 	}
 
+	public void setActive(boolean active) {
+		if( body == null ) 
+			return;
+
+		synchronized (body) {
+			this.body.setActive(active);
+		}
+	}
+
 	public void setInGame(boolean inGame) {
 		this.inGame = inGame;
 	}
-	
+
 	public boolean isInGame() {
 		return inGame;
 	}
-	
+
 	public ArrayList<ConfigurationItem> getConfigurationItems() {
 		return this.configurationItems;
 	}
@@ -256,6 +294,14 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		}
 	}
 
+	public void deleteBody(World world) {
+		synchronized (body) {
+			world.destroyBody(body);
+			body.setUserData(null);
+			body = null;
+		}
+	}
+
 	/**
 	 * Moves a gameobject to location x, y. Note that you should use
 	 * {@link Actor#setPosition(float, float)} if you only want to change
@@ -282,6 +328,26 @@ abstract public class GameObject extends Image implements Json.Serializable {
 			this.body.setTransform(getX(), y, this.body.getAngle());
 		} 
 		setY(y);
+	}
+
+	/**
+	 * Sets GameObject at Body position
+	 */
+	public void move() {
+		if( body == null )
+			return;
+
+		synchronized (body) {
+			if ( body.getType() != BodyDef.BodyType.DynamicBody)
+				return;
+
+			Vector2 bodyPosition = body.getPosition();
+
+			setX( bodyPosition.x );
+			setY( bodyPosition.y );
+
+			setRotation( MathUtils.radiansToDegrees * body.getAngle() );
+		}
 	}
 
 	/**
@@ -366,13 +432,13 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		} else {
 			return false;
 		}
-		
+
 		if( ( body != null ) && (! body.equals(object.getBody())) ) {
 			return false;
 		} else if( object.getBody() != null ) {
 			return false;
 		}
-		
+
 		return (
 				(getX() == object.getX()) &&
 				(getY() == object.getY()) &&
@@ -425,7 +491,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		json.writeValue("y", position.y);
 
 		json.writeValue("isNew", isNew);
-		
+
 		writeValues(json);
 		json.writeObjectEnd();
 	}
@@ -530,9 +596,9 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	abstract public void loadSounds();
 
-//	/**
-//	 * Called prior to updating the physics world (Box2D) so you can
-//	 * apply forces to the gameobject.
-//	 */
-//	abstract public void applyForce();
+	//	/**
+	//	 * Called prior to updating the physics world (Box2D) so you can
+	//	 * apply forces to the gameobject.
+	//	 */
+	//	abstract public void applyForce();
 }
