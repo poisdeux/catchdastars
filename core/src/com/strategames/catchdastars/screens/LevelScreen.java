@@ -6,6 +6,8 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.game.Game;
 import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
@@ -19,6 +21,7 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
+import com.strategames.ui.helpers.Screen;
 
 public class LevelScreen extends AbstractScreen implements OnClickListener, OnLevelLoadedListener
 {	
@@ -39,9 +42,14 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	protected void setupUI(Stage stage) {
 		this.stage = stage;
 		
-		this.filter = new FilledRectangleImage(stage);
-		this.filter.setWidth(stage.getWidth());
-		this.filter.setHeight(stage.getHeight());
+		Vector2 start = new Vector2();
+		Vector2 end = new Vector2();
+		Screen.getFullScreenCoordinates(stage, start, end);
+		
+		this.filter = new FilledRectangleImage(this.stage);
+		this.filter.setPosition(start.x, start.y);
+		this.filter.setWidth(end.x);
+		this.filter.setHeight(end.y);
 		this.filter.setColor(0f, 0f, 0f, 1f);
 		stage.addActor(this.filter);
 		

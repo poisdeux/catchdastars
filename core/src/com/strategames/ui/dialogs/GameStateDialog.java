@@ -3,13 +3,14 @@ package com.strategames.ui.dialogs;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.strategames.ui.helpers.FilledRectangleImage;
+import com.strategames.ui.helpers.Screen;
 import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.TextButton;
 
@@ -84,9 +85,14 @@ abstract public class GameStateDialog extends Dialog {
 	
 	@Override
 	public Dialog create() {
+		Vector2 start = new Vector2();
+		Vector2 end = new Vector2();
+		Screen.getFullScreenCoordinates(this.stage, start, end);
+		
 		this.filter = new FilledRectangleImage(this.stage);
-		this.filter.setWidth(this.stage.getWidth());
-		this.filter.setHeight(this.stage.getHeight());
+		this.filter.setPosition(start.x, start.y);
+		this.filter.setWidth(end.x);
+		this.filter.setHeight(end.y);
 		this.filter.setColor(0f, 0f, 0f, 0.4f);
 		
 		this.messageLabel = new Label(this.message, skin);

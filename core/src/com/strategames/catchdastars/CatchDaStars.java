@@ -137,6 +137,13 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
+	public void reset() {
+		super.reset();
+		amountOfBlueBalloons = 0;
+		amountOfRedBalloons = 0;
+	}
+	
+	@Override
 	public boolean setup(Stage stage) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
@@ -473,6 +480,9 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if( object instanceof Door ) {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof RectangularSensor ) {
+			Gdx.app.log("CatchDaStars", "balloon hit sensor: amountBalloonsInGame="+amountBalloonsInGame+
+					", amountOfRedBalloons="+amountOfRedBalloons+
+					", amountOfBlueBalloons="+amountOfBlueBalloons);
 			if( balloon.isInGame() ) {
 				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);

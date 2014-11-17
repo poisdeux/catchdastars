@@ -815,7 +815,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			break;
 		}
 
-		Gdx.app.log("LevelEditorScreen", "handleGameObjectConfigurationDialogOnClick: gameObject.isNew()="+gameObject.isNew());
 		if( ! gameObject.isNew() ) {
 			gameObject.setColor(1f, 1f, 1f, 0.3f);
 		} else {
