@@ -139,7 +139,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
+		//		Gdx.app.log("LevelEditorScreen", "touchDown float: (x,y)="+x+","+y+")");
 
 		this.dragDirection.x = x;
 		this.dragDirection.y = y;
@@ -166,12 +166,12 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		}
 
 		this.actorTouched = actor;
-		
+
 		if( actor != null ) { // actor selected
-//			deselectAllGameObjects();
+			//			deselectAllGameObjects();
 			selectGameObject((GameObject) this.actorTouched);
 		} else if( this.uiElementHit == null ) { // empty space selected
-//			deselectAllGameObjects();
+			//			deselectAllGameObjects();
 		}
 
 		return true;
@@ -334,38 +334,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	@Override
 	public void onClick(Dialog dialog, int which) {
 		if( dialog instanceof LevelEditorOptionsDialog ) {
-			switch( which ) {
-			case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
-				displayGrid(LevelEditorPreferences.displayGridEnabled());
-				break;
-			case LevelEditorOptionsDialog.CHECKBOX_SNAPTOGRID:
-				this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
-				break;
-			}
+			handleLevelEditorOptionsDialogOnClick(dialog, which);
 		} else if (dialog instanceof GameObjectConfigurationDialog ) {
-			switch( which ) {
-			case GameObjectConfigurationDialog.BUTTON_NEUTRAL:
-				GameObject original = ((GameObjectConfigurationDialog) dialog).getGameObject();
-				GameObject copy = copyGameObject(original);
-				((GameObjectConfigurationDialog) dialog).setGameObject(copy);
-				break;
-			case GameObjectConfigurationDialog.BUTTON_NEGATIVE:
-				GameObject gameObject = ((GameObjectConfigurationDialog) dialog).getGameObject();
-				gameObject.remove();
-				getGame().getLevel().removeGameObject(gameObject);
-				dialog.remove();
-				break;
-			}
+			handleGameObjectConfigurationDialogOnClick(dialog, which);
 		} else if( dialog instanceof ChangeWorldSizeDialog ) {
-			switch( which ) {
-			case ChangeWorldSizeDialog.VALUE_CHANGED:
-				ChangeWorldSizeDialog wDialog = (ChangeWorldSizeDialog) dialog;
-				resizeWorld(wDialog.getHorizontalAmount(), wDialog.getVertialAmount());
-				break;
-			case ChangeWorldSizeDialog.BUTTON_CLOSE:
-				dialog.remove();
-				break;
-			}
+			handleChangeWorldSizeDialogOnClick(dialog, which);
 		}
 	}
 
@@ -385,7 +358,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		if( (gameObjects != null) ) {
 			for( GameObject gameObject : gameObjects ) {
 				gameObject.initializeConfigurationItems();
-//				deselectGameObject(gameObject);
+				//				deselectGameObject(gameObject);
 				game.addGameObject(gameObject, stage);
 				if( ! gameObject.isNew() ) {
 					gameObject.setColor(1f, 1f, 1f, 0.3f);
@@ -397,7 +370,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		if( (doors != null) ) {
 			for( Door door : doors ) {
 				door.initializeConfigurationItems();
-//				deselectGameObject(door);
+				//				deselectGameObject(door);
 				game.addGameObject(door, stage);
 			}
 		}
@@ -447,7 +420,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns if the amount of red and blue balloons is greater than the
 	 * given amount 
@@ -468,7 +441,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		}
 		return ( nBlue > amountOfBlue ) && ( nRed > amountOfRed ); 
 	}
-	
+
 	private GameObject copyGameObject(GameObject object) {
 		GameObject copy = object.copy();
 		float xDelta = 0;
@@ -487,7 +460,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		copy.setupBody();
 		getGame().getLevel().addGameObject(copy);
 		getStageActors().addActor(copy);
-//		deselectGameObject(object);
+		//		deselectGameObject(object);
 		selectGameObject(copy);
 		return copy;
 	}
@@ -546,27 +519,27 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private void selectGameObject(GameObject gameObject) {
 		if( gameObject == null) return;
 
-//		gameObject.setColor(1f, 1f, 1f, 1.0f);
+		//		gameObject.setColor(1f, 1f, 1f, 1.0f);
 		this.selectedGameObjects.add(gameObject);
 	}
 
-//	private void deselectGameObject(GameObject gameObject) {
-//		if( gameObject == null) return;
-//
-//		this.selectedGameObjects.remove(gameObject);
-//
-//		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
-//	}
-//
-//	private void deselectAllGameObjects() {
-//		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
-//		while(itr.hasNext()) {
-//			GameObject object = (GameObject) itr.next();
-//			itr.remove();
-//			deselectGameObject(object);
-//		}
-//		this.selectedGameObjects.clear();
-//	}
+	//	private void deselectGameObject(GameObject gameObject) {
+	//		if( gameObject == null) return;
+	//
+	//		this.selectedGameObjects.remove(gameObject);
+	//
+	//		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+	//	}
+	//
+	//	private void deselectAllGameObjects() {
+	//		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
+	//		while(itr.hasNext()) {
+	//			GameObject object = (GameObject) itr.next();
+	//			itr.remove();
+	//			deselectGameObject(object);
+	//		}
+	//		this.selectedGameObjects.clear();
+	//	}
 
 	private boolean saveLevel() {
 		Level level = getGame().getLevel();
@@ -715,10 +688,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			dialog.setNegativeButton("Delete");
 		}
 		dialog.setNeutralButton("Copy");
+		dialog.setPositiveButton("Close", this);
 		dialog.create();
 		dialog.show();
 	}
-	
+
 	private void setupMenu(Stage stage) {
 		Game game = getGame();
 		Array<GameObject> gameObjects = game.getAvailableGameObjects();
@@ -764,7 +738,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		GameObject gameObject = object.copy();
 		gameObject.setSaveToFile(false);
 		gameObject.setMenuItem(true);
-//		deselectGameObject(gameObject);
+		//		deselectGameObject(gameObject);
 		gameObject.moveTo(x, y);
 		gameObject.setInitialPosition(new Vector2(x, y));
 		gameObject.setupImage();
@@ -813,7 +787,53 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		camera.viewportHeight =  viewSize.y * h;
 	}
 
+	private void handleLevelEditorOptionsDialogOnClick(Dialog dialog,int which) {
+		switch( which ) {
+		case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
+			displayGrid(LevelEditorPreferences.displayGridEnabled());
+			break;
+		case LevelEditorOptionsDialog.CHECKBOX_SNAPTOGRID:
+			this.snapToGrid = LevelEditorPreferences.snapToGridEnabled();
+			break;
+		}
+	}
 
+	private void handleGameObjectConfigurationDialogOnClick(Dialog dialog,int which) {
+		GameObject gameObject = ((GameObjectConfigurationDialog) dialog).getGameObject();
+		switch( which ) {
+		case GameObjectConfigurationDialog.BUTTON_NEUTRAL:
+			GameObject copy = copyGameObject(gameObject);
+			((GameObjectConfigurationDialog) dialog).setGameObject(copy);
+			break;
+		case GameObjectConfigurationDialog.BUTTON_NEGATIVE:
+			gameObject.remove();
+			getGame().getLevel().removeGameObject(gameObject);
+			dialog.remove();
+			break;
+		case GameObjectConfigurationDialog.BUTTON_CLOSE_CLICKED:
+			dialog.remove();
+			break;
+		}
+
+		Gdx.app.log("LevelEditorScreen", "handleGameObjectConfigurationDialogOnClick: gameObject.isNew()="+gameObject.isNew());
+		if( ! gameObject.isNew() ) {
+			gameObject.setColor(1f, 1f, 1f, 0.3f);
+		} else {
+			gameObject.setColor(1f, 1f, 1f, 1f);
+		}
+	}
+
+	private void handleChangeWorldSizeDialogOnClick(Dialog dialog,int which) {
+		switch( which ) {
+		case ChangeWorldSizeDialog.VALUE_CHANGED:
+			ChangeWorldSizeDialog wDialog = (ChangeWorldSizeDialog) dialog;
+			resizeWorld(wDialog.getHorizontalAmount(), wDialog.getVertialAmount());
+			break;
+		case ChangeWorldSizeDialog.BUTTON_CLOSE:
+			dialog.remove();
+			break;
+		}
+	}
 }
 
 
