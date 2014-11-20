@@ -60,8 +60,10 @@ public class CatchDaStars extends Game implements OnClickListener {
 	private Collectable redCollectables;
 	private Collectable blueCollectables;
 	private Collectable goldCollectables;
-	private static int amountOfBlueBalloons;
-	private static int amountOfRedBalloons;
+	private int amountOfBlueBalloons;
+	private int amountOfRedBalloons;
+	private int amountOfBlueBalloonsFromPreviousLevel;
+	private int amountOfRedBalloonsFromPreviousLevel;
 	private int amountBalloonsInGame;
 
 	private final int scorePerBalloon = 10;
@@ -138,10 +140,19 @@ public class CatchDaStars extends Game implements OnClickListener {
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
+	public void resetGame() {
+		super.resetGame();
 		amountOfBlueBalloons = 0;
 		amountOfRedBalloons = 0;
+		amountBalloonsInGame = 0;
+	}
+	
+	@Override
+	public void resetLevel() {
+		super.resetLevel();
+		amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
+		amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
+		amountBalloonsInGame = 0;
 	}
 	
 	@Override
@@ -168,14 +179,14 @@ public class CatchDaStars extends Game implements OnClickListener {
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
 
-		int prevAmountOfBlueBalloons = amountOfBlueBalloons;
-		int prevAmountOfRedBalloons = amountOfRedBalloons;
-
-		Gdx.app.log("CatchDaStars", "setup: prevAmountOfBlueBalloons="+prevAmountOfBlueBalloons+", prevAmountOfRedBalloons="+prevAmountOfRedBalloons);
+		int tmpAmountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel = this.amountOfBlueBalloons;
+		int tmpAmountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel = this.amountOfRedBalloons;
 		
-		amountOfBlueBalloons = 0;
-		amountOfRedBalloons = 0;
-
+		this.amountOfBlueBalloons = 0;
+		this.amountOfRedBalloons = 0;
+		
+		Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+amountOfBlueBalloonsFromPreviousLevel+", amountOfRedBalloonsFromPreviousLevel="+amountOfRedBalloonsFromPreviousLevel);
+		
 		Array<Wall> border = new Array<Wall>();
 
 		for(GameObject gameObject : gameObjects ) {
@@ -184,11 +195,11 @@ public class CatchDaStars extends Game implements OnClickListener {
 			} else if( gameObject instanceof Balloon ) {
 				if( ! gameObject.isNew() ) { // Add surviving balloons from previous level
 					if( gameObject instanceof BalloonBlue ) {
-						if( prevAmountOfBlueBalloons-- > 0 ) {
+						if( tmpAmountOfBlueBalloons-- > 0 ) {
 							addBalloon((Balloon) gameObject, stage);
 						}
 					} else if( gameObject instanceof BalloonRed ) {
-						if( prevAmountOfRedBalloons-- > 0 ) {
+						if( tmpAmountOfRedBalloons-- > 0 ) {
 							addBalloon((Balloon) gameObject, stage);
 						}
 					}
@@ -452,7 +463,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			return;
 		}
 
-		//		Gdx.app.log("CatchDaStars", "handleSensorCollision: balloon="+balloon+"\nobject="+object);
+		Gdx.app.log("CatchDaStars", "handleSensorCollision: START balloon="+balloon+"\nobject="+object);
 
 
 		if( object instanceof Star ) {
@@ -482,6 +493,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof RectangularSensor ) {
 			if( balloon.isInGame() ) {
+				Gdx.app.log("CatchDaStars", "handleSensorCollision: amountBalloonsInGame="+amountBalloonsInGame);
 				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);
 				if( --this.amountBalloonsInGame < 1 ) {
@@ -500,6 +512,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 				this.goldCollectables.allCollected() ) {
 			setLevelCompleted();
 		}
+		
+		Gdx.app.log("CatchDaStars", "handleSensorCollision: END");
 	}
 
 	private void handleBalloonRockCollision(ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
@@ -520,6 +534,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	 */
 	@Override
 	public void beginContact(Contact contact) {
+		Gdx.app.log("CatchDaStars", "beginContact: START");
 		Fixture fixtureA = contact.getFixtureA();
 		Fixture fixtureB = contact.getFixtureB();
 		GameObject collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
@@ -529,6 +544,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if(( collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
 			handleSensorCollision((Balloon) collidingGameObject2, collidingGameObject1);
 		}
+		Gdx.app.log("CatchDaStars", "beginContact: END");
 	}
 
 	@Override
@@ -545,6 +561,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
+		Gdx.app.log("CatchDaStars", "postSolve: START");
 		GameObject collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
 		GameObject collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
 		if( ( collidingGameObject1 instanceof Balloon ) && ( collidingGameObject2 instanceof Icecube ) ) {
@@ -555,6 +572,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			collidingGameObject2.handleCollision(contact, impulse, collidingGameObject1);
 			collidingGameObject1.handleCollision(contact, impulse, collidingGameObject2);
 		}
+		Gdx.app.log("CatchDaStars", "postSolve: END");
 	}
 
 	@Override
@@ -575,7 +593,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if( dialog instanceof LevelFailedDialog ) {
 			switch( which ) {
 			case LevelFailedDialog.BUTTON_RETRY_CLICKED:
-				reset();
+				resetGame();
 				break;
 			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
 				stopScreen();
@@ -590,7 +608,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 				resumeGame();
 				break;
 			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
-				reset();
+				resetGame();
 				break;
 			}
 		} else  if( dialog instanceof ErrorDialog ) {

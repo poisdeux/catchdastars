@@ -421,6 +421,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		messageBuffer.append(", halfWidth="+this.halfWidth);
 		messageBuffer.append(", halfHeight="+this.halfHeight);
 		messageBuffer.append(", saveToFile="+this.saveToFile);
+		messageBuffer.append(", inGame="+this.inGame);
 		return messageBuffer.toString();
 	}
 

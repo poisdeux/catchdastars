@@ -211,6 +211,19 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		this.levelState = LEVEL_STATE.INPROGRESS;
 	}
 
+	public boolean isLevelCompleted() {
+		return this.levelState == LEVEL_STATE.COMPLETE;
+	}
+
+	public boolean isLevelFailed() {
+		return this.levelState == LEVEL_STATE.FAILED;
+	}
+
+	public boolean isLevelInProgress() {
+		return this.levelState == LEVEL_STATE.INPROGRESS;
+	}
+	
+	
 	public boolean isRunning() {
 		return this.gameState == GAME_STATE.RUNNING;
 	}
@@ -501,14 +514,21 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	/**
-	 * Resets the game by reloading the level
+	 * Resets the game
 	 */
-	public void reset() {
+	public void resetGame() {
 		setTotalScore(0);
 		setLevelPosition(0, 0);
 		setScreen( new LevelScreen(this) );
 	}
 
+	/**
+	 * Resets the current level
+	 */
+	public void resetLevel() {
+		setScreen( new LevelScreen(this) );
+	}
+	
 	public void showMainMenu() {
 		Screen s = new MainMenuScreen(this);
 		setScreen( s );

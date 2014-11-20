@@ -26,7 +26,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				game.reset();
+				game.resetGame();
 				game.startLevel(0,0);
 			}
 		});

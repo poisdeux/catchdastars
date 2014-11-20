@@ -86,10 +86,10 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 	@Override
 	protected boolean handleBackNavigation() {
-		if( ! getGame().isRunning() ) { // prevent pausing game when game is complete or failed
+		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
 			return true;
 		}
-
+		
 		if( this.levelPausedDialog == null  ) {
 			this.levelPausedDialog = new LevelPausedDialog(getStageUIActors(), getSkin());
 			this.levelPausedDialog.setOnClickListener(this);
@@ -116,7 +116,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				getGame().resumeGame();
 				break;
 			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
-				getGame().reset();
+				getGame().resetLevel();
 				break;
 			}
 		} else if( dialog instanceof ErrorDialog ) {

@@ -1,5 +1,6 @@
 package com.strategames.ui.dialogs;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -29,6 +30,8 @@ abstract public class Dialog extends Table {
 	private TextButton neutralButton;
 	private TextButton positiveButton;
 	
+	private static int amountOfDialogsVisible;
+	
 	private String message;
 	
 	protected final Skin skin;
@@ -50,6 +53,10 @@ abstract public class Dialog extends Table {
 		setStage(stage);
 	}
 
+	public static int getAmountOfDialogsVisible() {
+		return amountOfDialogsVisible;
+	}
+	
 	public void setOnClickListener(OnClickListener listener) {
 		this.onClickListener = listener;
 	}
@@ -224,11 +231,16 @@ abstract public class Dialog extends Table {
 	public void show() {
 		this.stage.addActor(this);
 		setVisible(true);
+		amountOfDialogsVisible++;
 	}
 	
 	public void hide() {
 		this.remove();
 		setVisible(false);
+		amountOfDialogsVisible--;
+		if( amountOfDialogsVisible < 0 ) {
+			Gdx.app.log("Dialog", "hide(): amountOfDialogsVisible="+amountOfDialogsVisible+", dialog="+this);
+		}
 	}
 	
 	/**
