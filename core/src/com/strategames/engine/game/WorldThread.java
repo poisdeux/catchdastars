@@ -1,5 +1,8 @@
 package com.strategames.engine.game;
 
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.TweenManager;
+
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobject.DynamicBody;
@@ -19,6 +22,8 @@ public class WorldThread extends Thread {
 	private Array<GameObject> gameObjectsToSetInactive;
 	private Array<GameObject> gameObjectsForDeletion;
 	
+	private TweenManager tweenManager;
+	
 	public WorldThread(Game game, float timeStepSeconds, int velocityIterations, int positionIterations) {
 		super();
 		this.game = game;
@@ -30,6 +35,7 @@ public class WorldThread extends Thread {
 		this.gameObjectsForAddition = new Array<GameObject>();
 		this.gameObjectsToSetInactive = new Array<GameObject>();
 		this.gameObjectsForDeletion = new Array<GameObject>();
+		this.tweenManager = new TweenManager();
 	}
 
 	@Override
@@ -52,11 +58,16 @@ public class WorldThread extends Thread {
 			handleGameObjectsToSetInactiveQueue();
 			handleDeletedGameObjectsQueue();
 			applyForces();
+			this.tweenManager.update(timeStepSeconds);
 			
 			world.step(timeStepSeconds, velocityIterations, positionIterations);
 		}
 	}
 
+	public void startTimeline(Timeline timeline) {
+		timeline.start(this.tweenManager);
+	}
+	
 	public void stopThread() {
 		this.stopThread = true;
 	}

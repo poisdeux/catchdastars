@@ -144,7 +144,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		super.resetGame();
 		amountOfBlueBalloons = 0;
 		amountOfRedBalloons = 0;
-		amountBalloonsInGame = 0;
 	}
 	
 	@Override
@@ -152,7 +151,6 @@ public class CatchDaStars extends Game implements OnClickListener {
 		super.resetLevel();
 		amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
 		amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
-		amountBalloonsInGame = 0;
 	}
 	
 	@Override
@@ -184,6 +182,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
+		this.amountBalloonsInGame = 0;
 		
 		Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+amountOfBlueBalloonsFromPreviousLevel+", amountOfRedBalloonsFromPreviousLevel="+amountOfRedBalloonsFromPreviousLevel);
 		
@@ -352,7 +351,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Timeline timeline = Timeline.createSequence();
 		timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
 				.target(cutPoint.y + door.getHeight()));
-		screen.startTimeline(timeline);
+		getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
 	}
 
 	private void openHorizontalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
@@ -374,7 +373,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		Timeline timeline = Timeline.createSequence();
 		timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
 				.target(cutPoint.x + door.getWidth()));
-		screen.startTimeline(timeline);
+		getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
 	}
 
 	private void showLevelCompleteDialog() {
@@ -534,7 +533,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 	 */
 	@Override
 	public void beginContact(Contact contact) {
-		Gdx.app.log("CatchDaStars", "beginContact: START");
+//		Gdx.app.log("CatchDaStars", "beginContact: START");
 		Fixture fixtureA = contact.getFixtureA();
 		Fixture fixtureB = contact.getFixtureB();
 		GameObject collidingGameObject1 = (GameObject) fixtureA.getBody().getUserData();
@@ -544,7 +543,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		} else if(( collidingGameObject2 instanceof Balloon ) && ( fixtureA.isSensor() )) {
 			handleSensorCollision((Balloon) collidingGameObject2, collidingGameObject1);
 		}
-		Gdx.app.log("CatchDaStars", "beginContact: END");
+//		Gdx.app.log("CatchDaStars", "beginContact: END");
 	}
 
 	@Override
@@ -561,7 +560,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		Gdx.app.log("CatchDaStars", "postSolve: START");
+//		Gdx.app.log("CatchDaStars", "postSolve: START");
 		GameObject collidingGameObject1 = (GameObject) contact.getFixtureA().getBody().getUserData();
 		GameObject collidingGameObject2 = (GameObject) contact.getFixtureB().getBody().getUserData();
 		if( ( collidingGameObject1 instanceof Balloon ) && ( collidingGameObject2 instanceof Icecube ) ) {
@@ -572,7 +571,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			collidingGameObject2.handleCollision(contact, impulse, collidingGameObject1);
 			collidingGameObject1.handleCollision(contact, impulse, collidingGameObject2);
 		}
-		Gdx.app.log("CatchDaStars", "postSolve: END");
+//		Gdx.app.log("CatchDaStars", "postSolve: END");
 	}
 
 	@Override
