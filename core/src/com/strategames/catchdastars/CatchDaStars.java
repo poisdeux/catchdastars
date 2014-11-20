@@ -142,15 +142,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 	@Override
 	public void resetGame() {
 		super.resetGame();
-		amountOfBlueBalloons = 0;
-		amountOfRedBalloons = 0;
+		this.amountOfBlueBalloons = 0;
+		this.amountOfRedBalloons = 0;
 	}
 	
 	@Override
 	public void resetLevel() {
 		super.resetLevel();
-		amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
-		amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
+		this.amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
+		this.amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
 	}
 	
 	@Override
@@ -446,7 +446,12 @@ public class CatchDaStars extends Game implements OnClickListener {
 		return this.availableGameObjects;
 	}
 
+	/**
+	 * TODO destroyBalloon called multiple times when balloon is destroyed
+	 * @param balloon
+	 */
 	private void destroyBalloon(Balloon balloon) {
+		Gdx.app.log("CatchDaStars", "destroyBalloon: balloon="+balloon);
 		balloon.startRemoveAnimation();
 		deleteGameObject(balloon);
 		if( balloon instanceof BalloonBlue ) {
@@ -462,7 +467,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			return;
 		}
 
-		Gdx.app.log("CatchDaStars", "handleSensorCollision: START balloon="+balloon+"\nobject="+object);
+//		Gdx.app.log("CatchDaStars", "handleSensorCollision: START balloon="+balloon+"\nobject="+object);
 
 
 		if( object instanceof Star ) {
@@ -512,7 +517,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 			setLevelCompleted();
 		}
 		
-		Gdx.app.log("CatchDaStars", "handleSensorCollision: END");
+//		Gdx.app.log("CatchDaStars", "handleSensorCollision: END");
 	}
 
 	private void handleBalloonRockCollision(ContactImpulse impulse, Balloon balloon, GameObject gameObject) {
