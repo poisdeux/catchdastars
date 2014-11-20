@@ -46,6 +46,7 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
+import com.strategames.ui.dialogs.LevelPausedDialog;
 
 public class CatchDaStars extends Game implements OnClickListener {
 	private Vector2 gravityVector;
@@ -578,6 +579,18 @@ public class CatchDaStars extends Game implements OnClickListener {
 				break;
 			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
 				stopScreen();
+				break;
+			}
+		} else if( dialog instanceof LevelPausedDialog ) {
+			switch( which ) {
+			case LevelPausedDialog.BUTTON_QUIT_CLICKED:
+				stopScreen();
+				break;
+			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
+				resumeGame();
+				break;
+			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
+				reset();
 				break;
 			}
 		} else  if( dialog instanceof ErrorDialog ) {

@@ -25,9 +25,9 @@ abstract public class Dialog extends Table {
 	public static final int BUTTON_USER2 = -6;
 	public static final int BUTTON_USER3 = -7;
 	
-	private TextButton buttonNegative;
-	private TextButton buttonNeutral;
-	private TextButton buttonPositive;
+	private TextButton negativeButton;
+	private TextButton neutralButton;
+	private TextButton positiveButton;
 	
 	private String message;
 	
@@ -94,9 +94,21 @@ abstract public class Dialog extends Table {
 		return message;
 	}
 	
+	public TextButton getPositiveButton() {
+		return positiveButton;
+	}
+	
+	public TextButton getNeutralButton() {
+		return neutralButton;
+	}
+	
+	public TextButton getNegativeButton() {
+		return negativeButton;
+	}
+	
 	public void setPositiveButton(String text, final Dialog.OnClickListener onClickListener) {
-		this.buttonPositive = new TextButton(text, this.skin);
-		this.buttonPositive.addListener(new ClickListener() {
+		this.positiveButton = new TextButton(text, this.skin);
+		this.positiveButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				onClickListener.onClick(Dialog.this, BUTTON_POSITIVE);
@@ -110,8 +122,8 @@ abstract public class Dialog extends Table {
 	 * @param text
 	 */
 	public void setPositiveButton(String text) {
-		this.buttonPositive = new TextButton(text, this.skin);
-		this.buttonPositive.addListener(new ClickListener() {
+		this.positiveButton = new TextButton(text, this.skin);
+		this.positiveButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				notifyListener(BUTTON_POSITIVE);
@@ -120,8 +132,8 @@ abstract public class Dialog extends Table {
 	}
 
 	public void setNegativeButton(String text, final Dialog.OnClickListener onClickListener) {
-		this.buttonNegative = new TextButton(text, this.skin);
-		this.buttonNegative.addListener(new ClickListener() {
+		this.negativeButton = new TextButton(text, this.skin);
+		this.negativeButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				onClickListener.onClick(Dialog.this, BUTTON_NEGATIVE);
@@ -135,8 +147,8 @@ abstract public class Dialog extends Table {
 	 * @param text
 	 */
 	public void setNegativeButton(String text) {
-		this.buttonNegative = new TextButton(text, this.skin);
-		this.buttonNegative.addListener(new ClickListener() {
+		this.negativeButton = new TextButton(text, this.skin);
+		this.negativeButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				notifyListener(BUTTON_NEGATIVE);
@@ -145,8 +157,8 @@ abstract public class Dialog extends Table {
 	}
 
 	public void setNeutralButton(String text, final Dialog.OnClickListener onClickListener) {
-		this.buttonNeutral = new TextButton(text, this.skin);
-		this.buttonNeutral.addListener(new ClickListener() {
+		this.neutralButton = new TextButton(text, this.skin);
+		this.neutralButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				onClickListener.onClick(Dialog.this, BUTTON_NEUTRAL);
@@ -160,8 +172,8 @@ abstract public class Dialog extends Table {
 	 * @param text
 	 */
 	public void setNeutralButton(String text) {
-		this.buttonNeutral = new TextButton(text, this.skin);
-		this.buttonNeutral.addListener(new ClickListener() {
+		this.neutralButton = new TextButton(text, this.skin);
+		this.neutralButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				notifyListener(BUTTON_NEUTRAL);
@@ -179,17 +191,7 @@ abstract public class Dialog extends Table {
 			row();
 		}
 		
-		Table table = new Table(skin);
-		if( this.buttonNegative != null ) {
-			table.add(this.buttonNegative).expandX();
-		}
-		if( this.buttonNeutral != null ) {
-			table.add(this.buttonNeutral).expandX();
-		}
-		if( this.buttonPositive != null ) {
-			table.add(this.buttonPositive).expandX();
-		}
-		add(table).right();
+		createButtons();
 		
 		row();
 
@@ -198,6 +200,25 @@ abstract public class Dialog extends Table {
 		positionDialog();
 		
 		return this;
+	}
+	
+	/**
+	 * Creates the positive, neutral and negative buttons that should be displayed at the bottom of the dialog.
+	 * <br/>
+	 * Override to change the bottom buttons layout.
+	 */
+	public void createButtons() {
+		Table table = new Table(skin);
+		if( this.negativeButton != null ) {
+			table.add(this.negativeButton).expandX();
+		}
+		if( this.neutralButton != null ) {
+			table.add(this.neutralButton).expandX();
+		}
+		if( this.positiveButton != null ) {
+			table.add(this.positiveButton).expandX();
+		}
+		add(table).right().bottom();
 	}
 	
 	public void show() {

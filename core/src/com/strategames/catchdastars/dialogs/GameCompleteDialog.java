@@ -8,6 +8,6 @@ public class GameCompleteDialog extends GameStateDialog {
 
 	public GameCompleteDialog(Stage stage, Skin skin) {
 		super("Game Complete", stage, skin);
-		setLeftButton("Main menu");
+		setPositiveButton("Main menu");
 	}
 }

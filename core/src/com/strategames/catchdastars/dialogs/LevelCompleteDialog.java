@@ -32,8 +32,8 @@ import com.strategames.ui.dialogs.GameStateDialog;
 
 public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAnimationListener {
 	
-	public final static int BUTTON_QUIT_CLICKED = BUTTON_LEFT_CLICKED;
-	public final static int BUTTON_NEXT_CLICKED = BUTTON_RIGHT_CLICKED;
+	public final static int BUTTON_QUIT_CLICKED = BUTTON_NEGATIVE;
+	public final static int BUTTON_NEXT_CLICKED = BUTTON_POSITIVE;
 	
 	private ArrayList<ScoreItem> scoreItems;
 	private ArrayList<ChalkLine> chalkLines;
@@ -72,8 +72,8 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		this.totalScore = currentScore;
 		this.chalkLines = new ArrayList<ChalkLine>();
 		
-		setLeftButton("Quit");
-		setRightButton("Next level");
+		setNegativeButton("Quit");
+		setPositiveButton("Next level");
 	}
 
 	public void add(Image image, int amount, int scorePerGameObject) {

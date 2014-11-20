@@ -115,6 +115,9 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
 				getGame().resumeGame();
 				break;
+			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
+				getGame().reset();
+				break;
 			}
 		} else if( dialog instanceof ErrorDialog ) {
 			switch( which ) {

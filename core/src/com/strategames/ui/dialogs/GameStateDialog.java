@@ -101,25 +101,34 @@ abstract public class GameStateDialog extends Dialog {
 		this.messageLabel.addAction( fadeIn( 0.25f ) );
 		this.messageLabel.getColor().a = 0f;
 		addActor(this.messageLabel);
-		
-		final Table table = new Table();
-		table.setFillParent(true);
-		table.bottom();
-		
-		if( this.buttonLeft != null ) {
-			table.add(this.buttonLeft).expandX().fillX().left();
-		}
-		
-		if( this.buttonRight != null ) {
-			table.add(this.buttonRight).expandX().fillX().right();
-		}
-		addActor(table);
-		
+				
 		setFillParent(true);
 		
 		return super.create();
 	}
 	
+	@Override
+	public void createButtons() {
+		Table table = new Table(skin);
+		table.setFillParent(true);
+		table.bottom();
+
+		TextButton button = getNegativeButton();
+		if( button != null ) {
+			table.add(button).expandX().fillX();
+		}
+		button = getNeutralButton();
+		if( button != null ) {
+			table.add(button).expandX().fillX();
+		}
+		button = getPositiveButton();
+		if( button != null ) {
+			table.add(button).expandX().fillX();
+		}
+		
+		addActor(table);
+	}
+
 	@Override
 	public void show() {
 		this.stage.addActor(this.filter);
