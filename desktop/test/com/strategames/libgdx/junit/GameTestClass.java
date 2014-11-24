@@ -7,11 +7,11 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.ui.dialogs.Dialog;
 
-public class GameTestClass extends Game {
+public class GameTestClass extends GameEngine {
 
 	@Override
 	public void create() {

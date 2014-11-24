@@ -6,18 +6,19 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.strategames.catchdastars.CatchDaStars;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.Game;
 
 public class MainMenuScreen extends AbstractScreen {
 
-	public MainMenuScreen(Game game) {
+	public MainMenuScreen(GameEngine game) {
 		super(game, "Welcome to Catch Da Stars!");
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
-		final Game game = getGame();
+		final GameEngine gameEngine = getGameEngine();
 		
 		float x = stage.getWidth() / 2f;
 		float y = 600f;
@@ -26,8 +27,10 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				game.resetGame();
-				game.startLevel(0,0);
+				Game game = new Game();
+				game.setCurrentLevelPosition(new int[] {0,0});
+				gameEngine.setGame(game);
+				gameEngine.resetGame();
 			}
 		});
 		button.setPosition(x - (button.getWidth() / 2f), y);
@@ -38,7 +41,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				((CatchDaStars) getGame()).showSettings();
+				((CatchDaStars) getGameEngine()).showSettings();
 			}
 		});
 		button.setPosition(x - (button.getWidth() / 2f), y);
@@ -59,7 +62,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				((CatchDaStars) getGame()).showLevelEditorMenu();
+				((CatchDaStars) getGameEngine()).showLevelEditorMenu();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

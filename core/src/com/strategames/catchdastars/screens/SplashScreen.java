@@ -11,7 +11,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.graphics.Texture;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.MusicPlayer;
@@ -24,10 +24,10 @@ public class SplashScreen extends AbstractScreen {
 	
 	private Image splashImage;
 	
-	public SplashScreen(Game game) {
+	public SplashScreen(GameEngine game) {
 		super(game, null);
 		MusicPlayer player = MusicPlayer.getInstance();
-		player.setLibrary(getGame().getMusicSelector().getLibrary());
+		player.setLibrary(getGameEngine().getMusicSelector().getLibrary());
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class SplashScreen extends AbstractScreen {
 				stageHeight/2f - this.splashImage.getHeight()/2f);
 
 		try {
-			Textures.getInstance().addAllToAssetManager(getGame().getManager());
+			Textures.getInstance().addAllToAssetManager(getGameEngine().getManager());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +62,7 @@ public class SplashScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		if ( getGame().getManager().update() && ( ! this.finishedSetupAssets ) ) {
+		if ( getGameEngine().getManager().update() && ( ! this.finishedSetupAssets ) ) {
 			try {
 				Textures.getInstance().setup();
 			} catch (FileNotFoundException e) {
@@ -74,7 +74,7 @@ public class SplashScreen extends AbstractScreen {
 			this.finishedSetupAssets = true;
 			
 			if( this.finishedStartupAnimation ) {
-				getGame().showMainMenu();
+				getGameEngine().showMainMenu();
 			}
 		} 
 	}
@@ -95,7 +95,7 @@ public class SplashScreen extends AbstractScreen {
 					finishedStartupAnimation = true;
 					
 					if( finishedSetupAssets ) {
-						getGame().showMainMenu();
+						getGameEngine().showMainMenu();
 					}
 				}
 			}

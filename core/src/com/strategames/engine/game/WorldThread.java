@@ -15,7 +15,7 @@ public class WorldThread extends Thread {
 	private int velocityIterations;
 	private int positionIterations;
 	private World world;
-	private Game game;
+	private GameEngine game;
 	private long previousTime;
 	private boolean stopThread = false;
 	private Array<GameObject> gameObjectsForAddition;
@@ -24,7 +24,7 @@ public class WorldThread extends Thread {
 	
 	private TweenManager tweenManager;
 	
-	public WorldThread(Game game, float timeStepSeconds, int velocityIterations, int positionIterations) {
+	public WorldThread(GameEngine game, float timeStepSeconds, int velocityIterations, int positionIterations) {
 		super();
 		this.game = game;
 		this.world = game.getWorld();

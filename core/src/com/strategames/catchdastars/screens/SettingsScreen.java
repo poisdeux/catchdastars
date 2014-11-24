@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.utils.MusicPlayer;
@@ -20,7 +20,7 @@ import com.strategames.engine.utils.Settings;
 
 public class SettingsScreen extends AbstractScreen {
 
-	public SettingsScreen(Game game) {
+	public SettingsScreen(GameEngine game) {
 		super(game, "Settings");
 	}
 
@@ -77,7 +77,7 @@ public class SettingsScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().selectMusicFiles();
+				getGameEngine().selectMusicFiles();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);
@@ -88,7 +88,7 @@ public class SettingsScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGame().showMainMenu();
+				getGameEngine().showMainMenu();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

@@ -7,12 +7,14 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.math.Vector2;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
+import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
+import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.ui.dialogs.Dialog;
@@ -33,7 +35,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private boolean levelLoaded;
 	private Timeline levelStartAnimation;
 	
-	public LevelScreen(Game game) {
+	public LevelScreen(GameEngine game) {
 		super(game, null);
 	}
 
@@ -74,13 +76,14 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	@Override
 	public void show() {
 		super.show();
-		getGame().pauseGame();
-		getGame().loadLevel(this);
+		getGameEngine().pauseGame();
+		onLevelLoaded(LevelLoader.loadLocalSync(getGameEngine().getGame().getCurrentLevelPosition()));
 	}
+	
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		getGame().updateScreen(delta, this.stageActors);
+		getGameEngine().updateScreen(delta, this.stageActors);
 	}
 
 	@Override
@@ -109,19 +112,19 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		if( dialog instanceof LevelPausedDialog ) {
 			switch( which ) {
 			case LevelPausedDialog.BUTTON_QUIT_CLICKED:
-				getGame().stopScreen();
+				getGameEngine().stopScreen();
 				break;
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
-				getGame().resumeGame();
+				getGameEngine().resumeGame();
 				break;
 			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
-				getGame().resetLevel();
+				getGameEngine().resetLevel();
 				break;
 			}
 		} else if( dialog instanceof ErrorDialog ) {
 			switch( which ) {
 			case ErrorDialog.BUTTON_CLOSE:
-				getGame().stopScreen();
+				getGameEngine().showMainMenu();
 				break;
 			}
 		}
@@ -137,11 +140,16 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			return;
 		}
 		
-		if( getGame().setup(getStageActors()) ) {
+		
+		GameEngine engine = getGameEngine();
+		Game game = engine.getGame();
+		game.addLevel(level);
+		
+		if( getGameEngine().setup(getStageActors()) ) {
 			this.levelLoaded = true;
 			startScreenCloseAnimation();
 		} else {
-			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error setting up level", getSkin());
 			dialog.setOnClickListener(this);
 			dialog.create();
 			dialog.show();
@@ -184,7 +192,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				levelImage.remove();
 				filter.remove();
 				MusicPlayer.getInstance().playNext();
-				getGame().startGame();			}
+				getGameEngine().startGame();			}
 		});
 		levelStartAnimation.push(slideoutTween);
 		

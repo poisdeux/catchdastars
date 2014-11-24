@@ -15,14 +15,7 @@ public class ErrorDialog extends Dialog {
 	 */
 	public ErrorDialog(Stage stage, String message, Skin skin) {
 		super(stage, skin);
-		setPositiveButton("Close", new OnClickListener() {
-			
-			@Override
-			public void onClick(Dialog dialog, int which) {
-				dialog.remove();
-				notifyListener(BUTTON_POSITIVE);
-			}
-		});
+		setPositiveButton("Close");
 		setCenter(true);
 		setMessage(message);
 	}

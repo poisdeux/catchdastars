@@ -9,11 +9,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -30,15 +27,14 @@ import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.tweens.GameObjectAccessor;
+import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
-import com.strategames.engine.utils.LevelLoader;
-import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 
-abstract public class Game extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
+abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
 	public enum GAME_STATE {
 		NONE, RUNNING, PAUSED
 	};
@@ -67,9 +63,9 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private AssetManager manager;
 
-	private int[] levelPosition = new int[2];
+//	private int[] levelPosition = new int[2];
 
-	private Level level; 
+	private Game game; 
 
 	private World world;
 
@@ -94,7 +90,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 
 	private boolean levelCompleteCalled = false;
 
-	public Game() {
+	public GameEngine() {
 		this.title = "No name game";
 		this.manager = new AssetManager();
 		this.gameObjectsForDeletion = new Array<GameObject>();
@@ -106,7 +102,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		registerTweens();
 	}
 
-	public Game(String title) {
+	public GameEngine(String title) {
 		this();
 		this.title = title;
 	}
@@ -154,9 +150,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 			this.currentScreen.hide();
 		}
 		if( ! ( currentScreen instanceof AbstractScreen ) ) {
-			this.newScreen.show();
-			this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-			this.currentScreen = this.newScreen;
+			showScreen(this.newScreen);
 		}
 	}
 
@@ -171,9 +165,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void notifyScreenHidden() {
 		if( this.newScreen != null ) {
-			this.newScreen.show();
-			this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-			this.currentScreen = this.newScreen;
+			showScreen(this.newScreen);
 		}
 	}
 
@@ -339,40 +331,40 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		return x * BOX_TO_WORLD;
 	}
 
-	public int[] getLevelPosition() {
-		return levelPosition;
+//	public int[] getLevelPosition() {
+//		return levelPosition;
+//	}
+//
+//	public void setLevelPosition(int column, int row) {
+//		this.levelPosition[0] = column;
+//		this.levelPosition[1] = row;
+//	}
+
+	public void setGame(Game game) {
+		this.game = game;
+//		if( game != null ) {
+//			int[] position = game.getCurrentLevelPosition();
+//			setLevelPosition(position[0], position[1]);
+//		}
 	}
 
-	public void setLevelPosition(int column, int row) {
-		this.levelPosition[0] = column;
-		this.levelPosition[1] = row;
+	public Game getGame() {
+		return this.game;
 	}
 
-	public void setLevel(Level level) {
-		this.level = level;
-		if( level != null ) {
-			int[] position = level.getPosition();
-			setLevelPosition(position[0], position[1]);
-		}
-	}
-
-	public Level getLevel() {
-		return this.level;
-	}
-
-	/**
-	 * Loads the level synchronously.
-	 * The level loaded is the level with
-	 * position set by {@link #setLevelPosition(int, int)}
-	 * <br/>
-	 * Use {@link #getLevel()} to retrieve the level when AssetManager has finished
-	 * 
-	 * TODO Why do we need a listener if this call is synchronous?
-	 */
-	public void loadLevel(OnLevelLoadedListener listener) {
-		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
-		loadLevelSync(listener);
-	}
+//	/**
+//	 * Loads the level synchronously.
+//	 * The level loaded is the level with
+//	 * position set by {@link #setLevelPosition(int, int)}
+//	 * <br/>
+//	 * Use {@link #getGame()} to retrieve the level when AssetManager has finished
+//	 * 
+//	 * TODO Why do we need a listener if this call is synchronous?
+//	 */
+//	public void loadLevel(OnLevelLoadedListener listener) {
+//		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
+//		loadLevelSync(listener);
+//	}
 
 	/**
 	 * Unloads level from AssetManager. The level unloaded is the level
@@ -380,7 +372,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void disposeLevel() {
 		AssetManager manager = getManager();
-		String filename = manager.getAssetFileName(getLevel());
+		String filename = manager.getAssetFileName(getGame());
 		if( filename != null ) {
 			getManager().unload(filename);
 		}
@@ -518,7 +510,7 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	 */
 	public void resetGame() {
 		setTotalScore(0);
-		setLevelPosition(0, 0);
+		this.game.setCurrentLevelPosition(new int[] {0, 0});
 		setScreen( new LevelScreen(this) );
 	}
 
@@ -540,23 +532,23 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 	}
 
 	public void startLevel(int column, int row) {
-		setLevelPosition(column, row);
+		this.game.setCurrentLevelPosition(new int[] {column, row});
 		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
 
 	public void startLevel(Level level) {
-		setLevel(level);
+		this.game.setCurrentLevelPosition(level.getPosition());
 		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
 
-	private void loadLevelSync(final OnLevelLoadedListener listener) {
-		setLevel(LevelLoader.loadLocalSync(this.levelPosition[0]+","+this.levelPosition[1]));
-		if( listener != null ) {
-			listener.onLevelLoaded(getLevel());
-		}
-	}
+//	private void loadLevelSync(final OnLevelLoadedListener listener) {
+//		setGame(LevelLoader.loadLocalSync(this.levelPosition[0]+","+this.levelPosition[1]));
+//		if( listener != null ) {
+//			listener.onLevelLoaded(getGame());
+//		}
+//	}
 
 	/**
 	 * Hides the current screen and shows the previous screen
@@ -689,6 +681,12 @@ abstract public class Game extends com.badlogic.gdx.Game implements OnClickListe
 		}
 	}
 
+	private void showScreen(Screen screen) {
+		this.newScreen.show();
+		this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		this.currentScreen = this.newScreen;
+	}
+	
 	private void registerTweens() {
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Tween.registerAccessor(GameObject.class, new GameObjectAccessor());

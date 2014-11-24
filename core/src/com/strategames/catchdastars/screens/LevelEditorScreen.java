@@ -20,7 +20,7 @@ import com.strategames.catchdastars.dialogs.LevelEditorOptionsDialog;
 import com.strategames.catchdastars.dialogs.ToolsPickerDialog;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
@@ -30,6 +30,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
+import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.LevelWriter;
 import com.strategames.engine.utils.ScreenshotFactory;
@@ -63,13 +64,15 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private float cameraZoomInitial;
 	private OrthographicCamera camera;
 
+	private Level level;
+	
 	private enum States {
 		ZOOM, LONGPRESS, DRAG, NONE
 	}
 
 	private States state;
 
-	public LevelEditorScreen(Game game) {
+	public LevelEditorScreen(GameEngine game) {
 		super(game, null);
 
 		this.initialTouchPosition = new Vector2();
@@ -96,11 +99,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		this.camera = (OrthographicCamera) stage.getCamera();
 		zoomCamera(this.camera);
 
-		getGame().pauseGame();
+		getGameEngine().pauseGame();
 
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
 
-		getGame().loadLevel(this);
+		this.level = LevelLoader.loadLocalSync(getGameEngine().getGame().getCurrentLevelPosition());
 	}
 
 	@Override
@@ -128,7 +131,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			@Override
 			public void onClick(Dialog dialog, int which) {
 				dialog.remove();
-				getGame().stopScreen();
+				getGameEngine().stopScreen();
 			}
 		});
 		dialog.create();
@@ -190,7 +193,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			Vector2 v = gameObject.getInitialPosition();
 			gameObject.setMenuItem(false);
 			gameObject.setSaveToFile(true);
-			getGame().getLevel().addGameObject(gameObject);
+			this.level.addGameObject(gameObject);
 			addGameObjectToMenu(getStageActors(), gameObject, v.x, v.y);
 		} 
 
@@ -209,13 +212,13 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 				}
 			}
 			if( wall == null ) {
-				getGame().getLevel().removeDoor(door);
+				this.level.removeDoor(door);
 				gameObject.remove();
 			} else {
 				placeDoor(door, wall);
 			}
 		} else if( ! inGameArea(gameObject) ) {
-			getGame().getLevel().removeGameObject(gameObject);
+			this.level.removeGameObject(gameObject);
 			gameObject.remove();
 		}
 		return true;
@@ -324,10 +327,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		copy.setInitialPosition(new Vector2(xStage, yStage));
 		copy.moveTo(xStage, yStage);
 		copy.initializeConfigurationItems();
-		copy.setGame(getGame());
+		copy.setGame(getGameEngine());
 		copy.setupImage();
 		copy.setupBody();
-		getGame().getLevel().addGameObject(copy);
+		this.level.addGameObject(copy);
 		return copy;
 	}
 
@@ -352,7 +355,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			return;
 		}
 
-		Game game = getGame();
+		GameEngine game = getGameEngine();
 		Stage stage = getStageActors();
 		Array<GameObject> gameObjects = level.getGameObjects();
 		if( (gameObjects != null) ) {
@@ -390,14 +393,14 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	}
 
 	private void placeDoor(Door door, Wall wall) {
-		Vector3 worldSize = getGame().getWorldSize();
+		Vector3 worldSize = getGameEngine().getWorldSize();
 
 		if( wall instanceof WallVertical ) {
 			float wallX = wall.getX();
 			door.moveTo(wallX, door.getY());
 
 			if( wall.isBorder() ) {
-				int[] currentLevelPosition = getGame().getLevelPosition();
+				int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
 				float middle = worldSize.x / 2f;
 				if( wallX < middle ) { //If left border set next level to left
 					door.setNextLevelPosition(currentLevelPosition[0] - 1, currentLevelPosition[1]);
@@ -410,7 +413,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			door.moveTo(door.getX(), wallY);
 
 			if( wall.isBorder() ) {
-				int[] currentLevelPosition = getGame().getLevelPosition();
+				int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
 				float middle = worldSize.x / 2f;
 				if( wallY < middle ) { //If bottom border set next level to bottom
 					door.setNextLevelPosition(currentLevelPosition[0], currentLevelPosition[1] - 1);
@@ -431,7 +434,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private boolean amountOfBalloonsLargerThan(int amountOfBlue, int amountOfRed) {
 		int nBlue = 0;
 		int nRed = 0;
-		Array<GameObject> gameObjects = getGame().getLevel().getGameObjects();
+		Array<GameObject> gameObjects = this.level.getGameObjects();
 		for( GameObject gameObject : gameObjects ) {
 			if( gameObject instanceof BalloonBlue ) {
 				nBlue++;
@@ -455,10 +458,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		}
 
 		copy.setPosition(copy.getX() + xDelta, copy.getY() + yDelta);
-		copy.setGame(getGame());
+		copy.setGame(getGameEngine());
 		copy.setupImage();
 		copy.setupBody();
-		getGame().getLevel().addGameObject(copy);
+		this.level.addGameObject(copy);
 		getStageActors().addActor(copy);
 		//		deselectGameObject(object);
 		selectGameObject(copy);
@@ -499,7 +502,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	}
 
 	private Vector2 getMaxObjectSize() {
-		Array<GameObject> gameObjects = getGame().getAvailableGameObjects();
+		Array<GameObject> gameObjects = getGameEngine().getAvailableGameObjects();
 
 		Vector2 maxObjectSize = new Vector2(0, 0);
 
@@ -542,13 +545,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	//	}
 
 	private boolean saveLevel() {
-		Level level = getGame().getLevel();
-		if( level == null ) {
-			return false;
-		}
-		LevelWriter.save(level);
-
-
+		LevelWriter.save(this.level);
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 
@@ -620,7 +617,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		this.mainMenu.add("Tools", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, getGame(), getSkin());
+				ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, level, getSkin());
 				dialog.create();
 				dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
 				dialog.setOnClickListener(LevelEditorScreen.this);
@@ -644,8 +641,8 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				saveLevel();
-				Game game = getGame();
-				game.startLevel(game.getLevel());
+				GameEngine game = getGameEngine();
+				game.startLevel(level);
 				mainMenu.hide();
 			}
 		});
@@ -664,7 +661,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			public void onClick(Dialog dialog, int which) {
 				saveLevel();
 				mainMenu.hide();
-				getGame().stopScreen();
+				getGameEngine().stopScreen();
 			}
 		});
 
@@ -694,7 +691,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	}
 
 	private void setupMenu(Stage stage) {
-		Game game = getGame();
+		GameEngine game = getGameEngine();
 		Array<GameObject> gameObjects = game.getAvailableGameObjects();
 
 		Vector2 viewSize = game.getViewSize();
@@ -778,7 +775,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	}
 
 	private void resizeWorld(int w, int h) {
-		Game game = getGame();
+		GameEngine game = getGameEngine();
 		Vector2 viewSize = game.getViewSize();
 		Vector3 worldSize = game.getWorldSize();
 		game.setWorldSize(new Vector3(viewSize.x * w, viewSize.y * h, worldSize.z));
@@ -807,7 +804,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 			break;
 		case GameObjectConfigurationDialog.BUTTON_NEGATIVE:
 			gameObject.remove();
-			getGame().getLevel().removeGameObject(gameObject);
+			this.level.removeGameObject(gameObject);
 			dialog.remove();
 			break;
 		case GameObjectConfigurationDialog.BUTTON_CLOSE_CLICKED:

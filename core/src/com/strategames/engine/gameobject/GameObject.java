@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.utils.ConfigurationItem;
 
 /**
@@ -59,7 +59,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	private boolean isMenuItem;
 
-	private Game game;
+	private GameEngine game;
 
 	protected Vector2 size = new Vector2();
 
@@ -88,11 +88,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		this(new Vector2(0.3f, -1));
 	}
 
-	public Game getGame() {
+	public GameEngine getGame() {
 		return game;
 	}
 
-	public void setGame(Game game) {
+	public void setGame(GameEngine game) {
 		this.game = game;
 	}
 
@@ -386,7 +386,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 */
 	public void enableDebugMode() {
 		this.shapeRenderer = new ShapeRenderer();
-		this.shapeRenderer.scale(Game.BOX_TO_WORLD, Game.BOX_TO_WORLD, 1f);
+		this.shapeRenderer.scale(GameEngine.BOX_TO_WORLD, GameEngine.BOX_TO_WORLD, 1f);
 	}
 
 	public void drawBoundingBox(SpriteBatch batch) {
@@ -615,7 +615,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	abstract public void handleCollision(Contact contact, ContactImpulse impulse, GameObject gameObject);
 
 	/**
-	 * Soundeffects get disposed when screen closes. {@link Game} will call this method
+	 * Soundeffects get disposed when screen closes. {@link GameEngine} will call this method
 	 * to load sounds when starting a level. Make sure you load all sounds needed here.
 	 */
 	abstract public void loadSounds();

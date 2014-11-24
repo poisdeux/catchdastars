@@ -1,15 +1,85 @@
 package com.strategames.engine.utils;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
 
-public class Levels {
+public class Game implements Json.Serializable {
 	private Array<Level> levels;
+	private String uuid;
+	private String name;
+	private String designer;
+	private int[] currentLevelPosition = {0,0};
+	private int score;
 	
-	public Levels() {
+	public Game() {
 		this.levels = new Array<Level>();
+		this.uuid = UUID.randomUUID().toString();
+	}
+	
+	@Override
+	public void write(Json json) {
+		 json.writeValue("uuid", uuid);
+		 json.writeValue("name", name);
+		 json.writeValue("designer", designer);
+		 json.writeValue("currentLevelPosition", currentLevelPosition);
+		 json.writeValue("score", score);
+	}
+
+	@Override
+	public void read(Json json, JsonValue jsonData) {
+		JsonValue child = jsonData.child();
+		if(child.name.contentEquals("uuid")) {
+			uuid = child.asString();
+		} else if(child.name.contentEquals("name")) {
+			name = child.asString();
+		} else if(child.name.contentEquals("designer")) {
+			designer = child.asString();
+		} else if(child.name.contentEquals("currentLevelPosition")) {
+			currentLevelPosition = child.asIntArray();
+		} else if(child.name.contentEquals("score")) {
+			score = child.asInt();
+		}
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	public int[] getCurrentLevelPosition() {
+		return currentLevelPosition;
+	}
+	
+	public void setCurrentLevelPosition(int[] currentLevelPosition) {
+		this.currentLevelPosition = currentLevelPosition;
+	}
+	
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setDesigner(String designer) {
+		this.designer = designer;
+	}
+	
+	public String getDesigner() {
+		return designer;
 	}
 	
 	public void clear() {

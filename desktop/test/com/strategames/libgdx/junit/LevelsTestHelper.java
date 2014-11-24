@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.utils.Level;
-import com.strategames.engine.utils.Levels;
+import com.strategames.engine.utils.Game;
 
 public class LevelsTestHelper {
 	
@@ -52,8 +52,8 @@ public class LevelsTestHelper {
 	 *  <br/>
 	 * @return
 	 */
-	public static Levels createLevels() {
-		Levels levels = new Levels();
+	public static Game createLevels() {
+		Game levels = new Game();
 		Vector2 viewSize = new Vector2(3.1f, 18.1f);
 		Vector2 worldSize = new Vector2(9.3f, 36.2f);
 		for(int i = 0; i < positions.length; i++) {

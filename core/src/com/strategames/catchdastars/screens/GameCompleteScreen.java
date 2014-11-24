@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.dialogs.GameCompleteDialog;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.scenes.scene2d.Stage;
@@ -29,7 +29,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 	private SoundEffect balloonPopSound = new BalloonPopSound();
 	private FilledRectangleImage filter;
 	
-	public GameCompleteScreen(Game game, Stage stageActors) {
+	public GameCompleteScreen(GameEngine game, Stage stageActors) {
 		super(game, null, null, stageActors);
 	}
 
@@ -79,7 +79,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 								
 								@Override
 								public void onClick(Dialog dialog, int which) {
-									getGame().showMainMenu();
+									getGameEngine().showMainMenu();
 								}
 							});
 							dialog.create();
@@ -187,7 +187,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 			Stage stage = getStageActors();
 			Array<Actor> actors = stage.getActors();
 			for( int i = 0; i < actors.size; i++ ) {
-				getGame().deleteGameObject((GameObject) actors.get(i));
+				getGameEngine().deleteGameObject((GameObject) actors.get(i));
 			}
 			stage.clear();
 			this.balloonPopSound.play();

@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.StaticBody;
 import com.strategames.engine.utils.ConfigurationItem;
@@ -52,7 +52,7 @@ public class RectangularSensor extends StaticBody {
 		}
 		
 		if( this.end == null ) {
-			Game game = getGame();
+			GameEngine game = getGame();
 			Vector3 worldSize = game.getWorldSize();
 			this.end = new Vector2(worldSize.x, worldSize.y).add(Wall.WIDTH, Wall.HEIGHT);
 		}

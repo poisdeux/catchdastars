@@ -4,18 +4,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.utils.Level;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.widgets.TextButton;
 
 public class ToolsPickerDialog extends Dialog {
 	private final Skin skin;
-	private final Game game;
+	private final Level level;
 	
-	public ToolsPickerDialog(Stage stage, Game game, Skin skin) {
+	public ToolsPickerDialog(Stage stage, Level level, Skin skin) {
 		super(stage, skin);
 		this.skin = skin;
-		this.game = game;
+		this.level = level;
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class ToolsPickerDialog extends Dialog {
 		tButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				ChangeWorldSizeDialog dialog = new ChangeWorldSizeDialog(stage, skin, game.getLevel());
+				ChangeWorldSizeDialog dialog = new ChangeWorldSizeDialog(stage, skin, level);
 				dialog.setPosition(getX(), getY());
 				dialog.setOnClickListener(getOnClickListener());
 				dialog.create();

@@ -18,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.DynamicBody;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.sounds.RockBreakSound;
@@ -144,7 +144,7 @@ public class Icecube extends DynamicBody {
 			Icecube icecube1 = new Icecube();
 			Icecube icecube2 = new Icecube();
 			splitObject(this.breakOfPart, icecube1, icecube2);
-			Game game = getGame();
+			GameEngine game = getGame();
 			Stage stage = getStage();
 			game.addGameObject(icecube1, stage);
 			game.addGameObject(icecube2, stage);
@@ -305,7 +305,7 @@ public class Icecube extends DynamicBody {
 	 * @param icecube2 gameobject that will get all remaining parts
 	 */
 	public void splitObject(Part part, Icecube icecube1, Icecube icecube2) {
-		Game game = getGame();
+		GameEngine game = getGame();
 
 		Vector2 v = super.body.getPosition();
 		float rotation = getRotation();

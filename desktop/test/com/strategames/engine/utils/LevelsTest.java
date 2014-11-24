@@ -13,7 +13,7 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.libgdx.junit.LevelsTestHelper;
 
 public class LevelsTest {
-	private Levels levels;
+	private Game levels;
 
 	@Before
 	public void setUp() throws Exception {

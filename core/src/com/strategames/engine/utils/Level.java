@@ -1,6 +1,5 @@
 package com.strategames.engine.utils;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;

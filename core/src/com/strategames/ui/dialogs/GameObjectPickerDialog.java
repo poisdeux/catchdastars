@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.ui.widgets.TextButton;
 
@@ -18,11 +18,11 @@ public class GameObjectPickerDialog extends Dialog {
 	public static final int BUTTON_GAMEOBJECTSELECTED = 1;
 	private ArrayList<TextButton> textButtons;
 	private final Dialog.OnClickListener listener;
-	private final Game game;
+	private final GameEngine game;
 	private GameObject selectedGameObject;
-	private float IMAGEWIDTH = Game.convertWorldToScreen(0.30f);
+	private float IMAGEWIDTH = GameEngine.convertWorldToScreen(0.30f);
 	
-	public GameObjectPickerDialog(Stage stage, Game game, Skin skin, final Dialog.OnClickListener listener) {
+	public GameObjectPickerDialog(Stage stage, GameEngine game, Skin skin, final Dialog.OnClickListener listener) {
 		super(stage, skin);
 		this.textButtons = new ArrayList<TextButton>();
 		this.listener = listener;

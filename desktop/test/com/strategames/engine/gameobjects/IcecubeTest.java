@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Icecube;
 import com.strategames.engine.gameobject.types.Icecube.Part;
@@ -58,7 +58,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	@Test
 	public void testSplitObject() {
 		Icecube icecube = (Icecube) getGameObject();
-		Game game = new GameTestClass();
+		GameEngine game = new GameTestClass();
 		game.setWorld(this.world);
 		icecube.setGame(game);
 		icecube.setupImage();
@@ -104,7 +104,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 
 	@Test
 	public void testHandleCollision() {
-		Game game = new GameTestClass();
+		GameEngine game = new GameTestClass();
 		game.setWorld(this.world);
 		ArrayList<Icecube> result = new ArrayList<Icecube>();
 		Icecube icecube = new Icecube();
@@ -141,7 +141,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 	@Test
 	public void testFixture() {
 		int amountOfIcecubes = 10;
-		Game game = new GameTestClass();
+		GameEngine game = new GameTestClass();
 		game.setWorld(this.world);
 		ArrayList<Icecube> icecubes = new ArrayList<Icecube>();
 		for(int i = 0; i < amountOfIcecubes; i++) {
@@ -167,7 +167,7 @@ public class IcecubeTest extends GameObjectTestAbstractClass {
 		MyContactImpulse impulse = new MyContactImpulse();
 		
 		while(icecube.getParts().size() > 1) {
-			Game game = icecube.getGame();
+			GameEngine game = icecube.getGame();
 			assertNotNull(game);
 			
 			Body body = icecube.getBody();

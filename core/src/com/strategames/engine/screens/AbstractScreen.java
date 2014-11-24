@@ -22,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
@@ -39,7 +39,7 @@ import com.strategames.ui.widgets.MenuButton;
  */
 public abstract class AbstractScreen implements Screen, InputProcessor
 {
-	private Game game;
+	private GameEngine gameEngine;
 	private InputMultiplexer multiplexer;
 	private static Skin skin;
 	private Stage stageActors;
@@ -64,12 +64,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	/**
 	 * 
-	 * @param game 
+	 * @param engine 
 	 * @param title set to null to not display the screen title
 	 */
-	public AbstractScreen(Game game, String title)
+	public AbstractScreen(GameEngine engine, String title)
 	{
-		this.game = game;
+		this.gameEngine = engine;
 
 		this.tweenManager = new TweenManager();
 
@@ -87,7 +87,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 * @param stageUIActors stage to use for UI elements
 	 * @param stageActors stage to use for game objects
 	 */
-	public AbstractScreen(Game game, String title, Stage stageUIActors, Stage stageActors) {
+	public AbstractScreen(GameEngine game, String title, Stage stageUIActors, Stage stageActors) {
 		this(game, title);
 		this.stageUIActors = stageUIActors;
 		this.stageActors = stageActors;
@@ -115,7 +115,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	public OrthographicCamera getGameCamera() {
 		if( gameCamera == null ) {
-			Vector2 size = this.game.getViewSize();
+			Vector2 size = this.gameEngine.getViewSize();
 			gameCamera = new OrthographicCamera(size.x, size.y);
 			gameCamera.position.set(size.x/2f, size.y/2f, 0f);
 		}
@@ -146,8 +146,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return this.multiplexer;
 	}
 
-	protected Game getGame() {
-		return this.game;
+	protected GameEngine getGameEngine() {
+		return this.gameEngine;
 	}
 
 	protected String getName()
@@ -225,14 +225,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					if( arg0 == TweenCallback.COMPLETE ){
-						getGame().notifyScreenHidden();
+						getGameEngine().notifyScreenHidden();
 					}
 				}
 			});
 
 			timeline.start(this.tweenManager);
 		} else {
-			getGame().notifyScreenHidden();
+			getGameEngine().notifyScreenHidden();
 		}
 	}
 
@@ -265,7 +265,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	public Stage getStageActors() {
 		if( this.stageActors == null ) {
-			Vector3 sizeWorld = this.game.getWorldSize();
+			Vector3 sizeWorld = this.gameEngine.getWorldSize();
 			this.stageActors = new Stage(new FitViewport(sizeWorld.x, sizeWorld.y, getGameCamera()));
 		}
 		return this.stageActors;
@@ -308,7 +308,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 				return true;
 			}
 		}
-		return this.game.handleKeyEvent(keycode);
+		return this.gameEngine.handleKeyEvent(keycode);
 	}
 
 	@Override

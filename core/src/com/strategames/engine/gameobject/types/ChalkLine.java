@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.utils.Textures;
 
 public class ChalkLine extends Image {
@@ -118,7 +118,7 @@ public class ChalkLine extends Image {
 	public void init() {
 		this.length = this.start.dst(this.end);
 
-		this.steps = (int) (this.duration / (Game.FRAMES_PER_SECOND * 1000));
+		this.steps = (int) (this.duration / (GameEngine.FRAMES_PER_SECOND * 1000));
 
 		if( this.steps < 1 ) { 
 			this.steps = 1;

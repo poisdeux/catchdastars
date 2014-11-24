@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.libgdx.junit.GameTestClass;
@@ -54,7 +54,7 @@ abstract public class GameObjectTestAbstractClass {
 
 	@Test
 	public void testSetupWithWorld() {
-		Game game = new GameTestClass();;
+		GameEngine game = new GameTestClass();;
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
 		this.gameObject.setupImage();
@@ -82,7 +82,7 @@ abstract public class GameObjectTestAbstractClass {
 	
 	@Test
 	public void testDraw() {
-		Game game = new GameTestClass();
+		GameEngine game = new GameTestClass();
 		game.setWorld(new World(new Vector2(0,1), true));
 		this.gameObject.setGame(game);
 		this.gameObject.setupImage();

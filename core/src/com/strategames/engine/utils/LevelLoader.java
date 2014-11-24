@@ -61,7 +61,7 @@ public class LevelLoader {
 	 * Loads local level files (asynchronous) saved using {@link #save(Stage, int)}
 	 * <br/>
 	 * Use {@link #levelLoaded()} to see if loading has finished. After loading you
-	 * can retrieve the Level object using {@link #getLevel()} 
+	 * can retrieve the Level object using {@link #getGame()} 
 	 * @param level levelnumber to load
 	 */
 	static private void loadLocalAsync(int level, OnLevelLoadedListener listener) {
@@ -142,7 +142,7 @@ public class LevelLoader {
 	static public Array<Level> getLevels(String jsonString) {
 		Json json = new Json();
 		try {
-			Levels levels = json.fromJson(Levels.class, jsonString);
+			Game levels = json.fromJson(Game.class, jsonString);
 			return levels.getLevels();
 		} catch (Exception e) {
 			Gdx.app.log("LevelLoader", "getLevels: error parsing json: "+e.getMessage());

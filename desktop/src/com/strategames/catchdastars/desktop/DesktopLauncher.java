@@ -1,5 +1,10 @@
 package com.strategames.catchdastars.desktop;
 
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.strategames.catchdastars.CatchDaStars;
@@ -41,8 +46,12 @@ public class DesktopLauncher implements ExportImport, MusicSelector {
 
 	@Override
 	public void export(String text) {
-		// TODO Auto-generated method stub
-		
+		String path = Gdx.files.getLocalStoragePath()+"/games/";
+		try {
+			PrintWriter writer = new PrintWriter(path);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

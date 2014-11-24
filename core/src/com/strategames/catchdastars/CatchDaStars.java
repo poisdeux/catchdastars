@@ -27,7 +27,7 @@ import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.LevelEditorScreen;
 import com.strategames.catchdastars.screens.SettingsScreen;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
@@ -40,6 +40,7 @@ import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
+import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
@@ -48,7 +49,7 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 
-public class CatchDaStars extends Game implements OnClickListener {
+public class CatchDaStars extends GameEngine implements OnClickListener {
 	private Vector2 gravityVector;
 
 	private World world;
@@ -77,6 +78,8 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	private int[] nextLevelPosition;
 
+	private Level level;
+	
 	public CatchDaStars() {
 		super();
 		setTitle("Catch Da Stars");
@@ -157,8 +160,15 @@ public class CatchDaStars extends Game implements OnClickListener {
 	public boolean setup(Stage stage) {
 		System.gc(); //hint the garbage collector that now is a good time to collect
 
-		Level level = getLevel();
-		if( level == null ) {
+		Game game = getGame();
+		if( game == null ) {
+			Gdx.app.log("CatchDaStars", "setup: game==null");
+			return false;
+		}
+
+		int[] pos = game.getCurrentLevelPosition();
+		this.level = game.getLevel(pos[0], pos[1]);
+		if( this.level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
 			return false;
 		}
@@ -319,7 +329,7 @@ public class CatchDaStars extends Game implements OnClickListener {
 		AbstractScreen screen = ((AbstractScreen) getScreen());
 		Stage stage = screen.getStageActors();
 
-		Array<Door> doors = getLevel().getDoors();
+		Array<Door> doors = this.level.getDoors();
 		for(int i = 0; i < doors.size; i++) {
 			Door door = doors.get(i);
 			door.setOpen(true);

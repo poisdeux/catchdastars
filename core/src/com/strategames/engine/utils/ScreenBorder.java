@@ -1,14 +1,14 @@
 package com.strategames.engine.utils;
 
 import com.badlogic.gdx.math.Vector3;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallHorizontal;
 import com.strategames.engine.gameobject.types.WallVertical;
 
 public class ScreenBorder {
 
-	static public void create(Level level, Game game) {
+	static public void create(Level level, GameEngine game) {
 		Vector3 worldSize = game.getWorldSize();
 		
 		Wall wTop = new WallHorizontal();

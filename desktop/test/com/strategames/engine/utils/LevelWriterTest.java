@@ -13,7 +13,7 @@ import com.strategames.libgdx.junit.LevelsTestHelper;
 
 @RunWith(GdxTestRunner.class)
 public class LevelWriterTest {
-	private Levels levels;
+	private Game levels;
 	
 	@Before
 	public void setUp() throws Exception {

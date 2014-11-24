@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.StaticBody;
 import com.strategames.engine.utils.ConfigurationItem;
@@ -112,7 +112,7 @@ abstract public class Wall extends StaticBody implements OnConfigurationItemChan
 		item.setName("length");
 		item.setType(ConfigurationItem.Type.NUMERIC_RANGE);
 		item.setValueNumeric(this.length);
-		item.setMaxValue(Game.convertScreenToWorld(Gdx.app.getGraphics().getWidth()) + this.partSize);
+		item.setMaxValue(GameEngine.convertScreenToWorld(Gdx.app.getGraphics().getWidth()) + this.partSize);
 
 		item.setMinValue(this.partSize);
 		item.setStepSize(this.partSize);

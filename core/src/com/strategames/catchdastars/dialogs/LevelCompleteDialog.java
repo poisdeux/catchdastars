@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.ChalkLine;
 import com.strategames.engine.gameobject.types.ChalkLine.ChalkLineAnimationListener;
 import com.strategames.engine.sounds.CashRegisterOpenSound;
@@ -51,7 +51,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	private int animationPhase;
 	private Vector2 animPosition;
 
-	private float IMAGEHEIGHT = Game.convertWorldToScreen(0.60f);
+	private float IMAGEHEIGHT = GameEngine.convertWorldToScreen(0.60f);
 
 	private DrawChalkLineShort1Sound drawChalkLineShort1Sound = new DrawChalkLineShort1Sound();
 	private DrawChalkLineShort2Sound drawChalkLineShort2Sound = new DrawChalkLineShort2Sound();
@@ -65,7 +65,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	 * @param skin
 	 * @param currentScore the total score minus the score of the completed level
 	 */
-	public LevelCompleteDialog(Stage stage, Game game, Skin skin, int currentScore) {
+	public LevelCompleteDialog(Stage stage, GameEngine game, Skin skin, int currentScore) {
 		super("Level complete", stage, skin);
 		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
 		this.animPosition = new Vector2();

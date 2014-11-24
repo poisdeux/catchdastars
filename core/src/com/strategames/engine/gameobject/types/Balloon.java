@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.DynamicBody;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.sounds.BalloonBounceSound;
@@ -84,7 +84,7 @@ abstract public class Balloon extends DynamicBody implements OnConfigurationItem
 
 	@Override
 	public void applyForce() {
-		Game game = getGame();
+		GameEngine game = getGame();
 //		if( game.isRunning() ) {
 			Vector2 worldPointOfForce = super.body.getWorldPoint(this.upwardLiftPosition);
 			super.body.applyForce(game.getWorld().getGravity().scl(this.upwardLift), worldPointOfForce, true);

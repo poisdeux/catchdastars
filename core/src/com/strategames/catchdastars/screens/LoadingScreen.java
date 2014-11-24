@@ -10,7 +10,7 @@ import aurelienribon.tweenengine.Timeline;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.strategames.engine.game.Game;
+import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Textures;
 
@@ -26,7 +26,7 @@ public class LoadingScreen extends AbstractScreen {
 	/**
 	 * Shows an animation which can be displayed during game loading
 	 */
-	public LoadingScreen(Game game) {
+	public LoadingScreen(GameEngine game) {
 		super(game, null);
 	}
 
