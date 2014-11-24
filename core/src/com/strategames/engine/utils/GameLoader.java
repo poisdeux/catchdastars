@@ -34,7 +34,7 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link LevelWriter#save(Stage, int)}
+	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
 	 * @param level levelnumber to load
 	 * @return Level object containing the game objects 
 	 */

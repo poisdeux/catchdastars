@@ -10,8 +10,6 @@ import com.badlogic.gdx.utils.SerializationException;
 
 public class LevelLoader {
 
-	static private final String LOCAL_PATH = "levels";
-	static private final String INTERNAL_PATH = "levels";
 	static private OnLevelLoadedListener levelLoadedListener;
 
 	public interface OnLevelLoadedListener {
@@ -25,7 +23,7 @@ public class LevelLoader {
 	 */
 	static private Level loadInternalSync(String name) {
 		try {
-			FileHandle file = Gdx.files.internal(INTERNAL_PATH + "/" + name);
+			FileHandle file = Gdx.files.internal(Files.getPath(name));
 			return loadSync(file);
 		} catch (Exception e) {
 			return null;
@@ -34,7 +32,7 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link LevelWriter#save(Stage, int)}
+	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
 	 * @param pos position of the level
 	 * @return Level object containing the game objects 
 	 */
@@ -43,13 +41,13 @@ public class LevelLoader {
 	}
 	
 	/**
-	 * Loads local level files (synchronous) saved using {@link LevelWriter#save(Stage, int)}
+	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
 	 * @param level levelnumber to load
 	 * @return Level object containing the game objects 
 	 */
 	static public Level loadLocalSync(String name) {
 		try {
-			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + name);
+			FileHandle file = Gdx.files.local(Files.getPath(name));
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,7 +65,7 @@ public class LevelLoader {
 	static private void loadLocalAsync(int level, OnLevelLoadedListener listener) {
 		levelLoadedListener = listener;
 		try {
-			FileHandle file = Gdx.files.local(LOCAL_PATH + "/" + level);
+			FileHandle file = Gdx.files.local(Files.getPath(String.valueOf(level)));
 			loadAsync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -152,7 +150,7 @@ public class LevelLoader {
 
 	static public FileHandle getLocalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.local(LOCAL_PATH);
+			FileHandle dir = Gdx.files.local(Files.getPath());
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");
@@ -162,7 +160,7 @@ public class LevelLoader {
 
 	static public FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(INTERNAL_PATH);
+			FileHandle dir = Gdx.files.internal(Files.getPath());
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");
@@ -170,21 +168,7 @@ public class LevelLoader {
 		return null;
 	}
 
-	static public String getLocalPath() {
-		return LOCAL_PATH;
-	}
-
-	static public String getLocalPath(String name) {
-		return LOCAL_PATH + "/" + name;
-	}
-
-	static public String getInternalPath() {
-		return INTERNAL_PATH;
-	}
-
-	static public String getInternalPath(String name) {
-		return INTERNAL_PATH + "/" + name;
-	}
+	
 
 	/**
 	 * Reads the amount of level files on disk to determine

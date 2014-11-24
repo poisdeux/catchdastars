@@ -29,10 +29,11 @@ import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.GridLayout;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
-import com.strategames.engine.utils.LevelWriter;
+import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.engine.utils.ScreenshotFactory;
@@ -64,6 +65,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		addMenuItem("Import levels");
 		addMenuItem("Export levels");
+		addMenuItem("Save game");
 		addMenuItem("Delete game");
 
 		Array<Level> localLevels = LevelLoader.loadAllLocalLevels();
@@ -168,11 +170,6 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			final Level level = ((EditLevelDialog) dialog).getLevel();
 			final Button button = (Button) dialog.getTag();
 			switch(which) {
-			case EditLevelDialog.BUTTON_CHANGENAME_CLICKED:
-				changeLevelName(level, (TextButton) button);
-				dialog.remove();
-				button.setColor(colorWhite);
-				break;
 			case EditLevelDialog.BUTTON_COPY_CLICKED:
 				copyLevel(level);
 				dialog.remove();
@@ -199,8 +196,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Array<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
 			Array<Level> levelsFailedToSave = null;
-			if( LevelWriter.deleteLocalLevelsDir() ) {
-				levelsFailedToSave = LevelWriter.save(levels);
+			if( FileWriter.deleteLocalDir() ) {
+				levelsFailedToSave = FileWriter.saveLocal(
+						Files.getGamePath(getGameEngine().getGame()), levels);
 			} else {
 				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
 			}
@@ -221,25 +219,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 	}
 
-	private void changeLevelName(final Level level, final TextButton button) {
-		Gdx.input.getTextInput(new TextInputListener() {
-			@Override
-			public void input(String text) {
-				level.setName(text);
-				button.setText(level.getName());
-				LevelWriter.save(level);
-			}
-
-			@Override
-			public void canceled() {
-
-			}
-		}, "Enter name", level.getName());
-	}
-
 	private void copyLevel(Level level) {
 		Level newLevel = level.copy();
-		newLevel.setName("(copy) "+ newLevel.getName());
 		/**
 		 * TODO
 		 * User should select other level
@@ -251,11 +232,11 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	private void addLevel(Level level) {
 		this.game.addLevel(level);
-		LevelWriter.save(level);
+		FileWriter.saveLocal(Files.getGamePath(this.game), level);
 	}
 
 	private void deleteLevel(Level level) {
-		LevelWriter.deleteLocal(level);
+		FileWriter.deleteLocal(level);
 		this.game.deleteLevel(level);
 	}
 
@@ -329,13 +310,13 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Iterator<Level> itr = this.game.getLevels().iterator();
 		while(itr.hasNext()) {
 			Level level = itr.next();
-			if( LevelWriter.deleteLocal(level)) {
+			if( FileWriter.deleteLocal(level)) {
 				if(ScreenshotFactory.deleteScreenshot(level)) {
 					itr.remove();
 				}
 			} else {
 				success = false;
-				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getName());
+				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete "+level.getFilename());
 			}
 		}
 		if( ! success ) {
@@ -395,6 +376,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			dialog.create();
 			dialog.show();
 
+		} else if(text.contentEquals("Save game")) {
+		
 		}
 		getMainMenu().hide();
 	}

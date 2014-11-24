@@ -9,8 +9,9 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.utils.FileWriter.Writer;
 
-public class Level implements Comparable<Level> {
+public class Level implements Comparable<Level>, Writer {
 	private String name = "noname";
 	private Array<GameObject> gameObjects;
 	private Array<Door> doors;
@@ -18,7 +19,8 @@ public class Level implements Comparable<Level> {
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
 	private boolean reachable;
-
+	private Game game;
+	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 		this.doors = new Array<Door>();
@@ -55,6 +57,14 @@ public class Level implements Comparable<Level> {
 		}
 	}
 
+	public void setGame(Game game) {
+		this.game = game;
+	}
+	
+	public Game getGame() {
+		return game;
+	}
+	
 	public void removeGameObject(GameObject object) {
 		this.gameObjects.removeValue(object, true);
 	}
@@ -111,20 +121,18 @@ public class Level implements Comparable<Level> {
 		return position[0]+","+position[1];
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
+	@Override
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
 		return json.toJson(this);
 	}
 
+	@Override
+	public String getFilename() {
+		return position[0]+","+position[1];
+	}
+	
 	@Override
 	public int compareTo(Level o) {
 		int[] oPosition = o.getPosition();
@@ -160,7 +168,6 @@ public class Level implements Comparable<Level> {
 			}
 			level.setGameObjects(copyGameObjects);
 		}
-		level.setName(new String(this.name));
 		level.setPosition(this.position[0], this.position[1]);
 		level.setReachable(isReachable());
 
@@ -212,17 +219,6 @@ public class Level implements Comparable<Level> {
 				( viewSize.equals(level.getViewSize()) ) &&
 				( reachable == level.isReachable() )
 				) ) {
-			return false;
-		} 
-
-		/**
-		 * true if name == null AND level.getName() == null 
-		 *   OR
-		 *   name.contentEquals(level.getName()) == true
-		 */
-		if( ( name != null ) && ( ! name.contentEquals(level.getName()) ) )  {
-			return false;
-		} else if( ( level.getName() != null ) && ( name == null ) ) {
 			return false;
 		}
 

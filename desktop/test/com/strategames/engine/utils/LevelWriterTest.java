@@ -18,17 +18,17 @@ public class LevelWriterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.levels = LevelsTestHelper.createLevels();
-		LevelWriter.deleteLocalLevelsDir();
+		FileWriter.deleteLocalDir();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		LevelWriter.deleteLocalLevelsDir();
+		FileWriter.deleteLocalDir();
 	}
 	
 	@Test
 	public void testSave() {
-		Array<Level> fails = LevelWriter.save(this.levels.getLevels());
+		Array<Level> fails = FileWriter.save(this.levels.getLevels());
 		assertTrue(fails.size == 0);
 		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels();
 		assertTrue(levelsSaved.size == this.levels.getLevels().size);

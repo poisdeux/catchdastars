@@ -28,11 +28,12 @@ import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
-import com.strategames.engine.utils.LevelWriter;
+import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -545,7 +546,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	//	}
 
 	private boolean saveLevel() {
-		LevelWriter.save(this.level);
+		FileWriter.saveLocal(Files.getGamePath(getGameEngine().getGame()), this.level);
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 
