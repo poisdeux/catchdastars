@@ -141,16 +141,16 @@ public class CatchDaStars extends Game implements OnClickListener {
 
 	@Override
 	public void resetGame() {
-		super.resetGame();
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
+		super.resetGame();
 	}
 	
 	@Override
 	public void resetLevel() {
-		super.resetLevel();
 		this.amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
 		this.amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
+		super.resetLevel();
 	}
 	
 	@Override
@@ -451,15 +451,20 @@ public class CatchDaStars extends Game implements OnClickListener {
 	 * @param balloon
 	 */
 	private void destroyBalloon(Balloon balloon) {
-		Gdx.app.log("CatchDaStars", "destroyBalloon: balloon="+balloon);
-		balloon.startRemoveAnimation();
-		deleteGameObject(balloon);
+		if( ! balloon.isToBeDestroyed() ) {
+			balloon.destroy();
+			deleteGameObject(balloon);
+		} else {
+			return;
+		}
+		
 		if( balloon instanceof BalloonBlue ) {
 			amountOfBlueBalloons--;
 		} else if( balloon instanceof BalloonRed ) {
 			amountOfRedBalloons--;
 		}
 		this.amountBalloonsInGame--;
+		
 	}
 
 	private void handleSensorCollision(Balloon balloon, GameObject object) {
@@ -473,20 +478,20 @@ public class CatchDaStars extends Game implements OnClickListener {
 		if( object instanceof Star ) {
 			GameObject star = (Star) object;
 			if( star instanceof StarYellow ) {
-				if( ! star.isHit() ) {
-					star.startRemoveAnimation();
+				if( ! star.isToBeDestroyed() ) {
+					star.destroy();
 					deleteGameObject(star);
 					this.goldCollectables.collect(star);
 				}
 			} else if( ( balloon instanceof BalloonBlue ) && ( star instanceof StarBlue ) ) {
-				if( ! star.isHit() ) {
-					star.startRemoveAnimation();
+				if( ! star.isToBeDestroyed() ) {
+					star.destroy();
 					deleteGameObject(star);
 					this.blueCollectables.collect(star);
 				}
 			} else if( ( balloon instanceof BalloonRed ) && ( star instanceof StarRed ) ) {
-				if( ! star.isHit() ) {
-					star.startRemoveAnimation();
+				if( ! star.isToBeDestroyed() ) {
+					star.destroy();
 					deleteGameObject(star);
 					this.redCollectables.collect(star);
 				}

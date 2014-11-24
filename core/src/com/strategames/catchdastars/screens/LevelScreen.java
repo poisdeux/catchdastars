@@ -53,7 +53,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		stage.addActor(this.filter);
 		
 		this.levelImage = new Text();
-		this.levelImage.setScale(2f);
+		this.levelImage.setText("Get ready!");
 
 		float imageWidth = this.levelImage.getWidth();
 		float imageHeight = this.levelImage.getHeight();
@@ -136,8 +136,6 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 			dialog.show();
 			return;
 		}
-		
-		this.levelImage.setText(level.getName());
 		
 		if( getGame().setup(getStageActors()) ) {
 			this.levelLoaded = true;

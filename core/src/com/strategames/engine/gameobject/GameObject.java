@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Scaling;
@@ -49,10 +50,11 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	protected float halfHeight;
 	private ShapeRenderer shapeRenderer;
 	protected boolean canBeRemoved;
-	protected boolean isHit;
 	protected boolean isCollectible;
 	private boolean isNew = true;
-
+	private boolean toBeDestroyed;
+	private Array<GameObject> isHitBy;
+	
 	protected Vector2 initialPosition = new Vector2(); 
 
 	private boolean isMenuItem;
@@ -246,12 +248,29 @@ abstract public class GameObject extends Image implements Json.Serializable {
 		return this.configurationItems;
 	}
 
-	public boolean isHit() {
-		return this.isHit;
+	/**
+	 * Keeps track of objects that hit this gameobject
+	 * @param object that hit this gameobject
+	 */
+	public void setIsHitBy(GameObject object) {
+		this.isHitBy.add(object);
 	}
 
-	public void setHit(boolean hit) {
-		this.isHit = hit;
+	/**
+	 * Returns if this gameobject was hit by given object
+	 * @param object to test if this gameobject was hit by it
+	 * @return true if hit, false otherwise
+	 */
+	public boolean isHitBy(GameObject object) {
+		return this.isHitBy.contains(object, true);
+	}
+	
+	/**
+	 * Removes the object from the list of hit gameobjects
+	 * @param object
+	 */
+	public void forgetIsHitBy(GameObject object) {
+		this.isHitBy.removeValue(object, true);
 	}
 
 	/**
@@ -565,20 +584,24 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	/**
 	 * Use this to remove object from game during gameplay. It starts the {@link #destroyAction()}
-	 * and sets {@link #isHit} to true. 
+	 * and sets {@link #toBeDestroyed} to true. 
 	 * <br/>
-	 * Note that is {@link #isHit} is true {@link #destroyAction()} will not be called.
+	 * Note that if {@link #toBeDestroyed} is true when calling {@link #destroy()} {@link #destroyAction()} will not be called.
 	 */
-	synchronized public void startRemoveAnimation() {
-		if( this.isHit ) { //prevent object from being destroyed multiple times during a removal animation
+	synchronized public void destroy() {
+		if( this.toBeDestroyed ) { //prevent object from being destroyed multiple times during a removal animation
 			return;
 		}
-		this.isHit = true;
+		this.toBeDestroyed = true;
 		destroyAction();
 	}
 
+	public boolean isToBeDestroyed() {
+		return toBeDestroyed;
+	}
+	
 	/**
-	 * Called by {@link #startRemoveAnimation()} to start any animation or sound when object is destroyed
+	 * Called by {@link #destroy()} to start any animation or sound when object is destroyed
 	 * <br/>
 	 * Be sure to call {@link #setCanBeRemoved(boolean)} and set it to true when object can
 	 * safely be removed from game. Otherwise object will not be removed.
