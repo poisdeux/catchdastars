@@ -24,7 +24,6 @@ public class LevelTestHelper {
 	public static Level createLevel() {
 		Level level = new Level();
 		level.setPosition(1, 4);
-		level.setName("MyLevel");
 		level.setReachable(false);
 		level.setViewSize(new Vector2(3, 5));
 		level.setWorldSize(new Vector2(5, 7));
@@ -42,8 +41,6 @@ public class LevelTestHelper {
 		int x = rand.nextInt(50);
 		int y = rand.nextInt(50);
 		level.setPosition(x, y);
-		
-		level.setName(UUID.randomUUID().toString());
 		
 		level.setReachable(rand.nextBoolean());
 		

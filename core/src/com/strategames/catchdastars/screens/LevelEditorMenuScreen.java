@@ -108,7 +108,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		super.show();
 
 		Array<Level> levelsArrayList = this.game.getLevels();
-		
+
 		if( editingLevel != null ) { // reload level to include added gameobjects
 			int index = levelsArrayList.indexOf(editingLevel, true);
 			editingLevel = LevelLoader.loadLocalSync(editingLevel.getPositionAsString());
@@ -125,14 +125,14 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	public void onTap(final Actor actor) {
 		if( actor instanceof ScreenshotImage ) {
 			ScreenshotImage image = (ScreenshotImage) actor;
-			
+
 			Object tag = image.getTag();
 			if( tag == null ) {
 				return;
 			}
-			
+
 			CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
-			
+
 			if( tag instanceof Level ) {
 				Level level = (Level) tag;
 				gameEngine.getGame().setCurrentLevelPosition(level.getPosition());
@@ -195,24 +195,21 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	public void levelsReceived(String json) {
 		Array<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
-			Array<Level> levelsFailedToSave = null;
+			boolean levelsFailedToSave = false;
 			if( FileWriter.deleteLocalDir() ) {
-				levelsFailedToSave = FileWriter.saveLocal(
-						Files.getGamePath(getGameEngine().getGame()), levels);
+				for( Level level : levels ) {
+					if( ! FileWriter.saveLocal(
+							Files.getGamePath(getGameEngine().getGame()), level) ) {
+						levelsFailedToSave = true;
+					}
+				}
 			} else {
 				showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
 			}
-			if( levelsFailedToSave != null ) {
-				if( levelsFailedToSave.size == 0 ) {
-					fillLevelButtonsTable(levels);
-				} else {
-					for(Level level : levelsFailedToSave) {
-						Gdx.app.log("LevelEditorMenuScreen", "Failed to save level: "+level);
-					}
-					showErrorDialog("Error saving levels", "Failed to save one or more levels");
-				}
+			if( levelsFailedToSave ) {
+				showErrorDialog("Error saving levels", "Failed to save one or more levels");
 			} else {
-				showErrorDialog("Error deleting levels", "Failed to delete directory that holds the levels");
+				fillLevelButtonsTable(levels);
 			}
 		} else {
 			showErrorDialog("Error importing", "Failed to import levels");
@@ -251,7 +248,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			int[] pos = new int[] {0,0};
 			Level level = createNewLevel(pos);
 			addLevel(level);
-			
+
 			ScreenshotImage image = createLevelImage(level);
 
 			this.levelButtonsGrid.set(pos[0], pos[1], image);
@@ -260,7 +257,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], createLevelImage(level));
 			}
-			
+
 			for( Level level : levels ) {
 				int[] position = level.getPosition();
 				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
@@ -281,7 +278,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 		return createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
 	}
-	
+
 	private void addNextLevelButtons(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 		Array<Door> doors = level.getDoors();
@@ -377,7 +374,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			dialog.show();
 
 		} else if(text.contentEquals("Save game")) {
-		
+
 		}
 		getMainMenu().hide();
 	}
@@ -391,24 +388,24 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		level.setReachable(true); //assume level can only be created if reachable
 		level.setPosition(position[0], position[1]);
 		ScreenBorder.create(level, game);
-		
-		
+
+
 		Balloon balloon = new BalloonBlue();
 		float x = worldSize.x / 3f;
 		float y = 1f;
-		
+
 		balloon.setPosition(x, y);
 		balloon.setNew(false);
 		level.addGameObject(balloon);
-		
+
 		balloon = new BalloonRed();
 		balloon.setPosition(x + x, y);
 		balloon.setNew(false);
 		level.addGameObject(balloon);
-		
+
 		return level;
 	}
-	
+
 	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
 		ScreenshotImage image = new ScreenshotImage(texture);
 		image.setListener(this);

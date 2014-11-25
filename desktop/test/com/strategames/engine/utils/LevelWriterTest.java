@@ -13,11 +13,11 @@ import com.strategames.libgdx.junit.LevelsTestHelper;
 
 @RunWith(GdxTestRunner.class)
 public class LevelWriterTest {
-	private Game levels;
+	private Game game;
 	
 	@Before
 	public void setUp() throws Exception {
-		this.levels = LevelsTestHelper.createLevels();
+		this.game = LevelsTestHelper.createLevels();
 		FileWriter.deleteLocalDir();
 	}
 
@@ -28,11 +28,13 @@ public class LevelWriterTest {
 	
 	@Test
 	public void testSave() {
-		Array<Level> fails = FileWriter.save(this.levels.getLevels());
-		assertTrue(fails.size == 0);
+		for(Level level : this.game.getLevels()) {
+			assertTrue(FileWriter.saveLocal(Files.getGamePath(game), level));
+		}
+		
 		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels();
-		assertTrue(levelsSaved.size == this.levels.getLevels().size);
-		for(Level level : this.levels.getLevels()) {
+		assertTrue(levelsSaved.size == this.game.getLevels().size);
+		for(Level level : this.game.getLevels()) {
 			int found = 0;
 			for( Level savedLevel : levelsSaved ) {
 				if( level.equals(savedLevel) ) {

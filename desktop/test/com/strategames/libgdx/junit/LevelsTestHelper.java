@@ -59,7 +59,6 @@ public class LevelsTestHelper {
 		for(int i = 0; i < positions.length; i++) {
 			Level level = new Level();
 			level.setPosition(positions[i][0], positions[i][1]);
-			level.setName(level.getPositionAsString());
 			level.setViewSize(viewSize);
 			level.setWorldSize(worldSize);
 			

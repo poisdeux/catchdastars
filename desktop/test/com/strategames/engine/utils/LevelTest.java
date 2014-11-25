@@ -22,11 +22,6 @@ public class LevelTest {
 		level2 = LevelTestHelper.createLevel();
 		testEqual(level1, level2);
 		
-		String oldName = level1.getName();
-		level1.setName("YourLevel");
-		testNotEqual(level1, level2);
-		level1.setName(oldName);
-		
 		int[] oldPos = level1.getPosition();
 		level1.setPosition(oldPos[0] + 1, oldPos[0]);
 		testNotEqual(level1, level2);
