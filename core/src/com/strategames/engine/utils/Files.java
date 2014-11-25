@@ -14,4 +14,8 @@ public class Files {
 	static public String getGamePath(Game game) {
 		return PATH + "/" + game.getUuid() + "/";
 	}
+	
+	static public String getLevelsPath(Game game) {
+		return PATH + "/" + game.getUuid() + "/levels";
+	}
 }

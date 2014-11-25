@@ -68,7 +68,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		addMenuItem("Save game");
 		addMenuItem("Delete game");
 
-		Array<Level> localLevels = LevelLoader.loadAllLocalLevels();
+		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(this.game);
 		this.game.setLevels(localLevels);
 
 		this.levelButtonsGrid = new GridLayout();

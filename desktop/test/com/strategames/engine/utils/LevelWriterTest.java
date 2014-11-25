@@ -29,10 +29,10 @@ public class LevelWriterTest {
 	@Test
 	public void testSave() {
 		for(Level level : this.game.getLevels()) {
-			assertTrue(FileWriter.saveLocal(Files.getGamePath(game), level));
+			assertTrue("Failed to write level: "+level, FileWriter.saveLocal(Files.getLevelsPath(game), level));
 		}
 		
-		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels();
+		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels(this.game);
 		assertTrue(levelsSaved.size == this.game.getLevels().size);
 		for(Level level : this.game.getLevels()) {
 			int found = 0;

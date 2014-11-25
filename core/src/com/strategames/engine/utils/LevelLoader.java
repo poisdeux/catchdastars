@@ -115,8 +115,8 @@ public class LevelLoader {
 		thread.start();
 	}
 
-	static public Array<Level> loadAllLocalLevels() {
-		FileHandle dir = getLocalLevelsDir();
+	static public Array<Level> loadAllLocalLevels(Game game) {
+		FileHandle dir = getLocalLevelsDir(game);
 		FileHandle[] files = dir.list();
 
 		Array<Level> levels = new Array<Level>();
@@ -148,9 +148,9 @@ public class LevelLoader {
 		}
 	}
 
-	static public FileHandle getLocalLevelsDir() {
+	static public FileHandle getLocalLevelsDir(Game game) {
 		try {
-			FileHandle dir = Gdx.files.local(Files.getPath());
+			FileHandle dir = Gdx.files.local(Files.getLevelsPath(game));
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");
@@ -175,9 +175,9 @@ public class LevelLoader {
 	 * the last level number
 	 * @return
 	 */
-	public static int getLastLevelNumber() {
+	public static int getLastLevelNumber(Game game) {
 
-		FileHandle dir = getLocalLevelsDir();
+		FileHandle dir = getLocalLevelsDir(game);
 		FileHandle[] files = dir.list();
 		return files.length;
 	}
