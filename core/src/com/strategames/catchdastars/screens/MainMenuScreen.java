@@ -62,7 +62,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				((CatchDaStars) getGameEngine()).showLevelEditorMenu();
+				((CatchDaStars) getGameEngine()).showSelectGameScreen();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

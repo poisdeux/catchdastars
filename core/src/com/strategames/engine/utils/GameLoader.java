@@ -1,5 +1,8 @@
 package com.strategames.engine.utils;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,9 +12,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
 
 public class GameLoader {
-
-	static private final String LOCAL_PATH = "games";
-	static private final String INTERNAL_PATH = "games";
 	static private OnGameLoadedListener gameLoadedListener;
 
 	public interface OnGameLoadedListener {
@@ -23,9 +23,9 @@ public class GameLoader {
 	 * @param name name of the level file
 	 * @return Level object containing the game objects
 	 */
-	static private Game loadInternalSync(String UUID) {
+	static private Game loadInternalSync(Game game) {
 		try {
-			FileHandle file = Gdx.files.internal(getInternalPath(UUID));
+			FileHandle file = Gdx.files.internal(Files.getGamePath(game));
 			return loadSync(file);
 		} catch (Exception e) {
 			return null;
@@ -38,9 +38,9 @@ public class GameLoader {
 	 * @param level levelnumber to load
 	 * @return Level object containing the game objects 
 	 */
-	static public Game loadLocalSync(String UUID) {
+	static public Game loadLocalSync(Game game) {
 		try {
-			FileHandle file = Gdx.files.local(getLocalPath(UUID));
+			FileHandle file = Gdx.files.local(Files.getGamePath(game));
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,10 +55,10 @@ public class GameLoader {
 	 * can retrieve the Level object using {@link #getGame()} 
 	 * @param level levelnumber to load
 	 */
-	static private void loadLocalAsync(String UUID, OnGameLoadedListener listener) {
+	static private void loadLocalAsync(Game game, OnGameLoadedListener listener) {
 		gameLoadedListener = listener;
 		try {
-			FileHandle file = Gdx.files.local(getLocalPath(UUID));
+			FileHandle file = Gdx.files.local(Files.getGamePath(game));
 			loadAsync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,8 +108,14 @@ public class GameLoader {
 	}
 
 	static public Array<Game> loadAllLocalGames() {
-		FileHandle dir = getLocalLevelsDir();
-		FileHandle[] files = dir.list();
+		FileHandle dir = getLocalGamesDir();
+		FileHandle[] files = dir.list(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File arg0, String arg1) {
+				return arg1.contentEquals("meta");
+			}
+		});
 
 		Array<Game> games = new Array<Game>();
 
@@ -123,9 +129,9 @@ public class GameLoader {
 		return games;
 	}
 
-	static public FileHandle getLocalLevelsDir() {
+	static public FileHandle getLocalGamesDir() {
 		try {
-			FileHandle dir = Gdx.files.local(LOCAL_PATH);
+			FileHandle dir = Gdx.files.local(Files.getPath());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Level", "Error getting local games directory: "+e.getMessage());
@@ -135,23 +141,11 @@ public class GameLoader {
 
 	static public FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(INTERNAL_PATH);
+			FileHandle dir = Gdx.files.internal(Files.getPath());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Level", "Error getting internal games directory: "+e.getMessage());
 		}
 		return null;
-	}
-
-	static public String getLocalPath() {
-		return LOCAL_PATH;
-	}
-
-	static public String getLocalPath(String UUID) {
-		return LOCAL_PATH + "/" + UUID + "/meta";
-	}
-
-	static public String getInternalPath(String UUID) {
-		return INTERNAL_PATH + "/" + UUID + "/meta";
 	}
 }

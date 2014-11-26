@@ -34,7 +34,7 @@ abstract public class Dialog extends Table {
 	
 	private String message;
 	
-	protected final Skin skin;
+	private final Skin skin;
 	protected Stage stage;
 	
 	private boolean center;
@@ -63,6 +63,10 @@ abstract public class Dialog extends Table {
 	
 	public OnClickListener getOnClickListener() {
 		return onClickListener;
+	}
+	
+	public Skin getSkin() {
+		return skin;
 	}
 	
 	/**

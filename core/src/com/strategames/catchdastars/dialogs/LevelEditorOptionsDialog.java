@@ -44,7 +44,7 @@ public class LevelEditorOptionsDialog extends Dialog {
 	}
 	
 	private void createSnapToGridTool() {
-		CheckBox cBox = new CheckBox("Snap to grid", skin);
+		CheckBox cBox = new CheckBox("Snap to grid", getSkin());
 		cBox.setChecked(LevelEditorPreferences.snapToGridEnabled());
 		cBox.addListener(new ClickListener() {
 			@Override
@@ -59,7 +59,7 @@ public class LevelEditorOptionsDialog extends Dialog {
 		});
 		add(cBox);
 		
-		cBox = new CheckBox("Display grid", skin);
+		cBox = new CheckBox("Display grid", getSkin());
 		cBox.setChecked(LevelEditorPreferences.displayGridEnabled());
 		cBox.addListener(new ClickListener() {
 			@Override

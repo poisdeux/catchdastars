@@ -47,7 +47,7 @@ abstract public class GameStateDialog extends Dialog {
 	}
 	
 	public void setLeftButton(String text) {
-		this.buttonLeft = new TextButton(text, skin);
+		this.buttonLeft = new TextButton(text, getSkin());
 		this.buttonLeft.setListener(new ActorListener() {
 			
 			@Override
@@ -66,7 +66,7 @@ abstract public class GameStateDialog extends Dialog {
 	
 	
 	public void setRightButton(String text) {
-		this.buttonRight = new TextButton(text, skin);
+		this.buttonRight = new TextButton(text, getSkin());
 		this.buttonRight.setListener(new ActorListener() {
 			
 			@Override
@@ -95,7 +95,7 @@ abstract public class GameStateDialog extends Dialog {
 		this.filter.setHeight(end.y);
 		this.filter.setColor(0f, 0f, 0f, 0.4f);
 		
-		this.messageLabel = new Label(this.message, skin);
+		this.messageLabel = new Label(this.message, getSkin());
 		float xMiddle = (super.stage.getWidth() / 2) - (this.messageLabel.getWidth() / 2);
 		this.messageLabel.setPosition(xMiddle, super.stage.getHeight() / 2);
 		this.messageLabel.addAction( fadeIn( 0.25f ) );
@@ -109,7 +109,7 @@ abstract public class GameStateDialog extends Dialog {
 	
 	@Override
 	public void createButtons() {
-		Table table = new Table(skin);
+		Table table = new Table(getSkin());
 		table.setFillParent(true);
 		table.bottom();
 

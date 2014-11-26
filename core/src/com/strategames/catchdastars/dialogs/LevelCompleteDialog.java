@@ -173,7 +173,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		scoreItemTable.setHeight(height);
 		scoreItemTable.add(image).padRight(20f).width(width);
 
-		final Label label = new Label("", skin);
+		final Label label = new Label("", getSkin());
 		scoreItemTable.add(label).width(50f);
 
 		this.animPosition.x = 100f;
@@ -230,7 +230,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		this.cashRegister.setHeight(height);
 		this.cashRegister.setPosition(xPosition, -height);
 		this.cashRegister.scaleBy(scale);
-		this.totalScoreLabel = new Label(String.valueOf(this.totalScore), skin);
+		this.totalScoreLabel = new Label(String.valueOf(this.totalScore), getSkin());
 		this.totalScoreLabel.scaleBy(scale);
 		this.cashRegister.add(totalScoreLabel).width(50);
 		

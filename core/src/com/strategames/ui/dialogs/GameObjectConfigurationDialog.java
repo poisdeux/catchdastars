@@ -84,7 +84,7 @@ public class GameObjectConfigurationDialog extends Dialog {
 	}
 
 	private void setupConfigurationItems() {
-		Table table = new Table(super.skin);
+		Table table = new Table(getSkin());
 		
 		gameObject.initializeConfigurationItems();
 
@@ -95,10 +95,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 				final ConfigurationItem.Type type = item.getType();
 
 				if( item.getType() == ConfigurationItem.Type.TEXT ) {
-					Label label = new Label(item.getName(), super.skin);
+					Label label = new Label(item.getName(), getSkin());
 					table.add(label);
 
-					TextField tf = new TextField(String.valueOf(item.getValueText()), skin);
+					TextField tf = new TextField(String.valueOf(item.getValueText()), getSkin());
 					final StringBuffer buffer = new StringBuffer();
 					tf.setTextFieldListener(new TextFieldListener() {
 
@@ -117,10 +117,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 					table.add(tf).left();
 					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC ) {
-					Label label = new Label(item.getName(), super.skin);
+					Label label = new Label(item.getName(), getSkin());
 					table.add(label).left();
 
-					TextField tf = new TextField(String.valueOf(item.getValueNumeric()), skin);
+					TextField tf = new TextField(String.valueOf(item.getValueNumeric()), getSkin());
 					tf.setTextFieldFilter( new TextFieldFilter() {
 						@Override
 						public boolean acceptChar(TextField textField, char key) {
@@ -146,11 +146,11 @@ public class GameObjectConfigurationDialog extends Dialog {
 					table.add(tf).left();
 					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.NUMERIC_RANGE ) {
-					Label label = new Label(item.getName(), super.skin);
+					Label label = new Label(item.getName(), getSkin());
 					table.add(label).left();
 
 					Slider slider = new Slider(item.getMinValue(), 
-							item.getMaxValue(), item.getStepSize(), false, skin);
+							item.getMaxValue(), item.getStepSize(), false, getSkin());
 					slider.setValue(item.getValueNumeric());
 					slider.addListener(new ChangeListener() {
 
@@ -166,10 +166,10 @@ public class GameObjectConfigurationDialog extends Dialog {
 					table.add(slider).left();
 					table.row();
 				} else if( item.getType() == ConfigurationItem.Type.BOOLEAN ) {
-					Label label = new Label(item.getName(), super.skin);
+					Label label = new Label(item.getName(), getSkin());
 					table.add(label).left();
 					
-					final CheckBox cb = new CheckBox("", super.skin);
+					final CheckBox cb = new CheckBox("", getSkin());
 					cb.setChecked(item.getValueBoolean());
 					cb.addListener(new ClickListener() {
 						@Override

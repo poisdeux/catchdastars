@@ -114,7 +114,7 @@ public class ChangeWorldSizeDialog extends Dialog {
 	}
 
 	private Table createIncrementDecrementTable(ChangeListener incrementListener, ChangeListener decrementListener) {
-		Table table = new Table(skin);
+		Table table = new Table(getSkin());
 		ImageButton button = new ImageButton(drawablePlus);
 		button.addListener( incrementListener );
 		

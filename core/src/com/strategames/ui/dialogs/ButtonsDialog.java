@@ -26,7 +26,7 @@ public class ButtonsDialog extends Dialog {
 	}
 
 	public void add(String text, EventListener listener) {
-		TextButton tButton = new TextButton(text, skin);
+		TextButton tButton = new TextButton(text, getSkin());
 		tButton.addListener(listener);
 		this.textButtons.add(tButton);
 	}
