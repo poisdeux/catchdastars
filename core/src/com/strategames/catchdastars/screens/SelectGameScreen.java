@@ -60,11 +60,13 @@ public class SelectGameScreen extends AbstractScreen {
 						}
 						Game game = new Game();
 						game.setName(input);
+						addGameButton(game);
 					}
 				});
 				dialog.setWidth(200);
 				dialog.setHeight(60);
 				dialog.setCenter(true);
+				dialog.create();
 				dialog.show();
 			}			
 		});

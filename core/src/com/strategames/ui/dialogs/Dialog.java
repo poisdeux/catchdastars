@@ -11,6 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.strategames.ui.widgets.TextButton;
 
+/**
+ * Use {@link Dialog#create()} to build the dialog and {@link Dialog#show()}
+ * and {@link Dialog#hide()} to show and hide the dialog
+ * TODO make this a builder class by making all builder methods static and
+ * return the dialog so we can chain the methods. See for example the AlertDialog
+ * from the Android SDK.
+ * @author martijn
+ *
+ */
 abstract public class Dialog extends Table {
 	
 	public interface OnClickListener {

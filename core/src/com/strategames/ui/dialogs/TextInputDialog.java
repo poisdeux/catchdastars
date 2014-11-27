@@ -1,5 +1,7 @@
 package com.strategames.ui.dialogs;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -28,8 +30,8 @@ public class TextInputDialog extends Dialog {
 
 			@Override
 			public void keyTyped(TextField textField, char key) {
-				if (key == '\n') {
-					textField.getOnscreenKeyboard().show(false);
+				if ( key == '\r' || key == '\n' ) {
+					textField.next(true);
 					if( listener != null ) {
 						listener.onInputReceived(TextInputDialog.this, buffer.toString());
 					}
