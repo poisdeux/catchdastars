@@ -1,7 +1,5 @@
 package com.strategames.catchdastars.screens;
 
-import sun.font.CreatedFontTracker;
-
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -14,8 +12,10 @@ import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
+import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
+import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
 import com.strategames.ui.dialogs.TextInputDialog.OnInputReceivedListener;
 import com.strategames.ui.widgets.TextButton;
 
@@ -54,23 +54,34 @@ public class SelectGameScreen extends AbstractScreen {
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				final Game game = new Game();
 				TextInputDialog dialog = new TextInputDialog(stage, getSkin());
-				dialog.setOnInputReceivedListener(new OnInputReceivedListener() {
-					
-					@Override
-					public void onInputReceived(TextInputDialog dialog, String input) {
-						dialog.remove();
-						if( input.length() == 0 ) {
-							input = "No Name";
-						}
-						Game game = new Game();
-						game.setName(input);
-						addNewGame(game);
-					}
-				});
+				dialog.addInputField("Game name: ");
+				dialog.addInputField("Designer: ");
 				dialog.setWidth(200);
 				dialog.setHeight(60);
 				dialog.setCenter(true);
+				dialog.setOnCloseListener(new OnCloseListener() {
+					
+					@Override
+					public void onClosed(Dialog dialog) {
+						addNewGame(game);
+					}
+				});
+				dialog.setOnInputReceivedListener(new OnInputReceivedListener() {
+					
+					@Override
+					public void onInputReceived(TextInputDialog dialog, String name, String input) {
+						if( input.length() == 0 ) {
+							input = "No Name";
+						}
+						if( name.contentEquals("Game name: ")) {
+							game.setName(input);
+						} else if( name.contentEquals("Game name: ")) {
+							game.setDesigner(input);
+						} 
+					}
+				});
 				dialog.create();
 				dialog.show();
 			}			
