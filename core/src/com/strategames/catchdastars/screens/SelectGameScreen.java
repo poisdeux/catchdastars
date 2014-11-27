@@ -1,5 +1,7 @@
 package com.strategames.catchdastars.screens;
 
+import sun.font.CreatedFontTracker;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -8,8 +10,11 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.FileWriter;
+import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
+import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
 import com.strategames.ui.dialogs.TextInputDialog.OnInputReceivedListener;
 import com.strategames.ui.widgets.TextButton;
@@ -60,7 +65,7 @@ public class SelectGameScreen extends AbstractScreen {
 						}
 						Game game = new Game();
 						game.setName(input);
-						addGameButton(game);
+						addNewGame(game);
 					}
 				});
 				dialog.setWidth(200);
@@ -101,5 +106,15 @@ public class SelectGameScreen extends AbstractScreen {
 		TextButton button = new TextButton(game.getName(), getSkin());
 		this.gamesButtonsTable.add(button);
 		this.gamesButtonsTable.row();
+	}
+	
+	private void addNewGame(Game game) {
+		if( FileWriter.saveLocal(Files.getGamePath(game), game) ) {
+			addGameButton(game);
+		} else {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());
+			dialog.create();
+			dialog.show();
+		}
 	}
 }

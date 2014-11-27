@@ -7,8 +7,9 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.utils.FileWriter.Writer;
 
-public class Game implements Json.Serializable {
+public class Game implements Json.Serializable, Writer {
 	private Array<Level> levels;
 	private String uuid;
 	private String name;
@@ -156,5 +157,10 @@ public class Game implements Json.Serializable {
 		for(Level l : reachableLevels) {
 			l.setReachable(true);
 		}
+	}
+
+	@Override
+	public String getFilename() {
+		return "meta";
 	}
 }
