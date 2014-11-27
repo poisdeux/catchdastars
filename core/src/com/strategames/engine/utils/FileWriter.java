@@ -55,8 +55,8 @@ public class FileWriter {
 		return levelsFailed;
 	}
 	
-	static public boolean deleteLocalDir() {
-		FileHandle file = Gdx.files.local(Files.getPath());
+	static public boolean deleteLocalGamesDir() {
+		FileHandle file = Gdx.files.local(Files.getGamesPath());
 		if( file.isDirectory() ) {
 			if( file.deleteDirectory())  {
 				return true;
@@ -68,7 +68,7 @@ public class FileWriter {
 		} else {
 			return true; // directory does not exist
 		}
-		Gdx.app.log("Writer", "deleteLocalDir: failed to delete directory "+Files.getPath());
+		Gdx.app.log("Writer", "deleteLocalDir: failed to delete directory "+Files.getGamesPath());
 		return false;
 	}
 	

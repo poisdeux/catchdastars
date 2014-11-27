@@ -160,7 +160,7 @@ public class LevelLoader {
 
 	static public FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(Files.getPath());
+			FileHandle dir = Gdx.files.internal(Files.getGamesPath());
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");

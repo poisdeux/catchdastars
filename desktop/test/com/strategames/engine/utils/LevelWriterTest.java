@@ -18,12 +18,12 @@ public class LevelWriterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.game = LevelsTestHelper.createLevels();
-		FileWriter.deleteLocalDir();
+		FileWriter.deleteLocalGamesDir();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		FileWriter.deleteLocalDir();
+		FileWriter.deleteLocalGamesDir();
 	}
 	
 	@Test

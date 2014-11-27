@@ -3,7 +3,7 @@ package com.strategames.engine.utils;
 public class Files {
 	static private final String PATH = "games";
 	
-	static public String getPath() {
+	static public String getGamesPath() {
 		return PATH;
 	}
 

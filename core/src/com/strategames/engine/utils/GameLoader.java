@@ -129,9 +129,9 @@ public class GameLoader {
 		return games;
 	}
 
-	static public FileHandle getLocalGamesDir() {
+	 static private FileHandle getLocalGamesDir() {
 		try {
-			FileHandle dir = Gdx.files.local(Files.getPath());
+			FileHandle dir = Gdx.files.local(Files.getGamesPath());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Level", "Error getting local games directory: "+e.getMessage());
@@ -139,9 +139,9 @@ public class GameLoader {
 		return null;
 	}
 
-	static public FileHandle getInternalLevelsDir() {
+	static private FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(Files.getPath());
+			FileHandle dir = Gdx.files.internal(Files.getGamesPath());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Level", "Error getting internal games directory: "+e.getMessage());

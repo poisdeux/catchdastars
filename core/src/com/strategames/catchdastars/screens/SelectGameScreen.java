@@ -1,5 +1,8 @@
 package com.strategames.catchdastars.screens;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,17 +16,20 @@ import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
 import com.strategames.ui.dialogs.Dialog;
+import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
 import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
 import com.strategames.ui.dialogs.TextInputDialog.OnInputReceivedListener;
+import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.TextButton;
 
-public class SelectGameScreen extends AbstractScreen {
+public class SelectGameScreen extends AbstractScreen implements ActorListener {
 	private Table gamesButtonsTable;
 	
 	public SelectGameScreen(GameEngine game) {
 		super(game, "Select a game");
+		addMenuItem("Delete all games");
 	}
 
 	@Override
@@ -54,37 +60,8 @@ public class SelectGameScreen extends AbstractScreen {
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				final Game game = new Game();
-				TextInputDialog dialog = new TextInputDialog(stage, getSkin());
-				dialog.addInputField("Game name: ");
-				dialog.addInputField("Designer: ");
-				dialog.setWidth(200);
-				dialog.setHeight(60);
-				dialog.setCenter(true);
-				dialog.setOnCloseListener(new OnCloseListener() {
-					
-					@Override
-					public void onClosed(Dialog dialog) {
-						addNewGame(game);
-					}
-				});
-				dialog.setOnInputReceivedListener(new OnInputReceivedListener() {
-					
-					@Override
-					public void onInputReceived(TextInputDialog dialog, String name, String input) {
-						if( input.length() == 0 ) {
-							input = "No Name";
-						}
-						if( name.contentEquals("Game name: ")) {
-							game.setName(input);
-						} else if( name.contentEquals("Game name: ")) {
-							game.setDesigner(input);
-						} 
-					}
-				});
-				dialog.create();
-				dialog.show();
-			}			
+				handleButtonClicked();
+			}	
 		});
 		table.add(button).fillX().expandX();
 		table.bottom();
@@ -98,6 +75,46 @@ public class SelectGameScreen extends AbstractScreen {
 
 	}
 
+	@Override
+	protected void onMenuItemSelected(String text) {
+		if(text.contentEquals("Delete all games")) {
+			FileWriter.deleteLocalGamesDir();
+		}
+	}
+	
+	private void handleButtonClicked() {
+		final Game game = new Game();
+		TextInputDialog dialog = new TextInputDialog(getStageUIActors(), getSkin());
+		dialog.addInputField("Game name: ");
+		dialog.addInputField("Designer: ");
+		dialog.setWidth(200);
+		dialog.setHeight(60);
+		dialog.setCenter(true);
+		dialog.setOnCloseListener(new OnCloseListener() {
+			
+			@Override
+			public void onClosed(Dialog dialog) {
+				addNewGame(game);
+			}
+		});
+		dialog.setOnInputReceivedListener(new OnInputReceivedListener() {
+			
+			@Override
+			public void onInputReceived(TextInputDialog dialog, String name, String input) {
+				if( input.length() == 0 ) {
+					input = "No Name";
+				}
+				if( name.contentEquals("Game name: ")) {
+					game.setName(input);
+				} else if( name.contentEquals("Game name: ")) {
+					game.setDesigner(input);
+				} 
+			}
+		});
+		dialog.create();
+		dialog.show();
+	}
+	
 	private Table fillLevelButtonsTable(Array<Game> games) {
 		this.gamesButtonsTable = new Table();
 
@@ -127,5 +144,17 @@ public class SelectGameScreen extends AbstractScreen {
 			dialog.create();
 			dialog.show();
 		}
+	}
+
+	@Override
+	public void onTap(Actor actor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLongPress(Actor actor) {
+		// TODO Auto-generated method stub
+		
 	}
 }

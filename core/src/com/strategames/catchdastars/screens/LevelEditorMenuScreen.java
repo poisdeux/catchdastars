@@ -193,7 +193,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Array<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
 			boolean levelsFailedToSave = false;
-			if( FileWriter.deleteLocalDir() ) {
+			if( FileWriter.deleteLocalGamesDir() ) {
 				for( Level level : levels ) {
 					if( ! FileWriter.saveLocal(
 							Files.getGamePath(getGameEngine().getGame()), level) ) {

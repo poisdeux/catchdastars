@@ -1,7 +1,5 @@
 package com.strategames.ui.dialogs;
 
-import java.util.HashMap;
-
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,7 +10,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class TextInputDialog extends Dialog {
 	private OnInputReceivedListener listener;
-	//	private HashMap<String, Table> textfields;
 	private Array<String> inputFieldNames;
 
 	public interface OnCloseListener {
@@ -77,7 +74,7 @@ public class TextInputDialog extends Dialog {
 			}
 		});
 		Label label = new Label(name, getSkin());
-		table.add(label).fillX();
+		table.add(label);
 		table.add(tf).width(200).right();
 		return table;
 	}
