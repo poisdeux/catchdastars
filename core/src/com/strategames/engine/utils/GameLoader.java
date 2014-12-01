@@ -25,7 +25,7 @@ public class GameLoader {
 	 */
 	static private Game loadInternalSync(Game game) {
 		try {
-			FileHandle file = Gdx.files.internal(Files.getGamePath(game));
+			FileHandle file = Gdx.files.internal(Files.getGameDirectory(game));
 			return loadSync(file);
 		} catch (Exception e) {
 			return null;
@@ -40,7 +40,7 @@ public class GameLoader {
 	 */
 	static public Game loadLocalSync(Game game) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getGamePath(game));
+			FileHandle file = Gdx.files.local(Files.getGameDirectory(game));
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class GameLoader {
 	static private void loadLocalAsync(Game game, OnGameLoadedListener listener) {
 		gameLoadedListener = listener;
 		try {
-			FileHandle file = Gdx.files.local(Files.getGamePath(game));
+			FileHandle file = Gdx.files.local(Files.getGameDirectory(game));
 			loadAsync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,7 +133,7 @@ public class GameLoader {
 
 	static private FileHandle getLocalGamesDir() {
 		try {
-			FileHandle dir = Gdx.files.local(Files.getGamesPath());
+			FileHandle dir = Gdx.files.local(Files.getGamesDirectory());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Game", "Error getting local games directory: "+e.getMessage());
@@ -143,7 +143,7 @@ public class GameLoader {
 
 	static private FileHandle getInternalGamesDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(Files.getGamesPath());
+			FileHandle dir = Gdx.files.internal(Files.getGamesDirectory());
 			return dir;
 		} catch (Exception e) {
 			Gdx.app.log("Games", "Error getting internal games directory: "+e.getMessage());

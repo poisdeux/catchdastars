@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.editor;
 
 import java.util.ArrayList;
 
@@ -28,12 +28,13 @@ import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Files;
+import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
-import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -103,8 +104,10 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		getGameEngine().pauseGame();
 
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
-
-		this.level = LevelLoader.loadLocalSync(getGameEngine().getGame().getCurrentLevelPosition());
+		
+		Game game = getGameEngine().getGame();
+		this.level = LevelLoader.loadLocalSync(game, game.getCurrentLevelPosition());
+		onLevelLoaded(this.level);
 	}
 
 	@Override
@@ -546,7 +549,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	//	}
 
 	private boolean saveLevel() {
-		FileWriter.saveLocal(Files.getGamePath(getGameEngine().getGame()), this.level);
+		FileWriter.saveLevelLocal(getGameEngine().getGame(), this.level);
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 

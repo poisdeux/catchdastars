@@ -36,18 +36,9 @@ public class LevelLoader {
 	 * @param pos position of the level
 	 * @return Level object containing the game objects 
 	 */
-	static public Level loadLocalSync(int[] pos) {
-		return loadLocalSync(pos[0]+","+pos[1]);
-	}
-	
-	/**
-	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
-	 * @param level levelnumber to load
-	 * @return Level object containing the game objects 
-	 */
-	static public Level loadLocalSync(String name) {
+	static public Level loadLocalSync(Game game, int[] pos) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getPath(name));
+			FileHandle file = Gdx.files.local(Files.getLevelPath(game, pos));
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,7 +95,6 @@ public class LevelLoader {
 			public void run() {
 				Json json = new Json();
 				String text = file.readString();
-				Gdx.app.log("LevelLoader", "loadAsync: text="+text);
 				Object root =  json.fromJson(Level.class, text);
 				if( levelLoadedListener != null ) {
 					levelLoadedListener.onLevelLoaded((Level) root);
@@ -160,7 +150,7 @@ public class LevelLoader {
 
 	static public FileHandle getInternalLevelsDir() {
 		try {
-			FileHandle dir = Gdx.files.internal(Files.getGamesPath());
+			FileHandle dir = Gdx.files.internal(Files.getGamesDirectory());
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");

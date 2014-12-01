@@ -1,8 +1,7 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.editor;
 
 import java.util.HashMap;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -14,7 +13,6 @@ import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
-import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
 import com.strategames.ui.dialogs.ConfirmationDialog;
@@ -26,10 +24,10 @@ import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
 import com.strategames.ui.interfaces.ActorListener;
 import com.strategames.ui.widgets.TextButton;
 
-public class SelectGameScreen extends AbstractScreen {
+public class GameEditorScreen extends AbstractScreen {
 	private Table gamesButtonsTable;
 	
-	public SelectGameScreen(GameEngine game) {
+	public GameEditorScreen(GameEngine game) {
 		super(game, "Select a game");
 	}
 
@@ -66,7 +64,7 @@ public class SelectGameScreen extends AbstractScreen {
 		button.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				handleButtonClicked();
+				handleNewGameButtonClicked();
 			}	
 		});
 		table.add(button).fillX().expandX();
@@ -108,7 +106,7 @@ public class SelectGameScreen extends AbstractScreen {
 		hideMainMenu();
 	}
 	
-	private void handleButtonClicked() {
+	private void handleNewGameButtonClicked() {
 		final Game game = new Game();
 		TextInputDialog dialog = new TextInputDialog(getStageUIActors(), getSkin());
 		dialog.addInputField("Game name: ");
@@ -169,7 +167,7 @@ public class SelectGameScreen extends AbstractScreen {
 	}
 	
 	private void addNewGame(Game game) {
-		if( FileWriter.saveGameLocal(Files.getGamePath(game), game) ) {
+		if( FileWriter.saveGameLocal(game) ) {
 			addGameButton(game);
 		} else {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());

@@ -17,9 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
-import com.strategames.catchdastars.screens.LevelScreen;
-import com.strategames.catchdastars.screens.MainMenuScreen;
-import com.strategames.catchdastars.screens.SplashScreen;
+import com.strategames.catchdastars.screens.game.LevelScreen;
+import com.strategames.catchdastars.screens.game.MainMenuScreen;
+import com.strategames.catchdastars.screens.game.SplashScreen;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
@@ -531,8 +531,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		setScreen(new SplashScreen(this));
 	}
 
-	public void startLevel(int column, int row) {
-		this.game.setCurrentLevelPosition(new int[] {column, row});
+	public void startLevel(int[] pos) {
+		this.game.setCurrentLevelPosition(pos);
 		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}

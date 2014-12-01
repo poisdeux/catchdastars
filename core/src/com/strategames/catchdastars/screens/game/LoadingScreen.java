@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.game;
 
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;

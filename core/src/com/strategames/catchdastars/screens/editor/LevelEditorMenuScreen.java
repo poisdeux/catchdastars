@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.editor;
 
 import java.util.Iterator;
 
@@ -27,7 +27,6 @@ import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
-import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GridLayout;
 import com.strategames.engine.utils.Level;
@@ -47,26 +46,26 @@ import com.strategames.ui.widgets.TextButton;
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, ActorListener, OnLevelsReceivedListener {
 	private GridLayout levelButtonsGrid;
-	private Game game;
 	private Level editingLevel;
 	private Pixmap emptyLevelImage;
 
 	public LevelEditorMenuScreen(GameEngine game) {
 		super(game, "Level editor");
-		this.game = new Game();
 	}
 
 	@Override
 	protected void setupUI(Stage stage) {
+		Game game = getGameEngine().getGame();
 		Skin skin = getSkin();
 
-		addMenuItem("Import levels");
-		addMenuItem("Export levels");
+		addMenuItem("Play game");
 		addMenuItem("Save game");
 		addMenuItem("Delete game");
+		addMenuItem("Import levels");
+		addMenuItem("Export levels");
 
-		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(this.game);
-		this.game.setLevels(localLevels);
+		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(game);
+		game.setLevels(localLevels);
 
 		this.levelButtonsGrid = new GridLayout();
 		//Center button grid in scrollpane
@@ -103,17 +102,18 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	@Override
 	public void show() {
 		super.show();
+		Game game = getGameEngine().getGame();
 
-		Array<Level> levelsArrayList = this.game.getLevels();
+		Array<Level> levelsArrayList = game.getLevels();
 
 		if( editingLevel != null ) { // reload level to include added gameobjects
 			int index = levelsArrayList.indexOf(editingLevel, true);
-			editingLevel = LevelLoader.loadLocalSync(editingLevel.getPositionAsString());
+			editingLevel = LevelLoader.loadLocalSync(game, editingLevel.getPosition());
 			levelsArrayList.set(index, editingLevel);
 		}
 
 		//Check if adjacent rooms are still accessible
-		this.game.markLevelsReachable();
+		game.markLevelsReachable();
 
 		fillLevelButtonsTable(levelsArrayList);
 	}
@@ -193,10 +193,9 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Array<Level> levels = LevelLoader.getLevels(json);
 		if( levels != null ) {
 			boolean levelsFailedToSave = false;
-			if( FileWriter.deleteLocalGamesDir() ) {
+			if( FileWriter.deleteLocalGame(getGameEngine().getGame())) {
 				for( Level level : levels ) {
-					if( ! FileWriter.saveLocal(
-							Files.getGamePath(getGameEngine().getGame()), level) ) {
+					if( ! FileWriter.saveLevelLocal(getGameEngine().getGame(), level) ) {
 						levelsFailedToSave = true;
 					}
 				}
@@ -225,13 +224,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void addLevel(Level level) {
-		this.game.addLevel(level);
-		FileWriter.saveLocal(Files.getGamePath(this.game), level);
+		Game game = getGameEngine().getGame();
+		game.addLevel(level);
+		FileWriter.saveLevelLocal(game, level);
 	}
 
 	private void deleteLevel(Level level) {
-		FileWriter.deleteLocal(level);
-		this.game.deleteLevel(level);
+		Game game = getGameEngine().getGame();
+		FileWriter.deleteLevelLocal(game, level);
+		game.deleteLevel(level);
 	}
 
 	/**
@@ -300,11 +301,12 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	}
 
 	private void deleteAllLevels() {
+		Game game = getGameEngine().getGame();
 		Boolean success = true;
-		Iterator<Level> itr = this.game.getLevels().iterator();
+		Iterator<Level> itr = game.getLevels().iterator();
 		while(itr.hasNext()) {
 			Level level = itr.next();
-			if( FileWriter.deleteLocal(level)) {
+			if( FileWriter.deleteLevelLocal(game, level)) {
 				if(ScreenshotFactory.deleteScreenshot(level)) {
 					itr.remove();
 				}
@@ -318,13 +320,14 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			dialog.create().show();
 		}
 
-		fillLevelButtonsTable(this.game.getLevels());
+		fillLevelButtonsTable(game.getLevels());
 	}
 
 	@Override
 	protected void onMenuItemSelected(String text) {
+		Game game = getGameEngine().getGame();
 		if(text.contentEquals("Import levels")) {
-			if( this.game.getLevels().size > 0 ) {
+			if( game.getLevels().size > 0 ) {
 				//ask for confirmation
 				ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "Importing will delete current game", getSkin());
 				dialog.setPositiveButton("Import", new OnClickListener() {
@@ -349,6 +352,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 			}
 		} else if(text.contentEquals("Export levels")) {
 			getGameEngine().getExporterImporter().export(getGameEngine().getGame().getJson());
+		}else if(text.contentEquals("Play game")) {
+			((CatchDaStars) getGameEngine()).startLevel(new int[] {0,0});
 		} else if(text.contentEquals("Delete game")) {
 			//ask for confirmation
 			ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "This will delete all levels", getSkin());

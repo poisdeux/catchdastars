@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.game;
 
 
 import com.badlogic.gdx.scenes.scene2d.Actor;

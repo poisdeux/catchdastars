@@ -24,10 +24,11 @@ import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
-import com.strategames.catchdastars.screens.LevelEditorMenuScreen;
-import com.strategames.catchdastars.screens.LevelEditorScreen;
-import com.strategames.catchdastars.screens.SelectGameScreen;
-import com.strategames.catchdastars.screens.SettingsScreen;
+import com.strategames.catchdastars.screens.editor.GameEditorScreen;
+import com.strategames.catchdastars.screens.editor.LevelEditorMenuScreen;
+import com.strategames.catchdastars.screens.editor.LevelEditorScreen;
+import com.strategames.catchdastars.screens.game.SelectGameScreen;
+import com.strategames.catchdastars.screens.game.SettingsScreen;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Balloon;
@@ -321,6 +322,12 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		addToBackstack(screen);
 	}
 	
+	public void showGameEditorScreen() {
+		Screen screen = new GameEditorScreen(this);
+		setScreen(screen);
+		addToBackstack(screen);
+	}
+	
 	public void showSettings() {
 		Screen screen = new SettingsScreen(this);
 		setScreen(screen);
@@ -610,7 +617,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 				/**
 				 * TODO: determine game completed and create scroll animation to new level
 				 */
-				startLevel(this.nextLevelPosition[0], this.nextLevelPosition[1]);
+				startLevel(this.nextLevelPosition);
 				break;
 			case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
 				stopScreen();

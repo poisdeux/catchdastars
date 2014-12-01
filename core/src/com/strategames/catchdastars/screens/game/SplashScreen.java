@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.game;
 
 
 import java.io.FileNotFoundException;

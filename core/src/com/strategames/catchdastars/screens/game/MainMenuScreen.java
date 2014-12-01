@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,19 +18,14 @@ public class MainMenuScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(Stage stage) {
-		final GameEngine gameEngine = getGameEngine();
-		
 		float x = stage.getWidth() / 2f;
 		float y = 600f;
 		
-		TextButton button = new TextButton( "New game", getSkin() );
+		TextButton button = new TextButton( "Play", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				Game game = new Game();
-				game.setCurrentLevelPosition(new int[] {0,0});
-				gameEngine.setGame(game);
-				gameEngine.resetGame();
+				((CatchDaStars) getGameEngine()).showSelectGameScreen();
 			}
 		});
 		button.setPosition(x - (button.getWidth() / 2f), y);
@@ -62,7 +57,7 @@ public class MainMenuScreen extends AbstractScreen {
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				((CatchDaStars) getGameEngine()).showSelectGameScreen();
+				((CatchDaStars) getGameEngine()).showGameEditorScreen();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

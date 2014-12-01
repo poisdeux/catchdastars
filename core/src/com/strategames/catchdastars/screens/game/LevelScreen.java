@@ -1,4 +1,4 @@
-package com.strategames.catchdastars.screens;
+package com.strategames.catchdastars.screens.game;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -77,7 +77,8 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	public void show() {
 		super.show();
 		getGameEngine().pauseGame();
-		onLevelLoaded(LevelLoader.loadLocalSync(getGameEngine().getGame().getCurrentLevelPosition()));
+		Game game = getGameEngine().getGame();
+		onLevelLoaded(LevelLoader.loadLocalSync(game, game.getCurrentLevelPosition()));
 	}
 	
 	@Override

@@ -66,6 +66,10 @@ abstract public class Dialog extends Table {
 		return amountOfDialogsVisible;
 	}
 	
+	/**
+	 * Called when a button is clicked
+	 * @param listener
+	 */
 	public void setOnClickListener(OnClickListener listener) {
 		this.onClickListener = listener;
 	}
