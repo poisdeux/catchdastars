@@ -373,7 +373,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		} else if(text.contentEquals("Save game")) {
 
 		}
-		getMainMenu().hide();
+		hideMainMenu();
 	}
 
 	private Level createNewLevel(int[] position) {

@@ -345,12 +345,19 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		});
 	}
 
-	public ButtonsDialog getMainMenu() {
-		return mainMenu;
-	}
+//	public ButtonsDialog getMainMenu() {
+//		return mainMenu;
+//	}
 
+	public void hideMainMenu() {
+		this.mainMenu.hide();
+	}
+	
 	/**
 	 * Override to handle menu item selections
+	 * <br/>
+	 * Menu is not automatically closed when a selection has been made.
+	 * Use {@link #hideMainMenu()} to hide the main menu manually.
 	 * @param text of menu item as created using {@link #addMenuItem(String)}
 	 */
 	protected void onMenuItemSelected(String text) {

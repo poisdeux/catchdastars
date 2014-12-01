@@ -81,6 +81,8 @@ public class SelectGameScreen extends AbstractScreen implements ActorListener {
 		if(text.contentEquals("Delete all games")) {
 			FileWriter.deleteLocalGamesDir();
 		}
+		
+		hideMainMenu();
 	}
 	
 	private void handleButtonClicked() {
