@@ -326,6 +326,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return false;
 	}
 
+	/**
+	 * Adds an item to the menu.
+	 * <br/>
+	 * Only call this method within {@link #setupUI(Stage)}
+	 * @param text of the menu item to be added
+	 */
 	public void addMenuItem(final String text) {
 		if( this.mainMenu == null ) {
 			this.mainMenu = new ButtonsDialog(getStageUIActors(), getSkin(), ButtonsDialog.ORIENTATION.VERTICAL);

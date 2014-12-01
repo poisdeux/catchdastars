@@ -1,8 +1,9 @@
 package com.strategames.catchdastars.screens;
 
+import java.util.HashMap;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -16,7 +17,6 @@ import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
 import com.strategames.ui.dialogs.Dialog;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
 import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
@@ -29,11 +29,12 @@ public class SelectGameScreen extends AbstractScreen implements ActorListener {
 	
 	public SelectGameScreen(GameEngine game) {
 		super(game, "Select a game");
-		addMenuItem("Delete all games");
 	}
 
 	@Override
 	protected void setupUI(final Stage stage) {
+		addMenuItem("Delete all games");
+		
 		//Gameloader to load all games
 		Array<Game> games = GameLoader.loadAllLocalGames();
 
@@ -93,22 +94,17 @@ public class SelectGameScreen extends AbstractScreen implements ActorListener {
 		dialog.setOnCloseListener(new OnCloseListener() {
 			
 			@Override
-			public void onClosed(Dialog dialog) {
-				addNewGame(game);
-			}
-		});
-		dialog.setOnInputReceivedListener(new OnInputReceivedListener() {
-			
-			@Override
-			public void onInputReceived(TextInputDialog dialog, String name, String input) {
-				if( input.length() == 0 ) {
-					input = "No Name";
+			public void onClosed(Dialog dialog,
+					HashMap<String, StringBuffer> values) {
+				for(String name : values.keySet()) {
+					String value = values.get(name).toString();
+					if( name.contentEquals("Game name: ")) {
+						game.setName(value);
+					} else if( name.contentEquals("Designer: ")) {
+						game.setDesigner(value);
+					} 
 				}
-				if( name.contentEquals("Game name: ")) {
-					game.setName(input);
-				} else if( name.contentEquals("Game name: ")) {
-					game.setDesigner(input);
-				} 
+				addNewGame(game);
 			}
 		});
 		dialog.create();
@@ -137,7 +133,7 @@ public class SelectGameScreen extends AbstractScreen implements ActorListener {
 	}
 	
 	private void addNewGame(Game game) {
-		if( FileWriter.saveLocal(Files.getGamePath(game), game) ) {
+		if( FileWriter.saveGameLocal(Files.getGamePath(game), game) ) {
 			addGameButton(game);
 		} else {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());

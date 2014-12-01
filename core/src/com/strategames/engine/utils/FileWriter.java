@@ -39,6 +39,24 @@ public class FileWriter {
 	}
 	
 	/**
+	 * Saves the game in json format in the given directory on local storage
+	 * @param directory where to save the writer
+	 * @param writer to be written
+	 * @return true if succesful, false otherwise
+	 */
+	static public boolean saveGameLocal(String directory, Writer writer) {
+		FileHandle file = Gdx.files.local(directory +"/meta");
+		try {
+			Json json = new Json();
+			file.writeString(json.prettyPrint(writer.getJson()), false);
+			return true;
+		} catch (Exception e) {
+			Gdx.app.log("LevelWriter", "save: could not write: "+writer+"\nError: "+e.getMessage());
+			return false;
+		}
+	}
+	
+	/**
 	 * Saves all writers in ArrayList writers in the given directory on local storage
 	 * @param directory where to save
 	 * @param writers to save
