@@ -331,40 +331,13 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		return x * BOX_TO_WORLD;
 	}
 
-//	public int[] getLevelPosition() {
-//		return levelPosition;
-//	}
-//
-//	public void setLevelPosition(int column, int row) {
-//		this.levelPosition[0] = column;
-//		this.levelPosition[1] = row;
-//	}
-
 	public void setGame(Game game) {
 		this.game = game;
-//		if( game != null ) {
-//			int[] position = game.getCurrentLevelPosition();
-//			setLevelPosition(position[0], position[1]);
-//		}
 	}
 
 	public Game getGame() {
 		return this.game;
 	}
-
-//	/**
-//	 * Loads the level synchronously.
-//	 * The level loaded is the level with
-//	 * position set by {@link #setLevelPosition(int, int)}
-//	 * <br/>
-//	 * Use {@link #getGame()} to retrieve the level when AssetManager has finished
-//	 * 
-//	 * TODO Why do we need a listener if this call is synchronous?
-//	 */
-//	public void loadLevel(OnLevelLoadedListener listener) {
-//		//		getManager().load(Level.getLocalPath(this.levelNumber), Level.class);
-//		loadLevelSync(listener);
-//	}
 
 	/**
 	 * Unloads level from AssetManager. The level unloaded is the level
@@ -516,7 +489,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	/**
 	 * Resets the current level
-	 */
+	 */ 
 	public void resetLevel() {
 		setScreen( new LevelScreen(this) );
 	}
