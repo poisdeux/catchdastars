@@ -19,9 +19,9 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads packaged level files (synchronous)
-	 * @param name name of the level file
-	 * @return Level object containing the game objects
+	 * Loads packaged game files (synchronous)
+	 * @param game 
+	 * @return Game
 	 */
 	static private Game loadInternalSync(Game game) {
 		try {
@@ -34,9 +34,9 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
-	 * @param level levelnumber to load
-	 * @return Level object containing the game objects 
+	 * Loads local game files (synchronous) saved using {@link FileWriter#save(Stage, int)}
+	 * @param game 
+	 * @return Game
 	 */
 	static public Game loadLocalSync(Game game) {
 		try {
@@ -49,11 +49,9 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads local level files (asynchronous) saved using {@link #save(Stage, int)}
-	 * <br/>
-	 * Use {@link #levelLoaded()} to see if loading has finished. After loading you
-	 * can retrieve the Level object using {@link #getGame()} 
-	 * @param level levelnumber to load
+	 * Loads local game files (asynchronous)
+	 * @param game
+	 * @param listener will be called when game has finished loading
 	 */
 	static private void loadLocalAsync(Game game, OnGameLoadedListener listener) {
 		gameLoadedListener = listener;
@@ -66,16 +64,16 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads level file (synchronous) from FileHandle.
+	 * Loads game file (synchronous) from FileHandle.
 	 * You should never need to use this. Use {@link #loadInternalSync(int)} or {@link #loadLocalSync(int)} instead.
 	 * @param file
-	 * @return Level object containing the game objects 
+	 * @return Game
 	 */
 	static private Game loadSync(FileHandle file) {
 		Json json = new Json();
 		try {
 			String text = file.readString();
-			Object root =  json.fromJson(Level.class, text);
+			Object root =  json.fromJson(Game.class, text);
 			return (Game) root;
 		} catch (GdxRuntimeException e) {
 			Gdx.app.log("GameLoader", "Runtime error while loading game: "+e.getMessage());
@@ -86,7 +84,7 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads level file (asynchronous) from FileHandle.
+	 * Loads game file (asynchronous) from FileHandle.
 	 * You should never need to use this. Use {@link #loadInternalAsync(int)} or {@link #loadLocalAsync(int)} instead.
 	 * @param file
 	 */
@@ -108,43 +106,47 @@ public class GameLoader {
 	}
 
 	static public Array<Game> loadAllLocalGames() {
-		FileHandle dir = getLocalGamesDir();
-		FileHandle[] files = dir.list(new FilenameFilter() {
-			
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				return arg1.contentEquals("meta");
-			}
-		});
-
 		Array<Game> games = new Array<Game>();
+		FileHandle dir = getLocalGamesDir();
+		FileHandle[] entries = dir.list();
+		for( FileHandle entry : entries ) {
+			if( entry.isDirectory() ) {
+				FileHandle[] files = entry.list(new FilenameFilter() {
 
-		for( FileHandle file : files ) {
-			Game game = loadSync(file);
-			if( game != null ) {
-				games.add(game);
+					@Override
+					public boolean accept(File arg0, String arg1) {
+						return arg1.contentEquals("meta");
+					}
+				});
+
+				if( files.length > 0 ) {
+					Game game = loadSync(files[0]);
+					if( game != null ) {
+						games.add(game);
+					}
+				}
 			}
 		}
 
 		return games;
 	}
 
-	 static private FileHandle getLocalGamesDir() {
+	static private FileHandle getLocalGamesDir() {
 		try {
 			FileHandle dir = Gdx.files.local(Files.getGamesPath());
 			return dir;
 		} catch (Exception e) {
-			Gdx.app.log("Level", "Error getting local games directory: "+e.getMessage());
+			Gdx.app.log("Game", "Error getting local games directory: "+e.getMessage());
 		}
 		return null;
 	}
 
-	static private FileHandle getInternalLevelsDir() {
+	static private FileHandle getInternalGamesDir() {
 		try {
 			FileHandle dir = Gdx.files.internal(Files.getGamesPath());
 			return dir;
 		} catch (Exception e) {
-			Gdx.app.log("Level", "Error getting internal games directory: "+e.getMessage());
+			Gdx.app.log("Games", "Error getting internal games directory: "+e.getMessage());
 		}
 		return null;
 	}
