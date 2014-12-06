@@ -110,7 +110,9 @@ public class Game implements Json.Serializable, Writer {
 	}
 
 	public void addLevel(Level level) {
-		this.levels.add(level);
+		if( ! this.levels.contains(level, false) ) { 
+			this.levels.add(level);
+		}
 	}
 
 	public Level getLevel(int row, int column) {

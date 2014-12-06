@@ -197,16 +197,16 @@ public class Level implements Comparable<Level>, Writer {
 
 	@Override
 	public boolean equals(Object obj) {
-		Level level;
+		
 		if( obj == null ) {
-			Gdx.app.log("Level", "equals: obj="+obj);
+			return false;
 		}
 		
 		if( obj instanceof Level ) {
-			level = (Level) obj;
-		} else {
 			return false;
-		}
+		} 
+		
+		Level level = (Level) obj;
 
 		int[] levelPosition = level.getPosition();
 
