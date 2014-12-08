@@ -170,6 +170,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 		int[] pos = game.getCurrentLevelPosition();
 		this.level = game.getLevel(pos[0], pos[1]);
+		Gdx.app.log("CatchDaStars", "setup: level="+level);
 		if( this.level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
 			return false;

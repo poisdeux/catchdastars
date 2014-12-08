@@ -53,7 +53,7 @@ public class LevelsTestHelper {
 	 * @return
 	 */
 	public static Game createLevels() {
-		Game levels = new Game();
+		Game game = new Game();
 		Vector2 viewSize = new Vector2(3.1f, 18.1f);
 		Vector2 worldSize = new Vector2(9.3f, 36.2f);
 		for(int i = 0; i < positions.length; i++) {
@@ -73,9 +73,9 @@ public class LevelsTestHelper {
 				level.addGameObject(object);
 			}
 			
-			levels.addLevel(level);
+			game.addLevel(level);
 		}
-		return levels;
+		return game;
 	}
 	
 	
@@ -86,8 +86,12 @@ public class LevelsTestHelper {
 	 * @return position in grid coordinates (int[0]=x, int[1]=y)
 	 * @throws ArrayIndexOutOfBoundsException
 	 */
-	public static int[] getPositions(int index) throws ArrayIndexOutOfBoundsException {
+	public static int[] getPosition(int index) throws ArrayIndexOutOfBoundsException {
 		return positions[index];
+	}
+	
+	public static int getAmountOfPositions() {
+		return positions.length;
 	}
 	
 	/**

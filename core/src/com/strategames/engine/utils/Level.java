@@ -153,7 +153,7 @@ public class Level implements Comparable<Level>, Writer {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d,%d %s, #gameobjects=%d. #doors=%d", this.position[0], this.position[1], this.name, this.gameObjects.size, this.doors.size );
+		return String.format( Locale.US, "%d, %d,%d %s, #gameobjects=%d. #doors=%d", hashCode(), this.position[0], this.position[1], this.name, this.gameObjects.size, this.doors.size );
 	}
 
 	public Level copy() {
@@ -202,7 +202,11 @@ public class Level implements Comparable<Level>, Writer {
 			return false;
 		}
 		
-		if( obj instanceof Level ) {
+		if( this == obj ) {
+			return true;
+		}
+		
+		if( ! ( obj instanceof Level ) ) {
 			return false;
 		} 
 		

@@ -121,23 +121,6 @@ public class LevelLoader {
 		return levels;
 	}
 
-	/**
-	 * Creates an ArrayList of Level objects using jsonString as
-	 * json input
-	 * @param jsonString the json input containing a Levels block with one or more levels
-	 * @return ArrayList of type Level
-	 */
-	static public Array<Level> getLevels(String jsonString) {
-		Json json = new Json();
-		try {
-			Game levels = json.fromJson(Game.class, jsonString);
-			return levels.getLevels();
-		} catch (Exception e) {
-			Gdx.app.log("LevelLoader", "getLevels: error parsing json: "+e.getMessage());
-			return null;
-		}
-	}
-
 	static public FileHandle getLocalLevelsDir(Game game) {
 		try {
 			FileHandle dir = Gdx.files.local(Files.getLevelsPath(game));

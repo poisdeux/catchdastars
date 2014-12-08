@@ -1,8 +1,8 @@
 package com.strategames.engine.utils;
 
+import java.util.HashMap;
 import java.util.UUID;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
@@ -11,7 +11,7 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.utils.FileWriter.Writer;
 
 public class Game implements Json.Serializable, Writer {
-	private Array<Level> levels;
+	private HashMap<String, Level> levels;
 	private String uuid;
 	private String name;
 	private String designer;
@@ -19,7 +19,7 @@ public class Game implements Json.Serializable, Writer {
 	private int score;
 
 	public Game() {
-		this.levels = new Array<Level>();
+		this.levels = new HashMap<String, Level>();
 		this.uuid = UUID.randomUUID().toString();
 	}
 
@@ -87,42 +87,50 @@ public class Game implements Json.Serializable, Writer {
 		return designer;
 	}
 
-	public void clear() {
-		this.levels = new Array<Level>();
+	/**
+	 * Removes existing levels from game
+	 */
+	public void clearLevels() {
+		this.levels = new HashMap<String, Level>();
 	}
 
-	public void setLevels(Array<Level> levels) {
-		this.levels = levels;
-	}
-
-	public Array<Level> getLevels() {
+	public HashMap<String, Level> getLevels() {
 		return levels;
 	}
 
+	/**
+	 * Overrides any existing level. This means that any level
+	 * already at the same position as level will be overwritten.
+	 * @param level
+	 */
+	public void setLevel(Level level) {
+		this.levels.put(createKey(level), level);
+	}
+	
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
 		return json.toJson(this);
 	}
 
-	public void deleteLevel(Level level) {
-		this.levels.removeValue(level, true);
+	public Level deleteLevel(int column, int row) {
+		return this.levels.remove(createKey(column, row));
 	}
 
+	/**
+	 * Adds level only if a level at the same position does not already exist.
+	 * @param level
+	 */
 	public void addLevel(Level level) {
-		if( ! this.levels.contains(level, false) ) { 
-			this.levels.add(level);
+		String key = createKey(level);
+		Level curLevel = this.levels.get(key); 
+		if( curLevel == null ) {
+			this.levels.put(key, level);
 		}
 	}
 
-	public Level getLevel(int row, int column) {
-		for(Level level : this.levels) {
-			int[] pos = level.getPosition();
-			if((pos[0]==row)&&(pos[1]==column)) {
-				return level;
-			}
-		}
-		return null;
+	public Level getLevel(int column, int row) {
+		return this.levels.get(createKey(column, row));
 	}
 
 	/**
@@ -148,7 +156,7 @@ public class Game implements Json.Serializable, Writer {
 
 	public void markLevelsReachable() {
 		Level startLevel = null;
-		for(Level l : levels) {
+		for(Level l : this.levels.values() ) {
 			int[] pos = l.getPosition();
 			if( ( pos[0] == 0 ) && ( pos[1] == 0 ) ) {
 				startLevel = l;
@@ -175,5 +183,14 @@ public class Game implements Json.Serializable, Writer {
 		return super.toString() + ", uuid="+this.uuid+", name="+this.name+
 				", designer="+designer+", currentLevelPosition="+this.currentLevelPosition+
 				", score="+this.score;
+	}
+	
+	private String createKey(int column, int row) {
+		return column+""+row;
+	}
+	
+	private String createKey(Level level) {
+		int[] pos = level.getPosition();
+		return pos[0]+""+pos[1];
 	}
 }

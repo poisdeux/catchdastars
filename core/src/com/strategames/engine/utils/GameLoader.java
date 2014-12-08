@@ -131,6 +131,21 @@ public class GameLoader {
 		return games;
 	}
 
+	/**
+	 * Creates a Game using jsonString as json input
+	 * @param jsonString the json input containing the game
+	 * @return Game
+	 */
+	static public Game getGame(String jsonString) {
+		Json json = new Json();
+		try {
+			return json.fromJson(Game.class, jsonString);
+		} catch (Exception e) {
+			Gdx.app.log("GameLoader", "getGame: error parsing json: "+e.getMessage());
+			return null;
+		}
+	}
+	
 	static private FileHandle getLocalGamesDir() {
 		try {
 			FileHandle dir = Gdx.files.local(Files.getGamesDirectory());

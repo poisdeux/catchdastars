@@ -2,6 +2,8 @@ package com.strategames.engine.utils;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,13 +30,15 @@ public class LevelWriterTest {
 	
 	@Test
 	public void testSave() {
-		for(Level level : this.game.getLevels()) {
+		Collection<Level> levels = this.game.getLevels().values();
+		assertTrue("this.game.getLevels() returns null", levels != null);
+		for(Level level : levels) {
 			assertTrue("Failed to write level: "+level, FileWriter.saveLevelLocal(game, level));
 		}
 		
 		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels(this.game);
-		assertTrue(levelsSaved.size == this.game.getLevels().size);
-		for(Level level : this.game.getLevels()) {
+		assertTrue(levelsSaved.size == levels.size());
+		for(Level level : levels) {
 			int found = 0;
 			for( Level savedLevel : levelsSaved ) {
 				if( level.equals(savedLevel) ) {

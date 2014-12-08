@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
@@ -145,7 +146,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		
 		GameEngine engine = getGameEngine();
 		Game game = engine.getGame();
-		game.addLevel(level);
+		game.setLevel(level);
 		
 		if( getGameEngine().setup(getStageActors()) ) {
 			this.levelLoaded = true;
