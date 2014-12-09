@@ -59,6 +59,12 @@ abstract public class GameStateDialog extends Dialog {
 			public void onLongPress(Actor actor) {
 				
 			}
+			
+			@Override
+			public void setListener(ActorListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		this.buttonLeft.getColor().a = 0f;
 		this.buttonLeft.addAction( sequence( fadeIn( 0.25f ) ) );
@@ -76,6 +82,12 @@ abstract public class GameStateDialog extends Dialog {
 			
 			@Override
 			public void onLongPress(Actor actor) {
+				
+			}
+			
+			@Override
+			public void setListener(ActorListener listener) {
+				// TODO Auto-generated method stub
 				
 			}
 		});

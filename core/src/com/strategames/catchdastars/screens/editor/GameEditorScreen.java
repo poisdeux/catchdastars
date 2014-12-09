@@ -161,6 +161,12 @@ public class GameEditorScreen extends AbstractScreen {
 			public void onLongPress(Actor actor) {
 				showGameConfigurationDialog(game);
 			}
+			
+			@Override
+			public void setListener(ActorListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		this.gamesButtonsTable.add(button);
 		this.gamesButtonsTable.row();

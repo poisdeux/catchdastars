@@ -500,6 +500,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 					@Override
 					public void onLongPress(Actor actor) {	}
+					
+					@Override
+					public void setListener(ActorListener listener) {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 				getStageUIActors().addActor(this.menuButton);
 			}

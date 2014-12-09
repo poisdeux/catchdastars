@@ -768,6 +768,11 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	}
 
+	@Override
+	public void setListener(ActorListener listener) {
+		
+	}
+	
 	private boolean inGameArea(GameObject gameObject) {
 		float x = gameObject.getX();
 		float y = gameObject.getY();

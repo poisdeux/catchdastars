@@ -100,6 +100,12 @@ public class SelectGameScreen extends AbstractScreen {
 			public void onLongPress(Actor actor) {
 				//TODO add option to clear a saved game and start a new game
 			}
+			
+			@Override
+			public void setListener(ActorListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		this.gamesButtonsTable.add(button);
 		this.gamesButtonsTable.row();
