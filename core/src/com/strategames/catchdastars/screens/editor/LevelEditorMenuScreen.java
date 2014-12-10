@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -42,8 +41,6 @@ import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.widgets.ScreenshotImage;
 import com.strategames.ui.widgets.TextButton;
-
-
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener {
 	private GridLayout levelButtonsGrid;
@@ -90,7 +87,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		});
 
 		//Center button grid in scrollpane
-		this.levelButtonsGrid.setOffset(new Vector2((getStageUIActors().getWidth() / 2f)-30f, 185f));
+		this.levelButtonsGrid.setOffset(new Vector2((stage.getWidth() / 2f)-12f, 180f));
 		this.levelButtonsGrid.setElementSize(25f, 40f);
 
 		emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
@@ -143,24 +140,27 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		if( dialog instanceof EditLevelDialog ) {
 			final Color colorWhite = getSkin().getColor("white");
 			final Level level = ((EditLevelDialog) dialog).getLevel();
-			final Button button = (Button) dialog.getTag();
+			final ScreenshotImage image = (ScreenshotImage) dialog.getTag();
 			switch(which) {
 			case EditLevelDialog.BUTTON_COPY_CLICKED:
 				copyLevel(level);
 				dialog.remove();
-				button.setColor(colorWhite);
+				image.setColor(colorWhite);
 				break;
 			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
 				/**
 				 * TODO Add check to see if deleting level does not make
 				 * other levels unreachable
 				 */
+				int[] pos = level.getPosition();
 				deleteLevel(level);
+				ScreenshotImage newImage = createLevelImage(null);
+				this.levelButtonsGrid.set(pos[0], pos[1], newImage);
 				dialog.remove();
 				break;
 			case EditLevelDialog.BUTTON_CLOSE_CLICKED:
 				dialog.remove();
-				button.setColor(colorWhite);
+				image.setColor(colorWhite);
 				break;
 			}
 		}
@@ -262,8 +262,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.levelButtonsGrid.clear();
 
 		if( ( levels == null ) || ( levels.size() == 0 ) ) {
-			Vector2 elementSize = this.levelButtonsGrid.getElementSize();
-			ScreenshotImage image = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
+			ScreenshotImage image = createLevelImage(null);
 			this.levelButtonsGrid.set(0, 0, image);
 		} else {
 			for( Level level : levels ) {

@@ -1,5 +1,6 @@
 package com.strategames.ui.widgets;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -19,6 +20,7 @@ import com.strategames.ui.interfaces.ActorListener;
 public class ScreenshotImage extends Image implements EventListener, ActorListener {
 	private Timer timer;
 	private boolean longPress;
+	private boolean dragged;
 	private ActorListener listener = null;
 	private Object tag;
 
@@ -42,11 +44,15 @@ public class ScreenshotImage extends Image implements EventListener, ActorListen
 		if (!(e instanceof InputEvent)) return false;
 		InputEvent event = (InputEvent)e;
 
+		Gdx.app.log("ScreenshotImage", "handle: event="+event.getType().name());
 		switch (event.getType()) {
 		case touchDown:
 			return touchDown(event);
 		case touchUp:
 			touchUp(event);
+			return true;
+		case touchDragged:
+			touchDragged(event);
 			return true;
 		default:
 			return false;
@@ -72,7 +78,8 @@ public class ScreenshotImage extends Image implements EventListener, ActorListen
 			@Override
 			public void run() {
 				longPress = true;
-				onLongPress(ScreenshotImage.this);
+				if( listener != null )
+					listener.onLongPress(ScreenshotImage.this);
 			}
 		}, 1);
 		return true;
@@ -81,20 +88,23 @@ public class ScreenshotImage extends Image implements EventListener, ActorListen
 	private boolean touchUp(InputEvent event) {
 		this.timer.clear();
 		if( ! longPress ) {
-			onTap(ScreenshotImage.this);
+			if( this.listener != null )
+				this.listener.onTap(this);
 		}
 		return true;
 	}
 
+	private boolean touchDragged(InputEvent event) {
+		
+	}
+	
 	@Override
 	public void onTap(Actor actor) {
-		if( this.listener != null )
-			this.listener.onTap(this);
+		
 	}
 
 	@Override
 	public void onLongPress(Actor actor) {
-		if( this.listener != null )
-			this.listener.onLongPress(this);
+		
 	}
 }

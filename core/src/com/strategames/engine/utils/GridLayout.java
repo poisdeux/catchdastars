@@ -91,6 +91,7 @@ public class GridLayout extends WidgetGroup {
 		if( element == null ) {
 			element = new Holder(actor, x, y);
 			this.elements.add(element);
+			resize();
 		} else {
 			element.getActor().remove();
 			element.setActor(actor);
@@ -114,6 +115,7 @@ public class GridLayout extends WidgetGroup {
 			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
 				Actor actor = element.getActor();
 				actor.remove();
+				resize();
 				return actor; 
 			}
 		}
@@ -149,14 +151,37 @@ public class GridLayout extends WidgetGroup {
 		}
 		return null;
 	}
-
+	
+	private void resize() {
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		for( Holder element : elements ) {
+			if( element.x < minX ) {
+				minX = element.x;
+			} 
+			if( element.x > maxX ) {
+				maxX = element.x;
+			}
+			if( element.y < minY ) {
+				minY = element.y;
+			} 
+			if( element.y > maxY ) {
+				maxY = element.y;
+			}
+		}
+		
+		setSize(maxX - minX, maxY - minY);
+	}
+	
 	private void setupActor(final Holder element) {
 		final Actor actor = element.getActor();
 
 		float xActor = element.x * this.elementSize.x;
 		float yActor = element.y * this.elementSize.y;
 
-		actor.setPosition(xActor, yActor);
+		actor.setPosition(xActor + this.offset.x, yActor + this.offset.y);
 
 		if( actor instanceof ActorListener ) {
 			ActorListener actorListener = (ActorListener) actor;

@@ -62,6 +62,9 @@ public class ScreenshotFactory {
 	}
 
 	public static Texture loadScreenShot(Level level) {
+		if( level == null ) {
+			return null;
+		}
 		return loadScreenShot(level.getPositionAsString());
 	}
 
