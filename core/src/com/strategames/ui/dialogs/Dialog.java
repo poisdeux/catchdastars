@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.strategames.ui.widgets.TextButton;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
 
 /**
  * Use {@link Dialog#create()} to build the dialog and {@link Dialog#show()}

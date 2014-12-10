@@ -1,14 +1,19 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.scenes.scene2d.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import com.strategames.ui.interfaces.ActorListener;
 
-public class GridLayout extends WidgetGroup {
+public class GridLayout extends WidgetGroup implements EventListener {
 
 	/**
 	 * Interface used by GridLayout to notify listeners
@@ -37,12 +42,20 @@ public class GridLayout extends WidgetGroup {
 		public void onLongPress(int x, int y, Actor actor);
 	}
 
+	private Timer timer;
+	private boolean longPress;
+
 	private OnItemClickedListener listener;
 
 	private Vector2 elementSize = new Vector2(10, 10);
 	private Vector2 offset = new Vector2();
 
 	private Array<Holder> elements = new Array<Holder>();
+
+	public GridLayout() {
+		super();
+		addListener(this);
+	}
 
 	@Override
 	public void clear() {
@@ -151,7 +164,64 @@ public class GridLayout extends WidgetGroup {
 		}
 		return null;
 	}
-	
+
+	@Override
+	public boolean handle(Event e) {
+		if (!(e instanceof InputEvent)) return false;
+		InputEvent event = (InputEvent)e;
+
+		Gdx.app.log("GridLayout", "handle: event="+event.getType().name());
+		switch (event.getType()) {
+		case touchDown:
+			return touchDown(event);
+		case touchUp:
+			touchUp(event);
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private boolean touchDown(final InputEvent event) {
+		this.longPress = false;
+		final Actor actor = hit(event.getStageX(), event.getStageY(), false);
+		if( actor == null ) {
+			return false;
+		}
+
+		this.timer.scheduleTask(new Task() {
+
+			@Override
+			public void run() {
+				longPress = true;
+				if( listener != null ) {
+					int x = (int) ( actor.getX() / elementSize.x );
+					int y = (int) ( actor.getY() / elementSize.y );
+					listener.onLongPress(x, y, actor);
+				}
+			}
+		}, 1);
+		return true;
+	}
+
+	private boolean touchUp(InputEvent event) {
+		this.timer.clear();
+		
+		final Actor actor = hit(event.getStageX(), event.getStageY(), false);
+		if( actor == null ) {
+			return false;
+		}
+		
+		if( ! longPress ) {
+			if( this.listener != null ) {
+				int x = (int) ( actor.getX() / elementSize.x );
+				int y = (int) ( actor.getY() / elementSize.y );
+				this.listener.onTap(x, y, actor);
+			}
+		}
+		return true;
+	}
+
 	private void resize() {
 		int minX = 0;
 		int maxX = 0;
@@ -171,10 +241,10 @@ public class GridLayout extends WidgetGroup {
 				maxY = element.y;
 			}
 		}
-		
+
 		setSize(maxX - minX, maxY - minY);
 	}
-	
+
 	private void setupActor(final Holder element) {
 		final Actor actor = element.getActor();
 
@@ -183,34 +253,34 @@ public class GridLayout extends WidgetGroup {
 
 		actor.setPosition(xActor + this.offset.x, yActor + this.offset.y);
 
-		if( actor instanceof ActorListener ) {
-			ActorListener actorListener = (ActorListener) actor;
-			actorListener.setListener(new ActorListener() {
-
-				@Override
-				public void onTap(Actor actor) {
-					GridLayout.this.listener.onTap(element.x, element.y, actor);
-				}
-
-				@Override
-				public void onLongPress(Actor actor) {
-					GridLayout.this.listener.onLongPress(element.x, element.y, actor);
-				}
-
-				@Override
-				public void setListener(ActorListener listener) {
-				}
-			});
-		} else {
-			actor.addListener(new ClickListener() {
-				@Override
-				public void clicked(InputEvent event, float xc, float yc) {
-					if( listener != null ) {
-						listener.onTap(element.x, element.y, actor);
-					}
-				}
-			});
-		}
+//		if( actor instanceof ActorListener ) {
+//			ActorListener actorListener = (ActorListener) actor;
+//			actorListener.setListener(new ActorListener() {
+//
+//				@Override
+//				public void onTap(Actor actor) {
+//					GridLayout.this.listener.onTap(element.x, element.y, actor);
+//				}
+//
+//				@Override
+//				public void onLongPress(Actor actor) {
+//					GridLayout.this.listener.onLongPress(element.x, element.y, actor);
+//				}
+//
+//				@Override
+//				public void setListener(ActorListener listener) {
+//				}
+//			});
+//		} else {
+//			actor.addListener(new ClickListener() {
+//				@Override
+//				public void clicked(InputEvent event, float xc, float yc) {
+//					if( listener != null ) {
+//						listener.onTap(element.x, element.y, actor);
+//					}
+//				}
+//			});
+//		}
 	}
 
 	private Holder getHolderAt(int x, int y) {
@@ -251,4 +321,6 @@ public class GridLayout extends WidgetGroup {
 			this.actor = actor;
 		}
 	}
+
+
 }

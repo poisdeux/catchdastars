@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.strategames.ui.widgets.TextButton;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
 
 public class ButtonsDialog extends Dialog {
 	public static enum ORIENTATION {HORIZONTAL, VERTICAL};

@@ -9,10 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Screen;
 import com.strategames.ui.interfaces.ActorListener;
-import com.strategames.ui.widgets.TextButton;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package com.strategames.ui.widgets;
+package com.strategames.engine.scenes.scene2d.ui;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;

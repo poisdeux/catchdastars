@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi.ContentsResult;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 
@@ -37,13 +37,13 @@ extends AsyncTask<DriveId, Boolean, String> {
 	protected String doInBackground(DriveId... params) {
 		String contents = null;
 		DriveFile file = Drive.DriveApi.getFile(this.googleApiClient, params[0]);
-		ContentsResult contentsResult =
-				file.openContents(this.googleApiClient, DriveFile.MODE_READ_ONLY, null).await();
+		DriveContentsResult contentsResult =
+				file.open(this.googleApiClient, DriveFile.MODE_READ_ONLY, null).await();
 		if (!contentsResult.getStatus().isSuccess()) {
 			return null;
 		}
 		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(contentsResult.getContents().getInputStream()));
+				new InputStreamReader(contentsResult.getDriveContents().getInputStream()));
 		StringBuilder builder = new StringBuilder();
 		String line;
 		try {
@@ -54,8 +54,6 @@ extends AsyncTask<DriveId, Boolean, String> {
 		} catch (IOException e) {
 			Log.e("ImportAndroidActivity", "IOException while reading from the stream", e);
 		}
-
-		file.discardContents(this.googleApiClient, contentsResult.getContents()).await();
 		return contents;
 	}
 

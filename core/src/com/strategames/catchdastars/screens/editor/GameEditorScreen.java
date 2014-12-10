@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Game;
@@ -22,7 +23,6 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
 import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
 import com.strategames.ui.interfaces.ActorListener;
-import com.strategames.ui.widgets.TextButton;
 
 public class GameEditorScreen extends AbstractScreen {
 	private Table gamesButtonsTable;

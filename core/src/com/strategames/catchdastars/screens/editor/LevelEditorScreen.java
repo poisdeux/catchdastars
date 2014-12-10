@@ -27,6 +27,7 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Files;
@@ -43,7 +44,6 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.helpers.Grid;
 import com.strategames.ui.interfaces.ActorListener;
-import com.strategames.ui.widgets.MenuButton;
 
 public class LevelEditorScreen extends AbstractScreen 
 implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClickListener {

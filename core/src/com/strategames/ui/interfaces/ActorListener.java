@@ -13,6 +13,7 @@ public interface ActorListener {
 	 * @param actor
 	 */
 	public void onLongPress(Actor actor);
+	
 	/**
 	 * Use this to set the listener that will be called
 	 * when object is tapped or long pressed. This is useful

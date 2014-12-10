@@ -24,12 +24,14 @@ import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.GridLayout;
+import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
+import com.strategames.engine.scenes.scene2d.ui.GridLayout.OnItemClickedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.GameLoader;
-import com.strategames.engine.utils.GridLayout;
-import com.strategames.engine.utils.GridLayout.OnItemClickedListener;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.ScreenBorder;
@@ -39,8 +41,6 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
-import com.strategames.ui.widgets.ScreenshotImage;
-import com.strategames.ui.widgets.TextButton;
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener {
 	private GridLayout levelButtonsGrid;

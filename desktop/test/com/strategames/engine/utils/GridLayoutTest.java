@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.strategames.engine.scenes.scene2d.ui.GridLayout;
 
 public class GridLayoutTest {
 

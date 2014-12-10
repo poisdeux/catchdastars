@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
-import com.strategames.ui.widgets.TextButton;
+import com.strategames.engine.scenes.scene2d.ui.TextButton;
 
 public class GameObjectPickerDialog extends Dialog {
 	public static final int BUTTON_GAMEOBJECTSELECTED = 1;
