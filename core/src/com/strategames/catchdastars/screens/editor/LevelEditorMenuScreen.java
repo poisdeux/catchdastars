@@ -25,9 +25,9 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout;
+import com.strategames.engine.scenes.scene2d.ui.GridLayout.OnItemClickedListener;
 import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
-import com.strategames.engine.scenes.scene2d.ui.GridLayout.OnItemClickedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
 import com.strategames.engine.utils.Game;
@@ -87,7 +87,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		});
 
 		//Center button grid in scrollpane
-		this.levelButtonsGrid.setOffset(new Vector2((stage.getWidth() / 2f)-12f, 180f));
+		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
 		this.levelButtonsGrid.setElementSize(25f, 40f);
 
 		emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
@@ -99,7 +99,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		scrollPane.setWidth(stage.getWidth());
 		scrollPane.setPosition(0, 200f);
 		stage.addActor(scrollPane);
-
+		stage.addListener(this.levelButtonsGrid);
+		
 		TextButton button = new TextButton( "Main menu", skin);
 		button.setWidth(stage.getWidth());
 
@@ -133,6 +134,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		game.markLevelsReachable();
 
 		fillLevelButtonsTable(levelsArrayList);
+		
+		Gdx.app.log("LevelEditorMenuScreen", "show: this.levelButtonsGrid: pos=("+this.levelButtonsGrid.getX()+", "+this.levelButtonsGrid.getY());
 	}
 
 	@Override
