@@ -59,6 +59,11 @@ public class GridLayout extends WidgetGroup implements EventListener {
 
 	private Array<Holder> elements = new Array<Holder>();
 
+	public GridLayout() {
+		super();
+		setTransform(false);
+	}
+	
 	@Override
 	public void clear() {
 		elements.clear();
@@ -243,26 +248,36 @@ public class GridLayout extends WidgetGroup implements EventListener {
 	}
 
 	@Override
-	public void setPosition(float x, float y) {
-		Gdx.app.log("GridLayout", "setPosition: x="+x+", y="+y);
-		super.setPosition(x, y);
+	public void setSize(float width, float height) {
+		Gdx.app.log("GridLayout", "setSize: width="+width+", height="+height);
+		super.setSize(width, height);
 	}
 	
-	@Override
-	public void setX(float x) {
-		Gdx.app.log("GridLayout", "setX: x="+x);
-		super.setX(x);
-	}
-	
-	@Override
-	public void setY(float y) {
-		Gdx.app.log("GridLayout", "setY: y="+y);
-		super.setY(y);
-	}
+//	@Override
+//	public void setPosition(float x, float y) {
+//		Gdx.app.log("GridLayout", "setPosition: x="+x+", y="+y);
+//		super.setPosition(x, y);
+//	}
+//	
+//	@Override
+//	public void setX(float x) {
+//		Gdx.app.log("GridLayout", "setX: x="+x);
+//		super.setX(x);
+//	}
+//	
+//	@Override
+//	public void setY(float y) {
+//		Gdx.app.log("GridLayout", "setY: y="+y);
+//		super.setY(y);
+//	}
 	
 	@Override
 	public void layout() {
 		Gdx.app.log("GridLayout", "layout: ");
+		
+		//Center in middle of layout
+		float offsetX = getWidth() / 2f;
+		float offsetY = getHeight() / 2f;
 		
 		for( Holder element : this.elements ) {
 			Actor actor = element.getActor();
@@ -270,7 +285,7 @@ public class GridLayout extends WidgetGroup implements EventListener {
 			float xActor = element.x * this.elementSize.x;
 			float yActor = element.y * this.elementSize.y;
 
-			actor.setPosition(xActor + getX(), yActor + getY());
+			actor.setPosition(xActor + offsetX, yActor + offsetY);
 		}
 	}
 

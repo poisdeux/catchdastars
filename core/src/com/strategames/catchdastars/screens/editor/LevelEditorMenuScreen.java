@@ -27,6 +27,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout.OnItemClickedListener;
 import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
+import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
@@ -46,7 +47,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 	private GridLayout levelButtonsGrid;
 	private Level editingLevel;
 	private Pixmap emptyLevelImage;
-
+	private ScrollPane scrollPane;
+	
 	public LevelEditorMenuScreen(GameEngine game) {
 		super(game, "Level editor");
 	}
@@ -87,19 +89,39 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		});
 
 		//Center button grid in scrollpane
-		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
+//		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
 		this.levelButtonsGrid.setElementSize(25f, 40f);
-
-		emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
-		emptyLevelImage.setColor(0, 1, 0, 0.3f);
-		emptyLevelImage.fill();
-
-		ScrollPane scrollPane = new ScrollPane(levelButtonsGrid, skin);
-		scrollPane.setHeight(400f);
-		scrollPane.setWidth(stage.getWidth());
-		scrollPane.setPosition(0, 200f);
-		stage.addActor(scrollPane);
 		stage.addListener(this.levelButtonsGrid);
+		
+		this.emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
+		this.emptyLevelImage.setColor(0, 1, 0, 0.3f);
+		this.emptyLevelImage.fill();
+		
+		Table table = new Table();
+		table.setSkin(skin);
+		table.add("test1");
+//		table.add("test2");
+//		table.add("test3");
+//		table.add("test4");
+//		table.add("test5");
+//		table.add("test6");
+//		table.add("test7");
+//		table.add("test8");
+//		table.add("test9");
+//		table.add("test10");
+//		table.add("test11");
+//		table.add("test12");
+//		table.add("test13");
+//		table.add("test14");
+//		table.add("test15");
+//		table.add("test16");
+		
+		this.scrollPane = new ScrollPane(this.levelButtonsGrid, skin);
+		this.scrollPane.setHeight(400f);
+		this.scrollPane.setWidth(stage.getWidth());
+		this.scrollPane.setPosition(0, 200f);
+		stage.addActor(this.scrollPane);
+		
 		
 		TextButton button = new TextButton( "Main menu", skin);
 		button.setWidth(stage.getWidth());
