@@ -100,22 +100,37 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Table table = new Table();
 		table.setSkin(skin);
 		table.add("test1");
-//		table.add("test2");
-//		table.add("test3");
-//		table.add("test4");
-//		table.add("test5");
-//		table.add("test6");
-//		table.add("test7");
-//		table.add("test8");
-//		table.add("test9");
-//		table.add("test10");
-//		table.add("test11");
-//		table.add("test12");
-//		table.add("test13");
-//		table.add("test14");
-//		table.add("test15");
-//		table.add("test16");
-		
+		table.row();
+		table.add("test2");
+		table.row();
+		table.add("test3");
+		table.row();
+		table.add("test4");
+		table.row();
+		table.add("test5");
+		table.row();
+		table.add("test6");
+		table.row();
+		table.add("test7");
+		table.row();
+		table.add("test8");
+		table.row();
+		table.add("test9");
+		table.row();
+		table.add("test10");
+		table.row();
+		table.add("test11");
+		table.row();
+		table.add("test12");
+		table.row();
+		table.add("test13");
+		table.row();
+		table.add("test14");
+		table.row();
+		table.add("test15");
+		table.row();
+		table.add("test16");
+		stage.addListener(table);
 		this.scrollPane = new ScrollPane(this.levelButtonsGrid, skin);
 		this.scrollPane.setHeight(400f);
 		this.scrollPane.setWidth(stage.getWidth());
@@ -157,7 +172,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		fillLevelButtonsTable(levelsArrayList);
 		
-		Gdx.app.log("LevelEditorMenuScreen", "show: this.levelButtonsGrid: pos=("+this.levelButtonsGrid.getX()+", "+this.levelButtonsGrid.getY());
+		Gdx.app.log("LevelEditorMenuScreen", "show: this.levelButtonsGrid: size=("+this.levelButtonsGrid.getWidth()+","+this.levelButtonsGrid.getHeight()+")");
 	}
 
 	@Override
