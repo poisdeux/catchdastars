@@ -24,11 +24,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.ui.dialogs.ButtonsDialog;
-import com.strategames.ui.interfaces.ActorListener;
 
 /**
  * TODO dialogs do not take exclusive focus which means that user can still select
@@ -501,11 +501,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 					@Override
 					public void onLongPress(Actor actor) {	}
 					
-					@Override
-					public void setListener(ActorListener listener) {
-						// TODO Auto-generated method stub
-						
-					}
 				});
 				getStageUIActors().addActor(this.menuButton);
 			}

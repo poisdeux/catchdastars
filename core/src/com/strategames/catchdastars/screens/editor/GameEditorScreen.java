@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
@@ -22,7 +23,6 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.TextInputDialog;
 import com.strategames.ui.dialogs.TextInputDialog.OnCloseListener;
-import com.strategames.ui.interfaces.ActorListener;
 
 public class GameEditorScreen extends AbstractScreen {
 	private Table gamesButtonsTable;
@@ -160,12 +160,6 @@ public class GameEditorScreen extends AbstractScreen {
 			@Override
 			public void onLongPress(Actor actor) {
 				showGameConfigurationDialog(game);
-			}
-			
-			@Override
-			public void setListener(ActorListener listener) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		this.gamesButtonsTable.add(button);

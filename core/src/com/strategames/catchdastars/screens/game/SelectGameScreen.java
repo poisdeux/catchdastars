@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.CatchDaStars;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.Game;
@@ -16,7 +17,6 @@ import com.strategames.engine.utils.GameLoader;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
-import com.strategames.ui.interfaces.ActorListener;
 
 public class SelectGameScreen extends AbstractScreen {
 	private Table gamesButtonsTable;
@@ -99,12 +99,6 @@ public class SelectGameScreen extends AbstractScreen {
 			@Override
 			public void onLongPress(Actor actor) {
 				//TODO add option to clear a saved game and start a new game
-			}
-			
-			@Override
-			public void setListener(ActorListener listener) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		this.gamesButtonsTable.add(button);

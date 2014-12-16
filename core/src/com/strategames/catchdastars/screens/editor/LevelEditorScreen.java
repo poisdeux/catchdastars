@@ -27,10 +27,10 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
-import com.strategames.engine.utils.Files;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
@@ -43,7 +43,6 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.helpers.Grid;
-import com.strategames.ui.interfaces.ActorListener;
 
 public class LevelEditorScreen extends AbstractScreen 
 implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClickListener {
@@ -766,11 +765,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	@Override
 	public void onLongPress(Actor actor) {
 
-	}
-
-	@Override
-	public void setListener(ActorListener listener) {
-		
 	}
 	
 	private boolean inGameArea(GameObject gameObject) {

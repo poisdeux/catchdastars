@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
@@ -24,9 +25,9 @@ import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
+import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout;
 import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
-import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.utils.FileWriter;
@@ -41,7 +42,6 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
-import com.strategames.ui.interfaces.ActorListener;
 
 public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener, ActorListener {
 	private GridLayout levelButtonsGrid;
@@ -82,39 +82,73 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 		Table table = new Table();
 		table.setSkin(skin);
-		table.add("test1");
+		int count = 1;
+		TextButton b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test2");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test3");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test4");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test5");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test6");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test7");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test8");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test9");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test10");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test11");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test12");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test13");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test14");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test15");
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
 		table.row();
-		table.add("test16");
-		stage.addListener(table);
-		this.scrollPane = new ScrollPane(this.levelButtonsGrid, skin);
+		b = new TextButton("test" + count++, skin);
+		b.setListener(this);
+		table.add(b);
+		table.row();
+		
+		this.scrollPane = new ScrollPane(table, skin);
 		this.scrollPane.setHeight(400f);
 		this.scrollPane.setWidth(stage.getWidth());
 		this.scrollPane.setPosition(0, 200f);
@@ -453,6 +487,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	@Override
 	public void onTap(Actor actor) {
+		Gdx.app.log("LevelEditorMenuScreen", "onTap: actor="+actor);
 		if( actor instanceof ScreenshotImage ) {
 			startLevelEditor((ScreenshotImage) actor);
 		}
@@ -463,11 +498,5 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		if( actor instanceof ScreenshotImage ) {
 			startEditLevelDialog((ScreenshotImage) actor);
 		}
-	}
-
-	@Override
-	public void setListener(ActorListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 }
