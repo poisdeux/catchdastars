@@ -3,15 +3,8 @@ package com.strategames.engine.scenes.scene2d.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
-import com.strategames.ui.interfaces.ActorListener;
 
 /**
  * TODO Make GridLayout work in a ScrollPane. Use Table as an example.
@@ -19,41 +12,9 @@ import com.strategames.ui.interfaces.ActorListener;
  * @author martijn
  *
  */
-public class GridLayout extends WidgetGroup implements EventListener {
-
-	/**
-	 * Interface used by GridLayout to notify listeners
-	 * for click events on grid items
-	 * @author martijn
-	 *
-	 */
-	public interface OnItemClickedListener {
-		/**
-		 * Called when item is tapped
-		 * @param x position in gridlayout
-		 * @param y position in gridlayout
-		 * @param actor tapped
-		 */
-		public void onTap(int x, int y, Actor actor);
-
-		/**
-		 * Called when item is long pressed
-		 * <br/>
-		 * Note that onLongPress is only called on actors that
-		 * implement the {@link ActorListener} interface
-		 * @param x position in gridlayout
-		 * @param y position in gridlayout
-		 * @param actor tapped
-		 */
-		public void onLongPress(int x, int y, Actor actor);
-	}
+public class GridLayout extends WidgetGroup {
 
 	private boolean sizeInvalid;
-
-	private Timer timer = new Timer();
-	private boolean longPress;
-
-	private OnItemClickedListener listener;
 
 	private Vector2 elementSize = new Vector2(10, 10);
 	//	private Vector2 offset = new Vector2();
@@ -79,16 +40,14 @@ public class GridLayout extends WidgetGroup implements EventListener {
 		return actors;
 	}
 
+	
+	
 	public void setElementSize(float width, float height) {
 		this.elementSize = new Vector2(width, height);
 	}
 
 	public Vector2 getElementSize() {
 		return elementSize;
-	}
-
-	public void setListener(OnItemClickedListener listener) {
-		this.listener = listener;
 	}
 
 	/**
@@ -111,30 +70,7 @@ public class GridLayout extends WidgetGroup implements EventListener {
 		}
 
 		if( actor != null ) {
-//			setupActor(element);
 			addActor(actor);
-			actor.addListener(new ClickListener() {
-				@Override
-				public boolean touchDown(InputEvent event, float x, float y,
-						int pointer, int button) {
-					// TODO Auto-generated method stub
-					return handleTouchDownEvent(event, actor);
-				}
-				
-				@Override
-				public void touchUp(InputEvent event, float x, float y,
-						int pointer, int button) {
-					handleTouchUpEvent(event, actor);
-				}
-				
-				@Override
-				public void touchDragged(InputEvent event, float x, float y,
-						int pointer) {
-					// TODO Auto-generated method stub
-					super.touchDragged(event, x, y, pointer);
-				}
-				
-			});
 		}
 	}
 
@@ -181,7 +117,7 @@ public class GridLayout extends WidgetGroup implements EventListener {
 	public int[] getPosition(Actor actor) {
 		for(Holder element : this.elements) {
 			if( ( element.getActor() == actor ) ) {
-				return new int[] {element.getX(), element.getY()}; 
+				return new int[] {element.getX(), element.getY()};
 			}
 		}
 		return null;
@@ -209,57 +145,6 @@ public class GridLayout extends WidgetGroup implements EventListener {
 	public float getMinHeight () {
 		if (sizeInvalid) computeSize();
 		return getHeight();
-	}
-
-	@Override
-	public boolean handle(Event e) {
-		if (!(e instanceof InputEvent)) return false;
-		InputEvent event = (InputEvent)e;
-
-//		Gdx.app.log("GridLayout", "handle: event="+event.getType().name());
-		switch (event.getType()) {
-		case touchDown:
-			return false;
-		case touchUp:
-			return false;
-		default:
-			return false;
-		}
-	}
-
-	private boolean handleTouchDownEvent(final InputEvent event, final Actor actor) {
-		this.longPress = false;
-		
-		this.timer.scheduleTask(new Task() {
-
-			@Override
-			public void run() {
-				longPress = true;
-				if( listener != null ) {
-					Holder holder = getHolder(actor);
-					if( holder != null ) {
-						listener.onLongPress(holder.x, holder.y, actor);
-					}
-				}
-			}
-		}, 1);
-		return true;
-	}
-
-	private boolean handleTouchUpEvent(InputEvent event, Actor actor) {
-		this.timer.clear();
-
-		Gdx.app.log("GridLayout", "touchUp: actor="+actor);
-
-		if( ! longPress ) {
-			if( this.listener != null ) {
-				Holder holder = getHolder(actor);
-				if( holder != null ) {
-					listener.onTap(holder.x, holder.y, actor);
-				}
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -304,20 +189,6 @@ public class GridLayout extends WidgetGroup implements EventListener {
 			
 			Gdx.app.log("GridLayout", "layout(): actor="+actor+", pos=("+actor.getX()+", "+actor.getY()+")");
 		}
-	}
-
-	/**
-	 * Returns the holder containing the actor
-	 * @param actor
-	 * @return holder containing actor or null if not found
-	 */
-	private Holder getHolder(Actor actor) {
-		for( Holder element : elements ) {
-			if( element.actor == actor ) {
-				return element;
-			}
-		}
-		return null;
 	}
 	
 	private void computeSize() {

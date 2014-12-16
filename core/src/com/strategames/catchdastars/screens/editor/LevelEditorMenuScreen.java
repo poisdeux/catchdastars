@@ -25,7 +25,6 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout;
-import com.strategames.engine.scenes.scene2d.ui.GridLayout.OnItemClickedListener;
 import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
 import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
@@ -42,13 +41,14 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
+import com.strategames.ui.interfaces.ActorListener;
 
-public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener {
+public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener, ActorListener {
 	private GridLayout levelButtonsGrid;
 	private Level editingLevel;
 	private Pixmap emptyLevelImage;
 	private ScrollPane scrollPane;
-	
+
 	public LevelEditorMenuScreen(GameEngine game) {
 		super(game, "Level editor");
 	}
@@ -71,32 +71,15 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		}
 
 		this.levelButtonsGrid = new GridLayout();
-		this.levelButtonsGrid.setListener(new OnItemClickedListener() {
-
-			@Override
-			public void onTap(int x, int y, Actor actor) {
-				if( actor instanceof ScreenshotImage ) {
-					startLevelEditor(x, y, (ScreenshotImage) actor);
-				}
-			}
-
-			@Override
-			public void onLongPress(int x, int y, Actor actor) {
-				if( actor instanceof ScreenshotImage ) {
-					startEditLevelDialog(x, y, (ScreenshotImage) actor);
-				}
-			}
-		});
 
 		//Center button grid in scrollpane
-//		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
+		//		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
 		this.levelButtonsGrid.setElementSize(25f, 40f);
-		stage.addListener(this.levelButtonsGrid);
-		
+
 		this.emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
 		this.emptyLevelImage.setColor(0, 1, 0, 0.3f);
 		this.emptyLevelImage.fill();
-		
+
 		Table table = new Table();
 		table.setSkin(skin);
 		table.add("test1");
@@ -136,8 +119,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		this.scrollPane.setWidth(stage.getWidth());
 		this.scrollPane.setPosition(0, 200f);
 		stage.addActor(this.scrollPane);
-		
-		
+
+
 		TextButton button = new TextButton( "Main menu", skin);
 		button.setWidth(stage.getWidth());
 
@@ -171,7 +154,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		game.markLevelsReachable();
 
 		fillLevelButtonsTable(levelsArrayList);
-		
+
 		Gdx.app.log("LevelEditorMenuScreen", "show: this.levelButtonsGrid: size=("+this.levelButtonsGrid.getWidth()+","+this.levelButtonsGrid.getHeight()+")");
 	}
 
@@ -245,7 +228,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 
 	}
 
-	private void startLevelEditor(int x, int y, ScreenshotImage image) {
+	private void startLevelEditor(ScreenshotImage image) {
 		CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
 		Level level = null;
 
@@ -253,7 +236,8 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		if( tag instanceof Level ) {
 			level = (Level) tag;
 		} else {
-			level = createNewLevel(x, y);
+			int[] pos = this.levelButtonsGrid.getPosition(image);
+			level = createNewLevel(pos[0], pos[1]);
 			image.setTag(level);
 			addLevel(level);
 		}
@@ -263,7 +247,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		gameEngine.showLevelEditor();
 	}
 
-	private void startEditLevelDialog(int x, int y, ScreenshotImage image) {
+	private void startEditLevelDialog(ScreenshotImage image) {
 
 		Object tag = image.getTag();
 		if( ! (tag instanceof Level ) ) {
@@ -280,7 +264,7 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		Color selectedColor = getSkin().getColor("red");
 		image.setColor(selectedColor);
 	}
-	
+
 	private void addLevel(Level level) {
 		Game game = getGameEngine().getGame();
 		game.addLevel(level);
@@ -463,6 +447,27 @@ public class LevelEditorMenuScreen extends AbstractScreen implements Dialog.OnCl
 		image.setTag(level);
 		image.setScaling(Scaling.fit);
 		image.setSize(width, height);
+		image.setListener(this);
 		return image;
+	}
+
+	@Override
+	public void onTap(Actor actor) {
+		if( actor instanceof ScreenshotImage ) {
+			startLevelEditor((ScreenshotImage) actor);
+		}
+	}
+
+	@Override
+	public void onLongPress(Actor actor) {
+		if( actor instanceof ScreenshotImage ) {
+			startEditLevelDialog((ScreenshotImage) actor);
+		}
+	}
+
+	@Override
+	public void setListener(ActorListener listener) {
+		// TODO Auto-generated method stub
+
 	}
 }
