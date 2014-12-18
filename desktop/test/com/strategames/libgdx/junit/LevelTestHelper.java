@@ -1,7 +1,6 @@
 package com.strategames.libgdx.junit;
 
 import java.util.Random;
-import java.util.UUID;
 
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.utils.Level;

@@ -1,24 +1,17 @@
 package com.strategames.engine.scenes.scene2d.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * TODO Make GridLayout work in a ScrollPane. Use Table as an example.
- * see http://nexsoftware.net/wp/2013/05/09/libgdx-making-a-paged-level-selection-screen/
- * @author martijn
- *
- */
 public class GridLayout extends WidgetGroup {
 
-	private boolean sizeInvalid;
-
+	private boolean sizeInvalid = true;
+	private float gridPrefWidth, gridPrefHeight;
+	
 	private Vector2 elementSize = new Vector2(10, 10);
-	//	private Vector2 offset = new Vector2();
 
 	private Array<Holder> elements = new Array<Holder>();
 
@@ -27,7 +20,7 @@ public class GridLayout extends WidgetGroup {
 		setTransform(false);
 		setTouchable(Touchable.childrenOnly);
 	}
-	
+
 	@Override
 	public void clear() {
 		elements.clear();
@@ -42,8 +35,8 @@ public class GridLayout extends WidgetGroup {
 		return actors;
 	}
 
-	
-	
+
+
 	public void setElementSize(float width, float height) {
 		this.elementSize = new Vector2(width, height);
 	}
@@ -52,6 +45,11 @@ public class GridLayout extends WidgetGroup {
 		return elementSize;
 	}
 
+	@Override
+	public void invalidate() {
+		this.sizeInvalid = true;
+		super.invalidate();
+	}
 	/**
 	 * Sets element at given index.
 	 * @param x 
@@ -65,7 +63,7 @@ public class GridLayout extends WidgetGroup {
 		if( element == null ) {
 			element = new Holder(actor, x, y);
 			this.elements.add(element);
-			sizeInvalid = true;
+			invalidate();
 		} else {
 			element.getActor().remove();
 			element.setActor(actor);
@@ -88,7 +86,7 @@ public class GridLayout extends WidgetGroup {
 			if( ( element.getX() == x ) && ( element.getY() == y ) ) {
 				Actor actor = element.getActor();
 				actor.remove();
-				sizeInvalid = true;
+				invalidate();
 				return actor; 
 			}
 		}
@@ -128,71 +126,59 @@ public class GridLayout extends WidgetGroup {
 	@Override
 	public float getPrefWidth () {
 		if (sizeInvalid) computeSize();
-		return getWidth();
+		return gridPrefWidth;
 	}
 
 	@Override
 	public float getPrefHeight () {
 		if (sizeInvalid) computeSize();
-		return getHeight();
+		return gridPrefHeight;
 	}
 
 	@Override
 	public float getMinWidth () {
-		if (sizeInvalid) computeSize();
-		return getWidth();
+		return this.elementSize.x;
 	}
 
 	@Override
 	public float getMinHeight () {
-		if (sizeInvalid) computeSize();
-		return getHeight();
+		return this.elementSize.y;
 	}
 
 	@Override
 	public void setSize(float width, float height) {
-		Gdx.app.log("GridLayout", "setSize: width="+width+", height="+height);
 		super.setSize(width, height);
 	}
-	
-//	@Override
-//	public void setPosition(float x, float y) {
-//		Gdx.app.log("GridLayout", "setPosition: x="+x+", y="+y);
-//		super.setPosition(x, y);
-//	}
-//	
-//	@Override
-//	public void setX(float x) {
-//		Gdx.app.log("GridLayout", "setX: x="+x);
-//		super.setX(x);
-//	}
-//	
-//	@Override
-//	public void setY(float y) {
-//		Gdx.app.log("GridLayout", "setY: y="+y);
-//		super.setY(y);
-//	}
-	
+
+	@Override
+	public void setPosition(float x, float y) {
+		super.setPosition(x - getOriginX(), y - getOriginY());
+	}
+
+
+	@Override
+	public void setX(float x) {
+		super.setX(x - getOriginX());
+	}
+
+	@Override
+	public void setY(float y) {
+		super.setY(y - getOriginY());
+	}
+
 	@Override
 	public void layout() {
-		Gdx.app.log("GridLayout", "layout: ");
-		
-		//Center in middle of layout
-		float offsetX = getWidth() / 2f;
-		float offsetY = getHeight() / 2f;
-		
 		for( Holder element : this.elements ) {
 			Actor actor = element.getActor();
 
 			float xActor = element.x * this.elementSize.x;
 			float yActor = element.y * this.elementSize.y;
 
-			actor.setPosition(xActor + offsetX, yActor + offsetY);
-			
-			Gdx.app.log("GridLayout", "layout(): actor="+actor+", pos=("+actor.getX()+", "+actor.getY()+")");
+			actor.setPosition(xActor, yActor);
+
 		}
 	}
-	
+
 	private void computeSize() {
 		int minX = 0;
 		int maxX = 0;
@@ -213,13 +199,14 @@ public class GridLayout extends WidgetGroup {
 			}
 		}
 
-		float width = (maxX - minX) * elementSize.x;
-		float height = (maxY - minY) * elementSize.y;
-		setSize(width, height);
+		this.gridPrefWidth = ((maxX - minX) + 1) * elementSize.x;
+		this.gridPrefHeight = ((maxY - minY) + 1) * elementSize.y;
+
+		setOrigin(minX * elementSize.x, minY * elementSize.y);
 
 		sizeInvalid = false;
 	}
-	
+
 	private Holder getHolderAt(int x, int y) {
 		Holder holder = null;
 

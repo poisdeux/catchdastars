@@ -3,8 +3,8 @@ package com.strategames.libgdx.junit;
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
-import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.Level;
 
 public class LevelsTestHelper {
 	
