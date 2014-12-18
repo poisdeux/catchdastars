@@ -59,11 +59,10 @@ build/
 
 
 ## Custom
-
-screenshots/
-levels/
 bin/
 gen/
 core/lib/
 desktop/lib/
 ios/lib/
+desktop/games/
+desktop/screenshots/
