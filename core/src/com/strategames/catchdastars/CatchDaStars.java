@@ -25,9 +25,8 @@ import com.strategames.catchdastars.gameobjects.StarBlue;
 import com.strategames.catchdastars.gameobjects.StarRed;
 import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.catchdastars.screens.editor.GameEditorScreen;
-import com.strategames.catchdastars.screens.editor.LevelEditorMenuScreen;
 import com.strategames.catchdastars.screens.editor.LevelEditorScreen;
-import com.strategames.catchdastars.screens.game.SelectGameScreen;
+import com.strategames.catchdastars.screens.editor.SelectGameScreen;
 import com.strategames.catchdastars.screens.game.SettingsScreen;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
@@ -312,7 +311,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	}
 
 	public void showLevelEditorMenu() {
-		Screen screen = new LevelEditorMenuScreen(this);
+		Screen screen = new GameEditorScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
 	}
@@ -324,7 +323,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	}
 	
 	public void showGameEditorScreen() {
-		Screen screen = new GameEditorScreen(this);
+		Screen screen = new SelectGameScreen(this);
 		setScreen(screen);
 		addToBackstack(screen);
 	}

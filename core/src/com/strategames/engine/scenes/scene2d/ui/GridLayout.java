@@ -2,16 +2,19 @@ package com.strategames.engine.scenes.scene2d.ui;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
 public class GridLayout extends WidgetGroup {
+	private boolean center;
 
 	private boolean sizeInvalid = true;
 	private float gridPrefWidth, gridPrefHeight;
-	
+
 	private Vector2 elementSize = new Vector2(10, 10);
+	private Vector2 offset = new Vector2(0,0);
 
 	private Array<Holder> elements = new Array<Holder>();
 
@@ -35,7 +38,18 @@ public class GridLayout extends WidgetGroup {
 		return actors;
 	}
 
+	/**
+	 * Will position the element at 0,0 at the center of
+	 * the parent
+	 * @param center true to center in parent
+	 */
+	public void setCenter(boolean center) {
+		this.center = center;
+	}
 
+	public boolean isCenter() {
+		return center;
+	}
 
 	public void setElementSize(float width, float height) {
 		this.elementSize = new Vector2(width, height);
@@ -171,8 +185,8 @@ public class GridLayout extends WidgetGroup {
 		for( Holder element : this.elements ) {
 			Actor actor = element.getActor();
 
-			float xActor = element.x * this.elementSize.x;
-			float yActor = element.y * this.elementSize.y;
+			float xActor = (element.x * this.elementSize.x) + this.offset.x;
+			float yActor = (element.y * this.elementSize.y) + this.offset.y;
 
 			actor.setPosition(xActor, yActor);
 
@@ -180,6 +194,17 @@ public class GridLayout extends WidgetGroup {
 	}
 
 	private void computeSize() {
+		offset.x = 0;
+		offset.y = 0;
+		
+		if( center ) {
+			Group parent = getParent();
+			if( parent != null ) {
+				offset.x = parent.getWidth() / 2f;
+				offset.y = parent.getHeight() / 2f;
+			}
+		}
+
 		int minX = 0;
 		int maxX = 0;
 		int minY = 0;
@@ -199,10 +224,8 @@ public class GridLayout extends WidgetGroup {
 			}
 		}
 
-		this.gridPrefWidth = ((maxX - minX) + 1) * elementSize.x;
-		this.gridPrefHeight = ((maxY - minY) + 1) * elementSize.y;
-
-		setOrigin(minX * elementSize.x, minY * elementSize.y);
+		this.gridPrefWidth = offset.x + (((maxX - minX) + 1) * elementSize.x);
+		this.gridPrefHeight = offset.y + (((maxY - minY) + 1) * elementSize.y);
 
 		sizeInvalid = false;
 	}
