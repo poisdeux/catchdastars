@@ -215,7 +215,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 				}
 			}
 			if( wall == null ) {
-				this.level.removeDoor(door);
+				this.level.removeGameObject(door);
 				gameObject.remove();
 			} else {
 				placeDoor(door, wall);
@@ -406,9 +406,9 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 				int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
 				float middle = worldSize.x / 2f;
 				if( wallX < middle ) { //If left border set next level to left
-					door.setNextLevelPosition(currentLevelPosition[0] - 1, currentLevelPosition[1]);
+					door.setEntryLevel(currentLevelPosition[0] - 1, currentLevelPosition[1]);
 				} else { // set next level to right
-					door.setNextLevelPosition(currentLevelPosition[0] + 1, currentLevelPosition[1]);
+					door.setEntryLevel(currentLevelPosition[0] + 1, currentLevelPosition[1]);
 				}
 			}
 		} else {
@@ -419,9 +419,9 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 				int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
 				float middle = worldSize.x / 2f;
 				if( wallY < middle ) { //If bottom border set next level to bottom
-					door.setNextLevelPosition(currentLevelPosition[0], currentLevelPosition[1] - 1);
+					door.setEntryLevel(currentLevelPosition[0], currentLevelPosition[1] - 1);
 				} else { // set next level to top
-					door.setNextLevelPosition(currentLevelPosition[0], currentLevelPosition[1] + 1);
+					door.setEntryLevel(currentLevelPosition[0], currentLevelPosition[1] + 1);
 				}
 			}
 		}

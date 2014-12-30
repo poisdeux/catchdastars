@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -37,9 +40,9 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelLoader;
 import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.engine.utils.ScreenshotFactory;
+import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
-import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
@@ -49,6 +52,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private Level editingLevel;
 	private Pixmap emptyLevelImage;
 	private ScrollPane scrollPane;
+	private Textures textures = Textures.getInstance();
 
 	public GameEditorScreen(GameEngine game) {
 		super(game, "Level editor");
@@ -77,7 +81,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		//		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
 		this.levelButtonsGrid.setElementSize(25f, 40f);
 		this.levelButtonsGrid.setCenter(true);
-		
+
 		this.emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
 		this.emptyLevelImage.setColor(0, 1, 0, 0.3f);
 		this.emptyLevelImage.fill();
@@ -91,7 +95,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			table.add(b);
 			table.row();
 		}
-		
+
 		this.scrollPane = new ScrollPane(this.levelButtonsGrid, skin);
 		this.scrollPane.setHeight(400f);
 		this.scrollPane.setWidth(stage.getWidth());
@@ -134,8 +138,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		fillLevelButtonsTable(levelsArrayList);
 
 		this.scrollPane.scrollToCenter(30, 40, 100, 100);
-		
-		Gdx.app.log("LevelEditorMenuScreen", "show: this.levelButtonsGrid: size=("+this.levelButtonsGrid.getWidth()+","+this.levelButtonsGrid.getHeight()+")");
 	}
 
 	@Override
@@ -269,11 +271,20 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			ScreenshotImage image = createLevelImage(null);
 			this.levelButtonsGrid.set(0, 0, image);
 		} else {
+			/**
+			 * First we need to fill the grid so we can determine which are the outer levels
+			 * accessing non existing levels
+			 */
+
 			for( Level level : levels ) {
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], createLevelImage(level));
 			}
 
+			/**
+			 * Create new level images and set arrows to show the the path in which the user can
+			 * access the different levels
+			 */
 			for( Level level : levels ) {
 				int[] position = level.getPosition();
 				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
@@ -297,14 +308,50 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private void addNextLevelButtons(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
+		Vector2 overlaySize = new Vector2(elementSize.x / 3f, 0);
+		
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
-			final int[] nextLevelPosition = door.getNextLevelPosition();
-			if( this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]) == null ) {
-				ScreenshotImage image = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
-				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], image);	
+			int[] nextLevelPosition = door.getNextLevelPosition();
+			ScreenshotImage nextLevel = (ScreenshotImage) this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]);
+			if( nextLevel == null ) {
+				nextLevel = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
+				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevel);	
+			} 
+			TextureRegion arrowTexture = getArrow(level.getPosition(), nextLevelPosition);
+			if( arrowTexture != null ) {
+//				Sprite sprite;
+//				Image image = new Image(arrowTexture);
+//				image.setScaling(Scaling.fit);
+//				image.setSize(overlaySize.x, overlaySize.x); // yes, width is used twice to make sure arrows are all of equal size
+				overlaySize.y =  ( overlaySize.x * arrowTexture.getRegionHeight() ) / arrowTexture.getRegionWidth();
+				
+				nextLevel.addOverlay(arrowTexture);
+				nextLevel.setOverlaySize(overlaySize);
 			}
 		}
+	}
+
+	private TextureRegion getArrow(int[] curPos, int[] nextPos) {
+		if( nextPos[0] < curPos[0] ) {
+			return this.textures.arrowLeft;
+		} else if( nextPos[0] > curPos[0] ) {
+			return this.textures.arrowRight;
+		} else if( nextPos[1] < curPos[1] ) {
+			return this.textures.arrowBottom;
+		} else if( nextPos[1] > curPos[1] ) {
+			return this.textures.arrowTop;
+		}
+		return null;
+	}
+
+	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
+		ScreenshotImage image = new ScreenshotImage(texture);
+		image.setTag(level);
+		image.setScaling(Scaling.fit);
+		image.setSize(width, height);
+		image.setListener(this);
+		return image;
 	}
 
 	private void showErrorDialog(String title, String message) {
@@ -422,18 +469,8 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		return level;
 	}
 
-	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
-		ScreenshotImage image = new ScreenshotImage(texture);
-		image.setTag(level);
-		image.setScaling(Scaling.fit);
-		image.setSize(width, height);
-		image.setListener(this);
-		return image;
-	}
-
 	@Override
 	public void onTap(Actor actor) {
-		Gdx.app.log("LevelEditorMenuScreen", "onTap: actor="+actor);
 		if( actor instanceof ScreenshotImage ) {
 			startLevelEditor((ScreenshotImage) actor);
 		}

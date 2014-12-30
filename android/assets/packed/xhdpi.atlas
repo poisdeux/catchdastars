@@ -1,6 +1,6 @@
 
 xhdpi.png
-size: 972,504
+size: 1022,504
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -177,5 +177,33 @@ star_yellow
   xy: 678, 210
   size: 96, 96
   orig: 96, 96
+  offset: 0, 0
+  index: -1
+tango_arrow_bottom
+  rotate: false
+  xy: 974, 456
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+tango_arrow_left
+  rotate: false
+  xy: 776, 258
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+tango_arrow_right
+  rotate: false
+  xy: 532, 156
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+tango_arrow_top
+  rotate: false
+  xy: 826, 358
+  size: 48, 48
+  orig: 48, 48
   offset: 0, 0
   index: -1

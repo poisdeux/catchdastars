@@ -12,4 +12,8 @@
 ./resizesvg.sh 48 48 originals/star_*.svg
 ./resizesvg.sh 190 201 originals/cash_register.svg
 ./resizesvg.sh 48 48 originals/passagetonextlevel.svg
+./resizesvg.sh 24 24 originals/tango_arrow_bottom.svg
+./resizesvg.sh 24 24 originals/tango_arrow_top.svg
+./resizesvg.sh 24 24 originals/tango_arrow_left.svg
+./resizesvg.sh 24 24 originals/tango_arrow_right.svg
 

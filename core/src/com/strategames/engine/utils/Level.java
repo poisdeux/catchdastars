@@ -2,7 +2,6 @@ package com.strategames.engine.utils;
 
 import java.util.Locale;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -34,9 +33,6 @@ public class Level implements Comparable<Level>, Writer {
 
 		for( GameObject object : gameObjects ) {
 			addGameObject(object);
-			if( object instanceof Door ) {
-				this.doors.add((Door) object);
-			}
 		}
 	}
 
@@ -49,7 +45,6 @@ public class Level implements Comparable<Level>, Writer {
 	public void addGameObject(GameObject object) {
 		if( object.getSaveToFile() ){
 			if( object instanceof Door ) {
-				Gdx.app.log("Level", "addGameObject: Door="+object);
 				this.doors.add((Door) object);
 			} else {
 				this.gameObjects.add(object);
@@ -66,21 +61,15 @@ public class Level implements Comparable<Level>, Writer {
 	}
 	
 	public void removeGameObject(GameObject object) {
-		this.gameObjects.removeValue(object, true);
+		if( object instanceof Door ) {
+			this.doors.removeValue((Door) object, true);
+		} else {
+			this.gameObjects.removeValue(object, true);
+		}
 	}
 
 	public Array<GameObject> getGameObjects() {
 		return this.gameObjects;
-	}
-
-	public void addDoor(Door door) {
-		if( door.getSaveToFile() ){
-			this.doors.add((Door) door);
-		}
-	}
-
-	public void removeDoor(Door door) {
-		this.doors.removeValue(door, true);
 	}
 
 	public Array<Door> getDoors() {
@@ -173,7 +162,7 @@ public class Level implements Comparable<Level>, Writer {
 
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors) {
-			level.addDoor(door);
+			level.addGameObject(door);
 		}
 
 		return level;

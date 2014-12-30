@@ -51,6 +51,10 @@ public class Textures {
 	public TextureRegion gridPoint;
 	public TextureRegion menu;
 	public TextureRegion passageToNextLevel;
+	public TextureRegion arrowLeft;
+	public TextureRegion arrowRight;
+	public TextureRegion arrowTop;
+	public TextureRegion arrowBottom;
 	public Texture		 Loading;
 	public Texture		 dot;
 	public Texture 		 bricksHorizontal;
@@ -166,6 +170,10 @@ public class Textures {
 		gridPoint = atlas.findRegion("gridpoint");
 		menu = atlas.findRegion("icon-menu");
 		passageToNextLevel = atlas.findRegion("passagetonextlevel");
+		arrowLeft = atlas.findRegion("tango_arrow_left");
+		arrowRight = atlas.findRegion("tango_arrow_right");
+		arrowTop = atlas.findRegion("tango_arrow_top");
+		arrowBottom = atlas.findRegion("tango_arrow_bottom");
 		
 		String path = "images/"+ScreenDensity.getDensityName();
 		bricksHorizontal = new Texture(path+"/bricks-texture-horizontal.png");

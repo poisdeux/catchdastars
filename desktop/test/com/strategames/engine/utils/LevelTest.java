@@ -28,9 +28,9 @@ public class LevelTest {
 		level1.setPosition(oldPos[0], oldPos[1]);
 		
 		Door door = new Door();
-		level1.addDoor(door);
+		level1.addGameObject(door);
 		testNotEqual(level1, level2);
-		level1.removeDoor(door);
+		level1.removeGameObject(door);
 		
 		GameObject object = new GameObjectTestClass();
 		level1.addGameObject(object);

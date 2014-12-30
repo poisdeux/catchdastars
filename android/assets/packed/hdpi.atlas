@@ -179,3 +179,31 @@ star_yellow
   orig: 72, 72
   offset: 0, 0
   index: -1
+tango_arrow_bottom
+  rotate: false
+  xy: 114, 2
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+tango_arrow_left
+  rotate: false
+  xy: 152, 2
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+tango_arrow_right
+  rotate: false
+  xy: 190, 2
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+tango_arrow_top
+  rotate: false
+  xy: 228, 2
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1

@@ -65,8 +65,8 @@ public class LevelsTestHelper {
 			int[] levelDoors = doors[i];
 			for(int j = 0; j < levelDoors.length; j += 2) {
 				Door door = new Door();
-				door.setNextLevelPosition(levelDoors[j], levelDoors[j+1]);
-				level.addDoor(door);
+				door.setEntryLevel(levelDoors[j], levelDoors[j+1]);
+				level.addGameObject(door);
 			}
 			
 			for(GameObject object : GameObjectTestHelper.createRandomGameObjects()) {

@@ -22,7 +22,8 @@ public class Door extends StaticBody {
 	
 	private Wall wall;
 	private boolean open;
-	private int[] nextLevelPosition = new int[2];
+	private int[] entryLevel = new int[2]; // level this door provides access too
+	private int[] exitLevel = new int[2]; // level this door can be accessed from
 	
 	public Door() {
 		super(new Vector2(WIDTH, HEIGHT));
@@ -50,8 +51,8 @@ public class Door extends StaticBody {
 	@Override
 	protected void writeValues(Json json) {
 		json.writeArrayStart("nextLevelPosition");
-		json.writeValue(nextLevelPosition[0]);
-		json.writeValue(nextLevelPosition[1]);
+		json.writeValue(entryLevel[0]);
+		json.writeValue(entryLevel[1]);
 		json.writeArrayEnd();
 	}
 
@@ -59,7 +60,7 @@ public class Door extends StaticBody {
 	protected void readValue(JsonValue jsonData) {
 		String name = jsonData.name();
 		if( name.contentEquals("nextLevelPosition")) {
-			this.nextLevelPosition = jsonData.asIntArray();
+			this.entryLevel = jsonData.asIntArray();
 		}
 	}
 
@@ -68,7 +69,7 @@ public class Door extends StaticBody {
 		Door door = new Door();
 		door.setPosition(getX(), getY());
 		int[] pos = getNextLevelPosition();
-		door.setNextLevelPosition(pos[0], pos[1]);
+		door.setEntryLevel(pos[0], pos[1]);
 		return door;
 	}
 
@@ -124,18 +125,43 @@ public class Door extends StaticBody {
 		return open;
 	}
 	
-	public void setNextLevelPosition(int x, int y) {
-		this.nextLevelPosition[0] = x;
-		this.nextLevelPosition[1] = y;
+	/**
+	 * Sets the level position this door provides access too
+	 * @param x
+	 * @param y
+	 */
+	public void setEntryLevel(int x, int y) {
+		this.entryLevel[0] = x;
+		this.entryLevel[1] = y;
 	}
 	
+	/**
+	 * Returns the level position this door provides access too
+	 * @return
+	 */
 	public int[] getNextLevelPosition() {
-		return nextLevelPosition;
+		return entryLevel;
+	}
+	
+	/**
+	 * Sets the level position from which this door is accessible
+	 * @param exitLevel
+	 */
+	public void setExitLevel(int[] exitLevel) {
+		this.exitLevel = exitLevel;
+	}
+	
+	/**
+	 * Returns the level position this door is accessible from
+	 * @return
+	 */
+	public int[] getExitLevel() {
+		return exitLevel;
 	}
 	
 	@Override
 	public String toString() {
-		return super.toString() + ", nextLevelPosition="+nextLevelPosition[0]+","+nextLevelPosition[1];
+		return super.toString() + ", nextLevelPosition="+entryLevel[0]+","+entryLevel[1];
 	}
 	
 	@Override
@@ -147,7 +173,7 @@ public class Door extends StaticBody {
 			return false;
 		}
 		int[] pos = door.getNextLevelPosition();
-		return pos[0] == nextLevelPosition[0] && pos[1] == nextLevelPosition[1] && 
+		return pos[0] == entryLevel[0] && pos[1] == entryLevel[1] && 
 				super.equals(obj);
 	}
 }

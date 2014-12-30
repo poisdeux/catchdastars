@@ -52,7 +52,7 @@ public class LevelsTest {
 			if((pos[0] == 5) && (pos[1] == 2)) {
 				Array<Door> doors = level.getDoors();
 				for(Door door : doors) {
-					level.removeDoor(door);
+					level.removeGameObject(door);
 				}
 			}
 		}
