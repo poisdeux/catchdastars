@@ -1,10 +1,12 @@
 package com.strategames.engine.scenes.scene2d.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
@@ -12,9 +14,21 @@ import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 public class ScreenshotImage extends Image {
 	private EventHandler eventHandler = new EventHandler(this);
 	private Object tag;
-	private Array<TextureRegion> overlayImages = new Array<TextureRegion>();
-	private Vector2 overlaySize = new Vector2(30, 30);
-	
+	private Array<Overlay> overlays = new Array<Overlay>();
+	private Vector2 defaultOverlaySize = new Vector2(30, 30);
+	private int defaultOverlayAlignment = Align.center;
+
+	private class Overlay {
+		private Vector2 size;
+		private TextureRegion image;
+		private Vector2 origin;
+
+		public Overlay(TextureRegion image, Vector2 size) {
+			this.image = image;
+			this.size = size;
+		}
+	}
+
 	public ScreenshotImage(Drawable drawable) {
 		super(drawable);
 		addListener(this.eventHandler);
@@ -45,32 +59,69 @@ public class ScreenshotImage extends Image {
 	 * overlay will be positioned at absolute coordinates 110,52 (i.e. 100 + 10, 32 + 20)
 	 * @param overlay
 	 */
-	public void addOverlay(TextureRegion overlay) {
-		if( overlay == null ) {
+	public void addOverlay(TextureRegion image, Vector2 size, int alignment) {
+		if( image == null ) {
 			return;
 		}
-		this.overlayImages.add(overlay);
-	}
 
-	public boolean removeOverlay(TextureRegion overlay) {
-		return this.overlayImages.removeValue(overlay, true);
+		if( size == null ) {
+			size = defaultOverlaySize;
+		}
+
+		if( alignment == 0 ) {
+			alignment = defaultOverlayAlignment;
+		}
+
+		Overlay overlay = new Overlay(image, size);
+		alignOverlay(overlay, alignment);
+		this.overlays.add(overlay);
 	}
 
 	public void setOverlaySize(Vector2 overlaySize) {
-		this.overlaySize = overlaySize;
+		this.defaultOverlaySize = overlaySize;
 	}
-	
+
 	public Vector2 getOverlaySize() {
-		return overlaySize;
+		return defaultOverlaySize;
 	}
-	
+
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		float x = getX();
 		float y = getY();
-		for(TextureRegion overlay : this.overlayImages ) {
-			batch.draw(overlay, x, y, 0, 0, overlaySize.x, overlaySize.y, 1f, 1f, 0);
+		for(Overlay overlay : this.overlays ) {
+			batch.draw(overlay.image, x, y, overlay.origin.x, overlay.origin.y, overlay.size.x, overlay.size.y, 1f, 1f, 0);
 		}
+	}
+
+	@Override
+	public void layout() {
+		super.layout();
+	}
+	
+	private void alignOverlay(Overlay overlay, int align) {
+		float width = getImageWidth();
+		float height = getImageHeight();
+		float overlayWidth = overlay.image.getRegionWidth();
+		float overlayHeight = overlay.image.getRegionHeight();
+		float x = 0;
+		float y = 0;
+
+		if( ( align & Align.center ) == 0 ) {
+			x = ( width / 2f ) - (overlayWidth / 2f);
+			y = ( height / 2f ) - (overlayHeight / 2f);
+		}
+
+		if( ( align & Align.right ) == 0 ) {
+			x = width - overlayWidth; 
+		} // else x is already at 0
+
+		if( ( align & Align.top ) == 0 ) {
+			y = height - overlayHeight;
+		} // else y is already at 0
+		
+		overlay.origin = new Vector2(x, y);
+		Gdx.app.log("", "");
 	}
 }
