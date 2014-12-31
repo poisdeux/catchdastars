@@ -1,19 +1,23 @@
-== Eclipse ==
+== Android Studio ==
 
-1. Install gradle plugin for eclipse. See for info
-    https://github.com/spring-projects/eclipse-integration-gradle/
+1. Set ANDROID_HOME variable to Android SDK location:
 
-2. Import gradle project and select this directory
+  export ANDROID_HOME=/opt/adt-bundle-linux-latest/sdk/
 
-3. Click on build model. You might need to edit local.properties to
-   make sdk.dir point to the correct location for the Android SDK
+2. Start android studio
 
-4. Add google play services as Android project from existing source
+3. Import gradle project
 
-5. Add Android Support Library and import android support v7 appcompat
+4. Configure android studio to make desktop version work:
 
-   <sdk>/extras/android/support/v7/appcompat/
-
+   1. Open: Run -> Edit Configurations...,
+   2. click the plus (+) button and select Application. 
+   3. Set the Name to Desktop. 
+   4. Set the field "Use classpath of module" to desktop
+   5. Click on the button of the Main class field and select the DesktopLauncher class. 
+   6. Set the Working directory to your android/assets/ (or your_project_path/core/assets/) folder! 
+   7. Click Apply and then OK. You have now created a run configuration for your desktop project. 
+   8. You can now select the configuration and run it.
 
 == Commandline ==
 
@@ -31,50 +35,3 @@
 
      gradle android:installDebug android:run
 
-== VIM ==
-
-1. Setup pathogen
-
-   mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-   curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-
-2. Add following to .vimrc
-
-   execute pathogen#infect()
-
-3. Install plugins:
-
-   cd ~/.vim/bundle
-   git clone https://github.com/scrooloose/syntastic.git
-   git clone https://github.com/adragomir/javacomplete.git
-   git clone https://github.com/scrooloose/nerdtree.git
-
-4. Make sure libraries are available
-
-   ./gradlew copyToLib
-
-5. Include classpaths
-
-   export CLASSPATH=$CLASSPATH:desktop/lib/*:core/lib/*
-
-6. Execute vim from project's top dir
-
-7. (Extra) Zenburn color scheme
-
-   cd ~/.vim
-   git clone https://github.com/jnurmine/Zenburn.git
-   mv Zenburn/colors .
-   rm -rf Zenburn
-
-8. (Extra) Add folowing to .vimrc to use Zenburn color scheme
-
-   colors zenburn
-
-9. (Extra) Setup powerline
-
-   cd ~/.vim/bundle
-   git clone https://github.com/Lokaltog/powerline.git
-
-10. (Extra) Add following to .vimrc to use poweline
-
-   set rtp+=/home/martijn/.vim/bundle/powerline/bindings/vim

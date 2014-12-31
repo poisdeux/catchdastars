@@ -1,6 +1,6 @@
 android {
-    buildToolsVersion "19.1.0"
-    compileSdkVersion 19
+    buildToolsVersion "21.1.2"
+    compileSdkVersion 21
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -12,6 +12,12 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    repositories {
+        def androidHome = System.getenv("ANDROID_HOME")
+        maven { url "$androidHome/extras/android/m2repository/" }
+        maven { url "$androidHome/extras/google/m2repository/"}
     }
 }
 

@@ -21,7 +21,7 @@ public class ScreenshotImage extends Image {
 	private class Overlay {
 		private Vector2 size;
 		private TextureRegion image;
-		private Vector2 origin;
+		private Vector2 position;
 
 		public Overlay(TextureRegion image, Vector2 size) {
 			this.image = image;
@@ -77,21 +77,13 @@ public class ScreenshotImage extends Image {
 		this.overlays.add(overlay);
 	}
 
-	public void setOverlaySize(Vector2 overlaySize) {
-		this.defaultOverlaySize = overlaySize;
-	}
-
-	public Vector2 getOverlaySize() {
-		return defaultOverlaySize;
-	}
-
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		float x = getX();
 		float y = getY();
 		for(Overlay overlay : this.overlays ) {
-			batch.draw(overlay.image, x, y, overlay.origin.x, overlay.origin.y, overlay.size.x, overlay.size.y, 1f, 1f, 0);
+			batch.draw(overlay.image, x + overlay.position.x, y + overlay.position.y, 0, 0, overlay.size.x, overlay.size.y, 1f, 1f, 0);
 		}
 	}
 
@@ -101,27 +93,32 @@ public class ScreenshotImage extends Image {
 	}
 	
 	private void alignOverlay(Overlay overlay, int align) {
-		float width = getImageWidth();
-		float height = getImageHeight();
-		float overlayWidth = overlay.image.getRegionWidth();
-		float overlayHeight = overlay.image.getRegionHeight();
+		float width = getWidth();
+		float height = getHeight();
 		float x = 0;
 		float y = 0;
 
-		if( ( align & Align.center ) == 0 ) {
-			x = ( width / 2f ) - (overlayWidth / 2f);
-			y = ( height / 2f ) - (overlayHeight / 2f);
+		if( ( align & Align.center ) != 0 ) {
+			x = ( width / 2f ) - (overlay.size.x / 2f);
+			y = ( height / 2f ) - (overlay.size.y / 2f);
 		}
 
-		if( ( align & Align.right ) == 0 ) {
-			x = width - overlayWidth; 
-		} // else x is already at 0
+		if( ( align & Align.right ) != 0 ) {
+			x = width - overlay.size.x; 
+		} else if( ( align & Align.left ) != 0 ) {
+			x = 0;
+		}
 
-		if( ( align & Align.top ) == 0 ) {
-			y = height - overlayHeight;
-		} // else y is already at 0
+		if( ( align & Align.top ) != 0 ) {
+			y = height - overlay.size.y;
+		} else if( ( align & Align.bottom ) != 0 ) {
+			y = 0;
+		}
 		
-		overlay.origin = new Vector2(x, y);
-		Gdx.app.log("", "");
+		overlay.position = new Vector2(x, y);
+		
+		Gdx.app.log("ScreenshotImage", "alignOverlay: align="+align+", x="+x+", y="+y+", width="+width+
+				", height="+height+", overlay.size="+overlay.size);
+		
 	}
 }

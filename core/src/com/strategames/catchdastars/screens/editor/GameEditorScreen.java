@@ -50,11 +50,27 @@ import com.strategames.ui.dialogs.ErrorDialog;
 
 public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener, ActorListener {
 	private GridLayout levelButtonsGrid;
+	private Vector2 gridElementSize = new Vector2(40f, 64f);
 	private Level editingLevel;
 	private Pixmap emptyLevelImage;
 	private ScrollPane scrollPane;
 	private Textures textures = Textures.getInstance();
 
+	private class ArrowImage {
+		private TextureRegion texture;
+		private int alignment;
+		
+		/**
+		 * 
+		 * @param texture of arrow image
+		 * @param alignment from {@link Align}
+		 */
+		public ArrowImage(TextureRegion texture, int alignment) {
+			this.texture = texture;
+			this.alignment = alignment;
+		}
+	}
+	
 	public GameEditorScreen(GameEngine game) {
 		super(game, "Level editor");
 	}
@@ -80,10 +96,10 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 		//Center button grid in scrollpane
 		//		this.levelButtonsGrid.setPosition((stage.getWidth() / 2f)-12f, 180f);
-		this.levelButtonsGrid.setElementSize(25f, 40f);
+		this.levelButtonsGrid.setElementSize(gridElementSize.x, gridElementSize.y);
 		this.levelButtonsGrid.setCenter(true);
 
-		this.emptyLevelImage = new Pixmap(25, 40, Format.RGBA8888);
+		this.emptyLevelImage = new Pixmap((int) gridElementSize.x, (int)gridElementSize.y, Format.RGBA8888);
 		this.emptyLevelImage.setColor(0, 1, 0, 0.3f);
 		this.emptyLevelImage.fill();
 
@@ -319,28 +335,23 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				nextLevel = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevel);	
 			} 
-			TextureRegion arrowTexture = getArrow(level.getPosition(), nextLevelPosition);
-			if( arrowTexture != null ) {
-//				Sprite sprite;
-//				Image image = new Image(arrowTexture);
-//				image.setScaling(Scaling.fit);
-//				image.setSize(overlaySize.x, overlaySize.x); // yes, width is used twice to make sure arrows are all of equal size
-				overlaySize.y =  ( overlaySize.x * arrowTexture.getRegionHeight() ) / arrowTexture.getRegionWidth();
-				
-				nextLevel.addOverlay(arrowTexture, overlaySize, Align.center);
+			ArrowImage arrowImage = getArrow(level.getPosition(), nextLevelPosition);
+			if( arrowImage != null ) {
+				overlaySize.y =  ( overlaySize.x * arrowImage.texture.getRegionHeight() ) / arrowImage.texture.getRegionWidth();
+				nextLevel.addOverlay(arrowImage.texture, overlaySize, arrowImage.alignment);
 			}
 		}
 	}
 
-	private TextureRegion getArrow(int[] curPos, int[] nextPos) {
+	private ArrowImage getArrow(int[] curPos, int[] nextPos) {
 		if( nextPos[0] < curPos[0] ) {
-			return this.textures.arrowLeft;
+			return new ArrowImage(this.textures.arrowLeft, Align.right | Align.center);
 		} else if( nextPos[0] > curPos[0] ) {
-			return this.textures.arrowRight;
+			return new ArrowImage(this.textures.arrowRight, Align.left | Align.center);
 		} else if( nextPos[1] < curPos[1] ) {
-			return this.textures.arrowBottom;
+			return new ArrowImage(this.textures.arrowBottom, Align.top | Align.center);
 		} else if( nextPos[1] > curPos[1] ) {
-			return this.textures.arrowTop;
+			return new ArrowImage(this.textures.arrowTop, Align.bottom | Align.center);
 		}
 		return null;
 	}
