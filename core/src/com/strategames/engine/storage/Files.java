@@ -1,4 +1,7 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.storage;
+
+import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.Level;
 
 public class Files {
 	static private final String PATH = "games";
@@ -28,20 +31,18 @@ public class Files {
 		}
 		return getGameDirectory(game) + "/levels";
 	}
-	
-	static public String getLevelPath(Game game, int[] position) {
-		if( ( position.length < 2 ) || ( game == null ) ) {
+
+    /**
+     * Returns the path of the writer in the game's level directory
+     * @param game
+     * @param writer
+     * @return
+     */
+	static public String getLevelPath(Game game, Writer writer) {
+		if( ( writer == null ) || ( game == null ) ) {
 			return null;
 		}
-		return getLevelsPath(game) + "/" + position[0] +"," +position[1];
-	}
-	
-	static public String getLevelPath(Game game, Level level) {
-		if( ( level == null ) || ( game == null ) ) {
-			return null;
-		}
-		
-		int[] position = level.getPosition();
-		return getLevelsPath(game) + "/" + position[0] +"," +position[1];
+
+       return getLevelsPath(game) + "/" + writer.getFilename();
 	}
 }

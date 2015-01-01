@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.badlogic.gdx.utils.Array;
+import com.strategames.engine.storage.GameWriter;
+import com.strategames.engine.storage.LevelLoader;
 import com.strategames.libgdx.junit.GdxTestRunner;
 import com.strategames.libgdx.junit.LevelsTestHelper;
 
@@ -20,12 +22,12 @@ public class LevelWriterTest {
 	@Before
 	public void setUp() throws Exception {
 		this.game = LevelsTestHelper.createLevels();
-		FileWriter.deleteLocalGamesDir();
+		GameWriter.deleteAllGamesLocal();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		FileWriter.deleteLocalGamesDir();
+		GameWriter.deleteAllGamesLocal();
 	}
 	
 	@Test
@@ -33,7 +35,7 @@ public class LevelWriterTest {
 		Collection<Level> levels = this.game.getLevels().values();
 		assertTrue("this.game.getLevels() returns null", levels != null);
 		for(Level level : levels) {
-			assertTrue("Failed to write level: "+level, FileWriter.saveLevelLocal(game, level));
+			assertTrue("Failed to write level: "+level, GameWriter.saveLevelLocal(game, level));
 		}
 		
 		Array<Level> levelsSaved = LevelLoader.loadAllLocalLevels(this.game);

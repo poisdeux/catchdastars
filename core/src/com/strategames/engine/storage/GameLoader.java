@@ -1,4 +1,4 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.storage;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
+import com.strategames.engine.utils.Game;
 
 public class GameLoader {
 	static private OnGameLoadedListener gameLoadedListener;
@@ -34,7 +35,7 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads local game files (synchronous) saved using {@link FileWriter#save(Stage, int)}
+	 * Loads local game files (synchronous) saved using {@link GameWriter#save(Stage, int)}
 	 * @param game 
 	 * @return Game
 	 */

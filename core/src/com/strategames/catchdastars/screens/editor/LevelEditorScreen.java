@@ -30,12 +30,14 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.utils.FileWriter;
+import com.strategames.engine.storage.GameWriter;
+import com.strategames.engine.storage.LevelWriter;
+import com.strategames.engine.storage.Writer;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
-import com.strategames.engine.utils.LevelLoader;
-import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
+import com.strategames.engine.storage.LevelLoader;
+import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -548,7 +550,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	//	}
 
 	private boolean saveLevel() {
-		FileWriter.saveLevelLocal(getGameEngine().getGame(), this.level);
+		LevelWriter.saveLocal(getGameEngine().getGame(), (Writer) this.level);
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 

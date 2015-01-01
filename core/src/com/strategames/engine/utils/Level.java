@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
-import com.strategames.engine.utils.FileWriter.Writer;
+import com.strategames.engine.storage.GameWriter.Writer;
 
 public class Level implements Comparable<Level>, Writer {
 	private String name = "noname";

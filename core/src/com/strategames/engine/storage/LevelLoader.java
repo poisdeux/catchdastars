@@ -1,4 +1,4 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.storage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
+import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.Level;
 
 public class LevelLoader {
 
@@ -32,7 +34,7 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link FileWriter#save(Stage, int)}
+	 * Loads local level files (synchronous) saved using {@link GameWriter#save(Stage, int)}
 	 * @param pos position of the level
 	 * @return Level object containing the game objects 
 	 */

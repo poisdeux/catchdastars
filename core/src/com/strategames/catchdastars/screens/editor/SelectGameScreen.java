@@ -14,9 +14,9 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.utils.FileWriter;
+import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.utils.Game;
-import com.strategames.engine.utils.GameLoader;
+import com.strategames.engine.storage.GameLoader;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -88,7 +88,7 @@ public class SelectGameScreen extends AbstractScreen {
 				@Override
 				public void onClick(Dialog dialog, int which) {
 					dialog.remove();
-					FileWriter.deleteLocalGamesDir();
+					GameWriter.deleteAllGamesLocal();
 					gamesButtonsTable.clear();
 				}
 			});
@@ -167,7 +167,7 @@ public class SelectGameScreen extends AbstractScreen {
 	}
 	
 	private void addNewGame(Game game) {
-		if( FileWriter.saveGameLocal(game) ) {
+		if( GameWriter.saveMetadataLocal(game) ) {
 			addGameButton(game);
 		} else {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());

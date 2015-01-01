@@ -6,7 +6,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
@@ -15,8 +14,8 @@ import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
-import com.strategames.engine.utils.LevelLoader;
-import com.strategames.engine.utils.LevelLoader.OnLevelLoadedListener;
+import com.strategames.engine.storage.LevelLoader;
+import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
