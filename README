@@ -19,6 +19,25 @@
    7. Click Apply and then OK. You have now created a run configuration for your desktop project. 
    8. You can now select the configuration and run it.
 
+=== Create desktop launcher ===
+
+1. Create a new file under ~/.local/share/applications/ with the following content:
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=Android Studio
+Icon=jetbrains-android-studio.png
+Path=/PATH/USED/AS/WORKINGDIR
+Exec=env ANDROID_HOME=/PATH/TO/Android/Sdk /PATH/TO/android-studio/bin/studio.sh
+StartupNotify=false
+StartupWMClass=jetbrains-android-studio
+OnlyShowIn=Unity;
+X-UnityGenerated=true
+
+2. Change Path and Exec to match your filesystem hierarchy.
+
 == Commandline ==
 
 1. Set ANDROID_HOME variable to Android SDK location:

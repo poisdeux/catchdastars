@@ -50,7 +50,7 @@ public class LevelWriter {
 	 * @param level
 	 * @return
 	 */
-	static public boolean deleteLevelLocal(Game game, Writer level) {
+	static public boolean deleteLocal(Game game, Writer level) {
 		try {
 			FileHandle file = Gdx.files.local(Files.getLevelPath(game, level));
 			return file.delete();

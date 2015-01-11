@@ -45,4 +45,16 @@ public class Files {
 
        return getLevelsPath(game) + "/" + writer.getFilename();
 	}
+
+    static public String getLevelPath(Game game, int[] pos) {
+        if( game == null ) {
+            return null;
+        }
+
+        return getLevelsPath(game) + "/" + getLevelFilename(pos);
+    }
+
+    static public String getLevelFilename(int[] pos) {
+        return pos[0]+","+pos[1];
+    }
 }

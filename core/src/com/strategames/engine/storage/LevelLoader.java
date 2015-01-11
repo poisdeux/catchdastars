@@ -34,9 +34,7 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link GameWriter#save(Stage, int)}
-	 * @param pos position of the level
-	 * @return Level object containing the game objects 
+	 * Loads local level files (synchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveLocal(com.strategames.engine.utils.Game, Writer)}
 	 */
 	static public Level loadLocalSync(Game game, int[] pos) {
 		try {
@@ -49,10 +47,8 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (asynchronous) saved using {@link #save(Stage, int)}
+	 * Loads local level files (asynchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveLocal(com.strategames.engine.utils.Game, Writer)}
 	 * <br/>
-	 * Use {@link #levelLoaded()} to see if loading has finished. After loading you
-	 * can retrieve the Level object using {@link #getGame()} 
 	 * @param level levelnumber to load
 	 */
 	static private void loadLocalAsync(int level, OnLevelLoadedListener listener) {
@@ -67,7 +63,7 @@ public class LevelLoader {
 
 	/**
 	 * Loads level file (synchronous) from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternalSync(int)} or {@link #loadLocalSync(int)} instead.
+	 * You should never need to use this. Use {@link #loadInternalSync(String)} or {@link #loadLocalSync(com.strategames.engine.utils.Game, com.strategames.engine.utils.Level)} instead.
 	 * @param file
 	 * @return Level object containing the game objects 
 	 */
@@ -87,8 +83,8 @@ public class LevelLoader {
 
 	/**
 	 * Loads level file (asynchronous) from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternalAsync(int)} or {@link #loadLocalAsync(int)} instead.
-	 * @param file
+     * You should never need to use this. Use {@link #loadInternalSync(String)} or {@link #loadLocalSync(com.strategames.engine.utils.Game, com.strategames.engine.utils.Level)} instead.
+     * @param file
 	 */
 	static private void loadAsync(final FileHandle file) {
 		Thread thread = new Thread( new Runnable() {

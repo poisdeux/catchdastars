@@ -1,3 +1,5 @@
+apply plugin: 'com.android.application'
+
 android {
     buildToolsVersion "21.1.2"
     compileSdkVersion 21
@@ -19,6 +21,10 @@ android {
         maven { url "$androidHome/extras/android/m2repository/" }
         maven { url "$androidHome/extras/google/m2repository/"}
     }
+}
+
+dependencies {
+    compile "com.android.support:support-v4:18.0.+"
 }
 
 // needed to add JNI shared libraries to APK when compiling on CLI

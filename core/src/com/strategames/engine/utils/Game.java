@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
-import com.strategames.engine.storage.GameWriter.Writer;
+import com.strategames.engine.storage.Writer;
 
 public class Game implements Json.Serializable, Writer {
 	private HashMap<String, Level> levels;

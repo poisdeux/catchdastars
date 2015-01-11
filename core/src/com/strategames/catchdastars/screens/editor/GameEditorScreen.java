@@ -1,7 +1,5 @@
 package com.strategames.catchdastars.screens.editor;
 
-import java.util.Collection;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -32,11 +30,12 @@ import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
 import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.storage.GameWriter;
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.storage.GameLoader;
-import com.strategames.engine.utils.Level;
+import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelLoader;
+import com.strategames.engine.storage.LevelWriter;
+import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.ScreenBorder;
 import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.engine.utils.Textures;
@@ -45,6 +44,8 @@ import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.EditLevelDialog;
 import com.strategames.ui.dialogs.ErrorDialog;
+
+import java.util.Collection;
 
 public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickListener, OnLevelsReceivedListener, ActorListener {
 	private GridLayout levelButtonsGrid;
@@ -200,7 +201,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		boolean levelsFailedToSave = false;
 		if( GameWriter.deleteLocal(getGameEngine().getGame())) {
 			for( Level level : levels ) {
-				if( ! GameWriter.saveLevelLocal(getGameEngine().getGame(), level) ) {
+				if( ! LevelWriter.saveLocal(getGameEngine().getGame(), level) ) {
 					levelsFailedToSave = true;
 				}
 			}
@@ -265,12 +266,12 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private void addLevel(Level level) {
 		Game game = getGameEngine().getGame();
 		game.addLevel(level);
-		GameWriter.saveLevelLocal(game, level);
+		LevelWriter.saveLocal(game, level);
 	}
 
 	private void deleteLevel(Level level) {
 		Game game = getGameEngine().getGame();
-		GameWriter.deleteLevelLocal(game, level);
+		LevelWriter.deleteLocal(game, level);
 		int[] pos = level.getPosition();
 		game.deleteLevel(pos[0], pos[1]);
 	}
@@ -376,7 +377,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Boolean success = true;
 		Collection<Level> levels = game.getLevels().values();
 		for(Level level : levels) {
-			if( ! GameWriter.deleteLevelLocal(game, level) ) {
+			if( ! LevelWriter.deleteLocal(game, level) ) {
 				success = false;
 				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete level "+level.getFilename());
 			}
