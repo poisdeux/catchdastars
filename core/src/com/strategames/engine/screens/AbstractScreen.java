@@ -1,11 +1,5 @@
 package com.strategames.engine.screens;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenManager;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
@@ -29,6 +23,12 @@ import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.sounds.SoundEffect;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.ui.dialogs.ButtonsDialog;
+
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenManager;
 
 /**
  * TODO dialogs do not take exclusive focus which means that user can still select

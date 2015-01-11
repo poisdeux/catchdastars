@@ -626,7 +626,8 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		} else if( dialog instanceof LevelFailedDialog ) {
 			switch( which ) {
 			case LevelFailedDialog.BUTTON_RETRY_CLICKED:
-				resetGame();
+                Gdx.app.log("CatchDaStars", "LevelFailedDialog retry");
+				resetLevel();
 				break;
 			case LevelFailedDialog.BUTTON_QUIT_CLICKED:
 				stopScreen();

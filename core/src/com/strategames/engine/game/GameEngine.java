@@ -564,7 +564,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	/**
 	 * Override this method to implement a custom dialog that should be shown
-	 * when game is in state {@link #GAME_STATE_FAILED}
+	 * when game is in state {@link com.strategames.engine.game.GameEngine.LEVEL_STATE#FAILED}
 	 */
 	public void showLevelFailedDialog() {
 		AbstractScreen screen = (AbstractScreen) getScreen();
