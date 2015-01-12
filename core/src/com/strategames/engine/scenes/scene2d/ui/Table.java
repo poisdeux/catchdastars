@@ -23,24 +23,20 @@ public class Table extends com.badlogic.gdx.scenes.scene2d.ui.Table implements E
 
 	@Override
 	public void setBounds(float x, float y, float width, float height) {
-		Gdx.app.log("Table", "setBounds: x="+x+", y="+y+", width="+width+", height="+height);
 		super.setBounds(x, y, width, height);
 	}
 
 	@Override
 	public void setSize(float width, float height) {
-		Gdx.app.log("Table", "setSize: height="+height+", width="+width);
 		super.setSize(width, height);
 	}
 	@Override
 	public void setHeight(float height) {
-		Gdx.app.log("Table", "setHeight: height="+height);
 		super.setHeight(height);
 	}
 
 	@Override
 	public void setWidth(float width) {
-		Gdx.app.log("Table", "setWidth: width="+width);
 		super.setWidth(width);
 	}
 
@@ -59,7 +55,6 @@ public class Table extends com.badlogic.gdx.scenes.scene2d.ui.Table implements E
 
 			if( actor instanceof Label ) {
 				Label label = (Label) actor;
-				Gdx.app.log("Table", "touchDown: label="+label.getText());
 			}
 			return true;
 		case touchUp:
@@ -70,7 +65,6 @@ public class Table extends com.badlogic.gdx.scenes.scene2d.ui.Table implements E
 
 			if( actor instanceof Label ) {
 				Label label = (Label) actor;
-				Gdx.app.log("Table", "touchDown: label="+label.getText());
 			}
 			return true;
 		default:

@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
@@ -89,6 +90,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 	@Override
 	protected boolean handleBackNavigation() {
+        Gdx.app.log("LevelScreen", "handleBackNavigation");
 		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
 			return true;
 		}

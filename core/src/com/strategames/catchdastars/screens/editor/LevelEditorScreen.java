@@ -257,7 +257,6 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	public boolean tap(final float x, final float y, int count, int button) {
-		Gdx.app.log("LevelEditorScreen", "tap: (x,y)="+x+","+y+"), count="+count+", actorTouched="+this.actorTouched);
 		if( ( this.actorTouched != null ) && ( this.uiElementHit == null ) ){
 			if( count > 1 ) { //double tap
 				showGameObjectCongfigurationDialog((GameObject) this.actorTouched);

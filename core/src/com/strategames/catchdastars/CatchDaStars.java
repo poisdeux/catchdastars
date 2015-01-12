@@ -169,7 +169,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 		int[] pos = game.getCurrentLevelPosition();
 		this.level = game.getLevel(pos[0], pos[1]);
-		Gdx.app.log("CatchDaStars", "setup: level="+level);
 		if( this.level == null ) {
 			Gdx.app.log("CatchDaStars", "setup: level==null");
 			return false;
@@ -196,7 +195,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		this.amountOfRedBalloons = 0;
 		this.amountBalloonsInGame = 0;
 		
-		Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+amountOfBlueBalloonsFromPreviousLevel+", amountOfRedBalloonsFromPreviousLevel="+amountOfRedBalloonsFromPreviousLevel);
 		
 		Array<Wall> border = new Array<Wall>();
 
@@ -526,7 +524,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 			this.nextLevelPosition = ((Door) object).getNextLevelPosition();
 		} else if ( object instanceof RectangularSensor ) {
 			if( balloon.isInGame() ) {
-				Gdx.app.log("CatchDaStars", "handleSensorCollision: amountBalloonsInGame="+amountBalloonsInGame);
 				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);
 				if( --this.amountBalloonsInGame < 1 ) {
@@ -610,6 +607,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	@Override
 	public void onClick(Dialog dialog, int which) {
+        Gdx.app.log("CatchDaStars", "Dialog clicked: which="+which);
 		dialog.hide();
 		if( dialog instanceof LevelCompleteDialog ) {
 			switch( which ) {

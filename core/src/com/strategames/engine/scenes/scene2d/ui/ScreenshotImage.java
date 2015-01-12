@@ -117,8 +117,5 @@ public class ScreenshotImage extends Image {
 		
 		overlay.position = new Vector2(x, y);
 		
-		Gdx.app.log("ScreenshotImage", "alignOverlay: align="+align+", x="+x+", y="+y+", width="+width+
-				", height="+height+", overlay.size="+overlay.size);
-		
 	}
 }
