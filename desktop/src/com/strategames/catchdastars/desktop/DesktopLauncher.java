@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.strategames.catchdastars.CatchDaStars;
+import com.strategames.catchdastars.game.CatchDaStars;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;

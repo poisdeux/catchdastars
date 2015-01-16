@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import aurelienribon.tweenengine.Timeline;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -30,7 +29,6 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.storage.Writer;
 import com.strategames.engine.utils.Game;
@@ -530,26 +528,8 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		this.selectedGameObjects.add(gameObject);
 	}
 
-	//	private void deselectGameObject(GameObject gameObject) {
-	//		if( gameObject == null) return;
-	//
-	//		this.selectedGameObjects.remove(gameObject);
-	//
-	//		gameObject.setColor(0.7f, 0.7f, 0.7f, 1.0f);
-	//	}
-	//
-	//	private void deselectAllGameObjects() {
-	//		Iterator<GameObject> itr = this.selectedGameObjects.iterator();
-	//		while(itr.hasNext()) {
-	//			GameObject object = (GameObject) itr.next();
-	//			itr.remove();
-	//			deselectGameObject(object);
-	//		}
-	//		this.selectedGameObjects.clear();
-	//	}
-
 	private boolean saveLevel() {
-		LevelWriter.saveLocal(getGameEngine().getGame(), (Writer) this.level);
+		LevelWriter.saveOriginal(getGameEngine().getGame(), this.level);
 		return ScreenshotFactory.saveScreenshot(getStageActors(), level);
 	}
 

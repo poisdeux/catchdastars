@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
-import com.strategames.catchdastars.CatchDaStars;
+import com.strategames.catchdastars.game.CatchDaStars;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.engine.game.GameEngine;
@@ -201,7 +201,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		boolean levelsFailedToSave = false;
 		if( GameWriter.deleteLocal(getGameEngine().getGame())) {
 			for( Level level : levels ) {
-				if( ! LevelWriter.saveLocal(getGameEngine().getGame(), level) ) {
+				if( ! LevelWriter.saveOriginal(getGameEngine().getGame(), level) ) {
 					levelsFailedToSave = true;
 				}
 			}
@@ -266,12 +266,12 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private void addLevel(Level level) {
 		Game game = getGameEngine().getGame();
 		game.addLevel(level);
-		LevelWriter.saveLocal(game, level);
+		LevelWriter.saveOriginal(game, level);
 	}
 
 	private void deleteLevel(Level level) {
 		Game game = getGameEngine().getGame();
-		LevelWriter.deleteLocal(game, level);
+		LevelWriter.deleteOriginal(game, level);
 		int[] pos = level.getPosition();
 		game.deleteLevel(pos[0], pos[1]);
 	}
@@ -377,7 +377,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Boolean success = true;
 		Collection<Level> levels = game.getLevels().values();
 		for(Level level : levels) {
-			if( ! LevelWriter.deleteLocal(game, level) ) {
+			if( ! LevelWriter.deleteOriginal(game, level) ) {
 				success = false;
 				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete level "+level.getFilename());
 			}

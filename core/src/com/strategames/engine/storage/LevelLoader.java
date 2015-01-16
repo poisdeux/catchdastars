@@ -2,7 +2,6 @@ package com.strategames.engine.storage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
@@ -34,11 +33,11 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (synchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveLocal(com.strategames.engine.utils.Game, Writer)}
+	 * Loads local level files (synchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveOriginal(com.strategames.engine.utils.Game, Writer)}
 	 */
 	static public Level loadLocalSync(Game game, int[] pos) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getLevelPath(game, pos));
+			FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +46,7 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads local level files (asynchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveLocal(com.strategames.engine.utils.Game, Writer)}
+	 * Loads local level files (asynchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveOriginal(com.strategames.engine.utils.Game, Writer)}
 	 * <br/>
 	 * @param level levelnumber to load
 	 */
@@ -121,7 +120,7 @@ public class LevelLoader {
 
 	static public FileHandle getLocalLevelsDir(Game game) {
 		try {
-			FileHandle dir = Gdx.files.local(Files.getLevelsPath(game));
+			FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(game));
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");

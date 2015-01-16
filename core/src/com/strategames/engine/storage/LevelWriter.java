@@ -2,7 +2,6 @@ package com.strategames.engine.storage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
@@ -10,13 +9,14 @@ import com.strategames.engine.utils.Level;
 public class LevelWriter {
 
 	/**
-	 * Saves the writer in json format on local storage
+	 * Saves level as original level which will be loaded when level is played the first time
+     * during a game
 	 * @param game
 	 * @param writer
 	 * @return true if saving was succesful, false otherwise
 	 */
-	static public boolean saveLocal(Game game, Writer writer) {
-		FileHandle file = Gdx.files.local(Files.getLevelPath(game, writer));
+	static public boolean saveOriginal(Game game, Level writer) {
+		FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, writer));
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(writer.getJson()), false);
@@ -28,34 +28,51 @@ public class LevelWriter {
 	}
 
 	/**
-	 * Saves all levels in ArrayList levels on local storage
-	 * @param game
-	 * @param levels
-	 * @return array of levels failed to write
-	 */
-	static public Array<Writer> saveLocal(Game game, Array<Writer> levels) {
-		Array<Writer> levelsFailed = new Array<Writer>();
-		for(Writer writer : levels) {
-			if( ! LevelWriter.saveLocal(game, writer) ) {
-				Gdx.app.log("LevelWriter", "save: Failed to save: "+writer);
-				levelsFailed.add(writer);
-			}
-		}
-		return levelsFailed;
-	}
-
-	/**
-	 * Deletes the level file from local storage
+	 * Deletes the original level file which will be loaded when level is played the first time
+     * during a game
 	 * @param game
 	 * @param level
 	 * @return
 	 */
-	static public boolean deleteLocal(Game game, Writer level) {
+	static public boolean deleteOriginal(Game game, Level level) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getLevelPath(game, level));
+			FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, level));
 			return file.delete();
 		} catch (Exception e) {
 			return false;
 		}
 	}
+
+    /**
+    * Saves level as completed level which will be loaded when level is played again
+    * @param game
+    * @param level
+    * @return true if saving was succesful, false otherwise
+    */
+    static public boolean saveCompleted(Game game, Level level) {
+        FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, level));
+        try {
+            Json json = new Json();
+            file.writeString(json.prettyPrint(level.getJson()), false);
+            return true;
+        } catch (Exception e) {
+            Gdx.app.log("LevelWriter", "save: could not write: "+file.path()+"\nError: "+e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Deletes the completed level file which will be loaded when level is played again
+     * @param game
+     * @param level
+     * @return
+     */
+    static public boolean deleteCompleted(Game game, Level level) {
+        try {
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, level));
+            return file.delete();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

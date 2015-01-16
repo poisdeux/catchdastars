@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.strategames.catchdastars.CatchDaStars;
+import com.strategames.catchdastars.game.CatchDaStars;
 import com.strategames.catchdastars.database.MusicDbHelper;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;

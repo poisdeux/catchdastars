@@ -161,7 +161,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	/**
 	 * Notify the Game manager that screen is now hidden
-	 * @param currentScreen the screen that is now hidden
 	 */
 	public void notifyScreenHidden() {
 		if( this.newScreen != null ) {
@@ -337,18 +336,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	public Game getGame() {
 		return this.game;
-	}
-
-	/**
-	 * Unloads level from AssetManager. The level unloaded is the level
-	 * with level number set by {@link #setLevelNumber(int)}
-	 */
-	public void disposeLevel() {
-		AssetManager manager = getManager();
-		String filename = manager.getAssetFileName(getGame());
-		if( filename != null ) {
-			getManager().unload(filename);
-		}
 	}
 
 	public void setWorld(World world) {
@@ -540,7 +527,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	/**
 	 * Called by AbstractScreen when level is loaded and ready to start the game
-	 * @param Stage stage the stage that should hold the game objects
+	 * @param stage that should hold the game objects
 	 * @return true if setup was successful, false otherwise
 	 */
 	abstract public boolean setup(Stage stage);

@@ -1,4 +1,4 @@
-package com.strategames.catchdastars;
+package com.strategames.catchdastars.game;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -75,7 +75,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	private Box2DDebugRenderer debugRenderer;
 
-	private boolean showScore;
+    private boolean doorsOpen;
 
 	private int[] nextLevelPosition;
 
@@ -129,24 +129,14 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		super.updateScreen(delta, stage);
 		Icecube.playRocksHitSound();
 
-		if( this.showScore ){
-			showScore = false;
-			showLevelCompleteDialog();
-		}
-
 		//		this.debugRenderer.render(world, ((AbstractScreen) getScreen()).getGameCamera().combined);
-	}
-
-	@Override
-	public void startGame() {
-		showScore = false;
-		super.startGame();
 	}
 
 	@Override
 	public void resetGame() {
 		this.amountOfBlueBalloons = 0;
 		this.amountOfRedBalloons = 0;
+        this.doorsOpen = false;
 		super.resetGame();
 	}
 	
@@ -154,6 +144,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	public void resetLevel() {
 		this.amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
 		this.amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
+        this.doorsOpen = false;
 		super.resetLevel();
 	}
 	
@@ -334,10 +325,16 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	@Override
 	public void levelComplete() {
-		openDoors();
+        showLevelCompleteDialog();
 	}
 
 	private void openDoors() {
+        if( this.doorsOpen ) {
+            return;
+        }
+
+        this.doorsOpen = true;
+
 		AbstractScreen screen = ((AbstractScreen) getScreen());
 		Stage stage = screen.getStageActors();
 
@@ -473,13 +470,13 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	 * @param balloon
 	 */
 	private void destroyBalloon(Balloon balloon) {
-		if( ! balloon.isToBeDestroyed() ) {
-			balloon.destroy();
-			deleteGameObject(balloon);
-		} else {
-			return;
+		if( balloon.isToBeDestroyed() ) {
+            return;
 		}
-		
+
+        balloon.destroy();
+        deleteGameObject(balloon);
+
 		if( balloon instanceof BalloonBlue ) {
 			amountOfBlueBalloons--;
 		} else if( balloon instanceof BalloonRed ) {
@@ -527,7 +524,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 				getWorldThread().setGameObjectInactive(balloon);
 				balloon.setInGame(false);
 				if( --this.amountBalloonsInGame < 1 ) {
-					showScore = true;
+					setLevelCompleted();
 				}
 			}
 		}
@@ -540,7 +537,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		if( this.blueCollectables.allCollected() &&
 				this.redCollectables.allCollected() &&
 				this.goldCollectables.allCollected() ) {
-			setLevelCompleted();
+            openDoors();
 		}
 		
 //		Gdx.app.log("CatchDaStars", "handleSensorCollision: END");

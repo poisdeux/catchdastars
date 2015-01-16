@@ -25,36 +25,77 @@ public class Files {
 		return getGameDirectory(game) + "/meta";
 	}
 	
-	static public String getLevelsPath(Game game) {
+	static public String getOriginalLevelsPath(Game game) {
 		if( game == null ) {
 			return null;
 		}
 		return getGameDirectory(game) + "/levels";
 	}
 
+    static public String getCompletedLevelsPath(Game game) {
+        if( game == null ) {
+            return null;
+        }
+        return getGameDirectory(game) + "/levels_completed";
+    }
+
     /**
-     * Returns the path of the writer in the game's level directory
+     * Returns the path of the original level
      * @param game
-     * @param writer
+     * @param level
      * @return
      */
-	static public String getLevelPath(Game game, Writer writer) {
-		if( ( writer == null ) || ( game == null ) ) {
+	static public String getOriginalLevelPath(Game game, Level level) {
+		if( ( level == null ) || ( game == null ) ) {
 			return null;
 		}
 
-       return getLevelsPath(game) + "/" + writer.getFilename();
+       return getOriginalLevelsPath(game) + "/" + level.getFilename();
 	}
 
-    static public String getLevelPath(Game game, int[] pos) {
+    /**
+     * Returns the path of the writer in the game's level directory
+     * @param game
+     * @param pos
+     * @return
+     */
+    static public String getOriginalLevelPath(Game game, int[] pos) {
         if( game == null ) {
             return null;
         }
 
-        return getLevelsPath(game) + "/" + getLevelFilename(pos);
+        return getOriginalLevelsPath(game) + "/" + getLevelFilename(pos);
     }
 
     static public String getLevelFilename(int[] pos) {
         return pos[0]+","+pos[1];
+    }
+
+    /**
+     * Returns the path of the original level
+     * @param game
+     * @param level
+     * @return
+     */
+    static public String getCompletedLevelPath(Game game, Level level) {
+        if( ( level == null ) || ( game == null ) ) {
+            return null;
+        }
+
+        return getCompletedLevelsPath(game) + "/" + level.getFilename();
+    }
+
+    /**
+     * Returns the path of the writer in the game's level directory
+     * @param game
+     * @param pos
+     * @return
+     */
+    static public String getCompletedLevelPath(Game game, int[] pos) {
+        if( game == null ) {
+            return null;
+        }
+
+        return getCompletedLevelsPath(game) + "/" + getLevelFilename(pos);
     }
 }

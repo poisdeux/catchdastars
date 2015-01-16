@@ -21,9 +21,9 @@ public class SplashScreen extends AbstractScreen {
 
 	private boolean finishedSetupAssets = false;
 	private boolean finishedStartupAnimation = false;
-	
+
 	private Image splashImage;
-	
+
 	public SplashScreen(GameEngine game) {
 		super(game, null);
 		MusicPlayer player = MusicPlayer.getInstance();
@@ -43,11 +43,11 @@ public class SplashScreen extends AbstractScreen {
 
 		float stageWidth = stage.getWidth();
 		float stageHeight = stage.getHeight();
-		
+
 		float ratio = stageWidth / this.splashImage.getWidth();
 		this.splashImage.setSize(this.splashImage.getWidth() * ratio, this.splashImage.getHeight() * ratio);
-		
-		this.splashImage.setPosition(stageWidth/2f - this.splashImage.getWidth()/2f, 
+
+		this.splashImage.setPosition(stageWidth/2f - this.splashImage.getWidth()/2f,
 				stageHeight/2f - this.splashImage.getHeight()/2f);
 
 		try {
@@ -55,7 +55,7 @@ public class SplashScreen extends AbstractScreen {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		stage.addActor( this.splashImage );
 	}
 
@@ -72,28 +72,28 @@ public class SplashScreen extends AbstractScreen {
 			}
 
 			this.finishedSetupAssets = true;
-			
+
 			if( this.finishedStartupAnimation ) {
 				getGameEngine().showMainMenu();
 			}
-		} 
+		}
 	}
-	
+
 	@Override
 	protected Timeline showAnimation() {
 		this.splashImage.setOrigin(this.splashImage.getWidth() / 2f, this.splashImage.getHeight() / 2f);
 		this.splashImage.setScale(0f);
-		
+
 		Timeline timeline = Timeline.createParallel();
 		timeline.push(Tween.to(this.splashImage, ActorAccessor.SCALE, 1.5f).target(1f, 1f));
 		timeline.setCallbackTriggers(TweenCallback.COMPLETE);
 		timeline.setCallback(new TweenCallback() {
-			
+
 			@Override
 			public void onEvent(int arg0, BaseTween<?> arg1) {
 				if( arg0 == TweenCallback.COMPLETE ) {
 					finishedStartupAnimation = true;
-					
+
 					if( finishedSetupAssets ) {
 						getGameEngine().showMainMenu();
 					}
