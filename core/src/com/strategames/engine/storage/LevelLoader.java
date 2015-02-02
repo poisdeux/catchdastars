@@ -37,7 +37,10 @@ public class LevelLoader {
 	 */
 	static public Level loadLocalSync(Game game, int[] pos) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, pos));
+            if( ! file.exists() ) {
+                file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
+            }
 			return loadSync(file);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,12 +51,14 @@ public class LevelLoader {
 	/**
 	 * Loads local level files (asynchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveOriginal(com.strategames.engine.utils.Game, Writer)}
 	 * <br/>
-	 * @param level levelnumber to load
 	 */
-	static private void loadLocalAsync(int level, OnLevelLoadedListener listener) {
+	static private void loadLocalAsync(Game game, int[] pos, OnLevelLoadedListener listener) {
 		levelLoadedListener = listener;
 		try {
-			FileHandle file = Gdx.files.local(Files.getPath(String.valueOf(level)));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, pos));
+            if( ! file.exists() ) {
+                file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
+            }
 			loadAsync(file);
 		} catch (Exception e) {
 			e.printStackTrace();

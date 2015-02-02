@@ -57,7 +57,7 @@ public class Files {
      * Returns the path of the writer in the game's level directory
      * @param game
      * @param pos
-     * @return
+     * @return path
      */
     static public String getOriginalLevelPath(Game game, int[] pos) {
         if( game == null ) {
@@ -75,7 +75,7 @@ public class Files {
      * Returns the path of the original level
      * @param game
      * @param level
-     * @return
+     * @return path
      */
     static public String getCompletedLevelPath(Game game, Level level) {
         if( ( level == null ) || ( game == null ) ) {
@@ -89,7 +89,7 @@ public class Files {
      * Returns the path of the writer in the game's level directory
      * @param game
      * @param pos
-     * @return
+     * @return path
      */
     static public String getCompletedLevelPath(Game game, int[] pos) {
         if( game == null ) {

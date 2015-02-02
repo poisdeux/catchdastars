@@ -1,8 +1,5 @@
 package com.strategames.catchdastars.game;
 
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.Screen;
@@ -39,6 +36,7 @@ import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallHorizontal;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Game;
@@ -49,6 +47,9 @@ import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
+
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
 
 public class CatchDaStars extends GameEngine implements OnClickListener {
 	private Vector2 gravityVector;
@@ -325,6 +326,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	@Override
 	public void levelComplete() {
+        LevelWriter.saveCompleted(getGame(), level);
         showLevelCompleteDialog();
 	}
 
