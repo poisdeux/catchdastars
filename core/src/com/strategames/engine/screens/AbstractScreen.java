@@ -59,36 +59,30 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	private Array<Vector2> originalPositions;
 
 	public AbstractScreen() {
-		this(null, null);
+		this(null);
 	}
 
 	/**
 	 * 
-	 * @param engine 
-	 * @param title set to null to not display the screen title
+	 * @param engine
 	 */
-	public AbstractScreen(GameEngine engine, String title)
+	public AbstractScreen(GameEngine engine)
 	{
 		this.gameEngine = engine;
 
 		this.tweenManager = new TweenManager();
 
 		Gdx.input.setCatchBackKey(true);
-
-		if( title != null ) {
-			this.title = new Label(title, getSkin());
-		}
 	}
 
 	/**
 	 * 
 	 * @param game
-	 * @param title set to null to not display the screen title
 	 * @param stageUIActors stage to use for UI elements
 	 * @param stageActors stage to use for game objects
 	 */
-	public AbstractScreen(GameEngine game, String title, Stage stageUIActors, Stage stageActors) {
-		this(game, title);
+	public AbstractScreen(GameEngine game, Stage stageUIActors, Stage stageActors) {
+		this(game);
 		this.stageUIActors = stageUIActors;
 		this.stageActors = stageActors;
 	}
@@ -109,11 +103,23 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return menuSize;
 	}
 
+    /**
+     *
+     * @return title of this screen
+     */
 	public Label getTitle() {
 		return title;
 	}
 
-	public OrthographicCamera getGameCamera() {
+    /**
+     * Set the title of the screen
+     * @param title label holding the title
+     */
+    public void setTitle(Label title) {
+        this.title = title;
+    }
+
+    public OrthographicCamera getGameCamera() {
 		if( gameCamera == null ) {
 			Vector2 size = this.gameEngine.getViewSize();
 			gameCamera = new OrthographicCamera(size.x, size.y);
@@ -152,7 +158,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	protected String getName()
 	{
-		return getClass().getSimpleName();
+		return ((Object) this).getClass().getSimpleName();
 	}
 
 	public Skin getSkin()

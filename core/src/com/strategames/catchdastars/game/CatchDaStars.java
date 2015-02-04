@@ -311,7 +311,13 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		setScreen(screen);
 		addToBackstack(screen);
 	}
-	
+
+    public void showGameMenuScreen() {
+        Screen screen = new com.strategames.catchdastars.screens.game.GameMenuScreen(this);
+        setScreen(screen);
+        addToBackstack(screen);
+    }
+
 	public void showGameEditorScreen() {
 		Screen screen = new SelectGameScreen(this);
 		setScreen(screen);

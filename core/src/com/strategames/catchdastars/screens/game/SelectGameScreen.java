@@ -2,6 +2,7 @@ package com.strategames.catchdastars.screens.game;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -22,7 +23,8 @@ public class SelectGameScreen extends AbstractScreen {
 	private Table gamesButtonsTable;
 	
 	public SelectGameScreen(GameEngine game) {
-		super(game, "Select a game");
+		super(game);
+        setTitle(new Label("Select a game", getSkin()));
 	}
 
 	@Override
@@ -69,7 +71,6 @@ public class SelectGameScreen extends AbstractScreen {
 
 	@Override
 	protected void setupActors(Stage stage) {
-		// TODO Auto-generated method stub
 
 	}
 	
@@ -93,12 +94,11 @@ public class SelectGameScreen extends AbstractScreen {
 			public void onTap(Actor actor) {
 				CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
 				gameEngine.setGame(game);
-				gameEngine.startLevel(game.getCurrentLevelPosition());
+                gameEngine.showGameMenuScreen();
 			}
 			
 			@Override
 			public void onLongPress(Actor actor) {
-				//TODO add option to clear a saved game and start a new game
 			}
 		});
 		this.gamesButtonsTable.add(button);

@@ -25,7 +25,7 @@ public class SplashScreen extends AbstractScreen {
 	private Image splashImage;
 
 	public SplashScreen(GameEngine game) {
-		super(game, null);
+		super(game);
 		MusicPlayer player = MusicPlayer.getInstance();
 		player.setLibrary(getGameEngine().getMusicSelector().getLibrary());
 	}

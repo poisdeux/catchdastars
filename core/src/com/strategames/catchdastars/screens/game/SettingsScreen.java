@@ -21,7 +21,8 @@ import com.strategames.engine.utils.Settings;
 public class SettingsScreen extends AbstractScreen {
 
 	public SettingsScreen(GameEngine game) {
-		super(game, "Settings");
+		super(game);
+        setTitle(new Label("Settings", getSkin()));
 	}
 
 	@Override
@@ -84,11 +85,11 @@ public class SettingsScreen extends AbstractScreen {
 		stage.addActor(button);
 		y -= 60f;
 		
-		button = new TextButton( "Main menu", getSkin() );
+		button = new TextButton( "Exit", getSkin() );
 		button.addListener( new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				getGameEngine().showMainMenu();
+				getGameEngine().stopScreen();
 			}
 		} );
 		button.setPosition(x - (button.getWidth() / 2f), y);

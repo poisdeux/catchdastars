@@ -30,7 +30,7 @@ public class GameCompleteScreen extends AbstractScreen implements TweenCallback 
 	private FilledRectangleImage filter;
 	
 	public GameCompleteScreen(GameEngine game, Stage stageActors) {
-		super(game, null, null, stageActors);
+		super(game, null, stageActors);
 	}
 
 	@Override

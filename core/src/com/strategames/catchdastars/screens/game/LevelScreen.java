@@ -37,7 +37,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	private Timeline levelStartAnimation;
 	
 	public LevelScreen(GameEngine game) {
-		super(game, null);
+		super(game);
 	}
 
 	@Override
