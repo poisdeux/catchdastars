@@ -84,5 +84,5 @@ function findandroidsdk
 [ -r ${ASEXECCACHE} ] || findandroidstudioexecutable
 [ -r ${SDKLOCCACHE} ] || findandroidsdk
 
-export ANDROID_HOME=${SDKLOCCACHE}
+export ANDROID_HOME=$(cat ${SDKLOCCACHE})
 exec $(cat ${ASEXECCACHE})
