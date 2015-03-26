@@ -503,13 +503,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		showLevelScreen();
 	}
 
-//	private void loadLevelSync(final OnLevelLoadedListener listener) {
-//		setGame(LevelLoader.loadLocalSync(this.levelPosition[0]+","+this.levelPosition[1]));
-//		if( listener != null ) {
-//			listener.onLevelLoaded(getGame());
-//		}
-//	}
-
 	/**
 	 * Hides the current screen and shows the previous screen
 	 * TODO implement disposing screens when popped from backstack. This must be done after hide animation has finished

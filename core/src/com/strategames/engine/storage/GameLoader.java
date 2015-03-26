@@ -20,53 +20,7 @@ public class GameLoader {
 	}
 
 	/**
-	 * Loads packaged game files (synchronous)
-	 * @param game 
-	 * @return Game
-	 */
-	static private Game loadInternalSync(Game game) {
-		try {
-			FileHandle file = Gdx.files.internal(Files.getGameDirectory(game));
-			return loadSync(file);
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-
-	/**
-	 * Loads local game files (synchronous) saved using {@link GameWriter#save(Stage, int)}
-	 * @param game 
-	 * @return Game
-	 */
-	static public Game loadLocalSync(Game game) {
-		try {
-			FileHandle file = Gdx.files.local(Files.getGameDirectory(game));
-			return loadSync(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * Loads local game files (asynchronous)
-	 * @param game
-	 * @param listener will be called when game has finished loading
-	 */
-	static private void loadLocalAsync(Game game, OnGameLoadedListener listener) {
-		gameLoadedListener = listener;
-		try {
-			FileHandle file = Gdx.files.local(Files.getGameDirectory(game));
-			loadAsync(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Loads game file (synchronous) from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternalSync(int)} or {@link #loadLocalSync(int)} instead.
 	 * @param file
 	 * @return Game
 	 */
@@ -84,27 +38,6 @@ public class GameLoader {
 		return null;
 	}
 
-	/**
-	 * Loads game file (asynchronous) from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternalAsync(int)} or {@link #loadLocalAsync(int)} instead.
-	 * @param file
-	 */
-	static private void loadAsync(final FileHandle file) {
-		Thread thread = new Thread( new Runnable() {
-
-			@Override
-			public void run() {
-				Json json = new Json();
-				String text = file.readString();
-				Object root =  json.fromJson(Game.class, text);
-				if( gameLoadedListener != null ) {
-					gameLoadedListener.onGameLoaded((Game) root);
-				}
-			}
-		});
-
-		thread.start();
-	}
 
 	static public Array<Game> loadAllLocalGames() {
 		Array<Game> games = new Array<Game>();

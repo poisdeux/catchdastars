@@ -3,40 +3,76 @@ package com.strategames.engine.storage;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
+/**
+ * File structure:
+ *
+ * games/
+ *   in_progress/
+ *     <GAME_UUID>-<NUMBER>/
+ *       levels_completed/
+ *         <POSITION>
+ *         ...
+ *       meta
+ *     ...
+ *   originals
+ *     <GAME_UUID>/
+ *       levels/
+ *         <POSITION>
+ *         ...
+ *       meta
+ *     ...
+ */
+
 public class Files {
-	static private final String PATH = "games";
-	
+	static private final String TOP_PATH = "games";
+    static private final String INPROGRESS_PATH = TOP_PATH+"/in_progress";
+    static private final String ORIGINALS_PATH = TOP_PATH+"/originals";
+    static private final String META_FILENAME = "meta";
+    static private final String LEVELS_DIRECTORY = "levels";
+    static private final String LEVELS_COMPLETED_DIRECTORY = "levels_completed";
+
 	static public String getGamesDirectory() {
-		return PATH;
+		return TOP_PATH;
 	}
 
 	static public String getPath(String name) {
-		return PATH + "/" + name;
+		return TOP_PATH + "/" + name;
 	}
 	
-	static public String getGameDirectory(Game game) {
+	static public String getOriginalGameDirectory(Game game) {
 		if( game == null ) {
 			return null;
 		}
-		return PATH + "/" + game.getUuid() + "/";
+		return ORIGINALS_PATH + "/" + game.getUuid() + "/";
 	}
-	
-	static public String getGameMetaPath(Game game) {
-		return getGameDirectory(game) + "/meta";
+
+    static public String getInProgressGameDirectory(Game game) {
+        if( game == null ) {
+            return null;
+        }
+        return INPROGRESS_PATH + "/" + game.getUuid() + "/";
+    }
+
+    static public String getOriginalGameMetaPath(Game game) {
+        return getOriginalGameDirectory(game) + META_FILENAME;
+    }
+
+	static public String getInprogressGameMetaPath(Game game) {
+		return getInProgressGameDirectory(game) + META_FILENAME;
 	}
 	
 	static public String getOriginalLevelsPath(Game game) {
 		if( game == null ) {
 			return null;
 		}
-		return getGameDirectory(game) + "/levels";
+		return getOriginalGameDirectory(game) + LEVELS_DIRECTORY;
 	}
 
     static public String getCompletedLevelsPath(Game game) {
         if( game == null ) {
             return null;
         }
-        return getGameDirectory(game) + "/levels_completed";
+        return getInProgressGameDirectory(game) + LEVELS_COMPLETED_DIRECTORY;
     }
 
     /**
@@ -45,7 +81,7 @@ public class Files {
      * @param level
      * @return
      */
-	static public String getOriginalLevelPath(Game game, Level level) {
+	static public String getOriginalLevelFilename(Game game, Level level) {
 		if( ( level == null ) || ( game == null ) ) {
 			return null;
 		}
@@ -59,7 +95,7 @@ public class Files {
      * @param pos
      * @return path
      */
-    static public String getOriginalLevelPath(Game game, int[] pos) {
+    static public String getOriginalLevelFilename(Game game, int[] pos) {
         if( game == null ) {
             return null;
         }
@@ -77,7 +113,7 @@ public class Files {
      * @param level
      * @return path
      */
-    static public String getCompletedLevelPath(Game game, Level level) {
+    static public String getCompletedLevelFilename(Game game, Level level) {
         if( ( level == null ) || ( game == null ) ) {
             return null;
         }
@@ -91,7 +127,7 @@ public class Files {
      * @param pos
      * @return path
      */
-    static public String getCompletedLevelPath(Game game, int[] pos) {
+    static public String getCompletedLevelFilename(Game game, int[] pos) {
         if( game == null ) {
             return null;
         }

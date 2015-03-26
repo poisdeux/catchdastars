@@ -34,7 +34,7 @@ public class ChangeWorldSizeDialog extends Dialog {
 			drawableMinus = new TextureRegionDrawable(skin.get("tree-minus", TextureRegion.class));
 			drawablePlus = new TextureRegionDrawable(skin.get("tree-plus", TextureRegion.class));
 		} catch (Exception e) {
-			ErrorDialog dialog = new ErrorDialog(stage, "Error, could not load required image from skin", skin);
+			ErrorDialog dialog = new ErrorDialog(stage, "Error, could not loadSync required image from skin", skin);
 			dialog.setOnClickListener(new OnClickListener() {
 				public void onClick(Dialog dialog, int which) {
 					Gdx.app.exit();

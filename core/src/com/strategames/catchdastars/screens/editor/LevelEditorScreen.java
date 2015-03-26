@@ -30,7 +30,6 @@ import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.LevelWriter;
-import com.strategames.engine.storage.Writer;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
@@ -74,7 +73,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 	private States state;
 
 	public LevelEditorScreen(GameEngine game) {
-		super(game, null);
+		super(game);
 
 		this.initialTouchPosition = new Vector2();
 		this.dragDirection = new Vector2();
@@ -105,7 +104,7 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 		displayGrid(LevelEditorPreferences.displayGridEnabled());
 		
 		Game game = getGameEngine().getGame();
-		this.level = LevelLoader.loadLocalSync(game, game.getCurrentLevelPosition());
+		this.level = LevelLoader.loadSync(game, game.getCurrentLevelPosition());
 		onLevelLoaded(this.level);
 	}
 
@@ -123,6 +122,8 @@ implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClick
 
 	@Override
 	protected boolean handleBackNavigation() {
+        mainMenu.hide();
+
 		if(saveLevel()) {
 			return false;
 		}

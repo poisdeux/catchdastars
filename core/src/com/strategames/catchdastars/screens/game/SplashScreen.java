@@ -73,40 +73,40 @@ public class SplashScreen extends AbstractScreen {
 
 			this.finishedSetupAssets = true;
 
-			if( this.finishedStartupAnimation ) {
+//			if( this.finishedStartupAnimation ) {
 				getGameEngine().showMainMenu();
-			}
+//			}
 		}
 	}
 
-	@Override
-	protected Timeline showAnimation() {
-		this.splashImage.setOrigin(this.splashImage.getWidth() / 2f, this.splashImage.getHeight() / 2f);
-		this.splashImage.setScale(0f);
-
-		Timeline timeline = Timeline.createParallel();
-		timeline.push(Tween.to(this.splashImage, ActorAccessor.SCALE, 1.5f).target(1f, 1f));
-		timeline.setCallbackTriggers(TweenCallback.COMPLETE);
-		timeline.setCallback(new TweenCallback() {
-
-			@Override
-			public void onEvent(int arg0, BaseTween<?> arg1) {
-				if( arg0 == TweenCallback.COMPLETE ) {
-					finishedStartupAnimation = true;
-
-					if( finishedSetupAssets ) {
-						getGameEngine().showMainMenu();
-					}
-				}
-			}
-		});
-		return timeline;
-	}
-
-	@Override
-	protected Timeline hideAnimation() {
-		Timeline timeline = Timeline.createSequence();
-		timeline.push(Tween.to(this.splashImage, ActorAccessor.ALPHA, 1f).target(0f));
-		return timeline;
-	}
+//	@Override
+//	protected Timeline showAnimation() {
+//		this.splashImage.setOrigin(this.splashImage.getWidth() / 2f, this.splashImage.getHeight() / 2f);
+//		this.splashImage.setScale(0f);
+//
+//		Timeline timeline = Timeline.createParallel();
+//		timeline.push(Tween.to(this.splashImage, ActorAccessor.SCALE, 1.5f).target(1f, 1f));
+//		timeline.setCallbackTriggers(TweenCallback.COMPLETE);
+//		timeline.setCallback(new TweenCallback() {
+//
+//			@Override
+//			public void onEvent(int arg0, BaseTween<?> arg1) {
+//				if( arg0 == TweenCallback.COMPLETE ) {
+//					finishedStartupAnimation = true;
+//
+//					if( finishedSetupAssets ) {
+//						getGameEngine().showMainMenu();
+//					}
+//				}
+//			}
+//		});
+//		return timeline;
+//	}
+//
+//	@Override
+//	protected Timeline hideAnimation() {
+//		Timeline timeline = Timeline.createSequence();
+//		timeline.push(Tween.to(this.splashImage, ActorAccessor.ALPHA, 1f).target(0f));
+//		return timeline;
+//	}
 }

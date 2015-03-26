@@ -79,7 +79,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		super.show();
 		getGameEngine().pauseGame();
 		Game game = getGameEngine().getGame();
-		onLevelLoaded(LevelLoader.loadLocalSync(game, game.getCurrentLevelPosition()));
+		onLevelLoaded(LevelLoader.loadSync(game, game.getCurrentLevelPosition()));
 	}
 	
 	@Override

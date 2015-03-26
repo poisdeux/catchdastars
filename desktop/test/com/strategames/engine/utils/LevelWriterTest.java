@@ -27,7 +27,7 @@ public class LevelWriterTest {
 
 	@After
 	public void tearDown() throws Exception {
-		GameWriter.deleteAllGamesLocal();
+		GameWriter.deleteAllOriginalGames();
 	}
 	
 	@Test

@@ -1,0 +1,42 @@
+All assets can be found at "android/assets" which contains the following directories:
+
+fixtures      holds the Box2D fixtures
+
+fonts         holds the menu fonts
+
+games         holds the games metadata
+
+images        holds separate images
+
+packed        holds packed images to improve in game texture performance
+
+screenshots   holds screenshots taken from levels
+
+skin          holds skin definition files for the UI
+
+sounds        holds all audio files used for sound effects
+
+
+
+games
+=====
+
+The directory games contains the following setup:
+
+games/
+   in_progress/
+       <GAME_UUID>-<NUMBER>/
+         levels_completed/
+             <POSITION>
+             ...
+         meta
+       ...
+   originals
+       <GAME_UUID>/
+         levels/
+             <POSITION>
+             ...
+         meta
+       ...
+
+

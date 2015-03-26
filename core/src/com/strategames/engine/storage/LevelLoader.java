@@ -18,28 +18,14 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads packaged level files (synchronous)
-	 * @param name name of the level file
-	 * @return Level object containing the game objects
+	 * Loads completed level file if it exists, otherwise tries to loadSync original
+     * level file
 	 */
-	static private Level loadInternalSync(String name) {
+	static public Level loadSync(Game game, int[] pos) {
 		try {
-			FileHandle file = Gdx.files.internal(Files.getPath(name));
-			return loadSync(file);
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-
-	/**
-	 * Loads local level files (synchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveOriginal(com.strategames.engine.utils.Game, Writer)}
-	 */
-	static public Level loadLocalSync(Game game, int[] pos) {
-		try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, pos));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, pos));
             if( ! file.exists() ) {
-                file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
+                file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
             }
 			return loadSync(file);
 		} catch (Exception e) {
@@ -48,26 +34,43 @@ public class LevelLoader {
 		}
 	}
 
-	/**
-	 * Loads local level files (asynchronous) saved using {@link com.strategames.engine.storage.LevelWriter#saveOriginal(com.strategames.engine.utils.Game, Writer)}
-	 * <br/>
-	 */
-	static private void loadLocalAsync(Game game, int[] pos, OnLevelLoadedListener listener) {
-		levelLoadedListener = listener;
-		try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, pos));
+    /**
+     * Loads completed level file
+     * @param game
+     * @param pos
+     * @return loaded level or null if it does not exist
+     */
+    static public Level loadCompleted(Game game, int[] pos) {
+        try {
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, pos));
             if( ! file.exists() ) {
-                file = Gdx.files.local(Files.getOriginalLevelPath(game, pos));
+                file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
             }
-			loadAsync(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            return loadSync(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Loads original level file
+     * @param game
+     * @param pos
+     * @return loaded level or null if it does not exist
+     */
+    static public Level loadOriginal(Game game, int[] pos) {
+        try {
+            FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
+            return loadSync(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 	/**
 	 * Loads level file (synchronous) from FileHandle.
-	 * You should never need to use this. Use {@link #loadInternalSync(String)} or {@link #loadLocalSync(com.strategames.engine.utils.Game, com.strategames.engine.utils.Level)} instead.
 	 * @param file
 	 * @return Level object containing the game objects 
 	 */
@@ -87,7 +90,6 @@ public class LevelLoader {
 
 	/**
 	 * Loads level file (asynchronous) from FileHandle.
-     * You should never need to use this. Use {@link #loadInternalSync(String)} or {@link #loadLocalSync(com.strategames.engine.utils.Game, com.strategames.engine.utils.Level)} instead.
      * @param file
 	 */
 	static private void loadAsync(final FileHandle file) {

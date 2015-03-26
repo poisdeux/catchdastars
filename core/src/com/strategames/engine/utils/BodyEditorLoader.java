@@ -98,7 +98,7 @@ public class BodyEditorLoader {
 	 * every body is 1 meter large in your game, I guess).
 	 *
 	 * @param body The Box2d body you want to attach the fixture to.
-	 * @param name The name of the fixture you want to load.
+	 * @param name The name of the fixture you want to loadSync.
 	 * @param uniqueIdentifier will be added to the fixture. Retrieve using fixture.getUserData()
 	 * @param fd The fixture parameters to apply to the created body fixture.
 	 */

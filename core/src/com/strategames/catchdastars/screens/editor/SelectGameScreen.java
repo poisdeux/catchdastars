@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,14 +29,15 @@ public class SelectGameScreen extends AbstractScreen {
 	private Table gamesButtonsTable;
 	
 	public SelectGameScreen(GameEngine game) {
-		super(game, "Select a game");
+        super(game);
+        setTitle(new Label("Select a game", getSkin()));
 	}
 
 	@Override
 	protected void setupUI(final Stage stage) {
 		addMenuItem("Delete all games");
 		
-		//Gameloader to load all games
+		//Gameloader to loadSync all games
 		Array<Game> games = GameLoader.loadAllLocalGames();
 
 		this.gamesButtonsTable = new Table();
@@ -88,7 +90,7 @@ public class SelectGameScreen extends AbstractScreen {
 				@Override
 				public void onClick(Dialog dialog, int which) {
 					dialog.remove();
-					GameWriter.deleteAllGamesLocal();
+					GameWriter.deleteAllOriginalGames();
 					gamesButtonsTable.clear();
 				}
 			});
@@ -167,7 +169,7 @@ public class SelectGameScreen extends AbstractScreen {
 	}
 	
 	private void addNewGame(Game game) {
-		if( GameWriter.saveMetadataLocal(game) ) {
+		if( GameWriter.saveMetadataOriginal(game) ) {
 			addGameButton(game);
 		} else {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());

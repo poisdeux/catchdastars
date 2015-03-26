@@ -29,7 +29,7 @@ public class SelectGameScreen extends AbstractScreen {
 
 	@Override
 	protected void setupUI(final Stage stage) {
-		//Gameloader to load all games
+		//Gameloader to loadSync all games
 		Array<Game> games = GameLoader.loadAllLocalGames();
 
 		if( games.size < 1 ) {

@@ -84,11 +84,11 @@ public class Textures {
 	}
 	
 	/**
-	 * Adds the textures to the AssetManager load queue
+	 * Adds the textures to the AssetManager loadSync queue
 	 * <br/>
-	 * Note this does not actually load the assets just yet.
+	 * Note this does not actually loadSync the assets just yet.
 	 * <br/>
-	 * Use {@link AssetManager#update()} to load the actual assets
+	 * Use {@link AssetManager#update()} to loadSync the actual assets
 	 * @param manager
 	 * @throws FileNotFoundException
 	 */
@@ -121,7 +121,7 @@ public class Textures {
 	 * Note DO NOT call this method if AssetManager is not ready loading.
 	 * <br/>
 	 * Use {@link #addAllToAssetManager(AssetManager)} setup the asset manager and use {@link AssetManager#update()}
-	 * to load assets.
+	 * to loadSync assets.
 	 * <br/>
 	 * Note you cannot access the textures before calling this method
 	 * @param manager

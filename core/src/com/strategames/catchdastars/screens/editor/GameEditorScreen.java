@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -71,7 +72,8 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	}
 	
 	public GameEditorScreen(GameEngine game) {
-		super(game, "Level editor");
+		super(game);
+        setTitle(new Label("Level editor", getSkin()));
 	}
 
 	@Override
@@ -144,7 +146,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Collection<Level> levelsArrayList = game.getLevels().values();
 
 		if( editingLevel != null ) { // reload level to include added gameobjects
-			editingLevel = LevelLoader.loadLocalSync(game, editingLevel.getPosition());
+			editingLevel = LevelLoader.loadSync(game, editingLevel.getPosition());
 			game.setLevel(editingLevel);
 		}
 
@@ -199,7 +201,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		}
 
 		boolean levelsFailedToSave = false;
-		if( GameWriter.deleteLocal(getGameEngine().getGame())) {
+		if( GameWriter.deleteMetadataOriginal(getGameEngine().getGame())) {
 			for( Level level : levels ) {
 				if( ! LevelWriter.saveOriginal(getGameEngine().getGame(), level) ) {
 					levelsFailedToSave = true;

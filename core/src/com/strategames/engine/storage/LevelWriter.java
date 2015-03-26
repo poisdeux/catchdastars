@@ -16,7 +16,7 @@ public class LevelWriter {
 	 * @return true if saving was succesful, false otherwise
 	 */
 	static public boolean saveOriginal(Game game, Level writer) {
-		FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, writer));
+		FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, writer));
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(writer.getJson()), false);
@@ -36,7 +36,7 @@ public class LevelWriter {
 	 */
 	static public boolean deleteOriginal(Game game, Level level) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getOriginalLevelPath(game, level));
+			FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, level));
 			return file.delete();
 		} catch (Exception e) {
 			return false;
@@ -50,7 +50,7 @@ public class LevelWriter {
     * @return true if saving was succesful, false otherwise
     */
     static public boolean saveCompleted(Game game, Level level) {
-        FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, level));
+        FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, level));
         try {
             Json json = new Json();
             file.writeString(json.prettyPrint(level.getJson()), false);
@@ -69,7 +69,7 @@ public class LevelWriter {
      */
     static public boolean deleteCompleted(Game game, Level level) {
         try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelPath(game, level));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, level));
             return file.delete();
         } catch (Exception e) {
             return false;

@@ -616,7 +616,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	/**
 	 * Soundeffects get disposed when screen closes. {@link GameEngine} will call this method
-	 * to load sounds when starting a level. Make sure you load all sounds needed here.
+	 * to loadSync sounds when starting a level. Make sure you loadSync all sounds needed here.
 	 */
 	abstract public void loadSounds();
 
