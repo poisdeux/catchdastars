@@ -31,9 +31,9 @@ public class Files {
     static private final String LEVELS_DIRECTORY = "levels";
     static private final String LEVELS_COMPLETED_DIRECTORY = "levels_completed";
 
-	static public String getGamesDirectory() {
-		return TOP_PATH;
-	}
+    static public String getOriginalGamesDirectory() {
+        return ORIGINALS_PATH;
+    }
 
 	static public String getPath(String name) {
 		return TOP_PATH + "/" + name;
@@ -53,11 +53,11 @@ public class Files {
         return INPROGRESS_PATH + "/" + game.getUuid() + "/";
     }
 
-    static public String getOriginalGameMetaPath(Game game) {
+    static public String getOriginalGameMetaFile(Game game) {
         return getOriginalGameDirectory(game) + META_FILENAME;
     }
 
-	static public String getInprogressGameMetaPath(Game game) {
+	static public String getInprogressGameMetaFile(Game game) {
 		return getInProgressGameDirectory(game) + META_FILENAME;
 	}
 	

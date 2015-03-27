@@ -135,16 +135,6 @@ public class LevelLoader {
 		return null;
 	}
 
-	static public FileHandle getInternalLevelsDir() {
-		try {
-			FileHandle dir = Gdx.files.internal(Files.getGamesDirectory());
-			return dir;
-		} catch (Exception e) {
-			//			Gdx.app.log("Level", "error");
-		}
-		return null;
-	}
-
 	
 
 	/**

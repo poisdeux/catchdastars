@@ -207,7 +207,6 @@ abstract public class Dialog extends Table {
 	
 	/**
 	 * Use this to create and add the actual dialog to the stage.
-	 * @param stage the stage this dialog should be added to as an Actor
 	 */
 	public Dialog create() {
 		if( this.message != null ) {

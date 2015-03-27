@@ -41,7 +41,7 @@ public class GameLoader {
 
 	static public Array<Game> loadAllLocalGames() {
 		Array<Game> games = new Array<Game>();
-		FileHandle dir = getLocalGamesDir();
+		FileHandle dir = Gdx.files.local(Files.getOriginalGamesDirectory());
 		FileHandle[] entries = dir.list();
 		for( FileHandle entry : entries ) {
 			if( entry.isDirectory() ) {
@@ -78,25 +78,5 @@ public class GameLoader {
 			Gdx.app.log("GameLoader", "getGame: error parsing json: "+e.getMessage());
 			return null;
 		}
-	}
-	
-	static private FileHandle getLocalGamesDir() {
-		try {
-			FileHandle dir = Gdx.files.local(Files.getGamesDirectory());
-			return dir;
-		} catch (Exception e) {
-			Gdx.app.log("Game", "Error getting local games directory: "+e.getMessage());
-		}
-		return null;
-	}
-
-	static private FileHandle getInternalGamesDir() {
-		try {
-			FileHandle dir = Gdx.files.internal(Files.getGamesDirectory());
-			return dir;
-		} catch (Exception e) {
-			Gdx.app.log("Games", "Error getting internal games directory: "+e.getMessage());
-		}
-		return null;
 	}
 }

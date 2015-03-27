@@ -84,8 +84,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		addMenuItem("Play game");
 		addMenuItem("Save game");
 		addMenuItem("Delete game");
-		addMenuItem("Import levels");
-		addMenuItem("Export levels");
+		addMenuItem("Export game");
 
 		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(game);
 		game.clearLevels();
@@ -201,7 +200,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		}
 
 		boolean levelsFailedToSave = false;
-		if( GameWriter.deleteMetadataOriginal(getGameEngine().getGame())) {
+		if( GameWriter.deleteOriginal(getGameEngine().getGame())) {
 			for( Level level : levels ) {
 				if( ! LevelWriter.saveOriginal(getGameEngine().getGame(), level) ) {
 					levelsFailedToSave = true;
@@ -210,6 +209,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		} else {
 			showErrorDialog("Error deleting directory", "Failed to delete directory holding the levels");
 		}
+
 		if( levelsFailedToSave ) {
 			showErrorDialog("Error saving levels", "Failed to save one or more levels");
 		} else {
@@ -399,31 +399,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	@Override
 	protected void onMenuItemSelected(String text) {
 		Game game = getGameEngine().getGame();
-		if(text.contentEquals("Import levels")) {
-			if( game.getLevels().size() > 0 ) {
-				//ask for confirmation
-				ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "Importing will delete current game", getSkin());
-				dialog.setPositiveButton("Import", new OnClickListener() {
-
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						dialog.remove();
-						getGameEngine().getExporterImporter().importLevels(GameEditorScreen.this);
-					}
-				});
-				dialog.setNegativeButton("Cancel", new OnClickListener() {
-
-					@Override
-					public void onClick(Dialog dialog, int which) {
-						dialog.remove();
-					}
-				});
-				dialog.create();
-				dialog.show();
-			} else {
-				getGameEngine().getExporterImporter().export(game.getJson());
-			}
-		} else if(text.contentEquals("Export levels")) {
+		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(getGameEngine().getGame().getJson());
 		}else if(text.contentEquals("Play game")) {
 			((CatchDaStars) getGameEngine()).startLevel(new int[] {0,0});
