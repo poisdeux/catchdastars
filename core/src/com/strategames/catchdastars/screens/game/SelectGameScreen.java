@@ -30,7 +30,7 @@ public class SelectGameScreen extends AbstractScreen {
 	@Override
 	protected void setupUI(final Stage stage) {
 		//Gameloader to loadSync all games
-		Array<Game> games = GameLoader.loadAllLocalGames();
+		Array<Game> games = GameLoader.loadAllOriginalGames();
 
 		if( games.size < 1 ) {
 			ErrorDialog dialog = new ErrorDialog(stage, "No games available", getSkin());

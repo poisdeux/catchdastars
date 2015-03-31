@@ -76,6 +76,8 @@ public class LevelWriter {
         }
     }
 
+
+
     /**
      * Deletes all completed levels from game
      * @param game

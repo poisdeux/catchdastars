@@ -25,6 +25,7 @@ import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Game;
@@ -540,7 +541,13 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		levelCompleteDialog.show();
 
 		setTotalScore(getTotalScore());
+
+        saveProgress();
 	}
+
+    public void saveProgress() {
+        GameWriter.saveInprogress(game);
+    }
 
 	/**
 	 * Override this method to implement a custom dialog that should be shown

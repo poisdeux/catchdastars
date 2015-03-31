@@ -38,7 +38,7 @@ public class SelectGameScreen extends AbstractScreen {
         addMenuItem("Delete all games");
 
         //Gameloader to loadSync all games
-        Array<Game> games = GameLoader.loadAllLocalGames();
+        Array<Game> games = GameLoader.loadAllOriginalGames();
 
         this.gamesButtonsTable = new Table();
         fillGamesButtonsTable(games);

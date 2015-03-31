@@ -7,6 +7,7 @@ import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameWriter {
 
@@ -27,7 +28,7 @@ public class GameWriter {
         }
 
         HashMap<String, Level> levels = game.getLevels();
-        for( HashMap.Entry<String, Level> entry : levels.entrySet() ) {
+        for( Map.Entry<String, Level> entry : levels.entrySet() ) {
             if( ! LevelWriter.saveCompleted(game, entry.getValue()) ) {
                 return false;
             }
@@ -53,7 +54,7 @@ public class GameWriter {
         }
 
         HashMap<String, Level> levels = game.getLevels();
-        for( HashMap.Entry<String, Level> entry : levels.entrySet() ) {
+        for( Map.Entry<String, Level> entry : levels.entrySet() ) {
             if( ! LevelWriter.saveOriginal(game, entry.getValue()) ) {
                 return false;
             }
@@ -80,6 +81,23 @@ public class GameWriter {
             Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Deletes the complete game
+     * @param game
+     * @return
+     */
+    static public boolean deleteInprogress(Game game) {
+        FileHandle file = Gdx.files.local(Files.getInProgressGameDirectory(game));
+        if (file.isDirectory()) {
+            if (file.deleteDirectory()) {
+                return true;
+            }
+        }
+
+        Gdx.app.log("Writer", "deleteInprogress: failed to delete " + file.name());
+        return false;
     }
 
     /**

@@ -142,7 +142,7 @@ public class LevelEditorScreen extends AbstractScreen
             dialog.show();
         }
 
-        return true;
+        return false;
     }
 
     @Override
