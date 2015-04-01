@@ -6,6 +6,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -17,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.ChalkLine;
@@ -26,6 +30,7 @@ import com.strategames.engine.sounds.DrawChalkLineShort1Sound;
 import com.strategames.engine.sounds.DrawChalkLineShort2Sound;
 import com.strategames.engine.sounds.DrawChalkLineSound;
 import com.strategames.engine.sounds.SoundEffect;
+import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.GameStateDialog;
@@ -34,8 +39,11 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	
 	public final static int BUTTON_QUIT_CLICKED = BUTTON_NEGATIVE;
 	public final static int BUTTON_NEXT_CLICKED = BUTTON_POSITIVE;
-	
-	private ArrayList<ScoreItem> scoreItems;
+
+    private Score score;
+    private Iterator<Score.ScoreItem> scoreItemIterator;
+
+	private ArrayList<ScoreActor> scoreActors;
 	private ArrayList<ChalkLine> chalkLines;
 	private float maxRowHeight;
 	private float maxImageHeight;
@@ -61,36 +69,39 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	/**
 	 * Shows a scoreboard animation
 	 * @param stage the stage to use to show the score
-	 * @param game
 	 * @param skin
 	 * @param currentScore the total score minus the score of the completed level
 	 */
-	public LevelCompleteDialog(Stage stage, GameEngine game, Skin skin, int currentScore) {
+	public LevelCompleteDialog(Stage stage, Skin skin, int currentScore, Score score) {
 		super("Level complete", stage, skin);
-		this.scoreItems = new ArrayList<LevelCompleteDialog.ScoreItem>();
 		this.animPosition = new Vector2();
 		this.totalScore = currentScore;
 		this.chalkLines = new ArrayList<ChalkLine>();
-		
+		this.score = score;
+
 		setNegativeButton("Quit");
 		setPositiveButton("Next level");
 	}
 
-	public void add(Image image, int amount, int scorePerGameObject) {
-		ScoreItem item = new ScoreItem(image.getDrawable(), amount, scorePerGameObject);
-		this.scoreItems.add(item);
-		float height = image.getHeight();
-		if( height > this.maxRowHeight ) {
-			this.maxRowHeight = height;
-		}
-	}
+//	public void add(Image image, int amount, int scorePerGameObject) {
+//		ScoreItem item = new ScoreItem(image.getDrawable(), amount, scorePerGameObject);
+//		this.scoreItems.add(item);
+//		float height = image.getHeight();
+//		if( height > this.maxRowHeight ) {
+//			this.maxRowHeight = height;
+//		}
+//	}
 
 	public Dialog create() {
 		super.create();
 		
 		this.animationPhase = -1;
-		
-		int amountOfItems = this.scoreItems.size();
+
+        Collection<Score.ScoreItem> items = score.getScoreItems();
+
+        this.scoreItemIterator = items.iterator();
+
+		int amountOfItems = this.scoreActors.size();
 		float availableScreenHeight = super.stage.getHeight() - (this.padding * (amountOfItems + 2));
 		float height = availableScreenHeight / (amountOfItems + 2);
 		
@@ -109,9 +120,9 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		this.animationPhase++;
 		switch(this.animationPhase) {
 		case 0:
-			if( scoreItems.size() > 0 ) {
+			if( scoreActors.size() > 0 ) {
 				this.top = super.stage.getHeight() - (this.maxImageHeight * 2);
-				showScoreItem(0);
+				showScoreActor();
 			}
 			break;
 		case 1:
@@ -155,15 +166,19 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		}
 	}
 
-	private void showScoreItem(final int number) {
-		final ScoreItem scoreItem = this.scoreItems.get(number);
+	private void showScoreActor() {
+        Score.ScoreItem scoreItem = scoreItemIterator.next();
 
-		final int increment = scoreItem.getScorePerGameObject();
-		final int amount = scoreItem.getAmount() * increment;
+        if( scoreItem == null ) { //start next animation phase
+            animationController();
+            return;
+        }
+
+		final int increment = scoreItem.getMultiplier();
+		final int amount = scoreItem.getScore();
 		final SoundEffect incrementSound = SoundEffect.getSoundForIncrement(increment);
 
-		Drawable drawable = this.scoreItems.get(number).getDrawable();
-		Image image = new Image(drawable);
+		Image image = scoreItem.getImage();
 		image.setScaling(Scaling.stretch);
 		double scaleFactor = this.maxImageHeight / (double) image.getHeight() ;
 		float height = this.maxImageHeight;
@@ -177,7 +192,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		scoreItemTable.add(label).width(50f);
 
 		this.animPosition.x = 100f;
-		this.animPosition.y = this.top - (( this.maxImageHeight + this.padding )  * number);
+		this.animPosition.y = this.top - (( this.maxImageHeight + this.padding )  * scoreActors.size());
 
 		scoreItemTable.setPosition(animPosition.x, -height);
 
@@ -201,18 +216,14 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 							delayCount--;
 							return false;
 						} else {
-							if( number < (scoreItems.size() - 1)  ) {
-								showScoreItem(number + 1);
-							} else {
-								animationController();
-							}
+							showScoreActor();
 							return true;
 						}
 					}
 
 				}));
 
-		scoreItem.setActor(scoreItemTable);
+		scoreActors.add(new ScoreActor(scoreItemTable, scoreItem));
 		super.stage.addActor(scoreItemTable);
 	}
 
@@ -251,15 +262,15 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	}
 
 	private void calculateTotalAnimation(final int number, final float x, final float y) {
-		int size = this.scoreItems.size();
-		final ScoreItem scoreItem = this.scoreItems.get(number);
-		final Actor actor = scoreItem.getActor();
+		int size = this.scoreActors.size();
+		final ScoreActor scoreActor = this.scoreActors.get(number);
+		final Actor actor = scoreActor.getActor();
 
 		Action actionCountScore = new Action() {
 
 			@Override
 			public boolean act(float delta) {
-				int amount = scoreItem.getAmount() * scoreItem.getScorePerGameObject();
+				int amount = scoreActor.getScoreItem().getScore();
 				if( amount > 0 ) {
 					SoundEffect.getSoundForIncrement(amount).play();
 					totalScore += amount;
@@ -332,36 +343,23 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	}
 
 
-	private class ScoreItem {
-		private int amount;
-		private int scorePerGameObject;
+	private class ScoreActor {
+		private Score.ScoreItem scoreItem;
 		private Actor actor;
-		private Drawable drawable;
-		
-		public ScoreItem(Drawable drawable, int amount, int scorePerGameObject) {
-			this.amount = amount;
-			this.scorePerGameObject = scorePerGameObject;
-			this.drawable = drawable;
+
+        private ScoreActor() {}
+
+		public ScoreActor(Actor actor, Score.ScoreItem scoreItem) {
+			this.scoreItem = scoreItem;
+            this.actor = actor;
 		}
 
-		public int getAmount() {
-			return amount;
-		}
-
-		public int getScorePerGameObject() {
-			return scorePerGameObject;
-		}
-
-		public Drawable getDrawable() {
-			return drawable;
-		}
-		
 		public Actor getActor() {
 			return actor;
 		}
 
-		public void setActor(Actor actor) {
-			this.actor = actor;
-		}
-	}
+        public Score.ScoreItem getScoreItem() {
+            return scoreItem;
+        }
+    }
 }

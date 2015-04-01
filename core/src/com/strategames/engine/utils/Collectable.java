@@ -13,8 +13,8 @@ public class Collectable {
 		this.collected = new HashSet<GameObject>();
 	}
 	
-	public HashSet<GameObject> getCollected() {
-		return collected;
+	public int getAmountCollected() {
+		return collected.size();
 	}
 	
 	public int getTotal() {

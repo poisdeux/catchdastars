@@ -391,6 +391,10 @@ public class LevelEditorScreen extends AbstractScreen
         return null;
     }
 
+    /**
+     * TODO Show progress dialog while creating screenshot
+     * @return
+     */
     @Override
     protected Timeline hideAnimation() {
         ScreenshotFactory.saveScreenshot(getStageActors(), this.level);

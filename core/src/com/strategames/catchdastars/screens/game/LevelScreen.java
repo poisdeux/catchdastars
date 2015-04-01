@@ -8,6 +8,9 @@ import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
+import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
@@ -18,6 +21,7 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
+import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
@@ -96,9 +100,9 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	@Override
 	protected boolean handleBackNavigation() {
         Gdx.app.log("LevelScreen", "handleBackNavigation");
-		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
-			return true;
-		}
+//		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
+//			return true;
+//		}
 		
 		if( this.levelPausedDialog == null  ) {
 			this.levelPausedDialog = new LevelPausedDialog(getStageUIActors(), getSkin());
@@ -165,6 +169,24 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		}
 	}
 
+    public void showLevelCompleteDialog() {
+        LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getGameEngine(), getSkin(), getGameEngine().getTotalScore());
+
+        Textures textures = Textures.getInstance();
+        levelCompleteDialog.add(new Image(textures.balloonBlue), amountOfBlueBalloons, this.scorePerBalloon);
+        levelCompleteDialog.add(new Image(textures.balloonRed), amountOfRedBalloons, this.scorePerBalloon);
+        levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
+        levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
+        levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
+
+        BalloonBlue b = new BalloonBlue();
+        levelCompleteDialog.setOnClickListener(this);
+
+        levelCompleteDialog.create();
+
+        levelCompleteDialog.show();
+    }
+
 	private void startScreenCloseAnimation() {
 		if( imageStartAnimationFinished && levelLoaded ) {
 			this.levelStartAnimation.resume();
@@ -212,4 +234,5 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	protected Timeline hideAnimation() {
 		return null;
 	}
+
 }

@@ -24,6 +24,7 @@ import com.strategames.catchdastars.gameobjects.StarYellow;
 import com.strategames.catchdastars.screens.editor.GameEditorScreen;
 import com.strategames.catchdastars.screens.editor.LevelEditorScreen;
 import com.strategames.catchdastars.screens.editor.SelectGameScreen;
+import com.strategames.catchdastars.screens.game.LevelScreen;
 import com.strategames.catchdastars.screens.game.SettingsScreen;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
@@ -41,6 +42,7 @@ import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
+import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -60,6 +62,12 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	private boolean accelerometerAvailable;
 
+    private final String BLUE_BALLOON = "01_balloonBlue";
+    private final String RED_BALLOON = "02_balloonRed";
+    private final String BLUE_STAR = "03_starBlue";
+    private final String RED_STAR = "04_starRed";
+    private final String GOLD_STAR = "05_starGold";
+
 	private Collectable redCollectables;
 	private Collectable blueCollectables;
 	private Collectable goldCollectables;
@@ -68,11 +76,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	private int amountOfBlueBalloonsFromPreviousLevel;
 	private int amountOfRedBalloonsFromPreviousLevel;
 	private int amountBalloonsInGame;
-
-	private final int scorePerBalloon = 10;
-	private final int scorePerBlueStar = 1;
-	private final int scorePerRedStar = 1;
-	private final int scorePerGoldStar = 5;
+    private Score score = new Score();
 
 	private Box2DDebugRenderer debugRenderer;
 
@@ -88,6 +92,13 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		this.redCollectables = new Collectable();
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
+
+        Textures textures = Textures.getInstance();
+        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10, 0);
+        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10, 0);
+        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1, 0);
+        score.addItem(RED_STAR, new Image(textures.starRed), 1, 0);
+        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5, 0);
 
 		/**
 		 * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
@@ -284,16 +295,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		addGameObject(sensor, stage);
 	}
 
-	private int calculateScore() {
-		int blueCollectablesScore = amountOfBlueBalloons * this.blueCollectables.getCollected().size() * this.scorePerBlueStar;
-		int redCollectablesScore = amountOfRedBalloons * this.redCollectables.getCollected().size() * this.scorePerRedStar;
-		int goldCollectablesScore = this.goldCollectables.getCollected().size() * this.scorePerGoldStar;
-		int blueBalloonsScore = amountOfBlueBalloons * this.scorePerBalloon;
-		int redBalloonsScore = amountOfRedBalloons * this.scorePerBalloon;
-		return blueCollectablesScore + redCollectablesScore + goldCollectablesScore +
-				blueBalloonsScore + redBalloonsScore;
-	}
-
 	public void showLevelEditor() {
 		Screen screen = new LevelEditorScreen(this);
 		setScreen(screen);
@@ -333,10 +334,20 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 	@Override
 	public void levelComplete() {
         LevelWriter.saveCompleted(getGame(), level);
-        showLevelCompleteDialog();
+
+        super.levelComplete();
 	}
 
-	private void openDoors() {
+    @Override
+    public void calculateScore(Score score) {
+        score.setAmount(BLUE_STAR, this.blueCollectables.getAmountCollected());
+        score.setAmount(RED_STAR, this.redCollectables.getAmountCollected());
+        score.setAmount(GOLD_STAR, this.goldCollectables.getAmountCollected());
+        score.setAmount(BLUE_BALLOON, amountOfBlueBalloons);
+        score.setAmount(RED_BALLOON, amountOfRedBalloons);
+    }
+
+    private void openDoors() {
         if( this.doorsOpen ) {
             return;
         }
@@ -401,31 +412,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
 				.target(cutPoint.x + door.getWidth()));
 		getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
-	}
-
-	private void showLevelCompleteDialog() {
-		/**
-		 * TODO: refactor to check if all levels have been completed
-		 */
-		//		if( getLevelPosition() >= LevelLoader.getLastLevelNumber() ) {
-		//			setScreen(new GameCompleteScreen(this, screen.getStageActors()));
-		//		} else {
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(((AbstractScreen) getScreen()).getStageUIActors(), this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
-
-		Textures textures = Textures.getInstance();
-		levelCompleteDialog.add(new Image(textures.balloonBlue), amountOfBlueBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(textures.balloonRed), amountOfRedBalloons, this.scorePerBalloon);
-		levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
-		levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
-		levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
-
-		levelCompleteDialog.setOnClickListener(this);
-
-		levelCompleteDialog.create();
-
-		levelCompleteDialog.show();
-
-		setTotalScore(getTotalScore() + calculateScore());
 	}
 
 	@Override

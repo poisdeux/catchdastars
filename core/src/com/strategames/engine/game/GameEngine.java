@@ -31,10 +31,14 @@ import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
+import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.LevelFailedDialog;
 
+/**
+ * TODO we make use of many different datastructures which we create and destroy. This reduces performance when the garbage collector runs. We might want to change all these datastructures into one big ugly datastructure.
+ */
 abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
 	public enum GAME_STATE {
 		NONE, RUNNING, PAUSED
@@ -84,6 +88,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	private Screen newScreen;
 
 	private int totalScore;
+    private Score score;
 
 	//	private Stage stageActors;
 
@@ -530,9 +535,11 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	 * Override this method to create a custom action when level is completed 
 	 */
 	public void levelComplete() {
+        calculateScore(score);
+
 		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
 
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, this, ((AbstractScreen) getScreen()).getSkin(), getTotalScore());
+		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, ((AbstractScreen) getScreen()).getSkin(), getTotalScore(), score);
 
 		levelCompleteDialog.setOnClickListener(this);
 
@@ -540,10 +547,16 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 		levelCompleteDialog.show();
 
-		setTotalScore(getTotalScore());
+		setTotalScore(this.totalScore + score.getTotalScore());
 
         saveProgress();
 	}
+
+    /**
+     * Called when level is completed and final score must be calculated
+     * @param score use this to add the score per item
+     */
+    abstract public void calculateScore(Score score);
 
     public void saveProgress() {
         GameWriter.saveInprogress(game);
