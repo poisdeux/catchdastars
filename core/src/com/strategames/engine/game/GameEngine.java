@@ -537,16 +537,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	public void levelComplete() {
         calculateScore(score);
 
-		Stage stage = ((AbstractScreen) getScreen()).getStageUIActors();
-
-		LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(stage, ((AbstractScreen) getScreen()).getSkin(), getTotalScore(), score);
-
-		levelCompleteDialog.setOnClickListener(this);
-
-		levelCompleteDialog.create();
-
-		levelCompleteDialog.show();
-
 		setTotalScore(this.totalScore + score.getTotalScore());
 
         saveProgress();

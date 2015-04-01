@@ -1,11 +1,5 @@
 package com.strategames.catchdastars.screens.game;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenEquations;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -15,12 +9,13 @@ import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.LevelLoader;
+import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
-import com.strategames.engine.storage.LevelLoader;
-import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.MusicPlayer;
+import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -28,6 +23,12 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Screen;
+
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquations;
 
 public class LevelScreen extends AbstractScreen implements OnClickListener, OnLevelLoadedListener
 {	
@@ -169,17 +170,9 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		}
 	}
 
-    public void showLevelCompleteDialog() {
-        LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getGameEngine(), getSkin(), getGameEngine().getTotalScore());
+    public void showLevelCompleteDialog(Score score) {
+        LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getSkin(), getGameEngine().getTotalScore(), score);
 
-        Textures textures = Textures.getInstance();
-        levelCompleteDialog.add(new Image(textures.balloonBlue), amountOfBlueBalloons, this.scorePerBalloon);
-        levelCompleteDialog.add(new Image(textures.balloonRed), amountOfRedBalloons, this.scorePerBalloon);
-        levelCompleteDialog.add(new Image(textures.starBlue), this.blueCollectables.getCollected().size(), this.scorePerBlueStar);
-        levelCompleteDialog.add(new Image(textures.starRed), this.redCollectables.getCollected().size(), this.scorePerRedStar);
-        levelCompleteDialog.add(new Image(textures.starYellow), this.goldCollectables.getCollected().size(), this.scorePerGoldStar);
-
-        BalloonBlue b = new BalloonBlue();
         levelCompleteDialog.setOnClickListener(this);
 
         levelCompleteDialog.create();

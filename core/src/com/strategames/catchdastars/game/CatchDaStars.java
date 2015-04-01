@@ -93,13 +93,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		this.blueCollectables = new Collectable();
 		this.goldCollectables = new Collectable();
 
-        Textures textures = Textures.getInstance();
-        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10, 0);
-        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10, 0);
-        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1, 0);
-        score.addItem(RED_STAR, new Image(textures.starRed), 1, 0);
-        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5, 0);
-
 		/**
 		 * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
 		 * 8.1/0.3 = 27 (crosses horizontally)
@@ -111,7 +104,9 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 
 	@Override
 	public void create() {
-		this.gravityVector = new Vector2();
+        super.create();
+
+        this.gravityVector = new Vector2();
 		this.gravityVector.set(0, -GRAVITY);
 
 		this.accelerometerAvailable = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
@@ -123,8 +118,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		//of libgdx.
 		this.world = new World(this.gravityVector, true);
 		setWorld(this.world);
-
-		super.create();
 	}
 
 	@Override
@@ -331,20 +324,14 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
 		addToBackstack(screen);
 	}
 
-	@Override
-	public void levelComplete() {
-        LevelWriter.saveCompleted(getGame(), level);
-
-        super.levelComplete();
-	}
-
     @Override
     public void calculateScore(Score score) {
-        score.setAmount(BLUE_STAR, this.blueCollectables.getAmountCollected());
-        score.setAmount(RED_STAR, this.redCollectables.getAmountCollected());
-        score.setAmount(GOLD_STAR, this.goldCollectables.getAmountCollected());
-        score.setAmount(BLUE_BALLOON, amountOfBlueBalloons);
-        score.setAmount(RED_BALLOON, amountOfRedBalloons);
+        Textures textures = Textures.getInstance();
+        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10, amountOfBlueBalloons);
+        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10, amountOfRedBalloons);
+        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1,  this.blueCollectables.getAmountCollected());
+        score.addItem(RED_STAR, new Image(textures.starRed), 1, this.redCollectables.getAmountCollected());
+        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5, this.goldCollectables.getAmountCollected());
     }
 
     private void openDoors() {
