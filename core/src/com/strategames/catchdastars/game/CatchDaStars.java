@@ -497,7 +497,7 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
                 destroyBalloon(balloon);
             }
         } else if( object instanceof Door ) {
-            this.nextLevelPosition = ((Door) object).getNextLevelPosition();
+            setNextLevelPosition(((Door) object).getNextLevelPosition());
         } else if ( object instanceof RectangularSensor ) {
             if( balloon.isInGame() ) {
                 getWorldThread().setGameObjectInactive(balloon);
@@ -594,16 +594,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
                     startLevel(this.nextLevelPosition);
                     break;
                 case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
-                    stopScreen();
-                    break;
-            }
-        } else if( dialog instanceof LevelFailedDialog ) {
-            switch( which ) {
-                case LevelFailedDialog.BUTTON_RETRY_CLICKED:
-                    Gdx.app.log("CatchDaStars", "LevelFailedDialog retry");
-                    resetLevel();
-                    break;
-                case LevelFailedDialog.BUTTON_QUIT_CLICKED:
                     stopScreen();
                     break;
             }

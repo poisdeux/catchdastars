@@ -70,6 +70,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 //	private int[] levelPosition = new int[2];
 
+    private int[] nextLevelPosition;
+
 	private Game game; 
 
 	private World world;
@@ -195,7 +197,15 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		startBox2DThread();
 	}
 
-	public void setLevelCompleted() {
+    public void setNextLevelPosition(int[] nextLevelPosition) {
+        this.nextLevelPosition = nextLevelPosition;
+    }
+
+    public int[] getNextLevelPosition() {
+        return nextLevelPosition;
+    }
+
+    public void setLevelCompleted() {
 		this.levelState = LEVEL_STATE.COMPLETE;
 	}
 
@@ -499,6 +509,10 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 		this.levelState = LEVEL_STATE.NONE;
 		showLevelScreen();
 	}
+
+    public void startNextLevel() {
+        startLevel(nextLevelPosition);
+    }
 
 	/**
 	 * Hides the current screen and shows the previous screen

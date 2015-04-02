@@ -101,7 +101,6 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 	@Override
 	protected boolean handleBackNavigation() {
-        Gdx.app.log("LevelScreen", "handleBackNavigation");
 //		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
 //			return true;
 //		}
@@ -157,7 +156,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
                     getGameEngine().stopScreen();
                     break;
                 case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
-                    //getGameEngine().startLevel();
+                    getGameEngine().startNextLevel();;
                     break;
             }
         }
