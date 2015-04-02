@@ -20,6 +20,7 @@ import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
+import com.strategames.ui.dialogs.LevelFailedDialog;
 import com.strategames.ui.dialogs.LevelPausedDialog;
 import com.strategames.ui.helpers.FilledRectangleImage;
 import com.strategames.ui.helpers.Screen;
@@ -141,7 +142,25 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				getGameEngine().showMainMenu();
 				break;
 			}
-		}
+		} else if( dialog instanceof LevelFailedDialog ) {
+            switch( which ) {
+                case LevelFailedDialog.BUTTON_QUIT_CLICKED:
+                    getGameEngine().stopScreen();
+                    break;
+                case LevelFailedDialog.BUTTON_RETRY_CLICKED:
+                    getGameEngine().resetLevel();
+                    break;
+            }
+        } else if( dialog instanceof LevelCompleteDialog ) {
+            switch( which ) {
+                case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
+                    getGameEngine().stopScreen();
+                    break;
+                case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
+                    //getGameEngine().startLevel();
+                    break;
+            }
+        }
 	}
 
 	@Override
@@ -172,12 +191,16 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
     public void showLevelCompleteDialog(Score score) {
         LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getSkin(), score);
-
         levelCompleteDialog.setOnClickListener(this);
-
         levelCompleteDialog.create();
-
         levelCompleteDialog.show();
+    }
+
+    public void showLevelFailedDialog() {
+        LevelFailedDialog dialog = new LevelFailedDialog(getStageUIActors(), getSkin());
+        dialog.setOnClickListener(this);
+        dialog.create();
+        dialog.show();
     }
 
 	private void startScreenCloseAnimation() {

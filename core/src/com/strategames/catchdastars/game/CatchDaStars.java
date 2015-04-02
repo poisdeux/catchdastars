@@ -337,6 +337,11 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
     }
 
+    @Override
+    public void levelFailed() {
+        ((LevelScreen) getScreen()).showLevelFailedDialog();
+    }
+
     private void openDoors() {
         if( this.doorsOpen ) {
             return;
@@ -402,16 +407,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
         timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
                 .target(cutPoint.x + door.getWidth()));
         getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
-    }
-
-    @Override
-    public void showLevelFailedDialog() {
-        AbstractScreen screen = (AbstractScreen) getScreen();
-
-        LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIActors(), screen.getSkin());
-        dialog.setOnClickListener(this);
-        dialog.create();
-        dialog.show();
     }
 
     /**

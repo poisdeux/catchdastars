@@ -439,7 +439,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 				levelCompleteCalled = true;
 			} else if( this.levelState == LEVEL_STATE.FAILED ) {
 				pauseGame();
-				showLevelFailedDialog();
+				levelFailed();
 			}
 		}
 	}
@@ -526,26 +526,17 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	 * Called when game state is set to level complete. Use this to calculate the score
      * ,show a level complete animation, save game state, ...
 	 */
-	abstract public void levelComplete(Score score); {
+	abstract public void levelComplete(Score score);
 
-	}
+    /**
+     * Called when game state is set to level failed. Use this to show start animation or show
+     * a dialog.
+     */
+    abstract public void levelFailed();
 
     public void saveProgress() {
         GameWriter.saveInprogress(game);
     }
-
-	/**
-	 * Override this method to implement a custom dialog that should be shown
-	 * when game is in state {@link com.strategames.engine.game.GameEngine.LEVEL_STATE#FAILED}
-	 */
-	public void showLevelFailedDialog() {
-		AbstractScreen screen = (AbstractScreen) getScreen();
-
-		LevelFailedDialog dialog = new LevelFailedDialog(screen.getStageUIActors(), screen.getSkin());
-		dialog.setOnClickListener(this);
-		dialog.create();
-		dialog.show();
-	}
 
 	private void handleDeleteGameObjectsQueue() {
 		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
