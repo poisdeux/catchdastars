@@ -55,7 +55,9 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 	private int delayCount;
 	private Label totalScoreLabel;
 	private Table cashRegister;
-	
+
+    private int totalScore;
+
 	private int animationPhase;
 	private Vector2 animPosition;
 
@@ -149,13 +151,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		case 5:
             int totalScore = score.getCumulatedScore() - score.getScore();
             for(int i = 0; i < this.scoreActors.size(); i++) {
-                ScoreActor scoreActor = this.scoreActors.get(i);
-                Actor actor = scoreActor.getActor();
-                int actorScore = scoreActor.getScoreItem().getScore();
-
-                calculateTotalAnimation(i, actor, totalScore, actorScore, this.animPosition.y);
-
-                totalScore += actorScore;
+                calculateTotalAnimation(i, this.scoreActors.get(i), this.animPosition.y);
             }
 			break;
 		case 6:
@@ -260,12 +256,14 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		cashRegisterOpenSound.play();
 	}
 
-	private void calculateTotalAnimation(final int number, Actor actor, final int totalScore, final int actorScore, final float y) {
+	private void calculateTotalAnimation(final int number, final ScoreActor scoreActor, final float y) {
         Action actionCountScore = new Action() {
 
 			@Override
 			public boolean act(float delta) {
+                int actorScore = scoreActor.getScoreItem().getScore();
 				if( actorScore > 0 ) {
+                    totalScore += actorScore;
 					SoundEffect.getSoundForIncrement(actorScore).play();
 					totalScoreLabel.setText(String.valueOf(totalScore));
 				}
@@ -281,8 +279,9 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 				return true;
 			}
 		};
-		
-		if( number == 0 ) {
+
+        Actor actor = scoreActor.getActor();
+        if( number == 0 ) {
 			actor.addAction(sequence(moveTo(actor.getX(), y, 1f - (0.1f * number), Interpolation.circleIn), 
 					actionCountScore, new Action() {
 						
