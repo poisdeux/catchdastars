@@ -171,7 +171,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	}
 
     public void showLevelCompleteDialog(Score score) {
-        LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getSkin(), getGameEngine().getTotalScore(), score);
+        LevelCompleteDialog levelCompleteDialog = new LevelCompleteDialog(getStageUIActors(), getSkin(), score);
 
         levelCompleteDialog.setOnClickListener(this);
 

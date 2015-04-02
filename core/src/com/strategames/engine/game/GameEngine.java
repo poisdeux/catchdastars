@@ -87,8 +87,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	private Screen currentScreen;
 	private Screen newScreen;
 
-	private int totalScore;
-    private Score score;
+	private Score score = new Score();
 
 	//	private Stage stageActors;
 
@@ -227,14 +226,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 
 	public boolean isPaused() {
 		return this.gameState == GAME_STATE.PAUSED;
-	}
-
-	public void setTotalScore(int totalScore) {
-		this.totalScore = totalScore;
-	}
-
-	public int getTotalScore() {
-		return totalScore;
 	}
 
 	public String getTitle() {
@@ -444,7 +435,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 			handleAddGameObjectsQueue();
 
 			if( ( this.levelState == LEVEL_STATE.COMPLETE ) && ( levelCompleteCalled == false ) ){
-				levelComplete();
+				levelComplete(score);
 				levelCompleteCalled = true;
 			} else if( this.levelState == LEVEL_STATE.FAILED ) {
 				pauseGame();
@@ -475,7 +466,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	 * Resets the game
 	 */
 	public void resetGame() {
-		setTotalScore(0);
+		this.score = new Score();
 		this.game.setCurrentLevelPosition(new int[] {0, 0});
 		setScreen( new LevelScreen(this) );
 	}
@@ -532,21 +523,12 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClic
 	abstract public boolean setup(Stage stage);
 
 	/**
-	 * Override this method to create a custom action when level is completed 
+	 * Called when game state is set to level complete. Use this to calculate the score
+     * ,show a level complete animation, save game state, ...
 	 */
-	public void levelComplete() {
-        calculateScore(score);
+	abstract public void levelComplete(Score score); {
 
-		setTotalScore(this.totalScore + score.getTotalScore());
-
-        saveProgress();
 	}
-
-    /**
-     * Called when level is completed and final score must be calculated
-     * @param score use this to add the score per item
-     */
-    abstract public void calculateScore(Score score);
 
     public void saveProgress() {
         GameWriter.saveInprogress(game);

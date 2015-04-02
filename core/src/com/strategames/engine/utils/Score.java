@@ -11,6 +11,8 @@ import java.util.Set;
  * Created by martijn on 1-4-15.
  */
 public class Score {
+    int cumulatedScore;
+
     private LinkedHashMap<String, ScoreItem> scoreItems = new LinkedHashMap<String, ScoreItem>();
 
     public Collection<ScoreItem> getScoreItems() {
@@ -21,13 +23,26 @@ public class Score {
         return scoreItems.get(name);
     }
 
-    public int getTotalScore() {
+    /**
+     * Adds all scores from the current score items
+     * @return total score for current score items
+     */
+    public int getScore() {
         int score = 0;
         for( ScoreItem item : scoreItems.values() ) {
             score += item.getScore();
         }
 
         return score;
+    }
+
+    /**
+     * Each time you use {@link #addItem(String, com.badlogic.gdx.scenes.scene2d.ui.Image, int, int)} the item's
+     * score is cumulated and returned by {@link #getCumulatedScore()}.
+     * @return cumulated score
+     */
+    public int getCumulatedScore() {
+        return cumulatedScore;
     }
 
     public void setAmount(String name, int amount) {
@@ -39,6 +54,7 @@ public class Score {
 
     public void addItem(String name, Image image, int multiplier, int amount) {
         scoreItems.put(name, new ScoreItem(image, multiplier, amount));
+        cumulatedScore += amount * multiplier;
     }
 
     public class ScoreItem {
