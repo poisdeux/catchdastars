@@ -34,7 +34,7 @@ import aurelienribon.tweenengine.TweenEquations;
 public class LevelScreen extends AbstractScreen implements OnClickListener, OnLevelLoadedListener
 {	
 	private Text levelImage;
-	private LevelPausedDialog levelPausedDialog;
+
 	private Stage stageActors;
 	private FilledRectangleImage filter;
 	private Stage stage;
@@ -101,19 +101,14 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 
 	@Override
 	protected boolean handleBackNavigation() {
-//		if( Dialog.getAmountOfDialogsVisible() > 0 ) {
-//			return true;
-//		}
-		
-		if( this.levelPausedDialog == null  ) {
-			this.levelPausedDialog = new LevelPausedDialog(getStageUIActors(), getSkin());
-			this.levelPausedDialog.setOnClickListener(this);
-			this.levelPausedDialog.create();
-		}
-		
-		if( ! this.levelPausedDialog.isVisible() ) {
-			this.levelPausedDialog.show();
-		}
+        if( Dialog.getAmountOfDialogsVisible() > 0 ) {
+            return true;
+        }
+
+		LevelPausedDialog levelPausedDialog = new LevelPausedDialog(getStageUIActors(), getSkin());
+		levelPausedDialog.setOnClickListener(this);
+		levelPausedDialog.create();
+        levelPausedDialog.show();
 
 		// Make sure key is also sent to game engine as well
 		return false;

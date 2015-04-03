@@ -1,9 +1,5 @@
 package com.strategames.engine.game;
 
-import java.util.Stack;
-
-import aurelienribon.tweenengine.Tween;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -16,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
 import com.strategames.catchdastars.screens.game.LevelScreen;
 import com.strategames.catchdastars.screens.game.MainMenuScreen;
 import com.strategames.catchdastars.screens.game.SplashScreen;
@@ -33,13 +28,15 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
-import com.strategames.ui.dialogs.LevelFailedDialog;
+
+import java.util.Stack;
+
+import aurelienribon.tweenengine.Tween;
 
 /**
  * TODO we make use of many different datastructures which we create and destroy. This reduces performance when the garbage collector runs. We might want to change all these datastructures into one big ugly datastructure.
  */
-abstract public class GameEngine extends com.badlogic.gdx.Game implements OnClickListener, ContactListener, OnMusicFilesReceivedListener {
+abstract public class GameEngine extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public enum GAME_STATE {
 		NONE, RUNNING, PAUSED
 	};

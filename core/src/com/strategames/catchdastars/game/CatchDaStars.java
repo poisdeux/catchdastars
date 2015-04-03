@@ -15,7 +15,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
-import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
@@ -43,16 +42,11 @@ import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
-import com.strategames.ui.dialogs.Dialog;
-import com.strategames.ui.dialogs.Dialog.OnClickListener;
-import com.strategames.ui.dialogs.ErrorDialog;
-import com.strategames.ui.dialogs.LevelFailedDialog;
-import com.strategames.ui.dialogs.LevelPausedDialog;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
-public class CatchDaStars extends GameEngine implements OnClickListener {
+public class CatchDaStars extends GameEngine {
     private Vector2 gravityVector;
 
     private World world;
@@ -579,42 +573,6 @@ public class CatchDaStars extends GameEngine implements OnClickListener {
             collidingGameObject1.handleCollision(contact, impulse, collidingGameObject2);
         }
 //		Gdx.app.log("CatchDaStars", "postSolve: END");
-    }
-
-    @Override
-    public void onClick(Dialog dialog, int which) {
-        Gdx.app.log("CatchDaStars", "Dialog clicked: which="+which);
-        dialog.hide();
-        if( dialog instanceof LevelCompleteDialog ) {
-            switch( which ) {
-                case LevelCompleteDialog.BUTTON_NEXT_CLICKED:
-                    /**
-                     * TODO: determine game completed and create scroll animation to new level
-                     */
-                    startLevel(this.nextLevelPosition);
-                    break;
-                case LevelCompleteDialog.BUTTON_QUIT_CLICKED:
-                    stopScreen();
-                    break;
-            }
-        } else if( dialog instanceof LevelPausedDialog ) {
-            switch( which ) {
-                case LevelPausedDialog.BUTTON_QUIT_CLICKED:
-                    stopScreen();
-                    break;
-                case LevelPausedDialog.BUTTON_RESUME_CLICKED:
-                    resumeGame();
-                    break;
-                case LevelPausedDialog.BUTTON_RETRY_CLICKED:
-                    resetGame();
-                    break;
-            }
-        } else  if( dialog instanceof ErrorDialog ) {
-            switch( which ) {
-                case ErrorDialog.BUTTON_CLOSE:
-                    stopScreen();
-            }
-        }
     }
 }
 

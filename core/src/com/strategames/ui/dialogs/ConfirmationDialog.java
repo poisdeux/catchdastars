@@ -13,7 +13,7 @@ public class ConfirmationDialog extends Dialog {
 	 * Use {@link #setPositiveButton(String)} and {@link #setNegativeButton(String)} to 
 	 * change the button text
 	 * @param stage
-	 * @param title
+	 * @param message
 	 * @param skin
 	 */
 	public ConfirmationDialog(Stage stage, String message, Skin skin) {

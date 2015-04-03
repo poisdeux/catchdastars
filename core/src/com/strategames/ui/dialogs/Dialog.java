@@ -38,9 +38,9 @@ abstract public class Dialog extends Table {
 	private TextButton negativeButton;
 	private TextButton neutralButton;
 	private TextButton positiveButton;
-	
+
 	private static int amountOfDialogsVisible;
-	
+
 	private String message;
 	
 	private final Skin skin;
@@ -245,21 +245,30 @@ abstract public class Dialog extends Table {
 	}
 	
 	public void show() {
-		this.stage.addActor(this);
+        if( ! this.stage.getActors().contains(this, true)) {
+            this.stage.addActor(this);
+        }
 		setVisible(true);
 		amountOfDialogsVisible++;
 	}
 	
 	public void hide() {
-		this.remove();
-		setVisible(false);
-		amountOfDialogsVisible--;
-		if( amountOfDialogsVisible < 0 ) {
-			Gdx.app.log("Dialog", "hide(): amountOfDialogsVisible="+amountOfDialogsVisible+", dialog="+this);
-		}
+        if( isVisible() ) { // prevent hiding dialog multiple times
+            setVisible(false);
+            amountOfDialogsVisible--;
+            if( amountOfDialogsVisible < 0 ) {
+                Gdx.app.log("Dialog", "hide(): amountOfDialogsVisible="+amountOfDialogsVisible+", dialog="+this);
+            }
+        }
 	}
-	
-	/**
+
+    @Override
+    public boolean remove() {
+        hide();
+        return super.remove();
+    }
+
+    /**
 	 * Use this to notify caller that used {@link #setOnClickListener(OnClickListener)} 
 	 * to connect a listener, which button was clicked in which dialog.
 	 * @param which
