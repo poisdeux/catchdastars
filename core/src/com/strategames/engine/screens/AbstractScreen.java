@@ -293,7 +293,14 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
+        //Hide main menu if visible but not clicked
+		if( ( this.mainMenu != null ) && ( this.mainMenu.isVisible() ) ) {
+            if ( this.mainMenu != this.mainMenu.hit(screenX, screenY, true) ) {
+                this.mainMenu.hide();
+            }
+        }
+
+        return false;
 	}
 
 	@Override
