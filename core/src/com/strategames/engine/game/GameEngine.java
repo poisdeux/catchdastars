@@ -194,6 +194,32 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 		startBox2DThread();
 	}
 
+    /**
+     * Resets the current level
+     */
+    public void resetLevel() {
+//		setScreen( new LevelScreen(this) );
+
+    }
+
+    public void startLevel(int[] pos) {
+        this.game.setCurrentLevelPosition(pos);
+        this.levelState = LEVEL_STATE.NONE;
+        resetLevel();
+        showLevelScreen();
+    }
+
+    public void startLevel(Level level) {
+        this.game.setCurrentLevelPosition(level.getPosition());
+        this.levelState = LEVEL_STATE.NONE;
+        resetLevel();
+        showLevelScreen();
+    }
+
+    public void startNextLevel() {
+        startLevel(nextLevelPosition);
+    }
+
     public void setNextLevelPosition(int[] nextLevelPosition) {
         this.nextLevelPosition = nextLevelPosition;
     }
@@ -336,6 +362,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 
 	public void setGame(Game game) {
 		this.game = game;
+        this.score = new Score();
+        this.score.setCumulatedScore(game.getScore());
 	}
 
 	public Game getGame() {
@@ -469,23 +497,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 		return false;
 	}
 
-	/**
-	 * Resets the game
-	 */
-	public void resetGame() {
-		this.score = new Score();
-		this.game.setCurrentLevelPosition(new int[] {0, 0});
-		setScreen( new LevelScreen(this) );
-	}
-
-	/**
-	 * Resets the current level
-	 */ 
-	public void resetLevel() {
-		setScreen( new LevelScreen(this) );
-	}
-	
-	public void showMainMenu() {
+    public void showMainMenu() {
 		Screen s = new MainMenuScreen(this);
 		setScreen( s );
 		addToBackstack(s);
@@ -495,21 +507,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 		setScreen(new SplashScreen(this));
 	}
 
-	public void startLevel(int[] pos) {
-		this.game.setCurrentLevelPosition(pos);
-		this.levelState = LEVEL_STATE.NONE;
-		showLevelScreen();
-	}
-
-	public void startLevel(Level level) {
-		this.game.setCurrentLevelPosition(level.getPosition());
-		this.levelState = LEVEL_STATE.NONE;
-		showLevelScreen();
-	}
-
-    public void startNextLevel() {
-        startLevel(nextLevelPosition);
-    }
 
 	/**
 	 * Hides the current screen and shows the previous screen

@@ -6,11 +6,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -20,8 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.ChalkLine;
@@ -149,7 +145,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 			showCashRegistry(this.animPosition.x, this.animPosition.y);
 			break;
 		case 5:
-            int totalScore = score.getCumulatedScore() - score.getScore();
+            int totalScore = score.getCumulatedScore() - score.getTotalScoreFromScoreItems();
             for(int i = 0; i < this.scoreActors.size(); i++) {
                 calculateTotalAnimation(i, this.scoreActors.get(i), this.animPosition.y);
             }
@@ -236,7 +232,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		this.cashRegister.setHeight(height);
 		this.cashRegister.setPosition(xPosition, -height);
 		this.cashRegister.scaleBy(scale);
-		this.totalScoreLabel = new Label(String.valueOf(this.score.getCumulatedScore() - this.score.getScore()), getSkin());
+		this.totalScoreLabel = new Label(String.valueOf(this.score.getCumulatedScore() - this.score.getTotalScoreFromScoreItems()), getSkin());
 		this.totalScoreLabel.scaleBy(scale);
 		this.cashRegister.add(totalScoreLabel).width(50);
 		

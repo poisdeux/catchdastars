@@ -69,7 +69,6 @@ public class CatchDaStars extends GameEngine {
     private int amountOfBlueBalloonsFromPreviousLevel;
     private int amountOfRedBalloonsFromPreviousLevel;
     private int amountBalloonsInGame;
-    private Score score = new Score();
 
     private Box2DDebugRenderer debugRenderer;
 
@@ -131,14 +130,6 @@ public class CatchDaStars extends GameEngine {
     }
 
     @Override
-    public void resetGame() {
-        this.amountOfBlueBalloons = 0;
-        this.amountOfRedBalloons = 0;
-        this.doorsOpen = false;
-        super.resetGame();
-    }
-
-    @Override
     public void resetLevel() {
         this.amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
         this.amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
@@ -157,6 +148,9 @@ public class CatchDaStars extends GameEngine {
         }
 
         int[] pos = game.getCurrentLevelPosition();
+
+        Gdx.app.log("CatchDaStars", "setup: pos="+pos[0]+", "+pos[1]);
+
         this.level = game.getLevel(pos[0], pos[1]);
         if( this.level == null ) {
             Gdx.app.log("CatchDaStars", "setup: level==null");
@@ -319,7 +313,6 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void levelComplete(Score score) {
-        saveProgress();
 
         Textures textures = Textures.getInstance();
         score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10, amountOfBlueBalloons);
@@ -329,6 +322,10 @@ public class CatchDaStars extends GameEngine {
         score.addItem(GOLD_STAR, new Image(textures.starYellow), 5, this.goldCollectables.getAmountCollected());
 
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
+
+        getGame().setScore(score.getCumulatedScore());
+        getGame().setCurrentLevelPosition(getNextLevelPosition());
+        saveProgress();
     }
 
     @Override

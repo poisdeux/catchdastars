@@ -172,7 +172,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		Game game = engine.getGame();
 		game.setLevel(level);
 		
-		if( getGameEngine().setup(getStageActors()) ) {
+		if( engine.setup(getStageActors()) ) {
 			this.levelLoaded = true;
 			startScreenCloseAnimation();
 		} else {

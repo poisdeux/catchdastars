@@ -27,7 +27,7 @@ public class Score {
      * Adds all scores from the current score items
      * @return total score for current score items
      */
-    public int getScore() {
+    public int getTotalScoreFromScoreItems() {
         int score = 0;
         for( ScoreItem item : scoreItems.values() ) {
             score += item.getScore();
@@ -43,6 +43,14 @@ public class Score {
      */
     public int getCumulatedScore() {
         return cumulatedScore;
+    }
+
+    /**
+     * Sets the cumulated score to the value provided by cumulatedScore
+     * @param cumulatedScore
+     */
+    public void setCumulatedScore(int cumulatedScore) {
+        this.cumulatedScore = cumulatedScore;
     }
 
     public void setAmount(String name, int amount) {
