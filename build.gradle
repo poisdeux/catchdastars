@@ -58,7 +58,8 @@ project(":android") {
 
     dependencies {
         compile project(":core")
-        compile 'com.google.android.gms:play-services:6.5.+'
+        compile "com.android.support:support-v4:22.0.+"
+	compile 'com.google.android.gms:play-services-drive:7.0.0'
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"

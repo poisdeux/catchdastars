@@ -23,10 +23,6 @@ android {
     }
 }
 
-dependencies {
-    compile "com.android.support:support-v4:18.0.+"
-}
-
 // needed to add JNI shared libraries to APK when compiling on CLI
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
     pkgTask.jniFolders = new HashSet<File>()
