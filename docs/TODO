@@ -1,0 +1,38 @@
+Generic:
+
+  * Create soundtrack and ingame music
+  * Implement google leaderboard
+  * Load textures using asset manager so we can show an animation during loading
+  * Load level using asset manager so we can show an animation during loading
+
+
+Website:
+
+  * Add ability for users to upload and distribute their own games
+  * Implement editor to allow users to create games using
+    a webinterface.
+  * Implement rating system for user-created games
+
+  
+Gameplay:
+
+  * Fix performance issues during gameplay
+  * Create next level animation
+  * Create end game animation
+  * Add archer bad guy that shoulds arrows to destroy balloons
+  * Add switch to open doors or move walls
+  * Add timer?
+  * Create ingame music
+  * Create bonus level(s): 
+    ** user must manoeuvre balloon through space while
+       passing rocks of different sizes. Balloon stays at the bottom of the screen
+       while rocks move inscreen from the top and out of screen at the bottom.
+    ** Room full of blue stars and one balloon with limited time to try and collect
+       all stars. We might want to create different versions using combinations of
+       red and blue stars and two balloons.
+
+iOS:
+
+  * Add iOS support
+
+
