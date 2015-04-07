@@ -1,0 +1,215 @@
+
+xxxhdpi.png
+size: 970,1004
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+aj_balloon_blue
+  rotate: false
+  xy: 764, 736
+  size: 192, 268
+  orig: 192, 268
+  offset: 0, 0
+  index: -1
+aj_balloon_red
+  rotate: false
+  xy: 764, 466
+  size: 192, 268
+  orig: 192, 268
+  offset: 0, 0
+  index: -1
+cash_register
+  rotate: false
+  xy: 2, 200
+  size: 760, 804
+  orig: 760, 804
+  offset: 0, 0
+  index: -1
+icecube
+  rotate: false
+  xy: 2, 2
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part01
+  rotate: false
+  xy: 2, 2
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part02
+  rotate: false
+  xy: 764, 268
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part03
+  rotate: false
+  xy: 196, 2
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part04
+  rotate: false
+  xy: 390, 2
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part05
+  rotate: false
+  xy: 584, 2
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part06
+  rotate: false
+  xy: 778, 70
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+
+xxxhdpi2.png
+size: 972,494
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Chalk-01
+  rotate: false
+  xy: 2, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+Chalk-02
+  rotate: false
+  xy: 778, 398
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+Chalk-03
+  rotate: false
+  xy: 100, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+Chalk-04
+  rotate: false
+  xy: 778, 300
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+Chalk-05
+  rotate: false
+  xy: 876, 398
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+gridpoint
+  rotate: false
+  xy: 198, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+icecube-part07
+  rotate: false
+  xy: 2, 298
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part08
+  rotate: false
+  xy: 2, 100
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part09
+  rotate: false
+  xy: 196, 298
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icecube-part10
+  rotate: false
+  xy: 196, 100
+  size: 192, 196
+  orig: 192, 196
+  offset: 0, 0
+  index: -1
+icon-menu
+  rotate: false
+  xy: 778, 202
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+passagetonextlevel
+  rotate: false
+  xy: 390, 302
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+star_blue
+  rotate: false
+  xy: 390, 108
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+star_red
+  rotate: false
+  xy: 584, 302
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+star_yellow
+  rotate: false
+  xy: 584, 108
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+tango_arrow_bottom
+  rotate: false
+  xy: 876, 300
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+tango_arrow_left
+  rotate: false
+  xy: 876, 202
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+tango_arrow_right
+  rotate: false
+  xy: 296, 2
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+tango_arrow_top
+  rotate: false
+  xy: 778, 104
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1

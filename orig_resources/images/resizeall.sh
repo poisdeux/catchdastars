@@ -1,4 +1,5 @@
 #!/bin/bash
+# All images/SVGs that should be resized
 
 ./resizeimages.sh 315 99 originals/Loading.xcf
 ./resizeimages.sh 27 99 originals/dot.xcf

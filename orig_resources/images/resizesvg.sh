@@ -19,9 +19,16 @@ function scale
 
 [ $# -lt 3 ] && usage
 
+SVGTOOL=$(which inkscape)
+if [ $? -ne 0 ]
+then
+	echo "Error: no SVG tool found"
+	exit 1
+fi
+
 if [ ! -d gameobjects ]
 then
-	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi}
+	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}
 fi
 
 
@@ -36,17 +43,21 @@ do
   PNGFILENAME="${FILENAME%%.svg}.png"
 	SWIDTH=$WIDTH
 	SHEIGHT=$HEIGHT
-	inkscape -z -D -f "${FILENAME}" -e "gameobjects/mdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
+	${SVGTOOL} -z -D -f "${FILENAME}" -e "gameobjects/mdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
 
 	SWIDTH=$(scale $WIDTH "3/2")
 	SHEIGHT=$(scale $HEIGHT "3/2")
-	inkscape -z -D -f "${FILENAME}" -e "gameobjects/hdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
+	${SVGTOOL} -z -D -f "${FILENAME}" -e "gameobjects/hdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
 
 	SWIDTH=$(scale $WIDTH "2")
 	SHEIGHT=$(scale $HEIGHT "2")
-	inkscape -z -D -f "${FILENAME}" -e "gameobjects/xhdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
+	${SVGTOOL} -z -D -f "${FILENAME}" -e "gameobjects/xhdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
 
 	SWIDTH=$(scale $WIDTH "3")
 	SHEIGHT=$(scale $HEIGHT "3")
-	inkscape -z -D -f "${FILENAME}" -e "gameobjects/xxhdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
+	${SVGTOOL} -z -D -f "${FILENAME}" -e "gameobjects/xxhdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
+
+	SWIDTH=$(scale $WIDTH "4")
+	SHEIGHT=$(scale $HEIGHT "4")
+	${SVGTOOL} -z -D -f "${FILENAME}" -e "gameobjects/xxxhdpi/$(basename ${PNGFILENAME})" -w ${SWIDTH} -h ${SHEIGHT}
 done 

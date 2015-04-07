@@ -25,9 +25,16 @@ shift
 HEIGHT=$1
 shift
 
+SCALETOOL=$(which gimp)
+if [ $? -ne 0 ]
+then
+	echo "Error: no image scaling tool found"
+	exit 1
+fi
+
 if [ ! -d gameobjects ]
 then
-	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi}
+	mkdir -p gameobjects/{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}
 fi
 
 cat > ${TMPFILE} << 'EOF'
@@ -61,6 +68,10 @@ do
 	SWIDTH=$(scale $WIDTH "3")
 	SHEIGHT=$(scale $HEIGHT "3")
 	echo "(scale-image \"${FILENAME}\" \"gameobjects/xxhdpi/$(basename ${PNGFILENAME})\"  ${SWIDTH} ${SHEIGHT})"
+
+	SWIDTH=$(scale $WIDTH "4")
+	SHEIGHT=$(scale $HEIGHT "4")
+	echo "(scale-image \"${FILENAME}\" \"gameobjects/xxxhdpi/$(basename ${PNGFILENAME})\"  ${SWIDTH} ${SHEIGHT})"
 done  >> ${TMPFILE}
 
 echo "(gimp-quit 0)" >> ${TMPFILE}
