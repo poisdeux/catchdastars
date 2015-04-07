@@ -41,7 +41,7 @@ public class CheckBoxTextViewAdapter extends BaseAdapter {
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, null);
+			convertView = LayoutInflater.from(this.context).inflate(R.layout.selectmusiclistviewitem, parent, false);
 		}
 
 		final LibraryItem media = this.items[position];
