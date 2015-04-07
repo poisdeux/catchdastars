@@ -3,6 +3,7 @@ package com.strategames.engine.utils;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
@@ -43,7 +44,13 @@ public class Game implements Json.Serializable, Writer {
 			} else if(child.name.contentEquals("designer")) {
 				designer = child.asString();
 			} else if(child.name.contentEquals("currentLevelPosition")) {
-				currentLevelPosition = child.asIntArray();
+                try {
+                    currentLevelPosition = child.asIntArray();
+                } catch ( IllegalStateException e ) {
+                    Gdx.app.log("Game", "read: currentLevelPosition value is not an array");
+                    currentLevelPosition[0] = 0;
+                    currentLevelPosition[1] = 0;
+                 }
 			} else if(child.name.contentEquals("score")) {
 				score = child.asInt();
 			}

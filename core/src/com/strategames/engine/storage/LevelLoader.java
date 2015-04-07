@@ -42,7 +42,9 @@ public class LevelLoader {
      */
     static public Level loadCompleted(Game game, int[] pos) {
         try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, pos));
+            String filename = Files.getCompletedLevelFilename(game, pos);
+            Gdx.app.log("LevelLoader", "loadCompleted: filename="+filename);
+            FileHandle file = Gdx.files.local(filename);
             if( ! file.exists() ) {
                 file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
             }
