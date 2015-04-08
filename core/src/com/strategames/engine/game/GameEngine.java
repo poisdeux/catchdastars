@@ -21,6 +21,7 @@ import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameWriter;
+import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Game;
@@ -519,6 +520,15 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 		MusicPlayer player = MusicPlayer.getInstance();
 		player.setLibrary(this.musicSelector.getLibrary());
 	}
+
+    public void loadLevel(LevelLoader.OnLevelLoadedListener listener) {
+        Level level = LevelLoader.loadCompleted(this.game, this.game.getCurrentLevelPosition());
+        if( level == null ) {
+            level = LevelLoader.loadOriginal(this.game, this.game.getCurrentLevelPosition());
+        }
+
+        listener.onLevelLoaded(level);
+    }
 
 	/**
 	 * Called by AbstractScreen when level is loaded and ready to start the game
