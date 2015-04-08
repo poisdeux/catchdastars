@@ -11,23 +11,23 @@ import org.junit.Test;
 
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobject.types.Door;
-import com.strategames.libgdx.junit.LevelsTestHelper;
+import com.strategames.libgdx.junit.GameTestHelper;
 
 public class LevelsTest {
 	private Game game;
 
 	@Before
 	public void setUp() throws Exception {
-		this.game = LevelsTestHelper.createLevels();
+		this.game = GameTestHelper.createGame();
 	}
 
 	@Test
 	public void getLevelsTest() {
-		int amountOfLevels = LevelsTestHelper.getAmountOfPositions();
+		int amountOfLevels = GameTestHelper.getAmountOfPositions();
 		HashMap<String, Level> levels = this.game.getLevels();
 		assertTrue("Amount of levels returned by getLevels() ("+levels.size()+") is not equal to the amount of levels set ("+amountOfLevels+")", levels.size() == amountOfLevels);
 		for(int i = 0; i < amountOfLevels; i++) {
-			int[] origPosition = LevelsTestHelper.getPosition(i);
+			int[] origPosition = GameTestHelper.getPosition(i);
 			Level level = this.game.getLevel(origPosition[0], origPosition[1]);
 			assertFalse("Level="+level+" not found in game", level == null);
 			this.game.deleteLevel(origPosition[0], origPosition[1]);	

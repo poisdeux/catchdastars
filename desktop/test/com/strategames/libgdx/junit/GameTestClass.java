@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.utils.Score;
 import com.strategames.ui.dialogs.Dialog;
 
 public class GameTestClass extends GameEngine {
@@ -54,9 +55,13 @@ public class GameTestClass extends GameEngine {
 		return true;
 	}
 
-	@Override
-	public void onClick(Dialog dialog, int which) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void levelComplete(Score score) {
+
+    }
+
+    @Override
+    public void levelFailed() {
+
+    }
 }

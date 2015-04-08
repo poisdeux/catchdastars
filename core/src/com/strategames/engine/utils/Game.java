@@ -200,4 +200,63 @@ public class Game implements Json.Serializable, Writer {
 		int[] pos = level.getPosition();
 		return pos[0]+""+pos[1];
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+        if( obj == null ) {
+            return false;
+        }
+
+        if( this == obj ) {
+            return true;
+        }
+
+        if( ! ( obj instanceof Game ) ) {
+            return false;
+        }
+
+        Game game = (Game) obj;
+
+        for( Level level : levels.values() ) {
+            if( ! level.equals(level) ) {
+                return false;
+            }
+        }
+
+        if( ! compareStrings(this.uuid, game.uuid) ) {
+            return false;
+        }
+
+        if( ! compareStrings(this.name, game.name) ) {
+            return false;
+        }
+
+        if( ! compareStrings(this.designer, game.designer) ) {
+            return false;
+        }
+
+        if( ( this.currentLevelPosition[0] != game.currentLevelPosition[0] ) ||
+                ( this.currentLevelPosition[1] != game.currentLevelPosition[1] ) ) {
+            return false;
+        }
+
+        if( this.score != game.score ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean compareStrings(String s1, String s2) {
+        if( s1 != null ) {
+            if( ! s1.contentEquals(s2) ) {
+                return false;
+            }
+        } else {
+            if ( s2 != null ) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

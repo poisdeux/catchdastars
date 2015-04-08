@@ -543,7 +543,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     abstract public void levelFailed();
 
     public void saveProgress() {
-        GameWriter.saveInprogress(game);
+        GameWriter.saveInProgress(game);
     }
 
 	private void handleDeleteGameObjectsQueue() {

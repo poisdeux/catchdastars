@@ -1,6 +1,5 @@
 package com.strategames.catchdastars.screens.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -11,11 +10,9 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameLoader;
 import com.strategames.engine.storage.GameWriter;
-import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.utils.Game;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
-import com.strategames.ui.dialogs.ErrorDialog;
 
 /**
  * TODO save settings per game
@@ -113,11 +110,11 @@ public class GameMenuScreen extends AbstractScreen {
                 String buttonText = startGameButton.getText().toString();
                 if(buttonText.contains("New game") ) {
                     Game g = gameEngine.getGame();
-                    GameWriter.saveInprogress(gameEngine.getGame());
+                    GameWriter.saveInProgress(gameEngine.getGame());
                     gameEngine.setGame(g);
                     gameEngine.startLevel(g.getCurrentLevelPosition());
                 } else {
-                    Game gameInprogress = GameLoader.loadInProgressGame(gameEngine.getGame());
+                    Game gameInprogress = GameLoader.loadInProgress(gameEngine.getGame());
                     gameEngine.setGame(gameInprogress);
                     gameEngine.startLevel(gameInprogress.getCurrentLevelPosition());
                 }
@@ -126,7 +123,7 @@ public class GameMenuScreen extends AbstractScreen {
     }
 
     private void setStartGameButtonText() {
-        Game gameInprogress = GameLoader.loadInProgressGame(getGameEngine().getGame());
+        Game gameInprogress = GameLoader.loadInProgress(getGameEngine().getGame());
         if( gameInprogress == null ) {
             startGameButton.setText("New game");
         } else {

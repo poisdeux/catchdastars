@@ -11,7 +11,7 @@ import com.strategames.engine.utils.Textures;
 public class ScreenTestClass extends AbstractScreen {
 
 	public ScreenTestClass(GameEngine game) {
-		super(game, "ScreenTest");
+		super(game);
 	}
 
 	@Override

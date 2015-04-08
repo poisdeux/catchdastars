@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class GameWriter {
 
-    static public boolean saveInprogress(Game game) {
+    static public boolean saveInProgress(Game game) {
         String metafile = Files.getInprogressGameMetaFile(game);
         if (metafile == null) {
             return false;

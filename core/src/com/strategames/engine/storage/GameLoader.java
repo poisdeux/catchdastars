@@ -65,7 +65,17 @@ public class GameLoader {
         return games;
     }
 
-    static public Game loadInProgressGame(Game game) {
+    static public Game loadOriginal(Game game) {
+        Game gameOriginal = null;
+        FileHandle file = Gdx.files.local(Files.getOriginalGameMetaFile(game));
+        if( file.exists() ) {
+            gameOriginal = loadSync(file);
+        }
+
+        return gameOriginal;
+    }
+
+    static public Game loadInProgress(Game game) {
         Game gameInprogress = null;
         FileHandle file = Gdx.files.local(Files.getInprogressGameMetaFile(game));
         if( file.exists() ) {

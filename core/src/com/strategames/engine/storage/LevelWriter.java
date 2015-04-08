@@ -75,20 +75,4 @@ public class LevelWriter {
             return false;
         }
     }
-
-
-
-    /**
-     * Deletes all completed levels from game
-     * @param game
-     * @return true if success, false otherwise
-     */
-    static public boolean deleteAllCompletedLevels(Game game) {
-        try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelsPath(game));
-            return file.deleteDirectory();
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }

@@ -6,7 +6,7 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
-public class LevelsTestHelper {
+public class GameTestHelper {
 	
 	static final private int[][] positions = {
 			{0,0},{0,1},{0,2},{1,2},{2,2},
@@ -52,7 +52,7 @@ public class LevelsTestHelper {
 	 *  <br/>
 	 * @return
 	 */
-	public static Game createLevels() {
+	public static Game createGame() {
 		Game game = new Game();
 		Vector2 viewSize = new Vector2(3.1f, 18.1f);
 		Vector2 worldSize = new Vector2(9.3f, 36.2f);
