@@ -16,6 +16,7 @@ import com.strategames.catchdastars.screens.game.LevelScreen;
 import com.strategames.catchdastars.screens.game.MainMenuScreen;
 import com.strategames.catchdastars.screens.game.SplashScreen;
 import com.strategames.engine.gameobject.GameObject;
+import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
@@ -30,167 +31,168 @@ import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
 
 abstract public class GameEngine extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
-	public enum GAME_STATE {
-		NONE, RUNNING, PAUSED
-	};
-	private GAME_STATE gameState = GAME_STATE.NONE;
+    public enum GAME_STATE {
+        NONE, RUNNING, PAUSED
+    };
+    private GAME_STATE gameState = GAME_STATE.NONE;
 
-	private enum LEVEL_STATE {
-		NONE, INPROGRESS, FAILED, COMPLETE
-	};
+    private enum LEVEL_STATE {
+        NONE, INPROGRESS, FAILED, COMPLETE
+    };
 
-	private LEVEL_STATE levelState = LEVEL_STATE.NONE;
+    private LEVEL_STATE levelState = LEVEL_STATE.NONE;
 
-	public static final float FRAMES_PER_SECOND = 1/60f;
-	public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
-	private final int BOX2D_VELOCITY_ITERATIONS = 6;
-	private final int BOX2D_POSITION_ITERATIONS = 3;
-	private WorldThread worldThread;
+    public static final float FRAMES_PER_SECOND = 1/60f;
+    public static final float BOX2D_UPDATE_FREQUENCY = 1f/30f;
+    private final int BOX2D_VELOCITY_ITERATIONS = 6;
+    private final int BOX2D_POSITION_ITERATIONS = 3;
+    private WorldThread worldThread;
 
-	public static final float BOX_TO_WORLD = 100f;
-	public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
+    public static final float BOX_TO_WORLD = 100f;
+    public static final float WORLD_TO_BOX = 1/BOX_TO_WORLD;
 
-	public static final float GRAVITY = 9.81f;
+    public static final float GRAVITY = 9.81f;
 
-	private Array<GameObject> gameObjectsForDeletion;
-	private Array<GameObject> gameObjectsForAddition;
-	private Array<GameObject> gameObjectsInGame;
+    private Array<GameObject> gameObjectsForDeletion;
+    private Array<GameObject> gameObjectsForAddition;
+    private Array<GameObject> gameObjectsInGame;
 
-	private AssetManager manager;
+    private AssetManager manager;
 
 //	private int[] levelPosition = new int[2];
 
     private int[] nextLevelPosition;
 
-	private Game game; 
+    private Game game;
 
-	private World world;
+    private World world;
 
-	private Vector3 worldSize = new Vector3(0f, 0f, 0f);
-	private Vector2 viewSize = new Vector2(0f, 0f);
+    private Vector3 worldSize = new Vector3(0f, 0f, 0f);
+    private Vector2 viewSize = new Vector2(0f, 0f);
 
-	private ExportImport exportimport;
-	private MusicSelector musicSelector;
+    private ExportImport exportimport;
+    private MusicSelector musicSelector;
 
-	private String title;
+    private String title;
 
-	private Stack<Screen> backStack;
+    private Stack<Screen> backStack;
 
-	private Screen currentScreen;
-	private Screen newScreen;
+    private Screen currentScreen;
+    private Screen newScreen;
 
-	private Score score = new Score();
+    private Score score = new Score();
 
-	//	private Stage stageActors;
+    //	private Stage stageActors;
 
-	private FPSLogger fpsLogger;
+    private FPSLogger fpsLogger;
 
-	private boolean levelCompleteCalled = false;
+    private boolean levelCompleteCalled = false;
 
-	public GameEngine() {
-		this.title = "No name game";
-		this.manager = new AssetManager();
-		this.gameObjectsForDeletion = new Array<GameObject>();
-		this.gameObjectsForAddition = new Array<GameObject>();
-		this.gameObjectsInGame = new Array<GameObject>();
-		this.backStack = new Stack<Screen>();
-		this.fpsLogger = new FPSLogger();
-		this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
-		registerTweens();
-	}
+    public GameEngine() {
+        this.title = "No name game";
+        this.manager = new AssetManager();
+        this.gameObjectsForDeletion = new Array<GameObject>();
+        this.gameObjectsForAddition = new Array<GameObject>();
+        this.gameObjectsInGame = new Array<GameObject>();
+        this.backStack = new Stack<Screen>();
+        this.fpsLogger = new FPSLogger();
+        this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+        registerTweens();
+    }
 
-	public GameEngine(String title) {
-		this();
-		this.title = title;
-	}
+    public GameEngine(String title) {
+        this();
+        this.title = title;
+    }
 
-	@Override
-	public void create() {
-		showSplashScreen();
-	}
+    @Override
+    public void create() {
+        showSplashScreen();
+    }
 
-	@Override
-	public void dispose () {
-		if (currentScreen != null) currentScreen.hide();
-		try {
-			Textures.getInstance().dispose();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void dispose () {
+        if (currentScreen != null) currentScreen.hide();
+        try {
+            Textures.getInstance().dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void pause () {
-		if (currentScreen != null) currentScreen.pause();
-	}
+    @Override
+    public void pause () {
+        if (currentScreen != null) currentScreen.pause();
+    }
 
-	@Override
-	public void resume () {
-		if (currentScreen != null) currentScreen.resume();
-	}
+    @Override
+    public void resume () {
+        if (currentScreen != null) currentScreen.resume();
+    }
 
-	@Override
-	public void render () {
-		if (currentScreen != null) currentScreen.render(Gdx.graphics.getDeltaTime());
-	}
+    @Override
+    public void render () {
+        if (currentScreen != null) currentScreen.render(Gdx.graphics.getDeltaTime());
+    }
 
-	@Override
-	public void resize (int width, int height) {
-		if (currentScreen != null) currentScreen.resize(width, height);
-	}
+    @Override
+    public void resize (int width, int height) {
+        if (currentScreen != null) currentScreen.resize(width, height);
+    }
 
 
-	@Override
-	public void setScreen(Screen screen) {
-		this.newScreen = screen;
-		if( this.currentScreen != null ) {
-			this.currentScreen.hide();
-		}
-		if( ! ( currentScreen instanceof AbstractScreen ) ) {
-			showScreen(this.newScreen);
-		}
-	}
+    @Override
+    public void setScreen(Screen screen) {
+        this.newScreen = screen;
+        if( this.currentScreen != null ) {
+            this.currentScreen.hide();
+        }
+        if( ! ( currentScreen instanceof AbstractScreen ) ) {
+            showScreen(this.newScreen);
+        }
+    }
 
-	@Override
-	public Screen getScreen() {
-		return this.currentScreen;
-	}
+    @Override
+    public Screen getScreen() {
+        return this.currentScreen;
+    }
 
-	/**
-	 * Notify the Game manager that screen is now hidden
-	 */
-	public void notifyScreenHidden() {
-		if( this.newScreen != null ) {
-			showScreen(this.newScreen);
-		}
-	}
+    /**
+     * Notify the Game manager that screen is now hidden
+     */
+    public void notifyScreenHidden() {
+        if( this.newScreen != null ) {
+            showScreen(this.newScreen);
+        }
+    }
 
-	public void pauseGame() {
-		this.gameState = GAME_STATE.PAUSED;
-		MusicPlayer.getInstance().pause();
-		if( this.worldThread != null ) {
-			this.worldThread.stopThread();
-		}
-	}
+    public void pauseGame() {
+        this.gameState = GAME_STATE.PAUSED;
+        MusicPlayer.getInstance().pause();
+        if( this.worldThread != null ) {
+            this.worldThread.stopThread();
+        }
+    }
 
-	public void resumeGame() {
-		this.gameState = GAME_STATE.RUNNING;
-		MusicPlayer.getInstance().resume();
-		startBox2DThread();
-	}
+    public void resumeGame() {
+        this.gameState = GAME_STATE.RUNNING;
+        MusicPlayer.getInstance().resume();
+        startBox2DThread();
+    }
 
-	public void startGame() {
-		this.gameState = GAME_STATE.RUNNING;
-		this.levelState = LEVEL_STATE.INPROGRESS;
-		this.levelCompleteCalled = false;
-		MusicPlayer.getInstance().resume();
-		startBox2DThread();
-	}
+    public void startGame() {
+        this.gameState = GAME_STATE.RUNNING;
+        this.levelState = LEVEL_STATE.INPROGRESS;
+        this.levelCompleteCalled = false;
+        MusicPlayer.getInstance().resume();
+        startBox2DThread();
+    }
 
     /**
      * Resets the current level
@@ -227,321 +229,332 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     public void setLevelCompleted() {
-		this.levelState = LEVEL_STATE.COMPLETE;
-	}
+        this.levelState = LEVEL_STATE.COMPLETE;
+    }
 
-	public void setLevelFailed() {
-		this.levelState = LEVEL_STATE.FAILED;
-	}
+    public void setLevelFailed() {
+        this.levelState = LEVEL_STATE.FAILED;
+    }
 
-	public void setLevelInProgress() {
-		this.levelState = LEVEL_STATE.INPROGRESS;
-	}
+    public void setLevelInProgress() {
+        this.levelState = LEVEL_STATE.INPROGRESS;
+    }
 
-	public boolean isLevelCompleted() {
-		return this.levelState == LEVEL_STATE.COMPLETE;
-	}
+    public boolean isLevelCompleted() {
+        return this.levelState == LEVEL_STATE.COMPLETE;
+    }
 
-	public boolean isLevelFailed() {
-		return this.levelState == LEVEL_STATE.FAILED;
-	}
+    public boolean isLevelFailed() {
+        return this.levelState == LEVEL_STATE.FAILED;
+    }
 
-	public boolean isLevelInProgress() {
-		return this.levelState == LEVEL_STATE.INPROGRESS;
-	}
-	
-	
-	public boolean isRunning() {
-		return this.gameState == GAME_STATE.RUNNING;
-	}
+    public boolean isLevelInProgress() {
+        return this.levelState == LEVEL_STATE.INPROGRESS;
+    }
 
-	public boolean isPaused() {
-		return this.gameState == GAME_STATE.PAUSED;
-	}
 
-	public String getTitle() {
-		return title;
-	}
+    public boolean isRunning() {
+        return this.gameState == GAME_STATE.RUNNING;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public boolean isPaused() {
+        return this.gameState == GAME_STATE.PAUSED;
+    }
 
-	public void setExporterImporter(ExportImport exportimport) {
-		this.exportimport = exportimport;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public ExportImport getExporterImporter() {
-		return this.exportimport;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setMusicSelector(MusicSelector musicSelector) {
-		this.musicSelector = musicSelector;
-	}
+    public void setExporterImporter(ExportImport exportimport) {
+        this.exportimport = exportimport;
+    }
 
-	public void selectMusicFiles() {
-		if( this.musicSelector != null ) {
-			this.musicSelector.selectMusic(this);
-		}
-	}
+    public ExportImport getExporterImporter() {
+        return this.exportimport;
+    }
 
-	public MusicSelector getMusicSelector() {
-		return musicSelector;
-	}
+    public void setMusicSelector(MusicSelector musicSelector) {
+        this.musicSelector = musicSelector;
+    }
 
-	public void addToBackstack(Screen screen) {
-		this.backStack.add(screen);
-	}
+    public void selectMusicFiles() {
+        if( this.musicSelector != null ) {
+            this.musicSelector.selectMusic(this);
+        }
+    }
 
-	public Screen popBackstack() {
-		return this.backStack.pop();
-	}
+    public MusicSelector getMusicSelector() {
+        return musicSelector;
+    }
 
-	public Screen peekBackStack() {
-		if( this.backStack.size() > 0 ) {
-			return this.backStack.peek();
-		} else {
-			return null;
-		}
-	}
+    public void addToBackstack(Screen screen) {
+        this.backStack.add(screen);
+    }
 
-	/**
-	 * 
-	 * @return size of the world in meters
-	 */
-	public Vector3 getWorldSize() {
-		return worldSize;
-	}
+    public Screen popBackstack() {
+        return this.backStack.pop();
+    }
 
-	/**
-	 * Note that world size is not the same as screen size
-	 * It is the size of the world as used by Box2D
-	 * @param worldSize in meters
-	 */
-	public void setWorldSize(Vector3 worldSize) {
-		this.worldSize = worldSize;
-	}
+    public Screen peekBackStack() {
+        if( this.backStack.size() > 0 ) {
+            return this.backStack.peek();
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * This is the size of the world that should be displayed. This 
-	 * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
-	 * @return
-	 */
-	public Vector2 getViewSize() {
-		return viewSize;
-	}
+    /**
+     *
+     * @return size of the world in meters
+     */
+    public Vector3 getWorldSize() {
+        return worldSize;
+    }
 
-	/**
-	 * This is the size of the world that should be displayed. This 
-	 * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
-	 * @param viewSize
-	 */
-	public void setViewSize(Vector2 viewSize) {
-		this.viewSize = viewSize;
-	}
+    /**
+     * Note that world size is not the same as screen size
+     * It is the size of the world as used by Box2D
+     * @param worldSize in meters
+     */
+    public void setWorldSize(Vector3 worldSize) {
+        this.worldSize = worldSize;
+    }
 
-	/**
-	 * Use this to convert screen pixel sizes to Box2D sizes
-	 * @param x size in screen pixels
-	 * @return size in Box2D 
-	 */
-	static public float convertScreenToWorld(float x) {
-		return x * WORLD_TO_BOX;
-	}
+    /**
+     * This is the size of the world that should be displayed. This
+     * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
+     * @return
+     */
+    public Vector2 getViewSize() {
+        return viewSize;
+    }
 
-	/**
-	 * Use this to convert Box2D sizes to screen pixel sizes 
-	 * @param x size in Box2D
-	 * @return size in pixels
-	 */
-	static public float convertWorldToScreen(float x) {
-		return x * BOX_TO_WORLD;
-	}
+    /**
+     * This is the size of the world that should be displayed. This
+     * should be equal or smaller then the size set using {@link #setWorldSize(Vector3)}
+     * @param viewSize
+     */
+    public void setViewSize(Vector2 viewSize) {
+        this.viewSize = viewSize;
+    }
 
-	public void setGame(Game game) {
-		this.game = game;
+    /**
+     * Use this to convert screen pixel sizes to Box2D sizes
+     * @param x size in screen pixels
+     * @return size in Box2D
+     */
+    static public float convertScreenToWorld(float x) {
+        return x * WORLD_TO_BOX;
+    }
+
+    /**
+     * Use this to convert Box2D sizes to screen pixel sizes
+     * @param x size in Box2D
+     * @return size in pixels
+     */
+    static public float convertWorldToScreen(float x) {
+        return x * BOX_TO_WORLD;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
         this.score = new Score();
         this.score.setCumulatedScore(game.getScore());
-	}
+    }
 
-	public Game getGame() {
-		return this.game;
-	}
+    public Game getGame() {
+        return this.game;
+    }
 
-	public void setWorld(World world) {
-		this.world = world;
-		this.world.setContactListener(this);
-	}
+    public void setWorld(World world) {
+        this.world = world;
+        this.world.setContactListener(this);
+    }
 
-	public World getWorld() {
-		return world;
-	}
+    public World getWorld() {
+        return world;
+    }
 
-	/**
-	 * Use this to add User interface elements that do not require collision detection nor physics
-	 * Example: score bar, buttons, background images/animations
-	 * @param actor
-	 */
-	public void addUIElement(Actor actor) {
-		AbstractScreen screen = (AbstractScreen) getScreen();
-		screen.getStageUIActors().addActor(actor);
-	}
+    /**
+     * Use this to add User interface elements that do not require collision detection nor physics
+     * Example: score bar, buttons, background images/animations
+     * @param actor
+     */
+    public void addUIElement(Actor actor) {
+        AbstractScreen screen = (AbstractScreen) getScreen();
+        screen.getStageUIActors().addActor(actor);
+    }
 
-	public AssetManager getManager() {
-		return manager;
-	}
+    public AssetManager getManager() {
+        return manager;
+    }
 
-	/**
-	 * Queues a game object for removal. Note that this happens asynchronously.
-	 * <BR/>
-	 * Note that objects will only be removed is {@link GameObject#setCanBeRemoved(boolean)} has been
-	 * called and set to true
-	 * @param object the GameObject to be removed
-	 */
-	public void deleteGameObject(GameObject object) {
-		this.gameObjectsForDeletion.add(object);
-		this.worldThread.setGameObjectInactive(object);
-	}
+    /**
+     * Queues a game object for removal. Note that this happens asynchronously.
+     * <BR/>
+     * Note that objects will only be removed is {@link GameObject#setCanBeRemoved(boolean)} has been
+     * called and set to true
+     * @param object the GameObject to be removed
+     */
+    public void deleteGameObject(GameObject object) {
+        this.gameObjectsForDeletion.add(object);
+        this.worldThread.setGameObjectInactive(object);
+    }
 
-	public WorldThread getWorldThread() {
-		return worldThread;
-	}
+    public WorldThread getWorldThread() {
+        return worldThread;
+    }
 
-	/**
-	 * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
-	 * to be deleted
-	 * @return ArrayList<GameObject>
-	 */
-	public Array<GameObject> getGameObjectsForDeletion() {
-		return gameObjectsForDeletion;
-	}
+    /**
+     * Returns the game objects that have been added using {@link #deleteGameObject(GameObject)}
+     * to be deleted
+     * @return ArrayList<GameObject>
+     */
+    public Array<GameObject> getGameObjectsForDeletion() {
+        return gameObjectsForDeletion;
+    }
 
-	public void addGameObject(GameObject object, Stage stage) {
-		object.setGame(this);
+    public void addGameObject(GameObject object, Stage stage) {
+        object.setGame(this);
 
-		if( this.gameState == GAME_STATE.RUNNING ) {
-			this.gameObjectsForAddition.add(object);
-			this.worldThread.addGameObject(object);
-		} else {
-			object.loadSounds();
-			object.setupImage();
-			object.setupBody();
-		}
+        if( this.gameState == GAME_STATE.RUNNING ) {
+            this.gameObjectsForAddition.add(object);
+            this.worldThread.addGameObject(object);
+        } else {
+            object.loadSounds();
+            object.setupImage();
+            object.setupBody();
+        }
 
-		synchronized (this.gameObjectsInGame) {
-			this.gameObjectsInGame.add(object);
-		}
+        synchronized (this.gameObjectsInGame) {
+            this.gameObjectsInGame.add(object);
+        }
 
-		object.setInGame(true);
+        object.setInGame(true);
 
-		stage.addActor(object);
-	}
+        stage.addActor(object);
+    }
 
-	public Array<GameObject> getGameObjectsForAddition() {
-		return gameObjectsForAddition;
-	}
+    public Array<GameObject> getGameObjectsForAddition() {
+        return gameObjectsForAddition;
+    }
 
-	public Array<GameObject> getGameObjectsInGame() {
-		return gameObjectsInGame;
-	}
+    public Array<GameObject> getGameObjectsInGame() {
+        return gameObjectsInGame;
+    }
 
-	/**
-	 * Called by the World thread prior to calling {@link World#step(float, int, int)}
-	 */
-	public void updateWorld() {
+    /**
+     * Called by the World thread prior to calling {@link World#step(float, int, int)}
+     */
+    public void updateWorld() {
 
-	}
+    }
 
-	/**
-	 * Called in game during a render cycle
-	 * @param delta time in seconds since last cycle
-	 * @param stage stage that holds the game actors
-	 */
-	public void updateScreen(float delta, Stage stage) {
-		//		fpsLogger.log();
-		if( this.gameState == GAME_STATE.RUNNING ) {
-			//			fixedTimeStep(delta, stage);
-			fixedTimeStepInterpolated(delta, stage);
+    /**
+     * Called in game during a render cycle
+     * @param delta time in seconds since last cycle
+     * @param stage stage that holds the game actors
+     */
+    public void updateScreen(float delta, Stage stage) {
+        //		fpsLogger.log();
+        if( this.gameState == GAME_STATE.RUNNING ) {
+            //			fixedTimeStep(delta, stage);
+            fixedTimeStepInterpolated(delta, stage);
 
-			handleDeleteGameObjectsQueue();
+            handleDeleteGameObjectsQueue();
 
-			handleAddGameObjectsQueue();
+            handleAddGameObjectsQueue();
 
-			if( ( this.levelState == LEVEL_STATE.COMPLETE ) && ( levelCompleteCalled == false ) ){
-				levelComplete(score);
-				levelCompleteCalled = true;
-			} else if( this.levelState == LEVEL_STATE.FAILED ) {
-				pauseGame();
-				levelFailed();
-			}
-		}
-	}
+            if( ( this.levelState == LEVEL_STATE.COMPLETE ) && ( levelCompleteCalled == false ) ){
+                levelComplete(score);
+                levelCompleteCalled = true;
+            } else if( this.levelState == LEVEL_STATE.FAILED ) {
+                pauseGame();
+                levelFailed();
+            }
+        }
+    }
 
-	/**
-	 * Called when a key was pressed
-	 * @param keycode one of the constants in Input.Keys
-	 * @return whether the key was processed
-	 */
-	public boolean handleKeyEvent(int keycode) {
-		if((keycode == Keys.BACK) 
-				|| (keycode == Keys.ESCAPE)) {
-			if( this.gameState == GAME_STATE.RUNNING ) {
-				pauseGame();
-			} else {
-				stopScreen();
-			}
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Called when a key was pressed
+     * @param keycode one of the constants in Input.Keys
+     * @return whether the key was processed
+     */
+    public boolean handleKeyEvent(int keycode) {
+        if((keycode == Keys.BACK)
+                || (keycode == Keys.ESCAPE)) {
+            if( this.gameState == GAME_STATE.RUNNING ) {
+                pauseGame();
+            } else {
+                stopScreen();
+            }
+            return true;
+        }
+        return false;
+    }
 
     public void showMainMenu() {
-		Screen s = new MainMenuScreen(this);
-		setScreen( s );
-		addToBackstack(s);
-	}
+        Screen s = new MainMenuScreen(this);
+        setScreen( s );
+        addToBackstack(s);
+    }
 
-	public void showSplashScreen() {
-		setScreen(new SplashScreen(this));
-	}
+    public void showSplashScreen() {
+        setScreen(new SplashScreen(this));
+    }
 
 
-	/**
-	 * Hides the current screen and shows the previous screen
-	 * TODO implement disposing screens when popped from backstack. This must be done after hide animation has finished
-	 */
-	public void stopScreen() {
-		popBackstack();
-		setScreen(peekBackStack());
-	}
+    /**
+     * Hides the current screen and shows the previous screen
+     * TODO implement disposing screens when popped from backstack. This must be done after hide animation has finished
+     */
+    public void stopScreen() {
+        popBackstack();
+        setScreen(peekBackStack());
+    }
 
-	@Override
-	public void onMusicFilesReceived() {
-		MusicPlayer player = MusicPlayer.getInstance();
-		player.setLibrary(this.musicSelector.getLibrary());
-	}
+    @Override
+    public void onMusicFilesReceived() {
+        MusicPlayer player = MusicPlayer.getInstance();
+        player.setLibrary(this.musicSelector.getLibrary());
+    }
 
     public void loadLevel(LevelLoader.OnLevelLoadedListener listener) {
-        Level level = LevelLoader.loadCompleted(this.game, this.game.getCurrentLevelPosition());
-        if( level == null ) {
-            level = LevelLoader.loadOriginal(this.game, this.game.getCurrentLevelPosition());
-        }
+        Level levelCompleted = LevelLoader.loadCompleted(this.game, this.game.getCurrentLevelPosition());
+        Level levelOriginal = LevelLoader.loadOriginal(this.game, this.game.getCurrentLevelPosition());
+
+        Level level = setupLevel(levelCompleted, levelOriginal);
 
         listener.onLevelLoaded(level);
     }
 
-	/**
-	 * Called by AbstractScreen when level is loaded and ready to start the game
-	 * @param stage that should hold the game objects
-	 * @return true if setup was successful, false otherwise
-	 */
-	abstract public boolean setup(Stage stage);
+    /**
+     * Override this to restore level state from a previously completed level. By default this will simply return
+     * levelOriginal
+     * @param levelCompleted contains the saved level when user completed the level
+     * @param levelOriginal contains the original version of the level
+     * @return level with state corrected. This usually is levelCompleted with some objects returned to their original state
+     */
+    protected Level setupLevel(Level levelCompleted, Level levelOriginal) {
+        return levelOriginal;
+    }
 
-	/**
-	 * Called when game state is set to level complete. Use this to calculate the score
+    /**
+     * Called by AbstractScreen when level is loaded and ready to start the game
+     * @param stage that should hold the game objects
+     * @return true if setup was successful, false otherwise
+     */
+    abstract public boolean setup(Stage stage);
+
+    /**
+     * Called when game state is set to level complete. Use this to calculate the score
      * ,show a level complete animation, save game state, ...
-	 */
-	abstract public void levelComplete(Score score);
+     */
+    abstract public void levelComplete(Score score);
 
     /**
      * Called when game state is set to level failed. Use this to show start animation or show
@@ -553,107 +566,107 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         GameWriter.saveInProgress(game);
     }
 
-	private void handleDeleteGameObjectsQueue() {
-		Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
-		for (GameObject object : this.gameObjectsForDeletion ) {
-			if( object.canBeRemoved() ) {
-				if( object.remove() ) {
-					object.clear();
-				}
+    private void handleDeleteGameObjectsQueue() {
+        Array<GameObject> notDeletedGameObjects = new Array<GameObject>();
+        for (GameObject object : this.gameObjectsForDeletion ) {
+            if( object.canBeRemoved() ) {
+                if( object.remove() ) {
+                    object.clear();
+                }
 
-				synchronized (this.gameObjectsInGame) {
-					this.gameObjectsInGame.removeValue(object, true);
-				}
-			} else {
-				notDeletedGameObjects.add(object);
-			}
-		}
-		this.gameObjectsForDeletion = notDeletedGameObjects;
-	}
+                synchronized (this.gameObjectsInGame) {
+                    this.gameObjectsInGame.removeValue(object, true);
+                }
+            } else {
+                notDeletedGameObjects.add(object);
+            }
+        }
+        this.gameObjectsForDeletion = notDeletedGameObjects;
+    }
 
-	private void handleAddGameObjectsQueue() {
-		for(GameObject object : this.gameObjectsForAddition) {
-			object.setupImage();
-		}
-		this.gameObjectsForAddition.clear();
-	}
+    private void handleAddGameObjectsQueue() {
+        for(GameObject object : this.gameObjectsForAddition) {
+            object.setupImage();
+        }
+        this.gameObjectsForAddition.clear();
+    }
 
-	private void fixedTimeStep(float delta, Stage stage) {
-		this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
-		Array<Actor> actors = stage.getActors();
-		int size = actors.size;
+    private void fixedTimeStep(float delta, Stage stage) {
+        this.world.step(BOX2D_UPDATE_FREQUENCY, 6, 2);
+        Array<Actor> actors = stage.getActors();
+        int size = actors.size;
 
-		for(int i = 0; i < size; i++) {
-			GameObject gameObject = (GameObject) actors.get(i);
-			
-		}
-	}
+        for(int i = 0; i < size; i++) {
+            GameObject gameObject = (GameObject) actors.get(i);
 
-	private void fixedTimeStepInterpolated(float delta, Stage stage) {
-		//		Gdx.app.log("Game", "fixedTimeStepInterpolated: delta="+delta);
+        }
+    }
 
-		//		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
-		//			delta = 0.25f;
-		//		}
-		//		
-		//		accumulator += delta;
-		//
-		//		while (accumulator >= BOX2D_UPDATE_FREQUENCY) {
-		//			this.world.step(BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
-		//			accumulator -= BOX2D_UPDATE_FREQUENCY;
-		//		}
+    private void fixedTimeStepInterpolated(float delta, Stage stage) {
+        //		Gdx.app.log("Game", "fixedTimeStepInterpolated: delta="+delta);
 
-		//		interpolateGameObjectsCurrentPosition(accumulator/BOX2D_UPDATE_FREQUENCY, stage);
-		if( delta > BOX2D_UPDATE_FREQUENCY ) {
-			//Rendering running slower than world updates
-			//Should we also use Toast to notify user?
-			Gdx.app.log("Game", "Renderer took "+delta+" seconds while world is updated each "+BOX2D_UPDATE_FREQUENCY+" seconds");
-		}
-		interpolateGameObjectsCurrentPosition(delta/BOX2D_UPDATE_FREQUENCY, stage);
-	}
+        //		if( delta > 0.25f ) { //upper bound on framerate to prevent spiral of death
+        //			delta = 0.25f;
+        //		}
+        //
+        //		accumulator += delta;
+        //
+        //		while (accumulator >= BOX2D_UPDATE_FREQUENCY) {
+        //			this.world.step(BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+        //			accumulator -= BOX2D_UPDATE_FREQUENCY;
+        //		}
 
-	private void interpolateGameObjectsCurrentPosition(float alpha, Stage stage) {
-		Array<Actor> actors = stage.getActors();
-		int size = actors.size;
+        //		interpolateGameObjectsCurrentPosition(accumulator/BOX2D_UPDATE_FREQUENCY, stage);
+        if( delta > BOX2D_UPDATE_FREQUENCY ) {
+            //Rendering running slower than world updates
+            //Should we also use Toast to notify user?
+            Gdx.app.log("Game", "Renderer took "+delta+" seconds while world is updated each "+BOX2D_UPDATE_FREQUENCY+" seconds");
+        }
+        interpolateGameObjectsCurrentPosition(delta/BOX2D_UPDATE_FREQUENCY, stage);
+    }
 
-		for(int i = 0; i < size; i++) {
-			((GameObject) actors.get(i)).interpolate(alpha);
-		}
-	}
+    private void interpolateGameObjectsCurrentPosition(float alpha, Stage stage) {
+        Array<Actor> actors = stage.getActors();
+        int size = actors.size;
 
-	private void showLevelScreen() {
-		LevelScreen screen = new LevelScreen(this);
-		setScreen( screen );
+        for(int i = 0; i < size; i++) {
+            ((GameObject) actors.get(i)).interpolate(alpha);
+        }
+    }
 
-		//Make sure LevelScreen is only added once to the backstack to prevent
-		//going back to a previous level if user quits level
-		if( ! ( peekBackStack() instanceof LevelScreen ) ) {
-			addToBackstack(screen);
-		}
-	}
+    private void showLevelScreen() {
+        LevelScreen screen = new LevelScreen(this);
+        setScreen( screen );
 
-	private void showScreen(Screen screen) {
-		this.newScreen.show();
-		this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		this.currentScreen = this.newScreen;
-	}
-	
-	private void registerTweens() {
-		Tween.registerAccessor(Actor.class, new ActorAccessor());
-		Tween.registerAccessor(GameObject.class, new GameObjectAccessor());
-	}
+        //Make sure LevelScreen is only added once to the backstack to prevent
+        //going back to a previous level if user quits level
+        if( ! ( peekBackStack() instanceof LevelScreen ) ) {
+            addToBackstack(screen);
+        }
+    }
 
-	private void startBox2DThread() {
-		if( this.worldThread != null ) {
-			this.worldThread.stopThread();
-		}
-		this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
-		this.worldThread.start();
-	}
+    private void showScreen(Screen screen) {
+        this.newScreen.show();
+        this.newScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.currentScreen = this.newScreen;
+    }
 
-	/**
-	 * This should return one game object for each type used in the game.
-	 * @return
-	 */
-	abstract public Array<GameObject> getAvailableGameObjects();
+    private void registerTweens() {
+        Tween.registerAccessor(Actor.class, new ActorAccessor());
+        Tween.registerAccessor(GameObject.class, new GameObjectAccessor());
+    }
+
+    private void startBox2DThread() {
+        if( this.worldThread != null ) {
+            this.worldThread.stopThread();
+        }
+        this.worldThread = new WorldThread(this, BOX2D_UPDATE_FREQUENCY, BOX2D_VELOCITY_ITERATIONS, BOX2D_POSITION_ITERATIONS);
+        this.worldThread.start();
+    }
+
+    /**
+     * This should return one game object for each type used in the game.
+     * @return
+     */
+    abstract public Array<GameObject> getAvailableGameObjects();
 }
