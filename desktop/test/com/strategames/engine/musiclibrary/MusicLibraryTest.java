@@ -1,4 +1,4 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.musiclibrary;
 
 import org.junit.Assert;
 import org.junit.Test;

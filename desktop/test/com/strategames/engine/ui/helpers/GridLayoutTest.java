@@ -1,4 +1,4 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.ui.helpers;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

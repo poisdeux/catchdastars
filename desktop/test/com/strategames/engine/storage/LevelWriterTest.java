@@ -1,4 +1,4 @@
-package com.strategames.engine.utils;
+package com.strategames.engine.storage;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.storage.LevelWriter;
+import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.Level;
 import com.strategames.libgdx.junit.GdxTestRunner;
 import com.strategames.libgdx.junit.LevelsTestHelper;
 
