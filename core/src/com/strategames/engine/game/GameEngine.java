@@ -33,9 +33,6 @@ import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
 
-/**
- * TODO we make use of many different datastructures which we create and destroy. This reduces performance when the garbage collector runs. We might want to change all these datastructures into one big ugly datastructure.
- */
 abstract public class GameEngine extends com.badlogic.gdx.Game implements ContactListener, OnMusicFilesReceivedListener {
 	public enum GAME_STATE {
 		NONE, RUNNING, PAUSED

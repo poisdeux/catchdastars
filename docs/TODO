@@ -17,6 +17,7 @@ Website:
 Gameplay:
 
   * Fix performance issues during gameplay
+    ** Reduce amount of datastructures used to minimize garbage collector work
   * Create next level animation
   * Create end game animation
   * Add archer bad guy that shoulds arrows to destroy balloons
