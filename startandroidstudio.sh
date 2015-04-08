@@ -8,6 +8,10 @@ then
   if [ $1 == "-r" ]
   then
     rm -f ${SEXECCACHE} ${SDKLOCCACH}
+  elif [ $1 == "-e" ]
+  then
+    echo export ANDROID_HOME=$(cat ${SDKLOCCACHE})
+    exit 0
   else
     echo "usage: $0 [-r]"
     echo "options"
