@@ -30,7 +30,7 @@ import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.LevelWriter;
-import com.strategames.engine.utils.Game;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.storage.LevelLoader;
@@ -103,8 +103,8 @@ public class LevelEditorScreen extends AbstractScreen
 
         displayGrid(LevelEditorPreferences.displayGridEnabled());
 
-        Game game = getGameEngine().getGame();
-        this.level = LevelLoader.loadSync(game, game.getCurrentLevelPosition());
+        GameMetaData gameMetaData = getGameEngine().getGameMetaData();
+        this.level = LevelLoader.loadSync(gameMetaData, gameMetaData.getCurrentLevelPosition());
         onLevelLoaded(this.level);
     }
 
@@ -409,7 +409,7 @@ public class LevelEditorScreen extends AbstractScreen
             door.moveTo(wallX, door.getY());
 
             if( wall.isBorder() ) {
-                int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
+                int[] currentLevelPosition = getGameEngine().getGameMetaData().getCurrentLevelPosition();
                 float middle = worldSize.x / 2f;
                 if( wallX < middle ) { //If left border set next level to left
                     door.setEntryLevel(currentLevelPosition[0] - 1, currentLevelPosition[1]);
@@ -422,7 +422,7 @@ public class LevelEditorScreen extends AbstractScreen
             door.moveTo(door.getX(), wallY);
 
             if( wall.isBorder() ) {
-                int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
+                int[] currentLevelPosition = getGameEngine().getGameMetaData().getCurrentLevelPosition();
                 float middle = worldSize.x / 2f;
                 if( wallY < middle ) { //If bottom border set next level to bottom
                     door.setEntryLevel(currentLevelPosition[0], currentLevelPosition[1] - 1);
@@ -536,7 +536,7 @@ public class LevelEditorScreen extends AbstractScreen
     }
 
     private boolean saveLevel() {
-        return LevelWriter.saveOriginal(getGameEngine().getGame(), this.level);
+        return LevelWriter.saveOriginal(getGameEngine().getGameMetaData(), this.level);
     }
 
     /**

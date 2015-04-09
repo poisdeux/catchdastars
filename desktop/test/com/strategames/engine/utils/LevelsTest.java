@@ -11,33 +11,34 @@ import org.junit.Test;
 
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.libgdx.junit.GameTestHelper;
 
 public class LevelsTest {
-	private Game game;
+	private GameMetaData gameMetaData;
 
 	@Before
 	public void setUp() throws Exception {
-		this.game = GameTestHelper.createGame();
+		this.gameMetaData = GameTestHelper.createGame();
 	}
 
 	@Test
 	public void getLevelsTest() {
 		int amountOfLevels = GameTestHelper.getAmountOfPositions();
-		HashMap<String, Level> levels = this.game.getLevels();
+		HashMap<String, Level> levels = this.gameMetaData.getLevels();
 		assertTrue("Amount of levels returned by getLevels() ("+levels.size()+") is not equal to the amount of levels set ("+amountOfLevels+")", levels.size() == amountOfLevels);
 		for(int i = 0; i < amountOfLevels; i++) {
 			int[] origPosition = GameTestHelper.getPosition(i);
-			Level level = this.game.getLevel(origPosition[0], origPosition[1]);
+			Level level = this.gameMetaData.getLevel(origPosition[0], origPosition[1]);
 			assertFalse("Level="+level+" not found in game", level == null);
-			this.game.deleteLevel(origPosition[0], origPosition[1]);	
+			this.gameMetaData.deleteLevel(origPosition[0], origPosition[1]);
 		}
 	}
 
 	@Test
 	public void markLevelsReachableTestAllReachable() {
-		this.game.markLevelsReachable();
-		Collection<Level> levels = this.game.getLevels().values();
+		this.gameMetaData.markLevelsReachable();
+		Collection<Level> levels = this.gameMetaData.getLevels().values();
 		for(Level level : levels) {
 			assertTrue("Level not reachable: "+level, level.isReachable());
 		}
@@ -45,7 +46,7 @@ public class LevelsTest {
 
 	@Test
 	public void markLevelsReachableNotAllReachable() {
-		Collection<Level> levels = this.game.getLevels().values();
+		Collection<Level> levels = this.gameMetaData.getLevels().values();
 		for(Level level : levels) {
 			int[] pos = level.getPosition();
 			//Remove door from 5,2 to 6,2
@@ -57,7 +58,7 @@ public class LevelsTest {
 			}
 		}
 		int[][] posNotReachable = {{6,2},{6,1},{6,0},{7,0}};
-		this.game.markLevelsReachable();
+		this.gameMetaData.markLevelsReachable();
 		for(Level level : levels) {
 			int[] pos = level.getPosition();
 

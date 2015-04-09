@@ -3,7 +3,7 @@ package com.strategames.libgdx.junit;
 import com.badlogic.gdx.math.Vector2;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
-import com.strategames.engine.utils.Game;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Level;
 
 public class GameTestHelper {
@@ -52,8 +52,8 @@ public class GameTestHelper {
 	 *  <br/>
 	 * @return
 	 */
-	public static Game createGame() {
-		Game game = new Game();
+	public static GameMetaData createGame() {
+		GameMetaData gameMetaData = new GameMetaData();
 		Vector2 viewSize = new Vector2(3.1f, 18.1f);
 		Vector2 worldSize = new Vector2(9.3f, 36.2f);
 		for(int i = 0; i < positions.length; i++) {
@@ -73,9 +73,9 @@ public class GameTestHelper {
 				level.addGameObject(object);
 			}
 			
-			game.addLevel(level);
+			gameMetaData.addLevel(level);
 		}
-		return game;
+		return gameMetaData;
 	}
 	
 	

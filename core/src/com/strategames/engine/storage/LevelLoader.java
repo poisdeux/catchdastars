@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
 public class LevelLoader {
@@ -21,11 +20,11 @@ public class LevelLoader {
 	 * Loads completed level file if it exists, otherwise tries to loadSync original
      * level file
 	 */
-	static public Level loadSync(Game game, int[] pos) {
+	static public Level loadSync(GameMetaData gameMetaData, int[] pos) {
 		try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, pos));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(gameMetaData, pos));
             if( ! file.exists() ) {
-                file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
+                file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
             }
 			return loadSync(file);
 		} catch (Exception e) {
@@ -36,17 +35,17 @@ public class LevelLoader {
 
     /**
      * Loads completed level file
-     * @param game
+     * @param gameMetaData
      * @param pos
      * @return loaded level or null if it does not exist
      */
-    static public Level loadCompleted(Game game, int[] pos) {
+    static public Level loadCompleted(GameMetaData gameMetaData, int[] pos) {
         try {
-            String filename = Files.getCompletedLevelFilename(game, pos);
+            String filename = Files.getCompletedLevelFilename(gameMetaData, pos);
             Gdx.app.log("LevelLoader", "loadCompleted: filename="+filename);
             FileHandle file = Gdx.files.local(filename);
             if( ! file.exists() ) {
-                file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
+                file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
             }
             return loadSync(file);
         } catch (Exception e) {
@@ -57,13 +56,13 @@ public class LevelLoader {
 
     /**
      * Loads original level file
-     * @param game
+     * @param gameMetaData
      * @param pos
      * @return loaded level or null if it does not exist
      */
-    static public Level loadOriginal(Game game, int[] pos) {
+    static public Level loadOriginal(GameMetaData gameMetaData, int[] pos) {
         try {
-            FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, pos));
+            FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
             return loadSync(file);
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,8 +110,8 @@ public class LevelLoader {
 		thread.start();
 	}
 
-	static public Array<Level> loadAllLocalLevels(Game game) {
-		FileHandle dir = getLocalLevelsDir(game);
+	static public Array<Level> loadAllLocalLevels(GameMetaData gameMetaData) {
+		FileHandle dir = getLocalLevelsDir(gameMetaData);
 		FileHandle[] files = dir.list();
 
 		Array<Level> levels = new Array<Level>();
@@ -127,9 +126,9 @@ public class LevelLoader {
 		return levels;
 	}
 
-	static public FileHandle getLocalLevelsDir(Game game) {
+	static public FileHandle getLocalLevelsDir(GameMetaData gameMetaData) {
 		try {
-			FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(game));
+			FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(gameMetaData));
 			return dir;
 		} catch (Exception e) {
 			//			Gdx.app.log("Level", "error");
@@ -144,9 +143,9 @@ public class LevelLoader {
 	 * the last level number
 	 * @return
 	 */
-	public static int getLastLevelNumber(Game game) {
+	public static int getLastLevelNumber(GameMetaData gameMetaData) {
 
-		FileHandle dir = getLocalLevelsDir(game);
+		FileHandle dir = getLocalLevelsDir(gameMetaData);
 		FileHandle[] files = dir.list();
 		return files.length;
 	}

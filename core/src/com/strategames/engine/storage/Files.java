@@ -1,6 +1,5 @@
 package com.strategames.engine.storage;
 
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
 /**
@@ -39,68 +38,68 @@ public class Files {
 		return TOP_PATH + "/" + name;
 	}
 	
-	static public String getOriginalGameDirectory(Game game) {
-		if( game == null ) {
+	static public String getOriginalGameDirectory(GameMetaData gameMetaData) {
+		if( gameMetaData == null ) {
 			return null;
 		}
-		return ORIGINALS_PATH + "/" + game.getUuid() + "/";
+		return ORIGINALS_PATH + "/" + gameMetaData.getUuid() + "/";
 	}
 
-    static public String getInProgressGameDirectory(Game game) {
-        if( game == null ) {
+    static public String getInProgressGameDirectory(GameMetaData gameMetaData) {
+        if( gameMetaData == null ) {
             return null;
         }
-        return INPROGRESS_PATH + "/" + game.getUuid() + "/";
+        return INPROGRESS_PATH + "/" + gameMetaData.getUuid() + "/";
     }
 
-    static public String getOriginalGameMetaFile(Game game) {
-        return getOriginalGameDirectory(game) + META_FILENAME;
+    static public String getOriginalGameMetaFile(GameMetaData gameMetaData) {
+        return getOriginalGameDirectory(gameMetaData) + META_FILENAME;
     }
 
-	static public String getInprogressGameMetaFile(Game game) {
-		return getInProgressGameDirectory(game) + META_FILENAME;
+	static public String getInprogressGameMetaFile(GameMetaData gameMetaData) {
+		return getInProgressGameDirectory(gameMetaData) + META_FILENAME;
 	}
 	
-	static public String getOriginalLevelsPath(Game game) {
-		if( game == null ) {
+	static public String getOriginalLevelsPath(GameMetaData gameMetaData) {
+		if( gameMetaData == null ) {
 			return null;
 		}
-		return getOriginalGameDirectory(game) + LEVELS_DIRECTORY;
+		return getOriginalGameDirectory(gameMetaData) + LEVELS_DIRECTORY;
 	}
 
-    static public String getCompletedLevelsPath(Game game) {
-        if( game == null ) {
+    static public String getCompletedLevelsPath(GameMetaData gameMetaData) {
+        if( gameMetaData == null ) {
             return null;
         }
-        return getInProgressGameDirectory(game) + LEVELS_COMPLETED_DIRECTORY;
+        return getInProgressGameDirectory(gameMetaData) + LEVELS_COMPLETED_DIRECTORY;
     }
 
     /**
      * Returns the path of the original level
-     * @param game
+     * @param gameMetaData
      * @param level
      * @return
      */
-	static public String getOriginalLevelFilename(Game game, Level level) {
-		if( ( level == null ) || ( game == null ) ) {
+	static public String getOriginalLevelFilename(GameMetaData gameMetaData, Level level) {
+		if( ( level == null ) || ( gameMetaData == null ) ) {
 			return null;
 		}
 
-       return getOriginalLevelsPath(game) + "/" + level.getFilename();
+       return getOriginalLevelsPath(gameMetaData) + "/" + level.getFilename();
 	}
 
     /**
      * Returns the path of the writer in the game's level directory
-     * @param game
+     * @param gameMetaData
      * @param pos
      * @return path
      */
-    static public String getOriginalLevelFilename(Game game, int[] pos) {
-        if( game == null ) {
+    static public String getOriginalLevelFilename(GameMetaData gameMetaData, int[] pos) {
+        if( gameMetaData == null ) {
             return null;
         }
 
-        return getOriginalLevelsPath(game) + "/" + getLevelFilename(pos);
+        return getOriginalLevelsPath(gameMetaData) + "/" + getLevelFilename(pos);
     }
 
     static public String getLevelFilename(int[] pos) {
@@ -109,29 +108,29 @@ public class Files {
 
     /**
      * Returns the path of the original level
-     * @param game
+     * @param gameMetaData
      * @param level
      * @return path
      */
-    static public String getCompletedLevelFilename(Game game, Level level) {
-        if( ( level == null ) || ( game == null ) ) {
+    static public String getCompletedLevelFilename(GameMetaData gameMetaData, Level level) {
+        if( ( level == null ) || ( gameMetaData == null ) ) {
             return null;
         }
 
-        return getCompletedLevelsPath(game) + "/" + level.getFilename();
+        return getCompletedLevelsPath(gameMetaData) + "/" + level.getFilename();
     }
 
     /**
      * Returns the path of the writer in the game's level directory
-     * @param game
+     * @param gameMetaData
      * @param pos
      * @return path
      */
-    static public String getCompletedLevelFilename(Game game, int[] pos) {
-        if( game == null ) {
+    static public String getCompletedLevelFilename(GameMetaData gameMetaData, int[] pos) {
+        if( gameMetaData == null ) {
             return null;
         }
 
-        return getCompletedLevelsPath(game) + "/" + getLevelFilename(pos);
+        return getCompletedLevelsPath(gameMetaData) + "/" + getLevelFilename(pos);
     }
 }

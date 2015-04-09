@@ -1,22 +1,17 @@
 package com.strategames.catchdastars.screens.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.strategames.catchdastars.dialogs.LevelCompleteDialog;
-import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.types.Text;
 import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.tweens.ActorAccessor;
-import com.strategames.engine.utils.Game;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Score;
-import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
@@ -165,8 +160,8 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		
 		
 		GameEngine engine = getGameEngine();
-		Game game = engine.getGame();
-		game.setLevel(level);
+		GameMetaData gameMetaData = engine.getGameMetaData();
+		gameMetaData.setLevel(level);
 		
 		if( engine.setup(getStageActors()) ) {
 			this.levelLoaded = true;

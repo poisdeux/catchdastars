@@ -38,7 +38,7 @@ import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
-import com.strategames.engine.utils.Game;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
@@ -77,6 +77,7 @@ public class CatchDaStars extends GameEngine {
     private int[] nextLevelPosition;
 
     private Level level;
+    private Score score = new Score();
 
     public CatchDaStars() {
         super();
@@ -84,6 +85,14 @@ public class CatchDaStars extends GameEngine {
         this.redCollectables = new Collectable();
         this.blueCollectables = new Collectable();
         this.goldCollectables = new Collectable();
+
+        Textures textures = Textures.getInstance();
+
+        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10);
+        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10);
+        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1);
+        score.addItem(RED_STAR, new Image(textures.starRed), 1);
+        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5);
 
         /**
          * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
@@ -141,17 +150,17 @@ public class CatchDaStars extends GameEngine {
     public boolean setup(Stage stage) {
         System.gc(); //hint the garbage collector that now is a good time to collect
 
-        Game game = getGame();
-        if( game == null ) {
+        GameMetaData gameMetaData = getGameMetaData();
+        if( gameMetaData == null ) {
             Gdx.app.log("CatchDaStars", "setup: game==null");
             return false;
         }
 
-        int[] pos = game.getCurrentLevelPosition();
+        int[] pos = gameMetaData.getCurrentLevelPosition();
 
         Gdx.app.log("CatchDaStars", "setup: pos="+pos[0]+", "+pos[1]);
 
-        this.level = game.getLevel(pos[0], pos[1]);
+        this.level = gameMetaData.getLevel(pos[0], pos[1]);
         if( this.level == null ) {
             Gdx.app.log("CatchDaStars", "setup: level==null");
             return false;
@@ -215,6 +224,38 @@ public class CatchDaStars extends GameEngine {
 
         return true;
         //		Gdx.app.log("CatchDaStars", "initialize: this.blueCollectables="+this.blueCollectables);
+    }
+
+    @Override
+    protected Level setupLevel(Level levelCompleted, Level levelOriginal) {
+
+        //Get balloons from
+        int blueBalloons = 0;
+        int redBalloons = 0;
+        Array<GameObject> gameObjects = levelCompleted.getGameObjects();
+        for( GameObject gameObject : gameObjects ) {
+            if( gameObject instanceof BalloonBlue ) {
+                blueBalloons++;
+            } else if ( gameObject instanceof BalloonRed ) {
+                redBalloons++;
+            }
+        }
+
+        gameObjects = levelCompleted.getGameObjects();
+        for( GameObject gameObject : gameObjects ) {
+            if( gameObject instanceof BalloonBlue ) {
+                blueBalloons++;
+            } else if ( gameObject instanceof BalloonRed ) {
+                redBalloons++;
+            }
+        }
+
+        return super.setupLevel(levelCompleted, levelOriginal);
+    }
+
+    @Override
+    public void startNextLevel() {
+        startLevel(nextLevelPosition);
     }
 
     private void addStar(Star star, Stage stage) {
@@ -312,19 +353,23 @@ public class CatchDaStars extends GameEngine {
     }
 
     @Override
-    public void levelComplete(Score score) {
+    public void levelComplete() {
 
-        Textures textures = Textures.getInstance();
-        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10, amountOfBlueBalloons);
-        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10, amountOfRedBalloons);
-        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1, this.blueCollectables.getAmountCollected());
-        score.addItem(RED_STAR, new Image(textures.starRed), 1, this.redCollectables.getAmountCollected());
-        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5, this.goldCollectables.getAmountCollected());
+        score.setAmount(BLUE_BALLOON, this.amountOfBlueBalloons);
+        score.setAmount(RED_BALLOON, this.amountOfRedBalloons);
+        score.setAmount(BLUE_STAR, this.blueCollectables.getAmountCollected());
+        score.setAmount(RED_STAR, this.redCollectables.getAmountCollected());
+        score.setAmount(GOLD_STAR, this.goldCollectables.getAmountCollected());
 
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
 
-        getGame().setScore(score.getCumulatedScore());
-        getGame().setCurrentLevelPosition(getNextLevelPosition());
+        GameMetaData gameMetaData = getGameMetaData();
+        gameMetaData.setCurrentLevelPosition(nextLevelPosition);
+
+        String gameState = "s:"+score.getCumulatedScore()+
+                ":bb:"+this.amountOfBlueBalloons+
+                ":br:"+this.amountOfRedBalloons;
+        gameMetaData.setAdditionalInfo(gameState);
         saveProgress();
     }
 
@@ -488,7 +533,7 @@ public class CatchDaStars extends GameEngine {
                 destroyBalloon(balloon);
             }
         } else if( object instanceof Door ) {
-            setNextLevelPosition(((Door) object).getNextLevelPosition());
+            this.nextLevelPosition = ((Door) object).getNextLevelPosition();
         } else if ( object instanceof RectangularSensor ) {
             if( balloon.isInGame() ) {
                 getWorldThread().setGameObjectInactive(balloon);

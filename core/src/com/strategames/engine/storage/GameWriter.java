@@ -3,7 +3,6 @@ package com.strategames.engine.storage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
 import java.util.HashMap;
@@ -11,8 +10,8 @@ import java.util.Map;
 
 public class GameWriter {
 
-    static public boolean saveInProgress(Game game) {
-        String metafile = Files.getInprogressGameMetaFile(game);
+    static public boolean saveInProgress(GameMetaData gameMetaData) {
+        String metafile = Files.getInprogressGameMetaFile(gameMetaData);
         if (metafile == null) {
             return false;
         }
@@ -21,15 +20,15 @@ public class GameWriter {
 
         try {
             Json json = new Json();
-            file.writeString(json.prettyPrint(game.getJson()), false);
+            file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
         } catch (Exception e) {
             Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
         }
 
-        HashMap<String, Level> levels = game.getLevels();
+        HashMap<String, Level> levels = gameMetaData.getLevels();
         for( Map.Entry<String, Level> entry : levels.entrySet() ) {
-            if( ! LevelWriter.saveCompleted(game, entry.getValue()) ) {
+            if( ! LevelWriter.saveCompleted(gameMetaData, entry.getValue()) ) {
                 return false;
             }
         }
@@ -37,8 +36,8 @@ public class GameWriter {
         return true;
     }
 
-    static public boolean saveOriginal(Game game) {
-        String metafile = Files.getOriginalGameMetaFile(game);
+    static public boolean saveOriginal(GameMetaData gameMetaData) {
+        String metafile = Files.getOriginalGameMetaFile(gameMetaData);
         if (metafile == null) {
             return false;
         }
@@ -47,15 +46,15 @@ public class GameWriter {
 
         try {
             Json json = new Json();
-            file.writeString(json.prettyPrint(game.getJson()), false);
+            file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
         } catch (Exception e) {
             Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
         }
 
-        HashMap<String, Level> levels = game.getLevels();
+        HashMap<String, Level> levels = gameMetaData.getLevels();
         for( Map.Entry<String, Level> entry : levels.entrySet() ) {
-            if( ! LevelWriter.saveOriginal(game, entry.getValue()) ) {
+            if( ! LevelWriter.saveOriginal(gameMetaData, entry.getValue()) ) {
                 return false;
             }
         }
@@ -67,15 +66,15 @@ public class GameWriter {
      * Saves the game's meta data
      *
      */
-    static public boolean saveMetadataOriginal(Game game) {
-        String gamePath = Files.getOriginalGameMetaFile(game);
+    static public boolean saveMetadataOriginal(GameMetaData gameMetaData) {
+        String gamePath = Files.getOriginalGameMetaFile(gameMetaData);
         if (gamePath == null) {
             return false;
         }
         FileHandle file = Gdx.files.local(gamePath);
         try {
             Json json = new Json();
-            file.writeString(json.prettyPrint(game.getJson()), false);
+            file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
             return true;
         } catch (Exception e) {
             Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
@@ -85,11 +84,11 @@ public class GameWriter {
 
     /**
      * Deletes the complete game
-     * @param game
+     * @param gameMetaData
      * @return
      */
-    static public boolean deleteInprogress(Game game) {
-        FileHandle file = Gdx.files.local(Files.getInProgressGameDirectory(game));
+    static public boolean deleteInprogress(GameMetaData gameMetaData) {
+        FileHandle file = Gdx.files.local(Files.getInProgressGameDirectory(gameMetaData));
         if (file.isDirectory()) {
             if (file.deleteDirectory()) {
                 return true;
@@ -102,11 +101,11 @@ public class GameWriter {
 
     /**
      * Deletes the complete game
-     * @param game
+     * @param gameMetaData
      * @return
      */
-    static public boolean deleteOriginal(Game game) {
-        FileHandle file = Gdx.files.local(Files.getOriginalGameDirectory(game));
+    static public boolean deleteOriginal(GameMetaData gameMetaData) {
+        FileHandle file = Gdx.files.local(Files.getOriginalGameDirectory(gameMetaData));
         if (file.isDirectory()) {
             if (file.deleteDirectory()) {
                 return true;

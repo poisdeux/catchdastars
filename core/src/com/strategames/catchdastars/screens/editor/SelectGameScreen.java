@@ -15,8 +15,8 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameWriter;
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.storage.GameLoader;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -38,7 +38,7 @@ public class SelectGameScreen extends AbstractScreen {
         addMenuItem("Delete all games");
 
         //Gameloader to loadSync all games
-        Array<Game> games = GameLoader.loadAllOriginalGames();
+        Array<GameMetaData> games = GameLoader.loadAllOriginalGames();
 
         this.gamesButtonsTable = new Table();
         fillGamesButtonsTable(games);
@@ -112,7 +112,7 @@ public class SelectGameScreen extends AbstractScreen {
     }
 
     private void handleNewGameButtonClicked() {
-        final Game game = new Game();
+        final GameMetaData gameMetaData = new GameMetaData();
         TextInputDialog dialog = new TextInputDialog(getStageUIActors(), getSkin());
         dialog.addInputField("Game name: ");
         dialog.addInputField("Designer: ");
@@ -127,53 +127,53 @@ public class SelectGameScreen extends AbstractScreen {
                 for(String name : values.keySet()) {
                     String value = values.get(name).toString();
                     if( name.contentEquals("Game name: ")) {
-                        game.setName(value);
+                        gameMetaData.setName(value);
                     } else if( name.contentEquals("Designer: ")) {
-                        game.setDesigner(value);
+                        gameMetaData.setDesigner(value);
                     }
                 }
-                addNewGame(game);
+                addNewGame(gameMetaData);
             }
         });
         dialog.create();
         dialog.show();
     }
 
-    private void fillGamesButtonsTable(Array<Game> games) {
+    private void fillGamesButtonsTable(Array<GameMetaData> games) {
         if( ( games != null ) && ( games.size != 0 ) ) {
-            for( Game game : games ) {
-                addGameButton(game);
+            for( GameMetaData gameMetaData : games ) {
+                addGameButton(gameMetaData);
             }
         }
     }
 
-    private void addGameButton(final Game game) {
-        if( game == null ) {
+    private void addGameButton(final GameMetaData gameMetaData) {
+        if( gameMetaData == null ) {
             return;
         }
 
-        TextButton button = new TextButton(game.getName(), getSkin());
+        TextButton button = new TextButton(gameMetaData.getName(), getSkin());
         button.setListener(new ActorListener() {
 
             @Override
             public void onTap(Actor actor) {
                 CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
-                gameEngine.setGame(game);
+                gameEngine.setGameMetaData(gameMetaData);
                 gameEngine.showLevelEditorMenu();
             }
 
             @Override
             public void onLongPress(Actor actor) {
-                showGameConfigurationDialog(game);
+                showGameConfigurationDialog(gameMetaData);
             }
         });
         this.gamesButtonsTable.add(button);
         this.gamesButtonsTable.row();
     }
 
-    private void addNewGame(Game game) {
-        if( GameWriter.saveOriginal(game) ) {
-            addGameButton(game);
+    private void addNewGame(GameMetaData gameMetaData) {
+        if( GameWriter.saveOriginal(gameMetaData) ) {
+            addGameButton(gameMetaData);
         } else {
             ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save game", getSkin());
             dialog.create();
@@ -181,7 +181,7 @@ public class SelectGameScreen extends AbstractScreen {
         }
     }
 
-    private void showGameConfigurationDialog(Game game) {
+    private void showGameConfigurationDialog(GameMetaData gameMetaData) {
 
     }
 }

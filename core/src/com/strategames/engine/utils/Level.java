@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
 public class Level implements Comparable<Level>, Writer {
@@ -18,7 +19,7 @@ public class Level implements Comparable<Level>, Writer {
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
 	private boolean reachable;
-	private Game game;
+	private GameMetaData gameMetaData;
 	
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
@@ -52,12 +53,12 @@ public class Level implements Comparable<Level>, Writer {
 		}
 	}
 
-	public void setGame(Game game) {
-		this.game = game;
+	public void setGameMetaData(GameMetaData gameMetaData) {
+		this.gameMetaData = gameMetaData;
 	}
 	
-	public Game getGame() {
-		return game;
+	public GameMetaData getGameMetaData() {
+		return gameMetaData;
 	}
 	
 	public void removeGameObject(GameObject object) {

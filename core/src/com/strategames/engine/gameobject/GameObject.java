@@ -522,11 +522,10 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	 * <br>
 	 * Example
 	 * <pre>
-	 * if( key.contentEquals("type")) {
-	 *   type = Type.valueOf(value.toString());
+	 * if( jsonData.name.contentEquals("type")) {
+	 *   type = Type.valueOf(jsonData.asString());
 	 * }
-	 * @param key	String holding the name you used in json.writeValue(String name, Object value) 
-	 * @param value	The object you set using json.writeValue(String name, Object value)
+	 * @param jsonData	The JSON object you set using json.writeValue(String name, Object value)
 	 */
 	abstract protected void readValue(JsonValue jsonData);
 

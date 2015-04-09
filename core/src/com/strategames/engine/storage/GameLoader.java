@@ -5,18 +5,16 @@ import java.io.FilenameFilter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
-import com.strategames.engine.utils.Game;
 
 public class GameLoader {
     static private OnGameLoadedListener gameLoadedListener;
 
     public interface OnGameLoadedListener {
-        public void onGameLoaded(Game game);
+        public void onGameLoaded(GameMetaData gameMetaData);
     }
 
     /**
@@ -24,12 +22,12 @@ public class GameLoader {
      * @param file
      * @return Game
      */
-    static private Game loadSync(FileHandle file) {
+    static private GameMetaData loadSync(FileHandle file) {
         Json json = new Json();
         try {
             String text = file.readString();
-            Object root =  json.fromJson(Game.class, text);
-            return (Game) root;
+            Object root =  json.fromJson(GameMetaData.class, text);
+            return (GameMetaData) root;
         } catch (GdxRuntimeException e) {
             Gdx.app.log("GameLoader", "Runtime error while loading game: "+e.getMessage());
         } catch (SerializationException e) {
@@ -39,8 +37,8 @@ public class GameLoader {
     }
 
 
-    static public Array<Game> loadAllOriginalGames() {
-        Array<Game> games = new Array<Game>();
+    static public Array<GameMetaData> loadAllOriginalGames() {
+        Array<GameMetaData> games = new Array<GameMetaData>();
         FileHandle dir = Gdx.files.local(Files.getOriginalGamesDirectory());
         FileHandle[] entries = dir.list();
         for( FileHandle entry : entries ) {
@@ -54,9 +52,9 @@ public class GameLoader {
                 });
 
                 if( files.length > 0 ) {
-                    Game game = loadSync(files[0]);
-                    if( game != null ) {
-                        games.add(game);
+                    GameMetaData gameMetaData = loadSync(files[0]);
+                    if( gameMetaData != null ) {
+                        games.add(gameMetaData);
                     }
                 }
             }
@@ -65,24 +63,24 @@ public class GameLoader {
         return games;
     }
 
-    static public Game loadOriginal(Game game) {
-        Game gameOriginal = null;
-        FileHandle file = Gdx.files.local(Files.getOriginalGameMetaFile(game));
+    static public GameMetaData loadOriginal(GameMetaData gameMetaData) {
+        GameMetaData gameMetaDataOriginal = null;
+        FileHandle file = Gdx.files.local(Files.getOriginalGameMetaFile(gameMetaData));
         if( file.exists() ) {
-            gameOriginal = loadSync(file);
+            gameMetaDataOriginal = loadSync(file);
         }
 
-        return gameOriginal;
+        return gameMetaDataOriginal;
     }
 
-    static public Game loadInProgress(Game game) {
-        Game gameInprogress = null;
-        FileHandle file = Gdx.files.local(Files.getInprogressGameMetaFile(game));
+    static public GameMetaData loadInProgress(GameMetaData gameMetaData) {
+        GameMetaData gameMetaDataInprogress = null;
+        FileHandle file = Gdx.files.local(Files.getInprogressGameMetaFile(gameMetaData));
         if( file.exists() ) {
-            gameInprogress = loadSync(file);
+            gameMetaDataInprogress = loadSync(file);
         }
 
-        return gameInprogress;
+        return gameMetaDataInprogress;
     }
 
     /**
@@ -90,10 +88,10 @@ public class GameLoader {
      * @param jsonString the json input containing the game
      * @return Game
      */
-    static public Game getGame(String jsonString) {
+    static public GameMetaData getGame(String jsonString) {
         Json json = new Json();
         try {
-            return json.fromJson(Game.class, jsonString);
+            return json.fromJson(GameMetaData.class, jsonString);
         } catch (Exception e) {
             Gdx.app.log("GameLoader", "getGame: error parsing json: "+e.getMessage());
             return null;

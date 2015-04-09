@@ -3,7 +3,6 @@ package com.strategames.engine.storage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
-import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 
 public class LevelWriter {
@@ -11,12 +10,12 @@ public class LevelWriter {
 	/**
 	 * Saves level as original level which will be loaded when level is played the first time
      * during a game
-	 * @param game
+	 * @param gameMetaData
 	 * @param writer
 	 * @return true if saving was succesful, false otherwise
 	 */
-	static public boolean saveOriginal(Game game, Level writer) {
-		FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, writer));
+	static public boolean saveOriginal(GameMetaData gameMetaData, Level writer) {
+		FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, writer));
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(writer.getJson()), false);
@@ -30,13 +29,13 @@ public class LevelWriter {
 	/**
 	 * Deletes the original level file which will be loaded when level is played the first time
      * during a game
-	 * @param game
+	 * @param gameMetaData
 	 * @param level
 	 * @return
 	 */
-	static public boolean deleteOriginal(Game game, Level level) {
+	static public boolean deleteOriginal(GameMetaData gameMetaData, Level level) {
 		try {
-			FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(game, level));
+			FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, level));
 			return file.delete();
 		} catch (Exception e) {
 			return false;
@@ -45,12 +44,12 @@ public class LevelWriter {
 
     /**
     * Saves level as completed level which will be loaded when level is played again
-    * @param game
+    * @param gameMetaData
     * @param level
     * @return true if saving was succesful, false otherwise
     */
-    static public boolean saveCompleted(Game game, Level level) {
-        FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, level));
+    static public boolean saveCompleted(GameMetaData gameMetaData, Level level) {
+        FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(gameMetaData, level));
         try {
             Json json = new Json();
             file.writeString(json.prettyPrint(level.getJson()), false);
@@ -63,13 +62,13 @@ public class LevelWriter {
 
     /**
      * Deletes the completed level file which will be loaded when level is played again
-     * @param game
+     * @param gameMetaData
      * @param level
      * @return true if success, false otherwise
      */
-    static public boolean deleteCompleted(Game game, Level level) {
+    static public boolean deleteCompleted(GameMetaData gameMetaData, Level level) {
         try {
-            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(game, level));
+            FileHandle file = Gdx.files.local(Files.getCompletedLevelFilename(gameMetaData, level));
             return file.delete();
         } catch (Exception e) {
             return false;

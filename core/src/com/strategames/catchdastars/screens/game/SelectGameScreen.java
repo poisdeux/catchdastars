@@ -13,7 +13,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.utils.Game;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameLoader;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
@@ -30,7 +30,7 @@ public class SelectGameScreen extends AbstractScreen {
 	@Override
 	protected void setupUI(final Stage stage) {
 		//Gameloader to loadSync all games
-		Array<Game> games = GameLoader.loadAllOriginalGames();
+		Array<GameMetaData> games = GameLoader.loadAllOriginalGames();
 
 		if( games.size < 1 ) {
 			ErrorDialog dialog = new ErrorDialog(stage, "No games available", getSkin());
@@ -74,26 +74,26 @@ public class SelectGameScreen extends AbstractScreen {
 
 	}
 	
-	private void fillGamesButtonsTable(Array<Game> games) {
+	private void fillGamesButtonsTable(Array<GameMetaData> games) {
 		if( ( games != null ) && ( games.size != 0 ) ) {
-			for( Game game : games ) {
-				addGameButton(game);
+			for( GameMetaData gameMetaData : games ) {
+				addGameButton(gameMetaData);
 			}
 		}
 	}
 
-	private void addGameButton(final Game game) {
-		if( game == null ) {
+	private void addGameButton(final GameMetaData gameMetaData) {
+		if( gameMetaData == null ) {
 			return;
 		}
 		
-		TextButton button = new TextButton(game.getName(), getSkin());
+		TextButton button = new TextButton(gameMetaData.getName(), getSkin());
 		button.setListener(new ActorListener() {
 			
 			@Override
 			public void onTap(Actor actor) {
 				CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
-				gameEngine.setGame(game);
+				gameEngine.setGameMetaData(gameMetaData);
                 gameEngine.showGameMenuScreen();
 			}
 			

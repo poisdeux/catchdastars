@@ -16,11 +16,11 @@ import com.strategames.catchdastars.screens.game.LevelScreen;
 import com.strategames.catchdastars.screens.game.MainMenuScreen;
 import com.strategames.catchdastars.screens.game.SplashScreen;
 import com.strategames.engine.gameobject.GameObject;
-import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.interfaces.ExportImport;
 import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.tweens.ActorAccessor;
@@ -28,10 +28,8 @@ import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
-import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
@@ -67,8 +65,9 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 
 //	private int[] levelPosition = new int[2];
 
-    private int[] nextLevelPosition;
+//    private int[] nextLevelPosition;
 
+//    private GameMetaData gameMetaData;
     private Game game;
 
     private World world;
@@ -86,7 +85,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     private Screen currentScreen;
     private Screen newScreen;
 
-    private Score score = new Score();
+//    private Score score = new Score();
 
     //	private Stage stageActors;
 
@@ -210,23 +209,10 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     public void startLevel(Level level) {
-        this.game.setCurrentLevelPosition(level.getPosition());
-        this.levelState = LEVEL_STATE.NONE;
-        resetLevel();
-        showLevelScreen();
+        startLevel(level.getPosition());
     }
 
-    public void startNextLevel() {
-        startLevel(nextLevelPosition);
-    }
-
-    public void setNextLevelPosition(int[] nextLevelPosition) {
-        this.nextLevelPosition = nextLevelPosition;
-    }
-
-    public int[] getNextLevelPosition() {
-        return nextLevelPosition;
-    }
+    abstract public void startNextLevel();
 
     public void setLevelCompleted() {
         this.levelState = LEVEL_STATE.COMPLETE;
@@ -362,8 +348,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
 
     public void setGame(Game game) {
         this.game = game;
-        this.score = new Score();
-        this.score.setCumulatedScore(game.getScore());
+//        this.score.setCumulatedScore(game.getScore());
     }
 
     public Game getGame() {
@@ -430,9 +415,9 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
             object.setupBody();
         }
 
-        synchronized (this.gameObjectsInGame) {
+//        synchronized (this.gameObjectsInGame) {
             this.gameObjectsInGame.add(object);
-        }
+//        }
 
         object.setInGame(true);
 
@@ -470,8 +455,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
             handleAddGameObjectsQueue();
 
             if( ( this.levelState == LEVEL_STATE.COMPLETE ) && ( levelCompleteCalled == false ) ){
-                levelComplete(score);
                 levelCompleteCalled = true;
+                levelComplete();
             } else if( this.levelState == LEVEL_STATE.FAILED ) {
                 pauseGame();
                 levelFailed();
@@ -524,8 +509,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     public void loadLevel(LevelLoader.OnLevelLoadedListener listener) {
-        Level levelCompleted = LevelLoader.loadCompleted(this.game, this.game.getCurrentLevelPosition());
-        Level levelOriginal = LevelLoader.loadOriginal(this.game, this.game.getCurrentLevelPosition());
+        Level levelCompleted = LevelLoader.loadCompleted(this.gameMetaData, this.game.getCurrentLevelPosition());
+        Level levelOriginal = LevelLoader.loadOriginal(this.gameMetaData, this.game.getCurrentLevelPosition());
 
         Level level = setupLevel(levelCompleted, levelOriginal);
 
@@ -554,7 +539,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
      * Called when game state is set to level complete. Use this to calculate the score
      * ,show a level complete animation, save game state, ...
      */
-    abstract public void levelComplete(Score score);
+    abstract public void levelComplete();
 
     /**
      * Called when game state is set to level failed. Use this to show start animation or show
@@ -563,7 +548,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     abstract public void levelFailed();
 
     public void saveProgress() {
-        GameWriter.saveInProgress(game);
+        GameWriter.saveInProgress(gameMetaData);
     }
 
     private void handleDeleteGameObjectsQueue() {
@@ -574,9 +559,9 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
                     object.clear();
                 }
 
-                synchronized (this.gameObjectsInGame) {
+//                synchronized (this.gameObjectsInGame) {
                     this.gameObjectsInGame.removeValue(object, true);
-                }
+//                }
             } else {
                 notDeletedGameObjects.add(object);
             }
