@@ -512,25 +512,19 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         player.setLibrary(this.musicSelector.getLibrary());
     }
 
+    /**
+     * Loads the current set level. If the level has already been played the saved version
+     * is loaded. Otherwise the original level is loaded.
+     * @param listener
+     */
     public void loadLevel(LevelLoader.OnLevelLoadedListener listener) {
         GameMetaData gameMetaData = this.game.getGameMetaData();
-        Level levelCompleted = LevelLoader.loadCompleted(gameMetaData, this.game.getCurrentLevelPosition());
-        Level levelOriginal = LevelLoader.loadOriginal(gameMetaData, this.game.getCurrentLevelPosition());
-
-        Level level = setupLevel(levelCompleted, levelOriginal);
+        Level level = LevelLoader.loadCompleted(gameMetaData, this.game.getCurrentLevelPosition());
+        if( level == null ) {
+            level = LevelLoader.loadOriginal(gameMetaData, this.game.getCurrentLevelPosition());
+        }
 
         listener.onLevelLoaded(level);
-    }
-
-    /**
-     * Override this to restore level state from a previously completed level. By default this will simply return
-     * levelOriginal
-     * @param levelCompleted contains the saved level when user completed the level
-     * @param levelOriginal contains the original version of the level
-     * @return level with state corrected. This usually is levelCompleted with some objects returned to their original state
-     */
-    protected Level setupLevel(Level levelCompleted, Level levelOriginal) {
-        return levelOriginal;
     }
 
     /**

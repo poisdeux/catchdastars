@@ -160,8 +160,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 		
 		
 		GameEngine engine = getGameEngine();
-		GameMetaData gameMetaData = engine.getGameMetaData();
-		gameMetaData.setLevel(level);
+		engine.getGame().setLevel(level);
 		
 		if( engine.setup(getStageActors()) ) {
 			this.levelLoaded = true;

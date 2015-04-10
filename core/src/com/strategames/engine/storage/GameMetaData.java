@@ -17,7 +17,7 @@ public class GameMetaData implements Json.Serializable, Writer {
 	private String uuid;
 	private String name;
 	private String designer;
-    private HashMap<String, String> additionalInfo = new HashMap<>();
+    private HashMap<String, String> additionalInfo = new HashMap<String, String>();
 
 	public GameMetaData() {
 		this.uuid = UUID.randomUUID().toString();

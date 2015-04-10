@@ -16,23 +16,21 @@ public class Game {
 	private HashMap<String, Level> levels;
 	private int[] currentLevelPosition = {0,0};
     private GameMetaData gameMetaData;
+    private Score score;
 
     private Game() {}
 
 	public Game(GameMetaData gameMetaData) {
 		this.gameMetaData = gameMetaData;
         this.levels = new HashMap<String, Level>();
+        this.score = new Score();
 	}
 
-//	public int getScore() {
-//		return score;
-//	}
-//
-//	public void setScore(int score) {
-//		this.score = score;
-//	}
-//
-	public int[] getCurrentLevelPosition() {
+    public Score getScore() {
+        return score;
+    }
+
+    public int[] getCurrentLevelPosition() {
 		return currentLevelPosition;
 	}
 
