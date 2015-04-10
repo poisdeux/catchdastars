@@ -83,6 +83,7 @@ public class GameMenuScreen extends AbstractScreen {
                 public void onClick(Dialog dialog, int which) {
                     dialog.remove();
                     GameWriter.deleteInprogress(gameMetaData);
+                    getGameEngine().getGame().reset();
                     setStartGameButtonText();
 
                 }
@@ -108,12 +109,8 @@ public class GameMenuScreen extends AbstractScreen {
 
         startGameButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                String buttonText = startGameButton.getText().toString();
-                if(buttonText.contains("New game") ) {
-                    Game game = gameEngine.getGame();
-                    game.reset();
-                    gameEngine.startLevel(game.getCurrentLevelPosition());
-                }
+                Game game = gameEngine.getGame();
+                gameEngine.startLevel(game.getCurrentLevelPosition());
             }
         });
     }
