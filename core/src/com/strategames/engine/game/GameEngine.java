@@ -346,6 +346,10 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         return x * BOX_TO_WORLD;
     }
 
+    /**
+     * Connects a game to the engine.
+     * @param game
+     */
     public void setGame(Game game) {
         this.game = game;
 //        this.score.setCumulatedScore(game.getScore());
@@ -547,10 +551,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
      * a dialog.
      */
     abstract public void levelFailed();
-
-    public void saveProgress() {
-        GameWriter.saveProgress(getGame().getGameMetaData());
-    }
 
     private void handleDeleteGameObjectsQueue() {
         Array<GameObject> notDeletedGameObjects = new Array<GameObject>();

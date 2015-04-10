@@ -1,6 +1,8 @@
 package com.strategames.engine.storage;
 
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
@@ -15,8 +17,7 @@ public class GameMetaData implements Json.Serializable, Writer {
 	private String uuid;
 	private String name;
 	private String designer;
-//	private int score;
-    private String additionalInfo;
+    private HashMap<String, String> additionalInfo = new HashMap<>();
 
 	public GameMetaData() {
 		this.uuid = UUID.randomUUID().toString();
@@ -27,8 +28,7 @@ public class GameMetaData implements Json.Serializable, Writer {
 		json.writeValue("uuid", uuid);
 		json.writeValue("name", name);
 		json.writeValue("designer", designer);
-        json.writeValue("info", additionalInfo);
-//		json.writeValue("score", score);
+        json.writeValue("info", convertAdditionalInfoHashToString());
 	}
 
 //    /**
@@ -40,7 +40,9 @@ public class GameMetaData implements Json.Serializable, Writer {
 	@Override
 	public void read(Json json, JsonValue jsonData) {
 		JsonValue child = jsonData.child();
+
 		while( child != null ) {
+
 			if(child.name.contentEquals("uuid")) {
 				uuid = child.asString();
 			} else if(child.name.contentEquals("name")) {
@@ -48,48 +50,19 @@ public class GameMetaData implements Json.Serializable, Writer {
 			} else if(child.name.contentEquals("designer")) {
                 designer = child.asString();
             } else if(child.name.contentEquals("info")) {
-                additionalInfo = child.asString();
+                parseAdditionalInfo(child.asString());
             }
-//			} else if(child.name.contentEquals("currentLevelPosition")) {
-//                try {
-//                    currentLevelPosition = child.asIntArray();
-//                } catch ( IllegalStateException e ) {
-//                    Gdx.app.log("Game", "read: currentLevelPosition value is not an array");
-//                    currentLevelPosition[0] = 0;
-//                    currentLevelPosition[1] = 0;
-//                 }
-//			} else if(child.name.contentEquals("score")) {
-//				score = child.asInt();
-//			} else {
-//                readValue(child);
-//            }
+
 			child = child.next();
 		}
 	}
 
-//	public int getScore() {
-//		return score;
-//	}
-//
-//	public void setScore(int score) {
-//		this.score = score;
-//	}
-//
-//	public int[] getCurrentLevelPosition() {
-//		return currentLevelPosition;
-//	}
-//
-//	public void setCurrentLevelPosition(int[] currentLevelPosition) {
-//		this.currentLevelPosition = currentLevelPosition;
-//	}
-
-
-    public void setAdditionalInfo(String additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setAdditionalInfo(String name, String value) {
+        this.additionalInfo.put(name, value);
     }
 
-    public String getAdditionalInfo() {
-        return additionalInfo;
+    public String getAdditionalInfo(String name) {
+        return additionalInfo.get(name);
     }
 
     public String getUuid() {
@@ -181,5 +154,23 @@ public class GameMetaData implements Json.Serializable, Writer {
             }
         }
         return true;
+    }
+
+    private void parseAdditionalInfo(String info) {
+        String[] elts = info.split(":");
+        for( int i = 0; i < elts.length; i += 2 ) {
+            String key = elts[i];
+            String value = elts[i+1];
+            this.additionalInfo.put(key, value);
+        }
+    }
+
+    private String convertAdditionalInfoHashToString() {
+        StringBuffer stringBuffer = new StringBuffer();
+        Set<String> keys = additionalInfo.keySet();
+        for( String key : keys ) {
+            stringBuffer.append(key + ":" + additionalInfo.get(key));
+        }
+        return stringBuffer.toString();
     }
 }

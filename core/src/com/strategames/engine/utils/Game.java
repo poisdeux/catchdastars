@@ -40,6 +40,10 @@ public class Game {
 		this.currentLevelPosition = currentLevelPosition;
 	}
 
+    public Level getCurrentLevel() {
+        return getLevel(this.currentLevelPosition[0], this.currentLevelPosition[1]);
+    }
+
     public GameMetaData getGameMetaData() {
         return gameMetaData;
     }

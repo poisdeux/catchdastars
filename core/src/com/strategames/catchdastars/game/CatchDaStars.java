@@ -36,6 +36,7 @@ import com.strategames.engine.gameobject.types.Wall;
 import com.strategames.engine.gameobject.types.WallHorizontal;
 import com.strategames.engine.gameobject.types.WallVertical;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.storage.GameMetaData;
@@ -56,11 +57,12 @@ public class CatchDaStars extends GameEngine {
 
     private boolean accelerometerAvailable;
 
-    private final String BLUE_BALLOON = "01_balloonBlue";
-    private final String RED_BALLOON = "02_balloonRed";
-    private final String BLUE_STAR = "03_starBlue";
-    private final String RED_STAR = "04_starRed";
-    private final String GOLD_STAR = "05_starGold";
+    private final String KEY_SCORE = "score";
+    private final String KEY_BLUE_BALLOON = "balloonBlue";
+    private final String KEY_RED_BALLOON = "balloonRed";
+    private final String KEY_BLUE_STAR = "starBlue";
+    private final String KEY_RED_STAR = "starRed";
+    private final String KEY_GOLD_STAR = "starGold";
 
     private Collectable redCollectables;
     private Collectable blueCollectables;
@@ -89,11 +91,11 @@ public class CatchDaStars extends GameEngine {
 
         Textures textures = Textures.getInstance();
 
-        score.addItem(BLUE_BALLOON, new Image(textures.balloonBlue), 10);
-        score.addItem(RED_BALLOON, new Image(textures.balloonRed), 10);
-        score.addItem(BLUE_STAR, new Image(textures.starBlue), 1);
-        score.addItem(RED_STAR, new Image(textures.starRed), 1);
-        score.addItem(GOLD_STAR, new Image(textures.starYellow), 5);
+        score.addItem(KEY_BLUE_BALLOON, new Image(textures.balloonBlue), 10);
+        score.addItem(KEY_RED_BALLOON, new Image(textures.balloonRed), 10);
+        score.addItem(KEY_BLUE_STAR, new Image(textures.starBlue), 1);
+        score.addItem(KEY_RED_STAR, new Image(textures.starRed), 1);
+        score.addItem(KEY_GOLD_STAR, new Image(textures.starYellow), 5);
 
         /**
          * World at widescreen aspect ratio making sure grid fits nicely with width 0.3
@@ -228,6 +230,26 @@ public class CatchDaStars extends GameEngine {
     }
 
     @Override
+    public void setGame(Game game) {
+        super.setGame(game);
+        //Get last state from saved game
+        GameMetaData gameMetaData = game.getGameMetaData();
+        String amountOfBalloons = gameMetaData.getAdditionalInfo(KEY_RED_BALLOON);
+        if( amountOfBalloons == null ) {
+            this.amountOfRedBalloonsFromPreviousLevel = 0;
+        } else {
+            this.amountOfRedBalloonsFromPreviousLevel = Integer.valueOf(amountOfBalloons);
+        }
+
+        amountOfBalloons = gameMetaData.getAdditionalInfo(KEY_BLUE_BALLOON);
+        if( amountOfBalloons == null ) {
+            this.amountOfBlueBalloonsFromPreviousLevel = 0;
+        } else {
+            this.amountOfBlueBalloonsFromPreviousLevel = Integer.valueOf(amountOfBalloons);
+        }
+    }
+
+    @Override
     protected Level setupLevel(Level levelCompleted, Level levelOriginal) {
 
         //Get balloons from
@@ -356,11 +378,11 @@ public class CatchDaStars extends GameEngine {
     @Override
     public void levelComplete() {
 
-        score.setAmount(BLUE_BALLOON, this.amountOfBlueBalloons);
-        score.setAmount(RED_BALLOON, this.amountOfRedBalloons);
-        score.setAmount(BLUE_STAR, this.blueCollectables.getAmountCollected());
-        score.setAmount(RED_STAR, this.redCollectables.getAmountCollected());
-        score.setAmount(GOLD_STAR, this.goldCollectables.getAmountCollected());
+        score.setAmount(KEY_BLUE_BALLOON, this.amountOfBlueBalloons);
+        score.setAmount(KEY_RED_BALLOON, this.amountOfRedBalloons);
+        score.setAmount(KEY_BLUE_STAR, this.blueCollectables.getAmountCollected());
+        score.setAmount(KEY_RED_STAR, this.redCollectables.getAmountCollected());
+        score.setAmount(KEY_GOLD_STAR, this.goldCollectables.getAmountCollected());
 
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
 
@@ -368,11 +390,11 @@ public class CatchDaStars extends GameEngine {
         game.setCurrentLevelPosition(nextLevelPosition);
 
         GameMetaData gameMetaData = game.getGameMetaData();
-        String gameState = "s:"+score.getCumulatedScore()+
-                ":bb:"+this.amountOfBlueBalloons+
-                ":br:"+this.amountOfRedBalloons;
-        gameMetaData.setAdditionalInfo(gameState);
-        saveProgress();
+        gameMetaData.setAdditionalInfo(KEY_SCORE, String.valueOf(score.getCumulatedScore()));
+        gameMetaData.setAdditionalInfo(KEY_BLUE_BALLOON, String.valueOf(this.amountOfBlueBalloons));
+        gameMetaData.setAdditionalInfo(KEY_RED_BALLOON, String.valueOf(this.amountOfRedBalloons));
+
+        GameWriter.saveProgress(game.getGameMetaData(), this.level);
     }
 
     @Override
