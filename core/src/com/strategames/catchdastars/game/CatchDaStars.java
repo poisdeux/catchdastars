@@ -39,6 +39,7 @@ import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.tweens.GameObjectAccessor;
 import com.strategames.engine.utils.Collectable;
 import com.strategames.engine.storage.GameMetaData;
+import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
@@ -150,17 +151,17 @@ public class CatchDaStars extends GameEngine {
     public boolean setup(Stage stage) {
         System.gc(); //hint the garbage collector that now is a good time to collect
 
-        GameMetaData gameMetaData = getGameMetaData();
-        if( gameMetaData == null ) {
+        Game game = getGame();
+        if( game == null ) {
             Gdx.app.log("CatchDaStars", "setup: game==null");
             return false;
         }
 
-        int[] pos = gameMetaData.getCurrentLevelPosition();
+        int[] pos = game.getCurrentLevelPosition();
 
         Gdx.app.log("CatchDaStars", "setup: pos="+pos[0]+", "+pos[1]);
 
-        this.level = gameMetaData.getLevel(pos[0], pos[1]);
+        this.level = game.getLevel(pos[0], pos[1]);
         if( this.level == null ) {
             Gdx.app.log("CatchDaStars", "setup: level==null");
             return false;
@@ -363,9 +364,10 @@ public class CatchDaStars extends GameEngine {
 
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
 
-        GameMetaData gameMetaData = getGameMetaData();
-        gameMetaData.setCurrentLevelPosition(nextLevelPosition);
+        Game game = getGame();
+        game.setCurrentLevelPosition(nextLevelPosition);
 
+        GameMetaData gameMetaData = game.getGameMetaData();
         String gameState = "s:"+score.getCumulatedScore()+
                 ":bb:"+this.amountOfBlueBalloons+
                 ":br:"+this.amountOfRedBalloons;

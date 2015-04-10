@@ -5,12 +5,32 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.strategames.engine.utils.Level;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GameWriter {
 
-    static public boolean saveInProgress(GameMetaData gameMetaData) {
+    /**
+     * Saves progress in game meta data file and saves progress in level file
+     * @param gameMetaData
+     * @param level
+     * @return true if succeeded, false otherwise
+     */
+    static public boolean saveProgress(GameMetaData gameMetaData, Level level) {
+        if( ! saveProgress(gameMetaData) ) {
+            return false;
+        }
+
+        if( ! LevelWriter.saveCompleted(gameMetaData, level) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Saves progress only in meta data file
+     * @param gameMetaData
+     * @return true if succeeded, false otherwise
+     */
+    static public boolean saveProgress(GameMetaData gameMetaData) {
         String metafile = Files.getInprogressGameMetaFile(gameMetaData);
         if (metafile == null) {
             return false;
@@ -22,20 +42,36 @@ public class GameWriter {
             Json json = new Json();
             file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
         } catch (Exception e) {
-            Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
+            Gdx.app.log("GameWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
-        }
-
-        HashMap<String, Level> levels = gameMetaData.getLevels();
-        for( Map.Entry<String, Level> entry : levels.entrySet() ) {
-            if( ! LevelWriter.saveCompleted(gameMetaData, entry.getValue()) ) {
-                return false;
-            }
         }
 
         return true;
     }
 
+    /**
+     * Saves original game meta data file and original level file
+     * @param gameMetaData
+     * @param level
+     * @return true if succeeded, false otherwise
+     */
+    static public boolean saveOriginal(GameMetaData gameMetaData, Level level) {
+        if( ! saveOriginal(gameMetaData) ) {
+            return false;
+        }
+
+        if( ! LevelWriter.saveOriginal(gameMetaData, level) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Saves only the original game meta data file
+     * @param gameMetaData
+     * @return true if succeeded, false otherwise
+     */
     static public boolean saveOriginal(GameMetaData gameMetaData) {
         String metafile = Files.getOriginalGameMetaFile(gameMetaData);
         if (metafile == null) {
@@ -50,13 +86,6 @@ public class GameWriter {
         } catch (Exception e) {
             Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
-        }
-
-        HashMap<String, Level> levels = gameMetaData.getLevels();
-        for( Map.Entry<String, Level> entry : levels.entrySet() ) {
-            if( ! LevelWriter.saveOriginal(gameMetaData, entry.getValue()) ) {
-                return false;
-            }
         }
 
         return true;

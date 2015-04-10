@@ -15,6 +15,7 @@ import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameLoader;
+import com.strategames.engine.utils.Game;
 import com.strategames.ui.dialogs.Dialog;
 import com.strategames.ui.dialogs.Dialog.OnClickListener;
 import com.strategames.ui.dialogs.ErrorDialog;
@@ -93,7 +94,8 @@ public class SelectGameScreen extends AbstractScreen {
 			@Override
 			public void onTap(Actor actor) {
 				CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
-				gameEngine.setGameMetaData(gameMetaData);
+                Game game = new Game(gameMetaData);
+                gameEngine.setGame(game);
                 gameEngine.showGameMenuScreen();
 			}
 			

@@ -38,7 +38,7 @@ public class GameMetaDataWriterLoaderTest {
 
     @Test
     public void testCompleted() {
-        GameWriter.saveInProgress(this.gameMetaData);
+        GameWriter.saveProgress(this.gameMetaData);
 
         GameMetaData savedGameMetaData = GameLoader.loadInProgress(this.gameMetaData);
 

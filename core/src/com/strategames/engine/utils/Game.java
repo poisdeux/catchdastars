@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
+import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
 import java.util.HashMap;
@@ -14,9 +15,13 @@ import java.util.UUID;
 public class Game {
 	private HashMap<String, Level> levels;
 	private int[] currentLevelPosition = {0,0};
+    private GameMetaData gameMetaData;
 
-	public Game() {
-		this.levels = new HashMap<String, Level>();
+    private Game() {}
+
+	public Game(GameMetaData gameMetaData) {
+		this.gameMetaData = gameMetaData;
+        this.levels = new HashMap<String, Level>();
 	}
 
 //	public int getScore() {
@@ -35,7 +40,19 @@ public class Game {
 		this.currentLevelPosition = currentLevelPosition;
 	}
 
-	/**
+    public GameMetaData getGameMetaData() {
+        return gameMetaData;
+    }
+
+    /**
+     * Resets game
+     */
+    public void reset() {
+        this.currentLevelPosition[0] = 0;
+        this.currentLevelPosition[1] = 0;
+    }
+
+    /**
 	 * Removes existing levels from game
 	 */
 	public void clearLevels() {
@@ -53,12 +70,6 @@ public class Game {
 	 */
 	public void setLevel(Level level) {
 		this.levels.put(createKey(level), level);
-	}
-	
-	public String getJson() {
-		Json json = new Json();
-		json.setOutputType(OutputType.minimal);
-		return json.toJson(this);
 	}
 
 	public Level deleteLevel(int column, int row) {

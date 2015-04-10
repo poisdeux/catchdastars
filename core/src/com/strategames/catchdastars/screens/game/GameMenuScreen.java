@@ -11,6 +11,7 @@ import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameLoader;
 import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameWriter;
+import com.strategames.engine.utils.Game;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
 
@@ -23,7 +24,7 @@ public class GameMenuScreen extends AbstractScreen {
 
 	public GameMenuScreen(GameEngine game) {
 		super(game);
-        setTitle(new Label(getGameEngine().getGameMetaData().getName(), getSkin()));
+        setTitle(new Label(game.getGame().getGameMetaData().getName(), getSkin()));
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class GameMenuScreen extends AbstractScreen {
 
     @Override
     protected void onMenuItemSelected(String text) {
-        GameMetaData gameMetaData = getGameEngine().getGameMetaData();
+        final GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
         if(text.contentEquals("Delete progress")) {
             ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "This will delete all levels", getSkin());
             dialog.setPositiveButton("Delete", new Dialog.OnClickListener() {
@@ -81,7 +82,7 @@ public class GameMenuScreen extends AbstractScreen {
                 @Override
                 public void onClick(Dialog dialog, int which) {
                     dialog.remove();
-                    GameWriter.deleteInprogress(getGameEngine().getGameMetaData());
+                    GameWriter.deleteInprogress(gameMetaData);
                     setStartGameButtonText();
 
                 }
@@ -109,21 +110,16 @@ public class GameMenuScreen extends AbstractScreen {
             public void clicked(InputEvent event, float x, float y) {
                 String buttonText = startGameButton.getText().toString();
                 if(buttonText.contains("New game") ) {
-                    GameMetaData g = gameEngine.getGameMetaData();
-                    GameWriter.saveInProgress(gameEngine.getGameMetaData());
-                    gameEngine.setGameMetaData(g);
-                    gameEngine.startLevel(g.getCurrentLevelPosition());
-                } else {
-                    GameMetaData gameMetaDataInprogress = GameLoader.loadInProgress(gameEngine.getGameMetaData());
-                    gameEngine.setGameMetaData(gameMetaDataInprogress);
-                    gameEngine.startLevel(gameMetaDataInprogress.getCurrentLevelPosition());
+                    Game game = gameEngine.getGame();
+                    game.reset();
+                    gameEngine.startLevel(game.getCurrentLevelPosition());
                 }
             }
         });
     }
 
     private void setStartGameButtonText() {
-        GameMetaData gameMetaDataInprogress = GameLoader.loadInProgress(getGameEngine().getGameMetaData());
+        GameMetaData gameMetaDataInprogress = GameLoader.loadInProgress(getGameEngine().getGame().getGameMetaData());
         if( gameMetaDataInprogress == null ) {
             startGameButton.setText("New game");
         } else {

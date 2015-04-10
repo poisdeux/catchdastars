@@ -509,8 +509,9 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     public void loadLevel(LevelLoader.OnLevelLoadedListener listener) {
-        Level levelCompleted = LevelLoader.loadCompleted(this.gameMetaData, this.game.getCurrentLevelPosition());
-        Level levelOriginal = LevelLoader.loadOriginal(this.gameMetaData, this.game.getCurrentLevelPosition());
+        GameMetaData gameMetaData = this.game.getGameMetaData();
+        Level levelCompleted = LevelLoader.loadCompleted(gameMetaData, this.game.getCurrentLevelPosition());
+        Level levelOriginal = LevelLoader.loadOriginal(gameMetaData, this.game.getCurrentLevelPosition());
 
         Level level = setupLevel(levelCompleted, levelOriginal);
 
@@ -548,7 +549,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     abstract public void levelFailed();
 
     public void saveProgress() {
-        GameWriter.saveInProgress(gameMetaData);
+        GameWriter.saveProgress(getGame().getGameMetaData());
     }
 
     private void handleDeleteGameObjectsQueue() {
