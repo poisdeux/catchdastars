@@ -7,7 +7,7 @@ if [ $# -gt 0 ]
 then
   if [ $1 == "-r" ]
   then
-    rm -f ${SEXECCACHE} ${SDKLOCCACH}
+    rm -f ${ASEXECCACHE} ${SDKLOCCACHE}
   elif [ $1 == "-e" ]
   then
     echo export ANDROID_HOME=$(cat ${SDKLOCCACHE})
@@ -88,5 +88,13 @@ function findandroidsdk
 [ -r ${ASEXECCACHE} ] || findandroidstudioexecutable
 [ -r ${SDKLOCCACHE} ] || findandroidsdk
 
+if [ -z ${SDKLOCCACHE} ]
+then
+  echo "Error: SDK not found"
+  exit 1
+fi
+
 export ANDROID_HOME=$(cat ${SDKLOCCACHE})
+
+echo Starting ${ASEXECCACHE}
 exec $(cat ${ASEXECCACHE})
