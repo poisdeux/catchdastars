@@ -31,12 +31,6 @@ public class GameMetaData implements Json.Serializable, Writer {
         json.writeValue("info", convertAdditionalInfoHashToString());
 	}
 
-//    /**
-//     * Do not override this method in a subclass but override {@link #readValue(com.badlogic.gdx.utils.JsonValue)}
-//     * to read json values in a subclass
-//     * @param json
-//     * @param jsonData
-//     */
 	@Override
 	public void read(Json json, JsonValue jsonData) {
 		JsonValue child = jsonData.child();
@@ -96,13 +90,6 @@ public class GameMetaData implements Json.Serializable, Writer {
 		return "meta";
 	}
 
-//	@Override
-//	public String toString() {
-//		return super.toString() + ", uuid="+this.uuid+", name="+this.name+
-//				", designer="+designer+", currentLevelPosition="+this.currentLevelPosition+
-//				", score="+this.score;
-//	}
-
     @Override
     public boolean equals(Object obj) {
         if( obj == null ) {
@@ -131,15 +118,6 @@ public class GameMetaData implements Json.Serializable, Writer {
             return false;
         }
 
-//        if( ( this.currentLevelPosition[0] != game.currentLevelPosition[0] ) ||
-//                ( this.currentLevelPosition[1] != game.currentLevelPosition[1] ) ) {
-//            return false;
-//        }
-//
-//        if( this.score != game.score ) {
-//            return false;
-//        }
-
         return true;
     }
 
@@ -158,7 +136,8 @@ public class GameMetaData implements Json.Serializable, Writer {
 
     private void parseAdditionalInfo(String info) {
         String[] elts = info.split(":");
-        for( int i = 0; i < elts.length; i += 2 ) {
+        int size = elts.length - 1;
+        for( int i = 0; i < size; i += 2 ) {
             String key = elts[i];
             String value = elts[i+1];
             this.additionalInfo.put(key, value);

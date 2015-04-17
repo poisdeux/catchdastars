@@ -136,9 +136,8 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void resetLevel() {
-        this.amountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel;
-        this.amountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel;
         this.doorsOpen = false;
+        initializeGameFromSavedState();
         super.resetLevel();
     }
 
@@ -176,9 +175,6 @@ public class CatchDaStars extends GameEngine {
         this.blueCollectables = new Collectable();
         this.goldCollectables = new Collectable();
 
-        int tmpAmountOfBlueBalloons = this.amountOfBlueBalloonsFromPreviousLevel = this.amountOfBlueBalloons;
-        int tmpAmountOfRedBalloons = this.amountOfRedBalloonsFromPreviousLevel = this.amountOfRedBalloons;
-
         this.amountOfBlueBalloons = 0;
         this.amountOfRedBalloons = 0;
         this.amountBalloonsInGame = 0;
@@ -192,11 +188,11 @@ public class CatchDaStars extends GameEngine {
             } else if( gameObject instanceof Balloon ) {
                 if( ! gameObject.isNew() ) { // Add surviving balloons from previous level
                     if( gameObject instanceof BalloonBlue ) {
-                        if( tmpAmountOfBlueBalloons-- > 0 ) {
+                        if( this.amountOfBlueBalloonsFromPreviousLevel-- > 0 ) {
                             addBalloon((Balloon) gameObject, stage);
                         }
                     } else if( gameObject instanceof BalloonRed ) {
-                        if( tmpAmountOfRedBalloons-- > 0 ) {
+                        if( this.amountOfRedBalloonsFromPreviousLevel-- > 0 ) {
                             addBalloon((Balloon) gameObject, stage);
                         }
                     }
@@ -225,7 +221,28 @@ public class CatchDaStars extends GameEngine {
     @Override
     public void setGame(Game game) {
         super.setGame(game);
-        //Get last state from saved game
+
+        Textures textures = Textures.getInstance();
+
+        Score score = game.getScore();
+
+        score.addItem(KEY_BLUE_BALLOON, new Image(textures.balloonBlue), 10);
+        score.addItem(KEY_RED_BALLOON, new Image(textures.balloonRed), 10);
+        score.addItem(KEY_BLUE_STAR, new Image(textures.starBlue), 1);
+        score.addItem(KEY_RED_STAR, new Image(textures.starRed), 1);
+        score.addItem(KEY_GOLD_STAR, new Image(textures.starYellow), 5);
+
+        initializeGameFromSavedState();
+    }
+
+    @Override
+    public void startNextLevel() {
+        startLevel(nextLevelPosition);
+    }
+
+    private void initializeGameFromSavedState() {
+        Game game = getGame();
+
         GameMetaData gameMetaData = game.getGameMetaData();
         String amountOfBalloons = gameMetaData.getAdditionalInfo(KEY_RED_BALLOON);
         if( amountOfBalloons == null ) {
@@ -241,17 +258,7 @@ public class CatchDaStars extends GameEngine {
             this.amountOfBlueBalloonsFromPreviousLevel = Integer.valueOf(amountOfBalloons);
         }
 
-        Textures textures = Textures.getInstance();
-
-
         Score score = game.getScore();
-
-        score.addItem(KEY_BLUE_BALLOON, new Image(textures.balloonBlue), 10);
-        score.addItem(KEY_RED_BALLOON, new Image(textures.balloonRed), 10);
-        score.addItem(KEY_BLUE_STAR, new Image(textures.starBlue), 1);
-        score.addItem(KEY_RED_STAR, new Image(textures.starRed), 1);
-        score.addItem(KEY_GOLD_STAR, new Image(textures.starYellow), 5);
-
         String savedScore = gameMetaData.getAdditionalInfo(KEY_SCORE);
         if( savedScore == null ) {
             score.setCumulatedScore(0);
@@ -259,12 +266,6 @@ public class CatchDaStars extends GameEngine {
             score.setCumulatedScore(Integer.valueOf(savedScore));
         }
     }
-
-    @Override
-    public void startNextLevel() {
-        startLevel(nextLevelPosition);
-    }
-
     private void addStar(Star star, Stage stage) {
         if( star instanceof StarBlue ) {
             this.blueCollectables.add();
