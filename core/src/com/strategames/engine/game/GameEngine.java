@@ -197,8 +197,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
      * Resets the current level
      */
     public void resetLevel() {
-//		setScreen( new LevelScreen(this) );
-
+		setScreen( new LevelScreen(this) );
     }
 
     public void startLevel(int[] pos) {

@@ -50,6 +50,9 @@ public class Game {
      * Resets game
      */
     public void reset() {
+        if( this.currentLevelPosition == null ) {
+            this.currentLevelPosition = new int[2];
+        }
         this.currentLevelPosition[0] = 0;
         this.currentLevelPosition[1] = 0;
     }
