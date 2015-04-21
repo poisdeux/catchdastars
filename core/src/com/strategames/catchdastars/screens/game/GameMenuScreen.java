@@ -97,6 +97,7 @@ public class GameMenuScreen extends AbstractScreen {
             });
             dialog.create();
             dialog.show();
+            hideMainMenu();
         }
     }
 
