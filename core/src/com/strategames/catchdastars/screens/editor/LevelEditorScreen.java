@@ -29,6 +29,7 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
+import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Game;
@@ -44,6 +45,9 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.helpers.Grid;
 
+/**
+ * @TODO When balloon is dragged out of screen area it is removed from game. This should not happen
+ */
 public class LevelEditorScreen extends AbstractScreen
         implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClickListener {
 
@@ -111,6 +115,11 @@ public class LevelEditorScreen extends AbstractScreen
 
     @Override
     public void show() {
+        //Set to high value to avoid overwriting game progressions
+        getGameEngine().getGame().getGameMetaData().setSavedGameProgressNumber(1000);
+        //Remove any progression that might have been saved testing level
+        GameWriter.deleteInprogress(getGameEngine().getGame().getGameMetaData());
+
         resetStageActors();
         super.show();
     }

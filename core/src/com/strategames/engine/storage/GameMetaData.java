@@ -18,6 +18,7 @@ public class GameMetaData implements Json.Serializable, Writer {
 	private String name;
 	private String designer;
     private HashMap<String, String> additionalInfo = new HashMap<String, String>();
+    private int savedGameProgressNumber = 1; // used to be able to keep multiple saved states
 
 	public GameMetaData() {
 		this.uuid = UUID.randomUUID().toString();
@@ -50,6 +51,14 @@ public class GameMetaData implements Json.Serializable, Writer {
 			child = child.next();
 		}
 	}
+
+    public void setSavedGameProgressNumber(int savedGameProgressNumber) {
+        this.savedGameProgressNumber = savedGameProgressNumber;
+    }
+
+    public int getSavedGameProgressNumber() {
+        return savedGameProgressNumber;
+    }
 
     public void setAdditionalInfo(String name, String value) {
         this.additionalInfo.put(name, value);

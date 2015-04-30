@@ -1,5 +1,8 @@
 package com.strategames.engine.storage;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.utils.Level;
 
 /**
@@ -49,7 +52,8 @@ public class Files {
         if( gameMetaData == null ) {
             return null;
         }
-        return INPROGRESS_PATH + "/" + gameMetaData.getUuid() + "/";
+
+        return INPROGRESS_PATH + "/" + gameMetaData.getUuid() + "-" + gameMetaData.getSavedGameProgressNumber() + "/";
     }
 
     static public String getOriginalGameMetaFile(GameMetaData gameMetaData) {
@@ -132,5 +136,15 @@ public class Files {
         }
 
         return getCompletedLevelsPath(gameMetaData) + "/" + getLevelFilename(pos);
+    }
+
+    static public FileHandle getOriginalLevelsDir(GameMetaData gameMetaData) {
+        try {
+            FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(gameMetaData));
+            return dir;
+        } catch (Exception e) {
+            //			Gdx.app.log("Level", "error");
+        }
+        return null;
     }
 }

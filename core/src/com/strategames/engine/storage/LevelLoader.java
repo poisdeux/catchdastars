@@ -111,7 +111,7 @@ public class LevelLoader {
 	}
 
 	static public Array<Level> loadAllLocalLevels(GameMetaData gameMetaData) {
-		FileHandle dir = getLocalLevelsDir(gameMetaData);
+		FileHandle dir = Files.getOriginalLevelsDir(gameMetaData);
 		FileHandle[] files = dir.list();
 
 		Array<Level> levels = new Array<Level>();
@@ -125,30 +125,4 @@ public class LevelLoader {
 
 		return levels;
 	}
-
-	static public FileHandle getLocalLevelsDir(GameMetaData gameMetaData) {
-		try {
-			FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(gameMetaData));
-			return dir;
-		} catch (Exception e) {
-			//			Gdx.app.log("Level", "error");
-		}
-		return null;
-	}
-
-	
-
-	/**
-	 * Reads the amount of level files on disk to determine
-	 * the last level number
-	 * @return
-	 */
-	public static int getLastLevelNumber(GameMetaData gameMetaData) {
-
-		FileHandle dir = getLocalLevelsDir(gameMetaData);
-		FileHandle[] files = dir.list();
-		return files.length;
-	}
-
-
 }

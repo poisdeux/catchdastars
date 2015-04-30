@@ -15,13 +15,21 @@ public class LevelWriter {
 	 * @return true if saving was succesful, false otherwise
 	 */
 	static public boolean saveOriginal(GameMetaData gameMetaData, Level writer) {
-		FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, writer));
+        String filename = Files.getOriginalLevelFilename(gameMetaData, writer);
+        if( filename == null ) {
+            Gdx.app.log("LevelWriter", "saveOriginal: failed to get filename for \n"+
+                    "gameMetaData: "+gameMetaData+
+            "level: "+writer);
+            return false;
+        }
+
+		FileHandle file = Gdx.files.local(filename);
 		try {
 			Json json = new Json();
 			file.writeString(json.prettyPrint(writer.getJson()), false);
 			return true;
 		} catch (Exception e) {
-			Gdx.app.log("LevelWriter", "save: could not write: "+file.path()+"\nError: "+e.getMessage());
+			Gdx.app.log("LevelWriter", "saveOriginal: could not write: "+file.path()+"\nError: "+e.getMessage());
 			return false;
 		}
 	}
