@@ -70,6 +70,7 @@ public class LevelEditorScreen extends AbstractScreen
     private OrthographicCamera camera;
 
     private Level level;
+    private int[] currentLevelPosition;
 
     private enum States {
         ZOOM, LONGPRESS, DRAG, NONE
@@ -88,6 +89,8 @@ public class LevelEditorScreen extends AbstractScreen
         this.worldSize = game.getWorldSize();
 
         this.grid = new Grid(this.worldSize.x, this.worldSize.y);
+
+        this.currentLevelPosition = game.getGame().getCurrentLevelPosition();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class LevelEditorScreen extends AbstractScreen
         displayGrid(LevelEditorPreferences.displayGridEnabled());
 
         Game game = getGameEngine().getGame();
-        this.level = LevelLoader.loadSync(game.getGameMetaData(), game.getCurrentLevelPosition());
+        this.level = LevelLoader.loadSync(game.getGameMetaData(), this.currentLevelPosition);
         onLevelLoaded(this.level);
     }
 

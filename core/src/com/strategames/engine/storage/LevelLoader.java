@@ -42,7 +42,6 @@ public class LevelLoader {
     static public Level loadCompleted(GameMetaData gameMetaData, int[] pos) {
         try {
             String filename = Files.getCompletedLevelFilename(gameMetaData, pos);
-            Gdx.app.log("LevelLoader", "loadCompleted: filename="+filename);
             FileHandle file = Gdx.files.local(filename);
             if( ! file.exists() ) {
                 file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
@@ -77,6 +76,7 @@ public class LevelLoader {
 	 */
 	static private Level loadSync(FileHandle file) {
 		Json json = new Json();
+		Gdx.app.log("LevelLoader", "loadSync: filename="+file.name());
 		try {
 			String text = file.readString();
 			Object root =  json.fromJson(Level.class, text);

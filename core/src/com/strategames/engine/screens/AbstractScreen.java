@@ -487,6 +487,9 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 
 	/**
 	 * Called to create the stage for the game object elements.
+	 * Note that this will only be called the first time the screen is shown.
+	 * If you want {@link #setupActors(Stage)} to be called when {@link #show()} is called
+	 * make sure you call {@link #resetStageActors()} before showing the screen.
 	 * <br>
 	 * The actors in this stage will be drawn and
 	 * updated using Box2D
