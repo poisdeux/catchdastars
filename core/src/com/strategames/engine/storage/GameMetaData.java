@@ -13,6 +13,16 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.utils.Level;
 
+/**
+ * The GameMetaData contains generic meta-data about the game
+ *
+ * uuid:                    unique identifier of the game
+ * name:                    name of the game as provided by the game designer
+ * designer:                name of the designer of the game
+ * additionalInfo:          any info needed by the game that is not generic for all game types
+ * saveGameProgressNumber:  identifier to be used to identify multiple saved progressions of this
+ *                          game
+ */
 public class GameMetaData implements Json.Serializable, Writer {
 	private String uuid;
 	private String name;

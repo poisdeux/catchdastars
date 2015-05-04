@@ -620,33 +620,33 @@ public class LevelEditorScreen extends AbstractScreen
         this.mainMenu.add("Tools", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                mainMenu.hide();
                 ToolsPickerDialog dialog = new ToolsPickerDialog(stageUIActors, level, getSkin());
                 dialog.create();
-                dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
+                dialog.setPosition(mainMenu.getX() - (dialog.getWidth() / 2f), mainMenu.getY());
                 dialog.setOnClickListener(LevelEditorScreen.this);
                 dialog.show();
-                mainMenu.hide();
             }
         });
 
         this.mainMenu.add("Options", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                mainMenu.hide();
                 LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), LevelEditorScreen.this);
                 dialog.create();
-                dialog.setPosition(mainMenu.getX() - (dialog.getWidth()/2f), mainMenu.getY());
+                dialog.setPosition(mainMenu.getX() - (dialog.getWidth() / 2f), mainMenu.getY());
                 dialog.show();
-                mainMenu.hide();
             }
         });
 
         this.mainMenu.add("Play level", new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                mainMenu.hide();
                 saveLevel();
                 GameEngine game = getGameEngine();
                 game.startLevel(level);
-                mainMenu.hide();
             }
         });
 
@@ -654,16 +654,16 @@ public class LevelEditorScreen extends AbstractScreen
 
             @Override
             public void onClick(Dialog dialog, int which) {
-                saveLevel();
                 mainMenu.hide();
+                saveLevel();
             }
         });
         this.mainMenu.setNegativeButton("Quit", new OnClickListener() {
 
             @Override
             public void onClick(Dialog dialog, int which) {
-                saveLevel();
                 mainMenu.hide();
+                saveLevel();
             }
         });
 

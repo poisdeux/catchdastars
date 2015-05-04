@@ -298,7 +298,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			 * First we need to fill the grid so we can determine which are the outer levels
 			 * accessing non existing levels
 			 */
-
 			for( Level level : levels ) {
 				int[] position = level.getPosition();
 				this.levelButtonsGrid.set(position[0], position[1], createLevelImage(level));
@@ -312,7 +311,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				int[] position = level.getPosition();
 				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 				if( level.isReachable() ) {
-					addNextLevelButtons(level);
+					addNextLevelButtons::::":(level);
 				} else {
 					image.setColor(1f, 0.2f, 0.2f, 1f);
 				}
@@ -327,6 +326,15 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			texture = new Texture(emptyLevelImage);
 		}
 		return createScreenshotImage(texture, level, (int) elementSize.x, (int) elementSize.y);
+	}
+
+	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
+		ScreenshotImage image = new ScreenshotImage(texture);
+		image.setTag(level);
+		image.setScaling(Scaling.fit);
+		image.setSize(width, height);
+		image.setListener(this);
+		return image;
 	}
 
 	private void addNextLevelButtons(Level level) {
@@ -362,15 +370,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		return null;
 	}
 
-	private ScreenshotImage createScreenshotImage(Texture texture, Level level, int width, int height) {
-		ScreenshotImage image = new ScreenshotImage(texture);
-		image.setTag(level);
-		image.setScaling(Scaling.fit);
-		image.setSize(width, height);
-		image.setListener(this);
-		return image;
-	}
-
 	private void showErrorDialog(String title, String message) {
 		ErrorDialog dialog = new ErrorDialog(getStageUIActors(), title, getSkin());
 		dialog.setMessage(message);
@@ -403,10 +402,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	@Override
 	protected void onMenuItemSelected(String text) {
-        /**
-         * TODO: refactor to support new Game and GameMetaData classes
-         */
-		GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
+       GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
 		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(gameMetaData.getJson());
 		}else if(text.contentEquals("Play game")) {

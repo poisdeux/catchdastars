@@ -15,6 +15,7 @@ public class Level implements Comparable<Level>, Writer {
 	private String name = "noname";
 	private Array<GameObject> gameObjects;
 	private Array<Door> doors;
+	private Array<int[]> entryLevels;
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -24,6 +25,7 @@ public class Level implements Comparable<Level>, Writer {
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 		this.doors = new Array<Door>();
+		this.entryLevels = new Array<int[]>();
 	}
 
 	public void setGameObjects(Array<GameObject> gameObjects) {
@@ -71,6 +73,14 @@ public class Level implements Comparable<Level>, Writer {
 
 	public Array<GameObject> getGameObjects() {
 		return this.gameObjects;
+	}
+
+	public void addEntryLevel(int[] position) {
+		this.entryLevels.add(position);
+	}
+
+	public Array<int[]> getEntryLevels() {
+		return entryLevels;
 	}
 
 	public Array<Door> getDoors() {
