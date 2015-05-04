@@ -8,7 +8,7 @@ public class ErrorDialog extends Dialog {
 	public static final int BUTTON_CLOSE = BUTTON_POSITIVE;
 	
 	/**
-	 * Creates a simple error dialog with a title
+	 * Creates a simple error dialog with a title and a close button
 	 * @param stage
 	 * @param title
 	 * @param skin

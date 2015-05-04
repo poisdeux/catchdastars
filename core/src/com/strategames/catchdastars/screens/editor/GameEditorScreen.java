@@ -240,11 +240,16 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Object tag = image.getTag();
 		if( tag instanceof Level ) {
 			level = (Level) tag;
-		} else {
+		} else if( tag instanceof int[] ) {
 			int[] pos = this.levelButtonsGrid.getPosition(image);
-			level = createNewLevel(pos[0], pos[1]);
+			level = createNewLevel(pos[0], pos[1], (int[]) tag);
 			image.setTag(level);
 			addLevel(level);
+		} else {
+			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Starting level editor failed", getSkin());
+			dialog.create();
+			dialog.show();
+			return;
 		}
 
 		gameEngine.getGame().setCurrentLevelPosition(level.getPosition());
@@ -311,7 +316,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				int[] position = level.getPosition();
 				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 				if( level.isReachable() ) {
-					addNextLevelButtons::::":(level);
+					addNextLevelButtons(level);
 				} else {
 					image.setColor(1f, 0.2f, 0.2f, 1f);
 				}
@@ -434,7 +439,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		hideMainMenu();
 	}
 
-	private Level createNewLevel(int x, int y) {
+	private Level createNewLevel(int x, int y, int[] entryLevel) {
 		CatchDaStars game = (CatchDaStars) getGameEngine();
 		Vector3 worldSize = game.getWorldSize();
 		Level level = new Level();
@@ -442,8 +447,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		level.setViewSize(new Vector2(game.getViewSize()));
 		level.setReachable(true); //assume level can only be created if reachable
 		level.setPosition(x, y);
-		ScreenBorder.create(level, game);
+		level.addEntryLevel(entryLevel[0], entryLevel[1]);
 
+		ScreenBorder.create(level, game);
 
 		Balloon balloon = new BalloonBlue();
 		float xWorld = worldSize.x / 3f;

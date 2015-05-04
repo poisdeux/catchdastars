@@ -1,0 +1,21 @@
+Level files are json files that hold are required level data.
+
+More or less it should contain the following:
+
+	gameObjects:	a list of gameobjects
+	doors:		a list of exits to next levels
+	viewSize:	the level view size. This may differ from the actual 
+			level world size to allow levels to be larger then
+			the screen
+	worldSize:	the level world size. This is the actual size of the 
+			level. Note that you can use viewSize to determine how
+			much of the world the user sees on screen without 
+			needing to scroll.
+	reachable:	used to mark the level as reachable or not in the level
+			editor.
+	position:	the level's position in the game
+	entryLevels:	level positions that allow access to this level.
+
+The entryLevels attribute is needed to be able to generate a list of paths leading
+to the current level. This is required to determine if level is reachable and to 
+determine if the level will contain enough balloons of the right colour to be playable.

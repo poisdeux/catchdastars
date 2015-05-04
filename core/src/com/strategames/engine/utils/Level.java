@@ -75,7 +75,8 @@ public class Level implements Comparable<Level>, Writer {
 		return this.gameObjects;
 	}
 
-	public void addEntryLevel(int[] position) {
+	public void addEntryLevel(int x, int y) {
+		int[] pos = new int[] {x, y};
 		this.entryLevels.add(position);
 	}
 
