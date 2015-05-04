@@ -23,6 +23,13 @@ fi
 function findandroidstudioexecutable
 {
   ASEXEC=($(find ~ -name 'studio.sh'))
+
+	if [ -z "${ASEXEC}" ]
+	then
+		echo "Error android studio not found."
+		exit 1;
+	fi
+
   # Check if found files are readable and executable
   INDEX=0
   for asexec in ${ASEXEC[@]}
