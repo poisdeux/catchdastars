@@ -1,0 +1,73 @@
+All assets can be found at "android/assets" which contains the following directories:
+
+fixtures      holds the Box2D fixtures
+
+fonts         holds the menu fonts
+
+games         holds the games metadata
+
+images        holds separate images
+
+packed        holds packed images to improve in game texture performance
+
+screenshots   holds screenshots taken from levels
+
+skin          holds skin definition files for the UI
+
+sounds        holds all audio files used for sound effects
+
+
+
+games
+=====
+
+The directory games contains the following setup:
+
+games/
+   in_progress/
+       <GAME_UUID>-<NUMBER>/
+         levels_completed/
+             <POSITION>
+             ...
+         meta
+       ...
+   originals
+       <GAME_UUID>/
+         levels/
+             <POSITION>
+             ...
+         meta
+       ...
+
+
+in_progress/
+------------
+
+Holds game progression. As there can be multiple saved game states of the same 
+original game, we add a number to the game directory <GAME_UUID>-<NUMBER>/
+
+  <GAME_UUID>-<NUMBER>/levels_completed/	Contains the levels that have 
+						been completed. These level 
+						files typically contain the 
+						state of the level at the moment
+						the level was completed. 
+
+  <GAME_UUID>-<NUMBER>/meta			Contains the current meta data 
+						of the saved game. Typically 
+						the only difference with the 
+						original file will be the 
+						current total score.
+
+
+originals
+---------
+
+Holds the original game files as created by the designer of the game. These should only
+be modified by the game editor. 
+
+  <GAME_UUID>/levels/	The level files are named after their position in the game.
+
+  <GAME_UUID>/meta	Contains generic meta-data about the game.
+
+
+
