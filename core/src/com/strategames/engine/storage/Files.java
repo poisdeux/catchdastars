@@ -89,7 +89,7 @@ public class Files {
 			return null;
 		}
 
-       return getOriginalLevelsPath(gameMetaData) + "/" + level.getFilename();
+       return getOriginalLevelsPath(gameMetaData) + "/" + getLevelFilename(level.getPosition());
 	}
 
     /**
@@ -146,5 +146,10 @@ public class Files {
             //			Gdx.app.log("Level", "error");
         }
         return null;
+    }
+
+    static public boolean originalLevelExists(GameMetaData gameMetaData, Level level) {
+        FileHandle handle = Gdx.files.local(getOriginalLevelFilename(gameMetaData, level));
+        return handle.exists();
     }
 }

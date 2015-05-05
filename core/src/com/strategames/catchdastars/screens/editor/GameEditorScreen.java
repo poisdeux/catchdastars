@@ -31,7 +31,7 @@ import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
 import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
-import com.strategames.engine.storage.GameLoader;
+import com.strategames.engine.storage.Files;
 import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelLoader;
@@ -60,9 +60,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private class ArrowImage {
 		private TextureRegion texture;
 		private int alignment;
-		
+
 		/**
-		 * 
+		 *
 		 * @param texture of arrow image
 		 * @param alignment from {@link Align}
 		 */
@@ -71,10 +71,10 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			this.alignment = alignment;
 		}
 	}
-	
+
 	public GameEditorScreen(GameEngine game) {
 		super(game);
-        setTitle(new Label("Level editor", getSkin()));
+		setTitle(new Label("Level editor", getSkin()));
 	}
 
 	@Override
@@ -88,9 +88,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		addMenuItem("Export game");
 
 		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(game.getGameMetaData());
-        game.clearLevels();
+		game.clearLevels();
 		for(Level level : localLevels) {
-            game.setLevel(level);
+			game.setLevel(level);
 		}
 
 		this.levelButtonsGrid = new GridLayout();
@@ -147,13 +147,13 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 		if( editingLevel != null ) { // reload level to include added gameobjects
 			editingLevel = LevelLoader.loadSync(game.getGameMetaData(), editingLevel.getPosition());
-            game.setLevel(editingLevel);
+			game.setLevel(editingLevel);
 		}
 
 		//Check if adjacent rooms are still accessible
-        game.markLevelsReachable();
+		game.markLevelsReachable();
 
-		fillLevelButtonsTable(levelsArrayList);
+		createLevelsOverview(levelsArrayList);
 
 		this.scrollPane.scrollToCenter(30, 40, 100, 100);
 	}
@@ -165,26 +165,26 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			final Level level = ((EditLevelDialog) dialog).getLevel();
 			final ScreenshotImage image = (ScreenshotImage) dialog.getTag();
 			switch(which) {
-			case EditLevelDialog.BUTTON_COPY_CLICKED:
-				copyLevel(level);
-				dialog.remove();
-				image.setColor(colorWhite);
-				break;
-			case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
-				/**
-				 * TODO Add check to see if deleting level does not make
-				 * other levels unreachable
-				 */
-				int[] pos = level.getPosition();
-				deleteLevel(level);
-				ScreenshotImage newImage = createLevelImage(null);
-				this.levelButtonsGrid.set(pos[0], pos[1], newImage);
-				dialog.remove();
-				break;
-			case EditLevelDialog.BUTTON_CLOSE_CLICKED:
-				dialog.remove();
-				image.setColor(colorWhite);
-				break;
+				case EditLevelDialog.BUTTON_COPY_CLICKED:
+					copyLevel(level);
+					dialog.remove();
+					image.setColor(colorWhite);
+					break;
+				case EditLevelDialog.BUTTON_DELETELEVEL_CLICKED:
+					/**
+					 * TODO Add check to see if deleting level does not make
+					 * other levels unreachable
+					 */
+					int[] pos = level.getPosition();
+					deleteLevel(level);
+					ScreenshotImage newImage = createLevelImage(null);
+					this.levelButtonsGrid.set(pos[0], pos[1], newImage);
+					dialog.remove();
+					break;
+				case EditLevelDialog.BUTTON_CLOSE_CLICKED:
+					dialog.remove();
+					image.setColor(colorWhite);
+					break;
 			}
 		}
 	}
@@ -193,9 +193,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	public void levelsReceived(String json) {
 		Collection<Level> levels = null;
 
-        /**crec
-         * TODO: refactor to support new Game and GameMetaData class setup
-         */
+		/**crec
+		 * TODO: refactor to support new Game and GameMetaData class setup
+		 */
 		try {
 //			levels = GameLoader.getGame(json).getLevels().values();
 		} catch (Exception e) {
@@ -203,7 +203,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			return;
 		}
 
-        GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
+		GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
 		boolean levelsFailedToSave = false;
 		if( GameWriter.deleteOriginal(gameMetaData)) {
 			for( Level level : levels ) {
@@ -218,7 +218,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		if( levelsFailedToSave ) {
 			showErrorDialog("Error saving levels", "Failed to save one or more levels");
 		} else {
-			fillLevelButtonsTable(levels);
+			createLevelsOverview(levels);
 		}
 	}
 
@@ -235,24 +235,30 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private void startLevelEditor(ScreenshotImage image) {
 		CatchDaStars gameEngine = (CatchDaStars) getGameEngine();
+		Game game = gameEngine.getGame();
 		Level level = null;
 
-		Object tag = image.getTag();
-		if( tag instanceof Level ) {
-			level = (Level) tag;
-		} else if( tag instanceof int[] ) {
-			int[] pos = this.levelButtonsGrid.getPosition(image);
-			level = createNewLevel(pos[0], pos[1], (int[]) tag);
-			image.setTag(level);
-			addLevel(level);
-		} else {
+		try{
+			level = (Level) image.getTag();
+		} catch (ClassCastException e) {
 			ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Starting level editor failed", getSkin());
 			dialog.create();
 			dialog.show();
+			Gdx.app.log("GameEditorScreen", "startLevelEditor: "+e.getMessage());
 			return;
 		}
 
-		gameEngine.getGame().setCurrentLevelPosition(level.getPosition());
+		//Make sure new levels are saved to disk
+		if( ! Files.originalLevelExists(game.getGameMetaData(), level)) {
+			if( ! LevelWriter.saveOriginal(game.getGameMetaData(), level) ) {
+				ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save level", getSkin());
+				dialog.create();
+				dialog.show();
+				return;
+			}
+		}
+
+		game.setCurrentLevelPosition(level.getPosition());
 		editingLevel = level;
 		gameEngine.showLevelEditor();
 	}
@@ -275,28 +281,23 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		image.setColor(selectedColor);
 	}
 
-	private void addLevel(Level level) {
-		Game game = getGameEngine().getGame();
-        game.addLevel(level);
-		LevelWriter.saveOriginal(game.getGameMetaData(), level);
-	}
-
 	private void deleteLevel(Level level) {
 		Game game = getGameEngine().getGame();
 		LevelWriter.deleteOriginal(game.getGameMetaData(), level);
 		int[] pos = level.getPosition();
-        game.deleteLevel(pos[0], pos[1]);
+		game.deleteLevel(pos[0], pos[1]);
 	}
 
 	/**
 	 * TODO replace loading all levels completely by something less memory hungry. We only need level position, doors, and name.
 	 * Also add caching to prevent loading the complete game from scratch each time we show this screen
 	 */
-	private void fillLevelButtonsTable(Collection<Level> levels) {
+	private void createLevelsOverview(Collection<Level> levels) {
 		this.levelButtonsGrid.clear();
 
 		if( ( levels == null ) || ( levels.size() == 0 ) ) {
-			ScreenshotImage image = createLevelImage(null);
+			Level level = createNewLevel(0,0, new int[] {0,0});
+			ScreenshotImage image = createLevelImage(level);
 			this.levelButtonsGrid.set(0, 0, image);
 		} else {
 			/**
@@ -345,16 +346,17 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private void addNextLevelButtons(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 		Vector2 overlaySize = new Vector2(elementSize.x / 3f, 0);
-		
+
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
 			int[] nextLevelPosition = door.getNextLevelPosition();
 			ScreenshotImage nextLevelImage = (ScreenshotImage) this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]);
 			if( nextLevelImage == null ) {
-				nextLevelImage = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
-				nextLevelImage.setTag(nextLevelPosition);
+				Level newLevel = createNewLevel(nextLevelPosition[0], nextLevelPosition[1], level.getPosition());
+				nextLevelImage = createLevelImage(newLevel);
+				nextLevelImage.setTag(newLevel);
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevelImage);
-			} 
+			}
 			ArrowImage arrowImage = getArrow(level.getPosition(), nextLevelPosition);
 			if( arrowImage != null ) {
 				overlaySize.y =  ( overlaySize.x * arrowImage.texture.getRegionHeight() ) / arrowImage.texture.getRegionWidth();
@@ -403,12 +405,12 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			dialog.create().show();
 		}
 
-		fillLevelButtonsTable(game.getLevels().values());
+		createLevelsOverview(game.getLevels().values());
 	}
 
 	@Override
 	protected void onMenuItemSelected(String text) {
-       GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
+		GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
 		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(gameMetaData.getJson());
 		}else if(text.contentEquals("Play game")) {
