@@ -193,7 +193,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	public void levelsReceived(String json) {
 		Collection<Level> levels = null;
 
-        /**
+        /**crec
          * TODO: refactor to support new Game and GameMetaData class setup
          */
 		try {
@@ -353,12 +353,12 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			if( nextLevelImage == null ) {
 				nextLevelImage = createScreenshotImage(new Texture(emptyLevelImage), null, (int) elementSize.x, (int) elementSize.y);
 				nextLevelImage.setTag(nextLevelPosition);
-				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevel);	
+				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevelImage);
 			} 
 			ArrowImage arrowImage = getArrow(level.getPosition(), nextLevelPosition);
 			if( arrowImage != null ) {
 				overlaySize.y =  ( overlaySize.x * arrowImage.texture.getRegionHeight() ) / arrowImage.texture.getRegionWidth();
-				nextLevel.addOverlay(arrowImage.texture, overlaySize, arrowImage.alignment);
+				nextLevelImage.addOverlay(arrowImage.texture, overlaySize, arrowImage.alignment);
 			}
 		}
 	}
