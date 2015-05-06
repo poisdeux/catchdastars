@@ -1,10 +1,13 @@
 package com.strategames.engine.utils;
 
+import java.util.HashSet;
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
@@ -12,10 +15,9 @@ import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
 public class Level implements Comparable<Level>, Writer {
-	private String name = "noname";
 	private Array<GameObject> gameObjects;
 	private Array<Door> doors;
-	private Array<int[]> entryLevels;
+	private Array<Position> entryLevels;
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -25,7 +27,7 @@ public class Level implements Comparable<Level>, Writer {
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 		this.doors = new Array<Door>();
-		this.entryLevels = new Array<int[]>();
+		this.entryLevels = new Array<Position>();
 	}
 
 	public void setGameObjects(Array<GameObject> gameObjects) {
@@ -75,12 +77,22 @@ public class Level implements Comparable<Level>, Writer {
 		return this.gameObjects;
 	}
 
+	/**
+	 * Adds level position from which this level is accessible.
+	 * <br/>
+	 * If position has already been added it will not be added again.
+	 * @param x
+	 * @param y
+	 */
 	public void addEntryLevel(int x, int y) {
-		int[] pos = new int[] {x, y};
-		this.entryLevels.add(position);
+		Position pos = new Position(x, y);
+		if( this.entryLevels.contains(pos, false) == false ) {
+			Gdx.app.log("Level", "addEntryLevel: pos="+pos);
+			this.entryLevels.add(pos);
+		}
 	}
 
-	public Array<int[]> getEntryLevels() {
+	public Array<Position> getEntryLevels() {
 		return entryLevels;
 	}
 
@@ -154,7 +166,7 @@ public class Level implements Comparable<Level>, Writer {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d, %d,%d %s, #gameobjects=%d. #doors=%d", hashCode(), this.position[0], this.position[1], this.name, this.gameObjects.size, this.doors.size );
+		return String.format( Locale.US, "%d, %d,%d, #gameobjects=%d. #doors=%d", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size );
 	}
 
 	public Level copy() {
@@ -210,7 +222,7 @@ public class Level implements Comparable<Level>, Writer {
 		if( ! ( obj instanceof Level ) ) {
 			return false;
 		} 
-		
+
 		Level level = (Level) obj;
 
 		int[] levelPosition = level.getPosition();

@@ -145,13 +145,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 		Collection<Level> levelsArrayList = game.getLevels().values();
 
-		if( editingLevel != null ) { // reload level to include added gameobjects
-			editingLevel = LevelLoader.loadSync(game.getGameMetaData(), editingLevel.getPosition());
-			game.setLevel(editingLevel);
+		if( editingLevel != null ) {
+			updateGame();
 		}
-
-		//Check if adjacent rooms are still accessible
-		game.markLevelsReachable();
 
 		createLevelsOverview(levelsArrayList);
 
@@ -482,5 +478,22 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		if( actor instanceof ScreenshotImage ) {
 			startEditLevelDialog((ScreenshotImage) actor);
 		}
+	}
+
+	private void updateGame() {
+		Game game = getGameEngine().getGame();
+		// reload level to include added gameobjects
+		editingLevel = LevelLoader.loadSync(game.getGameMetaData(), editingLevel.getPosition());
+		game.setLevel(editingLevel);
+
+		Array<Door> doors = editingLevel.getDoors();
+		for(Door door : doors) {
+			int[] pos = door.getNextLevelPosition();
+			Level level = game.getLevel(pos[0], pos[1]);
+			level.addEntryLevel(pos[0], pos[1]);
+		}
+
+		//Check if adjacent rooms are still accessible
+		game.markLevelsReachable();
 	}
 }
