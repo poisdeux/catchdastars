@@ -345,7 +345,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
-			int[] nextLevelPosition = door.getNextLevelPosition();
+			int[] nextLevelPosition = door.getAccessToPosition();
 			ScreenshotImage nextLevelImage = (ScreenshotImage) this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]);
 			if( nextLevelImage == null ) {
 				Level newLevel = createNewLevel(nextLevelPosition[0], nextLevelPosition[1], level.getPosition());
@@ -488,7 +488,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 		Array<Door> doors = editingLevel.getDoors();
 		for(Door door : doors) {
-			int[] pos = door.getNextLevelPosition();
+			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
 			level.addEntryLevel(pos[0], pos[1]);
 		}

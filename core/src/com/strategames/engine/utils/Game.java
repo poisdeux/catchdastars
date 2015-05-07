@@ -1,16 +1,10 @@
 package com.strategames.engine.utils;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.storage.GameMetaData;
-import com.strategames.engine.storage.Writer;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class Game {
 	private HashMap<String, Level> levels;
@@ -55,6 +49,8 @@ public class Game {
         }
         this.currentLevelPosition[0] = 0;
         this.currentLevelPosition[1] = 0;
+
+		this.score.setCumulatedScore(0);
     }
 
     /**
@@ -109,7 +105,7 @@ public class Game {
 
 		Array<Door> doors = level.getDoors();
 		for(int i = 0; i < doors.size; i++) {
-			int[] nextPos = doors.get(i).getNextLevelPosition();
+			int[] nextPos = doors.get(i).getAccessToPosition();
 			Level adjacentLevel = getLevel(nextPos[0], nextPos[1]);
 			if( ( adjacentLevel != null ) && ( ! reachableLevels.contains(adjacentLevel, true) ) ) { // prevent looping when levels have doors to eachother
 				reachableLevels.add(adjacentLevel);

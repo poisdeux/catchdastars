@@ -31,7 +31,6 @@ import com.strategames.engine.scenes.scene2d.ui.MenuButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelWriter;
-import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
@@ -425,9 +424,9 @@ public class LevelEditorScreen extends AbstractScreen
                 int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
                 float middle = worldSize.x / 2f;
                 if( wallX < middle ) { //If left border set next level to left
-                    door.setEntryLevel(currentLevelPosition[0] - 1, currentLevelPosition[1]);
+                    door.setAccessTo(currentLevelPosition[0] - 1, currentLevelPosition[1]);
                 } else { // set next level to right
-                    door.setEntryLevel(currentLevelPosition[0] + 1, currentLevelPosition[1]);
+                    door.setAccessTo(currentLevelPosition[0] + 1, currentLevelPosition[1]);
                 }
             }
         } else {
@@ -438,9 +437,9 @@ public class LevelEditorScreen extends AbstractScreen
                 int[] currentLevelPosition = getGameEngine().getGame().getCurrentLevelPosition();
                 float middle = worldSize.x / 2f;
                 if( wallY < middle ) { //If bottom border set next level to bottom
-                    door.setEntryLevel(currentLevelPosition[0], currentLevelPosition[1] - 1);
+                    door.setAccessTo(currentLevelPosition[0], currentLevelPosition[1] - 1);
                 } else { // set next level to top
-                    door.setEntryLevel(currentLevelPosition[0], currentLevelPosition[1] + 1);
+                    door.setAccessTo(currentLevelPosition[0], currentLevelPosition[1] + 1);
                 }
             }
         }

@@ -45,8 +45,6 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.Score;
 import com.strategames.engine.utils.Textures;
 
-import java.util.Iterator;
-
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
@@ -543,7 +541,7 @@ public class CatchDaStars extends GameEngine {
                 destroyBalloon(balloon);
             }
         } else if( object instanceof Door ) {
-            this.nextLevelPosition = ((Door) object).getNextLevelPosition();
+            this.nextLevelPosition = ((Door) object).getAccessToPosition();
         } else if ( object instanceof RectangularSensor ) {
             if( balloon.isInGame() ) {
                 getWorldThread().setGameObjectInactive(balloon);

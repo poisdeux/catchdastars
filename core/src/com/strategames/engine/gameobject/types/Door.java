@@ -68,8 +68,8 @@ public class Door extends StaticBody {
 	public GameObject copy() {
 		Door door = new Door();
 		door.setPosition(getX(), getY());
-		int[] pos = getNextLevelPosition();
-		door.setEntryLevel(pos[0], pos[1]);
+		int[] pos = getAccessToPosition();
+		door.setAccessTo(pos[0], pos[1]);
 		return door;
 	}
 
@@ -130,7 +130,7 @@ public class Door extends StaticBody {
 	 * @param x
 	 * @param y
 	 */
-	public void setEntryLevel(int x, int y) {
+	public void setAccessTo(int x, int y) {
 		this.entryLevel[0] = x;
 		this.entryLevel[1] = y;
 	}
@@ -139,7 +139,7 @@ public class Door extends StaticBody {
 	 * Returns the level position this door provides access too
 	 * @return
 	 */
-	public int[] getNextLevelPosition() {
+	public int[] getAccessToPosition() {
 		return entryLevel;
 	}
 	
@@ -155,7 +155,7 @@ public class Door extends StaticBody {
 	 * Returns the level position this door is accessible from
 	 * @return
 	 */
-	public int[] getExitLevel() {
+	public int[] getAccessFromPosition() {
 		return exitLevel;
 	}
 	
@@ -172,7 +172,7 @@ public class Door extends StaticBody {
 		} else {
 			return false;
 		}
-		int[] pos = door.getNextLevelPosition();
+		int[] pos = door.getAccessToPosition();
 		return pos[0] == entryLevel[0] && pos[1] == entryLevel[1] && 
 				super.equals(obj);
 	}
