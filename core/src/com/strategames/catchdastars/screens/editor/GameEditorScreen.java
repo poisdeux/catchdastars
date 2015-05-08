@@ -446,7 +446,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		level.setViewSize(new Vector2(game.getViewSize()));
 		level.setReachable(true); //assume level can only be created if reachable
 		level.setPosition(x, y);
-		level.addEntryLevel(entryLevel[0], entryLevel[1]);
+		level.addAccessibleBy(entryLevel[0], entryLevel[1]);
 
 		ScreenBorder.create(level, game);
 
@@ -490,7 +490,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		for(Door door : doors) {
 			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
-			level.addEntryLevel(pos[0], pos[1]);
+			level.addAccessibleBy(pos[0], pos[1]);
 		}
 
 		//Check if adjacent rooms are still accessible

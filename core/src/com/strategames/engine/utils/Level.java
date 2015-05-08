@@ -17,7 +17,7 @@ import com.strategames.engine.storage.Writer;
 public class Level implements Comparable<Level>, Writer {
 	private Array<GameObject> gameObjects;
 	private Array<Door> doors;
-	private Array<Position> entryLevels;
+	private Array<Vector2> entryLevels;
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -27,7 +27,7 @@ public class Level implements Comparable<Level>, Writer {
 	public Level() {
 		this.gameObjects = new Array<GameObject>();
 		this.doors = new Array<Door>();
-		this.entryLevels = new Array<Position>();
+		this.entryLevels = new Array<Vector2>();
 	}
 
 	public void setGameObjects(Array<GameObject> gameObjects) {
@@ -84,15 +84,14 @@ public class Level implements Comparable<Level>, Writer {
 	 * @param x
 	 * @param y
 	 */
-	public void addEntryLevel(int x, int y) {
-		Position pos = new Position(x, y);
-		if( this.entryLevels.contains(pos, false) == false ) {
-			Gdx.app.log("Level", "addEntryLevel: pos="+pos);
-			this.entryLevels.add(pos);
+	public void addAccessibleBy(int x, int y) {
+		Vector2 v = new Vector2(x, y);
+		if( this.entryLevels.contains(v, false) == false ) {
+			this.entryLevels.add(v);
 		}
 	}
 
-	public Array<Position> getEntryLevels() {
+	public Array<Vector2> getAccessibleBy() {
 		return entryLevels;
 	}
 
@@ -228,6 +227,11 @@ public class Level implements Comparable<Level>, Writer {
 		int[] levelPosition = level.getPosition();
 
 		if( ( position[0] != levelPosition[0] ) || ( position[1] != levelPosition[1] ) ) {
+			return false;
+		}
+
+		Array<Vector2> accessiblePos = level.getAccessibleBy();
+		if( ! accessiblePos.equals(entryLevels) ) {
 			return false;
 		}
 

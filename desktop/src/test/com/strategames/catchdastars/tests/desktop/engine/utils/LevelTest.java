@@ -3,9 +3,11 @@ package com.strategames.catchdastars.tests.desktop.engine.utils;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.GameObjectTestClass;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.LevelTestHelper;
 import com.strategames.engine.gameobject.GameObject;
@@ -13,6 +15,13 @@ import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.utils.Level;
 
 public class LevelTest {
+	private Level level;
+
+	@Before
+	public void setUp() throws Exception {
+		this.level = LevelTestHelper.createLevel();
+	}
+
 	@Test
 	public void equalTest() {
 		Level level1 = LevelTestHelper.createRandomLevel();
@@ -47,6 +56,32 @@ public class LevelTest {
 		level1.setWorldSize(w.add(0, 1));
 		testNotEqual(level1, level2);
 		level1.setWorldSize(w.sub(0, 1));
+	}
+
+	@Test
+	public void accessibleByTest() {
+		Array<Vector2> positions = this.level.getAccessibleBy();
+		assertTrue(positions.size == 0);
+
+		this.level.addAccessibleBy(0, 0);
+		positions = this.level.getAccessibleBy();
+		assertTrue(positions.size == 1);
+		Vector2 pos = positions.get(0);
+		assertTrue((pos.x == 0) && (pos.y == 0));
+
+		this.level.addAccessibleBy(2, 3);
+		positions = this.level.getAccessibleBy();
+		assertTrue(positions.size == 2);
+		pos = positions.get(1);
+		assertTrue((pos.x == 2) && (pos.y == 3));
+
+		this.level.addAccessibleBy(0, 0); //should not be added again
+		positions = this.level.getAccessibleBy();
+		assertTrue(positions.size == 2);
+		pos = positions.get(0);
+		assertTrue((pos.x == 0) && (pos.y == 0));
+		pos = positions.get(1);
+		assertTrue((pos.x == 2) && (pos.y == 3));
 	}
 
 	private void testEqual(Level level1, Level level2) {

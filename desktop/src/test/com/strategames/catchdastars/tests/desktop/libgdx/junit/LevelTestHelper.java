@@ -22,7 +22,7 @@ public class LevelTestHelper {
 	 */
 	public static Level createLevel() {
 		Level level = new Level();
-		level.setPosition(1, 4);
+		level.setPosition(0,0);
 		level.setReachable(false);
 		level.setViewSize(new Vector2(3, 5));
 		level.setWorldSize(new Vector2(5, 7));
@@ -50,7 +50,11 @@ public class LevelTestHelper {
 		x = rand.nextInt(50);
 		y = rand.nextInt(50);
 		level.setWorldSize(new Vector2(x, y));
-		
+
+		x = rand.nextInt(50);
+		y = rand.nextInt(50);
+		level.addAccessibleBy(x, y);
+
 		level.setGameObjects(GameObjectTestHelper.createRandomGameObjects());
 		return level;
 	}
