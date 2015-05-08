@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.GameTestHelper;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.GdxTestRunner;
 import com.strategames.engine.storage.GameMetaData;
@@ -29,27 +32,35 @@ public class LevelWriterLoaderTest {
 	@After
 	public void tearDown() throws Exception {
         GameMetaData metadata = this.game.getGameMetaData();
-        GameWriter.deleteOriginal(metadata);
-        GameWriter.deleteInprogress(metadata);
+//        GameWriter.deleteOriginal(metadata);
+//        GameWriter.deleteInprogress(metadata);
 	}
 
     @Test
-    public void testOriginal() {
+    public void saveOriginalTest() {
         GameMetaData metadata = this.game.getGameMetaData();
         int[] pos = GameTestHelper.getPosition(2);
         Level level = this.game.getLevel(pos[0], pos[1]);
         assertTrue(level != null);
 
-        LevelWriter.saveOriginal(metadata, level);
+        Array<Vector2> accessibleBy = level.getAccessibleBy();
+        for( Vector2 v : accessibleBy ) {
+            Gdx.app.log("LevelWriterLoaderTest", "saveOriginalTest: accessibleBy="+v);
+        }
+
+        //level.delAccessibleBy(0,1);
+        level.addAccessibleBy(0,2);
+
+        assertTrue(LevelWriter.saveOriginal(metadata, level));
 
         Level savedLevel = LevelLoader.loadOriginal(metadata, pos);
         assertTrue(savedLevel != null);
         assertTrue(savedLevel.equals(level));
 
-        LevelWriter.deleteOriginal(metadata, level);
-        savedLevel = LevelLoader.loadOriginal(metadata, pos);
-        assertFalse(savedLevel != null);
-        assertFalse(level.equals(savedLevel));
+//        LevelWriter.deleteOriginal(metadata, level);
+//        savedLevel = LevelLoader.loadOriginal(metadata, pos);
+//        assertFalse(savedLevel != null);
+//        assertFalse(level.equals(savedLevel));
     }
 
     @Test

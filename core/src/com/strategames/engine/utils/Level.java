@@ -1,9 +1,7 @@
 package com.strategames.engine.utils;
 
-import java.util.HashSet;
 import java.util.Locale;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -15,9 +13,9 @@ import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
 public class Level implements Comparable<Level>, Writer {
-	private Array<GameObject> gameObjects;
-	private Array<Door> doors;
-	private Array<Vector2> entryLevels;
+	private Array<GameObject> gameObjects = new Array<GameObject>();
+	private Array<Door> doors = new Array<Door>();;
+	private Array<com.strategames.engine.utils.Vector2> accessibleBy = new Array<com.strategames.engine.utils.Vector2>();
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -25,9 +23,6 @@ public class Level implements Comparable<Level>, Writer {
 	private GameMetaData gameMetaData;
 	
 	public Level() {
-		this.gameObjects = new Array<GameObject>();
-		this.doors = new Array<Door>();
-		this.entryLevels = new Array<Vector2>();
 	}
 
 	public void setGameObjects(Array<GameObject> gameObjects) {
@@ -85,14 +80,23 @@ public class Level implements Comparable<Level>, Writer {
 	 * @param y
 	 */
 	public void addAccessibleBy(int x, int y) {
-		Vector2 v = new Vector2(x, y);
-		if( this.entryLevels.contains(v, false) == false ) {
-			this.entryLevels.add(v);
+		com.strategames.engine.utils.Vector2 v = new com.strategames.engine.utils.Vector2(x, y);
+		if( this.accessibleBy.contains(v, false) == false ) {
+			this.accessibleBy.add(v);
 		}
 	}
 
-	public Array<Vector2> getAccessibleBy() {
-		return entryLevels;
+	/**
+	 * Removes level position from which this level is accessible.
+	 * @param x
+	 * @param y
+	 */
+	public void delAccessibleBy(int x, int y) {
+		this.accessibleBy.removeValue(new com.strategames.engine.utils.Vector2(x, y), false);
+	}
+
+	public Array<com.strategames.engine.utils.Vector2> getAccessibleBy() {
+		return accessibleBy;
 	}
 
 	public Array<Door> getDoors() {
@@ -230,8 +234,8 @@ public class Level implements Comparable<Level>, Writer {
 			return false;
 		}
 
-		Array<Vector2> accessiblePos = level.getAccessibleBy();
-		if( ! accessiblePos.equals(entryLevels) ) {
+		Array<com.strategames.engine.utils.Vector2> accessiblePos = level.getAccessibleBy();
+		if( ! accessiblePos.equals(accessibleBy) ) {
 			return false;
 		}
 
@@ -265,4 +269,34 @@ public class Level implements Comparable<Level>, Writer {
 		}
 		return true;
 	}
+
+//	@Override
+//	public void write(Json json) {
+//		json.writeObjectStart(this.getClass().getSimpleName());
+//
+//		json.writeValue("position", position);
+//
+////
+////		json.writeValue(viewSize);
+////		json.writeValue(worldSize);
+//
+////		if( accessibleBy.size > 0 ) {
+////			json.writeValue("accessibleBy", accessibleBy, Array.class, Vector2.class);
+//////			json.writeArrayStart("accessibleBy");
+//////			for ( Vector2 v : accessibleBy ) {
+//////				json.writeValue(v);
+//////			}
+//////			json.writeArrayEnd();
+////		}
+////
+////		json.writeValue(doors);
+////		json.writeValue(gameObjects);
+////
+//		json.writeObjectEnd();
+//	}
+//
+//	@Override
+//	public void read(Json json, JsonValue jsonData) {
+//
+//	}
 }

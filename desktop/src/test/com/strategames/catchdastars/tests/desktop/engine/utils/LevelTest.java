@@ -56,6 +56,12 @@ public class LevelTest {
 		level1.setWorldSize(w.add(0, 1));
 		testNotEqual(level1, level2);
 		level1.setWorldSize(w.sub(0, 1));
+
+		level1.addAccessibleBy(1, 2);
+		level2.addAccessibleBy(2,3);
+		testNotEqual(level1, level2);
+		level1.delAccessibleBy(1, 2);
+		level2.delAccessibleBy(2,3);
 	}
 
 	@Test

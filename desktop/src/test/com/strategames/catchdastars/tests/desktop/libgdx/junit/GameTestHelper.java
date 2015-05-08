@@ -102,7 +102,7 @@ public class GameTestHelper {
 	}
 
 	public static Level createLevel(int pos) {
-		Level level = LevelTestHelper.createRandomLevel();
+		Level level = LevelTestHelper.createLevel();
 		level.setPosition(levelPositions[pos][0], levelPositions[pos][1]);
 
 		int[] levelDoors = doors[pos];
