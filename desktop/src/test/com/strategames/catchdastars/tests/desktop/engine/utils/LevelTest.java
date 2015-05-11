@@ -66,7 +66,7 @@ public class LevelTest {
 
 	@Test
 	public void accessibleByTest() {
-		Array<Vector2> positions = this.level.getAccessibleBy();
+		Array<com.strategames.engine.math.Vector2> positions = this.level.getAccessibleBy();
 		assertTrue(positions.size == 0);
 
 		this.level.addAccessibleBy(0, 0);

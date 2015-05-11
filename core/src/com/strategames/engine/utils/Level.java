@@ -5,7 +5,6 @@ import java.util.Locale;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
@@ -15,7 +14,7 @@ import com.strategames.engine.storage.Writer;
 public class Level implements Comparable<Level>, Writer {
 	private Array<GameObject> gameObjects = new Array<GameObject>();
 	private Array<Door> doors = new Array<Door>();;
-	private Array<com.strategames.engine.utils.Vector2> accessibleBy = new Array<com.strategames.engine.utils.Vector2>();
+	private Array<com.strategames.engine.math.Vector2> accessibleBy = new Array<com.strategames.engine.math.Vector2>();
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -80,7 +79,7 @@ public class Level implements Comparable<Level>, Writer {
 	 * @param y
 	 */
 	public void addAccessibleBy(int x, int y) {
-		com.strategames.engine.utils.Vector2 v = new com.strategames.engine.utils.Vector2(x, y);
+		com.strategames.engine.math.Vector2 v = new com.strategames.engine.math.Vector2(x, y);
 		if( this.accessibleBy.contains(v, false) == false ) {
 			this.accessibleBy.add(v);
 		}
@@ -92,10 +91,10 @@ public class Level implements Comparable<Level>, Writer {
 	 * @param y
 	 */
 	public void delAccessibleBy(int x, int y) {
-		this.accessibleBy.removeValue(new com.strategames.engine.utils.Vector2(x, y), false);
+		this.accessibleBy.removeValue(new com.strategames.engine.math.Vector2(x, y), false);
 	}
 
-	public Array<com.strategames.engine.utils.Vector2> getAccessibleBy() {
+	public Array<com.strategames.engine.math.Vector2> getAccessibleBy() {
 		return accessibleBy;
 	}
 
@@ -234,7 +233,7 @@ public class Level implements Comparable<Level>, Writer {
 			return false;
 		}
 
-		Array<com.strategames.engine.utils.Vector2> accessiblePos = level.getAccessibleBy();
+		Array<com.strategames.engine.math.Vector2> accessiblePos = level.getAccessibleBy();
 		if( ! accessiblePos.equals(accessibleBy) ) {
 			return false;
 		}
