@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.utils.Level;
+import com.strategames.engine.utils.ScreenDensity;
 
 /**
  * File structure:
@@ -80,17 +81,38 @@ public class Files {
 
     /**
      * Returns the path of the original level
-     * @param gameMetaData
      * @param level
      * @return
      */
-	static public String getOriginalLevelFilename(GameMetaData gameMetaData, Level level) {
+	static public String getOriginalLevelFilename(Level level) {
+        GameMetaData gameMetaData = level.getGameMetaData();
+
 		if( ( level == null ) || ( gameMetaData == null ) ) {
 			return null;
 		}
 
        return getOriginalLevelsPath(gameMetaData) + "/" + getLevelFilename(level.getPosition());
 	}
+
+    /**
+     * Returns the path of the original level's screenshot image
+     * @param level
+     * @return
+     */
+    static public String getScreenshotFilename(Level level) {
+        GameMetaData gameMetaData = level.getGameMetaData();
+
+        if( ( level == null ) || ( gameMetaData == null ) ) {
+            return null;
+        }
+
+        return getOriginalGameDirectory(gameMetaData) +
+                "/screenshots/" +
+                ScreenDensity.getDensityName() +
+                "/" +
+                getLevelFilename(level.getPosition()) +
+                ".png";
+    }
 
     /**
      * Returns the path of the writer in the game's level directory
@@ -112,11 +134,12 @@ public class Files {
 
     /**
      * Returns the path of the original level
-     * @param gameMetaData
      * @param level
      * @return path
      */
-    static public String getCompletedLevelFilename(GameMetaData gameMetaData, Level level) {
+    static public String getCompletedLevelFilename(Level level) {
+        GameMetaData gameMetaData = level.getGameMetaData();
+
         if( ( level == null ) || ( gameMetaData == null ) ) {
             return null;
         }
@@ -148,8 +171,8 @@ public class Files {
         return null;
     }
 
-    static public boolean originalLevelExists(GameMetaData gameMetaData, Level level) {
-        FileHandle handle = Gdx.files.local(getOriginalLevelFilename(gameMetaData, level));
+    static public boolean originalLevelExists(Level level) {
+        FileHandle handle = Gdx.files.local(getOriginalLevelFilename(level));
         return handle.exists();
     }
 }

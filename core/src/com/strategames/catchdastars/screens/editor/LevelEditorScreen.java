@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Rectangle;
@@ -371,14 +372,14 @@ public class LevelEditorScreen extends AbstractScreen
             return;
         }
 
-        GameEngine game = getGameEngine();
+        GameEngine gameEngine = getGameEngine();
         Stage stage = getStageActors();
         Array<GameObject> gameObjects = level.getGameObjects();
         if( (gameObjects != null) ) {
             for( GameObject gameObject : gameObjects ) {
                 gameObject.initializeConfigurationItems();
                 //				deselectGameObject(gameObject);
-                game.addGameObject(gameObject, stage);
+                gameEngine.addGameObject(gameObject, stage);
                 if( ! gameObject.isNew() ) {
                     gameObject.setColor(1f, 1f, 1f, 0.3f);
                 }
@@ -390,11 +391,11 @@ public class LevelEditorScreen extends AbstractScreen
             for( Door door : doors ) {
                 door.initializeConfigurationItems();
                 //				deselectGameObject(door);
-                game.addGameObject(door, stage);
+                gameEngine.addGameObject(door, stage);
             }
         }
 
-        //We setup menu last to make sure menu items are drawn on top
+        //We setup the menu last to make sure menu items are drawn on top
         setupMenu(getStageActors());
     }
 
@@ -409,7 +410,10 @@ public class LevelEditorScreen extends AbstractScreen
      */
     @Override
     protected Timeline hideAnimation() {
-        ScreenshotFactory.saveScreenshot(getStageActors(), this.level);
+        Pixmap pixmap = ScreenshotFactory.takeScreenshot(getStageActors(), this.level);
+        if( pixmap != null ) {
+            LevelWriter.saveScreenshot(this.level, pixmap);
+        }
         return null;
     }
 
@@ -548,7 +552,7 @@ public class LevelEditorScreen extends AbstractScreen
     }
 
     private boolean saveLevel() {
-        return LevelWriter.saveOriginal(getGameEngine().getGame().getGameMetaData(), this.level);
+        return LevelWriter.saveOriginal(this.level);
     }
 
     /**

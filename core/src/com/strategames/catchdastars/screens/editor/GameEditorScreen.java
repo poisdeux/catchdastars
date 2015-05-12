@@ -203,7 +203,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		boolean levelsFailedToSave = false;
 		if( GameWriter.deleteOriginal(gameMetaData)) {
 			for( Level level : levels ) {
-				if( ! LevelWriter.saveOriginal(gameMetaData, level) ) {
+				if( ! LevelWriter.saveOriginal(level) ) {
 					levelsFailedToSave = true;
 				}
 			}
@@ -245,8 +245,8 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		}
 
 		//Make sure new levels are saved to disk
-		if( ! Files.originalLevelExists(game.getGameMetaData(), level)) {
-			if( ! LevelWriter.saveOriginal(game.getGameMetaData(), level) ) {
+		if( ! Files.originalLevelExists(level)) {
+			if( ! LevelWriter.saveOriginal(level) ) {
 				ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed to save level", getSkin());
 				dialog.create();
 				dialog.show();
@@ -279,7 +279,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private void deleteLevel(Level level) {
 		Game game = getGameEngine().getGame();
-		LevelWriter.deleteOriginal(game.getGameMetaData(), level);
+		LevelWriter.deleteOriginal(level);
 		int[] pos = level.getPosition();
 		game.deleteLevel(pos[0], pos[1]);
 	}
@@ -292,7 +292,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		this.levelButtonsGrid.clear();
 
 		if( ( levels == null ) || ( levels.size() == 0 ) ) {
-			Level level = createNewLevel(0,0, new int[] {0,0});
+			Level level = createNewLevel(0,0);
 			ScreenshotImage image = createLevelImage(level);
 			this.levelButtonsGrid.set(0, 0, image);
 		} else {
@@ -311,10 +311,10 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			 */
 			for( Level level : levels ) {
 				int[] position = level.getPosition();
-				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 				if( level.isReachable() ) {
-					addNextLevelButtons(level);
+					handleDoors(level);
 				} else {
+					ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 					image.setColor(1f, 0.2f, 0.2f, 1f);
 				}
 			}
@@ -323,7 +323,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private ScreenshotImage createLevelImage(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
-		Texture texture = ScreenshotFactory.loadScreenShot(level);
+		Texture texture = LevelLoader.loadScreenShot(level.getGameMetaData(), level);
 		if( texture == null ) {
 			texture = new Texture(emptyLevelImage);
 		}
@@ -339,16 +339,18 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		return image;
 	}
 
-	private void addNextLevelButtons(Level level) {
+	private void handleDoors(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 		Vector2 overlaySize = new Vector2(elementSize.x / 3f, 0);
+
+		int[] levelPosition = level.getPosition();
 
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
 			int[] nextLevelPosition = door.getAccessToPosition();
 			ScreenshotImage nextLevelImage = (ScreenshotImage) this.levelButtonsGrid.get(nextLevelPosition[0], nextLevelPosition[1]);
 			if( nextLevelImage == null ) {
-				Level newLevel = createNewLevel(nextLevelPosition[0], nextLevelPosition[1], level.getPosition());
+				Level newLevel = createNewLevel(nextLevelPosition[0], nextLevelPosition[1]);
 				nextLevelImage = createLevelImage(newLevel);
 				nextLevelImage.setTag(newLevel);
 				this.levelButtonsGrid.set(nextLevelPosition[0], nextLevelPosition[1], nextLevelImage);
@@ -358,6 +360,8 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				overlaySize.y =  ( overlaySize.x * arrowImage.texture.getRegionHeight() ) / arrowImage.texture.getRegionWidth();
 				nextLevelImage.addOverlay(arrowImage.texture, overlaySize, arrowImage.alignment);
 			}
+
+			((Level) nextLevelImage.getTag()).addAccessibleBy(levelPosition[0], levelPosition[1]);
 		}
 	}
 
@@ -387,11 +391,11 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Boolean success = true;
 		Collection<Level> levels = game.getLevels().values();
 		for(Level level : levels) {
-			if( ! LevelWriter.deleteOriginal(game.getGameMetaData(), level) ) {
+			if( ! LevelWriter.deleteOriginal(level) ) {
 				success = false;
 				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete level "+level.getFilename());
 			}
-			if( ! ScreenshotFactory.deleteScreenshot(level) ) {
+			if( ! LevelWriter.deleteScreenshot(level) ) {
 				success = false;
 				Gdx.app.log("LevelEditorMenuScreen", "Failed to delete screenshot for "+level.getFilename());
 			}
@@ -438,7 +442,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		hideMainMenu();
 	}
 
-	private Level createNewLevel(int x, int y, int[] entryLevel) {
+	private Level createNewLevel(int x, int y) {
 		CatchDaStars game = (CatchDaStars) getGameEngine();
 		Vector3 worldSize = game.getWorldSize();
 		Level level = new Level();
@@ -446,7 +450,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		level.setViewSize(new Vector2(game.getViewSize()));
 		level.setReachable(true); //assume level can only be created if reachable
 		level.setPosition(x, y);
-		level.addAccessibleBy(entryLevel[0], entryLevel[1]);
 
 		ScreenBorder.create(level, game);
 
@@ -490,7 +493,9 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		for(Door door : doors) {
 			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
-			level.addAccessibleBy(pos[0], pos[1]);
+			if( level != null ) {
+				level.addAccessibleBy(pos[0], pos[1]);
+			}
 		}
 
 		//Check if adjacent rooms are still accessible

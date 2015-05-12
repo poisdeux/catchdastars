@@ -18,7 +18,7 @@ public class GameWriter {
             return false;
         }
 
-        if( ! LevelWriter.saveCompleted(gameMetaData, level) ) {
+        if( ! LevelWriter.saveCompleted(level) ) {
             return false;
         }
 
@@ -60,7 +60,7 @@ public class GameWriter {
             return false;
         }
 
-        if( ! LevelWriter.saveOriginal(gameMetaData, level) ) {
+        if( ! LevelWriter.saveOriginal(level) ) {
             return false;
         }
 

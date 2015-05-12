@@ -2,6 +2,7 @@ package com.strategames.engine.storage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
@@ -84,7 +85,7 @@ public class LevelLoader {
 		} catch (GdxRuntimeException e) {
 			Gdx.app.log("LevelLoader", "Runtime error while loading level: "+e.getMessage());
 		} catch (SerializationException e) {
-			Gdx.app.log("LevelLoader", "Serialization error while loading level: "+e.getMessage());
+			Gdx.app.log("LevelLoader", "Serialization error while loading level: " + e.getMessage());
 		}
 		return null;
 	}
@@ -119,10 +120,21 @@ public class LevelLoader {
 		for( FileHandle file : files ) {
 			Level level = loadSync(file);
 			if( level != null ) {
+				level.setGameMetaData(gameMetaData);
 				levels.add(level);
 			}
 		}
 
 		return levels;
+	}
+
+	public static Texture loadScreenShot(GameMetaData gameMetaData, Level level) {
+		Texture texture = null;
+		try {
+			texture = new Texture(Gdx.files.local(Files.getScreenshotFilename(level)));
+		} catch (GdxRuntimeException e) {
+			Gdx.app.log("ScreenshotFactory", "loadScreenShot: Error: "+e.getMessage());
+		}
+		return texture;
 	}
 }
