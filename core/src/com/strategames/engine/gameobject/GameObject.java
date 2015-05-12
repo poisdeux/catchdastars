@@ -498,7 +498,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	@Override
 	public void write(Json json) {
 		json.writeObjectStart(this.getClass().getSimpleName());
-
+//		json.writeObjectStart(this.getClass().getCanonicalName());
 		Vector2 position = new Vector2();
 		if( this.body != null ) {
 			position = this.body.getPosition();
@@ -512,7 +512,8 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 		json.writeValue("isNew", isNew);
 
-		writeValues(json);
+		writeValues(json); //allow subclasses to add their own entries
+
 		json.writeObjectEnd();
 	}
 

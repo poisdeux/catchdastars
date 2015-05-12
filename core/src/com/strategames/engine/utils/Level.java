@@ -2,6 +2,7 @@ package com.strategames.engine.utils;
 
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -140,6 +141,7 @@ public class Level implements Comparable<Level>, Writer {
 	public String getJson() {
 		Json json = new Json();
 		json.setOutputType(OutputType.minimal);
+
 		return json.toJson(this);
 	}
 
@@ -168,7 +170,18 @@ public class Level implements Comparable<Level>, Writer {
 
 	@Override
 	public String toString() {
-		return String.format( Locale.US, "%d, %d,%d, #gameobjects=%d. #doors=%d", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size );
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(String.format( Locale.US, "%d, %d,%d, #gameobjects=%d. #doors=%d\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size ));
+		stringBuffer.append("Gameobjects:\n");
+		for( GameObject gameObject : this.gameObjects ) {
+			stringBuffer.append(gameObject.toString());
+			stringBuffer.append("\n");
+		}
+		for( GameObject gameObject : this.doors ) {
+			stringBuffer.append(gameObject.toString());
+			stringBuffer.append("\n");
+		}
+		return stringBuffer.toString();
 	}
 
 	public Level copy() {
@@ -246,14 +259,20 @@ public class Level implements Comparable<Level>, Writer {
 			return false;
 		}
 
-		return arrayGameObjectsEquals(level.getGameObjects(), this.gameObjects) &&
-				arrayDoorsEquals(level.getDoors(), this.doors);	
+		if ( ! arrayGameObjectsEquals(level.getGameObjects(), this.gameObjects) ) {
+			return false;
+		}
+
+		Gdx.app.log("Level", "arrayGameObjectsEquals: equals");
+
+		return arrayDoorsEquals(level.getDoors(), this.doors);
 
 	}
 
 	private boolean arrayGameObjectsEquals(Array<GameObject> array1, Array<GameObject> array2) {
 		for(GameObject object : array2) {
 			if( ! array1.contains(object, false) ) {
+				Gdx.app.log("Level", "arrayGameObjectsEquals: not found object="+object);
 				return false;
 			}
 		}
@@ -263,39 +282,10 @@ public class Level implements Comparable<Level>, Writer {
 	private boolean arrayDoorsEquals(Array<Door> array1, Array<Door> array2) {
 		for(Door object : array2) {
 			if( ! array1.contains(object, false) ) {
+				Gdx.app.log("Level", "arrayDoorsEquals: not found object="+object);
 				return false;
 			}
 		}
 		return true;
 	}
-
-//	@Override
-//	public void write(Json json) {
-//		json.writeObjectStart(this.getClass().getSimpleName());
-//
-//		json.writeValue("position", position);
-//
-////
-////		json.writeValue(viewSize);
-////		json.writeValue(worldSize);
-//
-////		if( accessibleBy.size > 0 ) {
-////			json.writeValue("accessibleBy", accessibleBy, Array.class, Vector2.class);
-//////			json.writeArrayStart("accessibleBy");
-//////			for ( Vector2 v : accessibleBy ) {
-//////				json.writeValue(v);
-//////			}
-//////			json.writeArrayEnd();
-////		}
-////
-////		json.writeValue(doors);
-////		json.writeValue(gameObjects);
-////
-//		json.writeObjectEnd();
-//	}
-//
-//	@Override
-//	public void read(Json json, JsonValue jsonData) {
-//
-//	}
 }

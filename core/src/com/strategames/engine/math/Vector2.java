@@ -20,15 +20,25 @@ public class Vector2 extends com.badlogic.gdx.math.Vector2 implements Json.Seria
 
     @Override
     public void read(Json json, JsonValue jsonData) {
-        float x = jsonData.child().asFloat();
-        float y = jsonData.child().asFloat();
-        Gdx.app.log("Vector2", "read: x="+x+", y="+y);
-        set(x, y);
+        for (JsonValue entry = jsonData.child; entry != null; entry = entry.next) {
+            for(JsonValue element = entry.child; element != null; element = element.next) {
+                String name = element.name;
+                if ( name.contentEquals("x")) {
+                    float value = element.asFloat();
+                    super.x = value;
+                } else if ( name.contentEquals("y")) {
+                    float value = element.asFloat();
+                    super.y = value;
+                }
+            }
+        }
     }
 
     @Override
     public void write(Json json) {
+        json.writeObjectStart(this.getClass().getCanonicalName());
         json.writeValue("x", super.x);
         json.writeValue("y", super.y);
+        json.writeObjectEnd();
     }
 }
