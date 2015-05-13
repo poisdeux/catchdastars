@@ -132,7 +132,7 @@ public class LevelLoader {
 		Texture texture = null;
 		try {
 			texture = new Texture(Gdx.files.local(Files.getScreenshotFilename(level)));
-		} catch (GdxRuntimeException e) {
+		} catch (Exception e) {
 			Gdx.app.log("ScreenshotFactory", "loadScreenShot: Error: "+e.getMessage());
 		}
 		return texture;

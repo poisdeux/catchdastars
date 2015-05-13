@@ -30,6 +30,7 @@ games/
              <POSITION>
              ...
          meta
+         screenshots 
        ...
    originals
        <GAME_UUID>/

@@ -28,7 +28,7 @@ public class ScreenshotFactory {
 		worldSize.x -= worldOrigin.x;
 		worldSize.y -= worldOrigin.y;
 
-		return takeScreenShot((int) worldOrigin.x, (int) worldOrigin.y, (int) worldSize.x, (int) worldSize.y, false);
+		return takeScreenShot((int) worldOrigin.x, (int) worldOrigin.y, (int) worldSize.x, (int) worldSize.y, true);
 	}
 
 

@@ -20,7 +20,7 @@ public class LevelWriter {
 
         String filename = Files.getOriginalLevelFilename(level);
         if( filename == null ) {
-            Gdx.app.log("LevelWriter", "saveOriginal: failed to get filename for \n"+level);
+            Gdx.app.log("LevelWriter", "saveOriginal: failed to get filename for level "+level.getPositionAsString());
             return false;
         }
 

@@ -466,6 +466,8 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		balloon.setNew(false);
 		level.addGameObject(balloon);
 
+		level.setGameMetaData(game.getGame().getGameMetaData());
+
 		return level;
 	}
 

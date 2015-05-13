@@ -23,11 +23,12 @@ import com.strategames.engine.utils.ScreenDensity;
  *         <POSITION>
  *         ...
  *       meta
+ *       screenshots
  *     ...
  */
 
 public class Files {
-	static private final String TOP_PATH = "games";
+    static private final String TOP_PATH = "games";
     static private final String INPROGRESS_PATH = TOP_PATH+"/in_progress";
     static private final String ORIGINALS_PATH = TOP_PATH+"/originals";
     static private final String META_FILENAME = "meta";
@@ -38,16 +39,16 @@ public class Files {
         return ORIGINALS_PATH;
     }
 
-	static public String getPath(String name) {
-		return TOP_PATH + "/" + name;
-	}
-	
-	static public String getOriginalGameDirectory(GameMetaData gameMetaData) {
-		if( gameMetaData == null ) {
-			return null;
-		}
-		return ORIGINALS_PATH + "/" + gameMetaData.getUuid() + "/";
-	}
+    static public String getPath(String name) {
+        return TOP_PATH + "/" + name;
+    }
+
+    static public String getOriginalGameDirectory(GameMetaData gameMetaData) {
+        if( gameMetaData == null ) {
+            return null;
+        }
+        return ORIGINALS_PATH + "/" + gameMetaData.getUuid() + "/";
+    }
 
     static public String getInProgressGameDirectory(GameMetaData gameMetaData) {
         if( gameMetaData == null ) {
@@ -61,19 +62,21 @@ public class Files {
         return getOriginalGameDirectory(gameMetaData) + META_FILENAME;
     }
 
-	static public String getInprogressGameMetaFile(GameMetaData gameMetaData) {
-		return getInProgressGameDirectory(gameMetaData) + META_FILENAME;
-	}
-	
-	static public String getOriginalLevelsPath(GameMetaData gameMetaData) {
-		if( gameMetaData == null ) {
-			return null;
-		}
-		return getOriginalGameDirectory(gameMetaData) + LEVELS_DIRECTORY;
-	}
+    static public String getInprogressGameMetaFile(GameMetaData gameMetaData) {
+        return getInProgressGameDirectory(gameMetaData) + META_FILENAME;
+    }
+
+    static public String getOriginalLevelsPath(GameMetaData gameMetaData) {
+        if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getOriginalLevelsPath: Error level has no game meta data set");
+            return null;
+        }
+        return getOriginalGameDirectory(gameMetaData) + LEVELS_DIRECTORY;
+    }
 
     static public String getCompletedLevelsPath(GameMetaData gameMetaData) {
         if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getCompletedLevelsPath: Error level has no game meta data set");
             return null;
         }
         return getInProgressGameDirectory(gameMetaData) + LEVELS_COMPLETED_DIRECTORY;
@@ -84,15 +87,21 @@ public class Files {
      * @param level
      * @return
      */
-	static public String getOriginalLevelFilename(Level level) {
+    static public String getOriginalLevelFilename(Level level) {
         GameMetaData gameMetaData = level.getGameMetaData();
 
-		if( ( level == null ) || ( gameMetaData == null ) ) {
-			return null;
-		}
+        if( level == null ) {
+            Gdx.app.log("Files", "getOriginalLevelFilename: Error level is null");
+            return null;
+        }
 
-       return getOriginalLevelsPath(gameMetaData) + "/" + getLevelFilename(level.getPosition());
-	}
+        if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getOriginalLevelFilename: Error level has no game meta data set");
+            return null;
+        }
+
+        return getOriginalLevelsPath(gameMetaData) + "/" + getLevelFilename(level.getPosition());
+    }
 
     /**
      * Returns the path of the original level's screenshot image
@@ -102,7 +111,13 @@ public class Files {
     static public String getScreenshotFilename(Level level) {
         GameMetaData gameMetaData = level.getGameMetaData();
 
-        if( ( level == null ) || ( gameMetaData == null ) ) {
+        if( level == null ) {
+            Gdx.app.log("Files", "getScreenshotFilename: Error level is null");
+            return null;
+        }
+
+        if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getScreenshotFilename: Error level has no game meta data set");
             return null;
         }
 
@@ -122,6 +137,7 @@ public class Files {
      */
     static public String getOriginalLevelFilename(GameMetaData gameMetaData, int[] pos) {
         if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getOriginalLevelFilename: Error level has no game meta data set");
             return null;
         }
 
@@ -140,7 +156,13 @@ public class Files {
     static public String getCompletedLevelFilename(Level level) {
         GameMetaData gameMetaData = level.getGameMetaData();
 
-        if( ( level == null ) || ( gameMetaData == null ) ) {
+        if( level == null ) {
+            Gdx.app.log("Files", "getCompletedLevelFilename: Error level is null");
+            return null;
+        }
+
+        if( gameMetaData == null ) {
+            Gdx.app.log("Files", "getCompletedLevelFilename: Error level has no game meta data set");
             return null;
         }
 
@@ -155,6 +177,7 @@ public class Files {
      */
     static public String getCompletedLevelFilename(GameMetaData gameMetaData, int[] pos) {
         if( gameMetaData == null ) {
+            Gdx.app.log("Level", "getCompletedLevelFilename: Error gameMetaData is null");
             return null;
         }
 
@@ -166,13 +189,18 @@ public class Files {
             FileHandle dir = Gdx.files.local(Files.getOriginalLevelsPath(gameMetaData));
             return dir;
         } catch (Exception e) {
-            //			Gdx.app.log("Level", "error");
+            Gdx.app.log("Level", "getOriginalLevelsDir: Error: "+e.getMessage());
         }
         return null;
     }
 
     static public boolean originalLevelExists(Level level) {
-        FileHandle handle = Gdx.files.local(getOriginalLevelFilename(level));
-        return handle.exists();
+        try {
+            FileHandle handle = Gdx.files.local(getOriginalLevelFilename(level));
+            return handle.exists();
+        } catch (Exception e) {
+            Gdx.app.log("Files", "originalLevelExists: Error: "+ e.getMessage());
+        }
+        return false;
     }
 }
