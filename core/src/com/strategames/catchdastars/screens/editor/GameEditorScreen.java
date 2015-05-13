@@ -410,11 +410,13 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	@Override
 	protected void onMenuItemSelected(String text) {
-		GameMetaData gameMetaData = getGameEngine().getGame().getGameMetaData();
+        GameEngine gameEngine = getGameEngine();
+		GameMetaData gameMetaData = gameEngine.getGame().getGameMetaData();
 		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(gameMetaData.getJson());
 		}else if(text.contentEquals("Play game")) {
-			((CatchDaStars) getGameEngine()).startLevel(new int[] {0,0});
+            gameEngine.setTestMode(true);
+			gameEngine.startLevel(new int[] {0,0});
 		} else if(text.contentEquals("Delete game")) {
 			//ask for confirmation
 			ConfirmationDialog dialog = new ConfirmationDialog(getStageUIActors(), "This will delete all levels", getSkin());
@@ -458,13 +460,13 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		float yWorld = 1f;
 
 		balloon.setPosition(xWorld, yWorld);
-		balloon.setNew(false);
-		level.addGameObject(balloon);
+        balloon.setNew(false);
+        level.addGameObject(balloon);
 
 		balloon = new BalloonRed();
 		balloon.setPosition(xWorld + xWorld, yWorld);
-		balloon.setNew(false);
-		level.addGameObject(balloon);
+        balloon.setNew(false);
+        level.addGameObject(balloon);
 
 		level.setGameMetaData(game.getGame().getGameMetaData());
 

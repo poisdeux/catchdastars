@@ -649,6 +649,7 @@ public class LevelEditorScreen extends AbstractScreen
                 mainMenu.hide();
                 saveLevel();
                 GameEngine game = getGameEngine();
+                game.setTestMode(true);
                 game.startLevel(level);
             }
         });

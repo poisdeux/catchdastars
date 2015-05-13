@@ -180,11 +180,13 @@ public class CatchDaStars extends GameEngine {
 
         Array<Wall> border = new Array<Wall>();
 
+        boolean testMode = isTestMode();
+
         for(GameObject gameObject : gameObjects ) {
             if( gameObject instanceof Star ) {
                 addStar((Star) gameObject, stage);
             } else if( gameObject instanceof Balloon ) {
-                if( ! gameObject.isNew() ) { // Add surviving balloons from previous level
+                if( ( ! testMode ) && (! gameObject.isNew() ) ) { // Add surviving balloons from previous level
                     if( gameObject instanceof BalloonBlue ) {
                         if( this.amountOfBlueBalloonsFromPreviousLevel-- > 0 ) {
                             addBalloon((Balloon) gameObject, stage);

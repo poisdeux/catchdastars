@@ -85,6 +85,8 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     private Screen currentScreen;
     private Screen newScreen;
 
+    private boolean testMode;
+
 //    private Score score = new Score();
 
     //	private Stage stageActors;
@@ -123,6 +125,14 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTestMode(boolean testMode) {
+        this.testMode = testMode;
+    }
+
+    public boolean isTestMode() {
+        return testMode;
     }
 
     @Override
