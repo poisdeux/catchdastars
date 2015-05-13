@@ -113,6 +113,11 @@ public class LevelEditorScreen extends AbstractScreen
 
         Game game = getGameEngine().getGame();
         this.level = LevelLoader.loadSync(game.getGameMetaData(), this.currentLevelPosition);
+
+        //We need entryLevels to setup objects that are not new but should be added from
+        //previous levels. For example balloons
+        Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
+
         onLevelLoaded(this.level);
     }
 
