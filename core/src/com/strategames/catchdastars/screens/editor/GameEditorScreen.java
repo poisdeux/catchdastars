@@ -311,7 +311,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				int[] position = level.getPosition();
 				ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
 				if( level.isReachable() ) {
-					addNextLevelButtons::::":(level);
+					addNextLevelButtons(level);
 				} else {
 					image.setColor(1f, 0.2f, 0.2f, 1f);
 				}
