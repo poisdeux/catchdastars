@@ -22,13 +22,12 @@ fi
 
 function findandroidstudioexecutable
 {
-  ASEXEC=($(find ~ -name 'studio.sh'))
-
-	if [ -z "${ASEXEC}" ]
-	then
-		echo "Error android studio not found."
-		exit 1;
-	fi
+  if [ -e '/Applications/Android Studio.app/Contents/MacOS/studio' ] # assume we are running on Mac OSX
+  then
+    ASEXEC=("/Applications/Android Studio.app/Contents/MacOS/studio")
+  else
+    ASEXEC=($(find ~ -name 'studio.sh'))
+  fi
 
   # Check if found files are readable and executable
   INDEX=0
@@ -69,6 +68,12 @@ function findandroidstudioexecutable
 function findandroidsdk
 {
   SDKLOC=($(find ~ -name 'SDK Readme.txt' -exec dirname {} \;))
+  if [ ${#SDKLOC[@]} -eq 0 ]
+  then
+    echo "Error: no SDK found"
+    exit 1
+  fi
+
   if [ ${#SDKLOC[@]} -gt 1 ]
   then
     echo "Multiple SDKs found:"
@@ -95,13 +100,7 @@ function findandroidsdk
 [ -r ${ASEXECCACHE} ] || findandroidstudioexecutable
 [ -r ${SDKLOCCACHE} ] || findandroidsdk
 
-if [ -z ${SDKLOCCACHE} ]
-then
-  echo "Error: SDK not found"
-  exit 1
-fi
-
 export ANDROID_HOME=$(cat ${SDKLOCCACHE})
 
-echo Starting ${ASEXECCACHE}
-exec $(cat ${ASEXECCACHE})
+echo Starting "$(cat ${ASEXECCACHE})"
+exec "$(cat ${ASEXECCACHE})"

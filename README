@@ -8,7 +8,9 @@
 
 3. Import gradle project
 
-4. Configure android studio to make desktop version work:
+4. Start Android SDK Manager and install Android Support Library
+
+5. Configure android studio to make desktop version work:
 
    1. Open: Run -> Edit Configurations...,
    2. click the plus (+) button and select Application. 
