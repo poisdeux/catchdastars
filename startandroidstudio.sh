@@ -22,7 +22,13 @@ fi
 
 function findandroidstudioexecutable
 {
-  ASEXEC=($(find ~ -name 'studio.sh'))
+  if [ -e '/Applications/Android Studio.app/Contents/MacOS/studio' ] # assume we are running on Mac OSX
+  then
+    ASEXEC=("/Applications/Android Studio.app/Contents/MacOS/studio")
+  else
+    ASEXEC=($(find ~ -name 'studio.sh'))
+  fi
+
   # Check if found files are readable and executable
   INDEX=0
   for asexec in ${ASEXEC[@]}
@@ -96,5 +102,5 @@ function findandroidsdk
 
 export ANDROID_HOME=$(cat ${SDKLOCCACHE})
 
-echo Starting ${ASEXECCACHE}
-exec $(cat ${ASEXECCACHE})
+echo Starting "$(cat ${ASEXECCACHE})"
+exec "$(cat ${ASEXECCACHE})"
