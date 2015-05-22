@@ -118,7 +118,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				break;
 			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
 				resetStageActors();
-				getGameEngine().resetLevel();
+				getGameEngine().restartLevel();
 				break;
 			}
 		} else if( dialog instanceof ErrorDialog ) {

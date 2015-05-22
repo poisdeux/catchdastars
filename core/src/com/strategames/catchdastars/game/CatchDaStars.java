@@ -136,7 +136,6 @@ public class CatchDaStars extends GameEngine {
     public void resetLevel() {
         this.doorsOpen = false;
         initializeGameFromSavedState();
-        super.resetLevel();
     }
 
     @Override
@@ -268,6 +267,7 @@ public class CatchDaStars extends GameEngine {
             score.setCumulatedScore(Integer.valueOf(savedScore));
         }
     }
+
     private void addStar(Star star, Stage stage) {
         if( star instanceof StarBlue ) {
             this.blueCollectables.add();
