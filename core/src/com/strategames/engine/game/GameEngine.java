@@ -471,7 +471,6 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
                 levelCompleteCalled = true;
                 levelComplete();
             } else if( this.levelState == LEVEL_STATE.FAILED ) {
-                pauseGame();
                 levelFailed();
             }
         }

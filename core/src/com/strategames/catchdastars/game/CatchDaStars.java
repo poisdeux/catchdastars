@@ -182,6 +182,8 @@ public class CatchDaStars extends GameEngine {
 
         boolean testMode = isTestMode();
 
+        Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+this.amountOfBlueBalloonsFromPreviousLevel+
+        ", amountOfBlueBalloonsFromPreviousLevel="+this.amountOfRedBalloonsFromPreviousLevel);
         for(GameObject gameObject : gameObjects ) {
             if( gameObject instanceof Star ) {
                 addStar((Star) gameObject, stage);
@@ -385,6 +387,7 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void levelFailed() {
+        pauseGame();
         ((LevelScreen) getScreen()).showLevelFailedDialog();
     }
 

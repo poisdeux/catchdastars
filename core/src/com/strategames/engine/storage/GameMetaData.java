@@ -24,43 +24,42 @@ import com.strategames.engine.utils.Level;
  *                          game
  */
 public class GameMetaData implements Json.Serializable, Writer {
-	private String uuid;
-	private String name;
-	private String designer;
+    private String uuid;
+    private String name;
+    private String designer;
     private HashMap<String, String> additionalInfo = new HashMap<String, String>();
     private int savedGameProgressNumber = 1; // used to be able to keep multiple saved states
 
-	public GameMetaData() {
-		this.uuid = UUID.randomUUID().toString();
-	}
+    public GameMetaData() {
+        this.uuid = UUID.randomUUID().toString();
+    }
 
-	@Override
-	public void write(Json json) {
-		json.writeValue("uuid", uuid);
-		json.writeValue("name", name);
-		json.writeValue("designer", designer);
+    @Override
+    public void write(Json json) {
+        json.writeValue("uuid", uuid);
+        json.writeValue("name", name);
+        json.writeValue("designer", designer);
         json.writeValue("info", convertAdditionalInfoHashToString());
-	}
+    }
 
-	@Override
-	public void read(Json json, JsonValue jsonData) {
-		JsonValue child = jsonData.child();
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        JsonValue child = jsonData.child();
 
-		while( child != null ) {
-
-			if(child.name.contentEquals("uuid")) {
-				uuid = child.asString();
-			} else if(child.name.contentEquals("name")) {
-				name = child.asString();
-			} else if(child.name.contentEquals("designer")) {
+        while( child != null ) {
+            if (child.name.contentEquals("uuid")) {
+                uuid = child.asString();
+            } else if (child.name.contentEquals("name")) {
+                name = child.asString();
+            } else if (child.name.contentEquals("designer")) {
                 designer = child.asString();
-            } else if(child.name.contentEquals("info")) {
+            } else if (child.name.contentEquals("info")) {
                 parseAdditionalInfo(child.asString());
             }
 
-			child = child.next();
-		}
-	}
+            child = child.next();
+        }
+    }
 
     public void setSavedGameProgressNumber(int savedGameProgressNumber) {
         this.savedGameProgressNumber = savedGameProgressNumber;
@@ -79,35 +78,35 @@ public class GameMetaData implements Json.Serializable, Writer {
     }
 
     public String getUuid() {
-		return uuid;
-	}
+        return uuid;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setDesigner(String designer) {
-		this.designer = designer;
-	}
+    public void setDesigner(String designer) {
+        this.designer = designer;
+    }
 
-	public String getDesigner() {
-		return designer;
-	}
-	
-	public String getJson() {
-		Json json = new Json();
-		json.setOutputType(OutputType.minimal);
-		return json.toJson(this);
-	}
+    public String getDesigner() {
+        return designer;
+    }
 
-	@Override
-	public String getFilename() {
-		return "meta";
-	}
+    public String getJson() {
+        Json json = new Json();
+        json.setOutputType(OutputType.minimal);
+        return json.toJson(this);
+    }
+
+    @Override
+    public String getFilename() {
+        return "meta";
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -154,7 +153,11 @@ public class GameMetaData implements Json.Serializable, Writer {
     }
 
     private void parseAdditionalInfo(String info) {
-        String[] elts = info.split(":");
+        if( info == null )
+            return;
+
+        String[] elts = info.split(info);
+
         int size = elts.length - 1;
         for( int i = 0; i < size; i += 2 ) {
             String key = elts[i];
@@ -167,7 +170,7 @@ public class GameMetaData implements Json.Serializable, Writer {
         StringBuffer stringBuffer = new StringBuffer();
         Set<String> keys = additionalInfo.keySet();
         for( String key : keys ) {
-            stringBuffer.append(key + ":" + additionalInfo.get(key));
+            stringBuffer.append(key + ":" + additionalInfo.get(key) + ":");
         }
         return stringBuffer.toString();
     }
