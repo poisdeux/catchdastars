@@ -55,10 +55,14 @@ public class GameTestHelper {
 		GameMetaData gameMetaData = new GameMetaData();
 		gameMetaData.setName("TestGame");
 		gameMetaData.setDesigner("TestDesigner");
+        gameMetaData.setAdditionalInfo("item1", "23");
+        gameMetaData.setAdditionalInfo("43", "testing");
 		Game game = new Game(gameMetaData);
 
 		for(int i = 0; i < levelPositions.length; i++) {
-			game.addLevel(createLevel(i));
+			Level level = createLevel(i);
+			level.setGameMetaData(gameMetaData);
+			game.addLevel(level);
 		}
 
 		for(int i = 0; i < doors.length; i++) {

@@ -43,14 +43,14 @@ public class LevelWriterLoaderTest {
 
     @Test
     public void saveOriginalTest() {
-        assertTrue(LevelWriter.saveOriginal(metadata, level));
+        assertTrue(LevelWriter.saveOriginal(level));
 
         Level savedLevel = LevelLoader.loadOriginal(metadata, pos);
 
         assertTrue(savedLevel != null);
         assertTrue(savedLevel.equals(level));
 
-        LevelWriter.deleteOriginal(metadata, level);
+        LevelWriter.deleteOriginal(level);
         savedLevel = LevelLoader.loadOriginal(metadata, pos);
         assertFalse(savedLevel != null);
         assertFalse(level.equals(savedLevel));
@@ -58,14 +58,14 @@ public class LevelWriterLoaderTest {
 
     @Test
     public void testCompleted() {
-        LevelWriter.saveCompleted(metadata, level);
+        LevelWriter.saveCompleted(level);
 
         Level savedLevel = LevelLoader.loadCompleted(metadata, pos);
 
         assertTrue(savedLevel != null);
         assertTrue(savedLevel.equals(level));
 
-        LevelWriter.deleteCompleted(metadata, level);
+        LevelWriter.deleteCompleted(level);
         savedLevel = LevelLoader.loadCompleted(metadata, pos);
         assertFalse(savedLevel != null);
         assertFalse(level.equals(savedLevel));

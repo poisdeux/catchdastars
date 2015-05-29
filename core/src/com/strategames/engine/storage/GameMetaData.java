@@ -136,7 +136,7 @@ public class GameMetaData implements Json.Serializable, Writer {
             return false;
         }
 
-        return true;
+        return additionalInfo.equals(gameMetaData.additionalInfo);
     }
 
     private boolean compareStrings(String s1, String s2) {
@@ -156,7 +156,7 @@ public class GameMetaData implements Json.Serializable, Writer {
         if( info == null )
             return;
 
-        String[] elts = info.split(info);
+        String[] elts = info.split(":");
 
         int size = elts.length - 1;
         for( int i = 0; i < size; i += 2 ) {
@@ -173,5 +173,10 @@ public class GameMetaData implements Json.Serializable, Writer {
             stringBuffer.append(key + ":" + additionalInfo.get(key) + ":");
         }
         return stringBuffer.toString();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", uuid="+uuid+", name="+name+", designer="+designer+", savedGameProgressNumber="+savedGameProgressNumber+", additionalInfo="+convertAdditionalInfoHashToString();
     }
 }

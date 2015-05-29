@@ -1,5 +1,6 @@
 package com.strategames.catchdastars.tests.desktop.engine.storage;
 
+import com.badlogic.gdx.Gdx;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.GameTestHelper;
 import com.strategames.catchdastars.tests.desktop.libgdx.junit.GdxTestRunner;
 import com.strategames.engine.storage.GameLoader;
@@ -38,6 +39,9 @@ public class GameMetaDataWriterLoaderTest {
         GameWriter.saveOriginal(metaData);
 
         GameMetaData savedGameMetaData = GameLoader.loadOriginal(metaData);
+
+        Gdx.app.log("LevelWriterLoaderTest", "testOriginal: savedGameMetaData="+savedGameMetaData);
+        Gdx.app.log("LevelWriterLoaderTest", "testOriginal: metaData="+metaData);
 
         assertTrue(metaData.equals(savedGameMetaData));
     }

@@ -69,8 +69,6 @@ public class CatchDaStars extends GameEngine {
     private Collectable goldCollectables;
     private int amountOfBlueBalloons;
     private int amountOfRedBalloons;
-    private int amountOfBlueBalloonsFromPreviousLevel;
-    private int amountOfRedBalloonsFromPreviousLevel;
     private int amountBalloonsInGame;
 
     private Box2DDebugRenderer debugRenderer;
@@ -147,6 +145,7 @@ public class CatchDaStars extends GameEngine {
             Gdx.app.log("CatchDaStars", "setup: game==null");
             return false;
         }
+        GameMetaData gameMetaData = game.getGameMetaData();
 
         int[] pos = game.getCurrentLevelPosition();
 
@@ -176,24 +175,27 @@ public class CatchDaStars extends GameEngine {
         this.amountOfRedBalloons = 0;
         this.amountBalloonsInGame = 0;
 
+        int amountOfBlueBalloonsFromPreviousLevel =  getAmountOfBalloonsFromPreviousLevel(KEY_BLUE_BALLOON);
+        int amountOfRedBalloonsFromPreviousLevel = getAmountOfBalloonsFromPreviousLevel(KEY_RED_BALLOON);;
 
         Array<Wall> border = new Array<Wall>();
 
         boolean testMode = isTestMode();
 
-        Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+this.amountOfBlueBalloonsFromPreviousLevel+
-        ", amountOfBlueBalloonsFromPreviousLevel="+this.amountOfRedBalloonsFromPreviousLevel);
+        Gdx.app.log("CatchDaStars", "setup: gameMetaData=" + gameMetaData);
+        Gdx.app.log("CatchDaStars", "setup: amountOfBlueBalloonsFromPreviousLevel="+amountOfBlueBalloonsFromPreviousLevel+
+        ", amountOfRedBalloonsFromPreviousLevel="+amountOfRedBalloonsFromPreviousLevel);
         for(GameObject gameObject : gameObjects ) {
             if( gameObject instanceof Star ) {
                 addStar((Star) gameObject, stage);
             } else if( gameObject instanceof Balloon ) {
                 if( ( ! testMode ) && (! gameObject.isNew() ) ) { // Add surviving balloons from previous level
                     if( gameObject instanceof BalloonBlue ) {
-                        if( this.amountOfBlueBalloonsFromPreviousLevel-- > 0 ) {
+                        if( amountOfBlueBalloonsFromPreviousLevel-- > 0 ) {
                             addBalloon((Balloon) gameObject, stage);
                         }
                     } else if( gameObject instanceof BalloonRed ) {
-                        if( this.amountOfRedBalloonsFromPreviousLevel-- > 0 ) {
+                        if( amountOfRedBalloonsFromPreviousLevel-- > 0 ) {
                             addBalloon((Balloon) gameObject, stage);
                         }
                     }
@@ -241,23 +243,22 @@ public class CatchDaStars extends GameEngine {
         startLevel(nextLevelPosition);
     }
 
+    private int getAmountOfBalloonsFromPreviousLevel(String key) {
+        Game game = getGame();
+
+        GameMetaData gameMetaData = game.getGameMetaData();
+        String amountOfBalloons = gameMetaData.getAdditionalInfo(key);
+        if( amountOfBalloons == null ) {
+            return 0;
+        } else {
+            return Integer.valueOf(amountOfBalloons);
+        }
+    }
+
     private void initializeGameFromSavedState() {
         Game game = getGame();
 
         GameMetaData gameMetaData = game.getGameMetaData();
-        String amountOfBalloons = gameMetaData.getAdditionalInfo(KEY_RED_BALLOON);
-        if( amountOfBalloons == null ) {
-            this.amountOfRedBalloonsFromPreviousLevel = 0;
-        } else {
-            this.amountOfRedBalloonsFromPreviousLevel = Integer.valueOf(amountOfBalloons);
-        }
-
-        amountOfBalloons = gameMetaData.getAdditionalInfo(KEY_BLUE_BALLOON);
-        if( amountOfBalloons == null ) {
-            this.amountOfBlueBalloonsFromPreviousLevel = 0;
-        } else {
-            this.amountOfBlueBalloonsFromPreviousLevel = Integer.valueOf(amountOfBalloons);
-        }
 
         Score score = game.getScore();
         String savedScore = gameMetaData.getAdditionalInfo(KEY_SCORE);
@@ -377,11 +378,13 @@ public class CatchDaStars extends GameEngine {
 
         game.setCurrentLevelPosition(nextLevelPosition);
 
+        Gdx.app.log("CatchDaStars", "levelComplete(): amountOfBlueBalloons="+amountOfBlueBalloons);
         GameMetaData gameMetaData = game.getGameMetaData();
         gameMetaData.setAdditionalInfo(KEY_SCORE, String.valueOf(score.getCumulatedScore()));
         gameMetaData.setAdditionalInfo(KEY_BLUE_BALLOON, String.valueOf(this.amountOfBlueBalloons));
         gameMetaData.setAdditionalInfo(KEY_RED_BALLOON, String.valueOf(this.amountOfRedBalloons));
 
+        Gdx.app.log("CatchDaStars", "levelComplete(): gameMetaData=" + gameMetaData);
         GameWriter.saveProgress(game.getGameMetaData(), this.level);
     }
 
