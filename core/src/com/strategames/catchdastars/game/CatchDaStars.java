@@ -632,5 +632,15 @@ public class CatchDaStars extends GameEngine {
         }
 //		Gdx.app.log("CatchDaStars", "postSolve: END");
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", amountOfBlueBalloons: "+this.amountOfBlueBalloons
+                + ", amountOfRedBalloons: "+this.amountOfRedBalloons
+                + ", blueCollectables: "+this.blueCollectables
+                + ", redCollectables: "+this.redCollectables
+                + ", goldCollectables: "+this.goldCollectables
+                ;
+    }
 }
 
