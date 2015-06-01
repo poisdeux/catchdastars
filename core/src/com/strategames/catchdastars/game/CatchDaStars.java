@@ -132,7 +132,6 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void resetLevel() {
-        this.doorsOpen = false;
         initializeGameFromSavedState();
     }
 
@@ -140,6 +139,8 @@ public class CatchDaStars extends GameEngine {
     public boolean setup(Stage stage) {
         System.gc(); //hint the garbage collector that now is a good time to collect
 
+        this.doorsOpen = false;
+        
         Game game = getGame();
         if( game == null ) {
             Gdx.app.log("CatchDaStars", "setup: game==null");
@@ -192,10 +193,12 @@ public class CatchDaStars extends GameEngine {
                 if( ( ! testMode ) && (! gameObject.isNew() ) ) { // Add surviving balloons from previous level
                     if( gameObject instanceof BalloonBlue ) {
                         if( amountOfBlueBalloonsFromPreviousLevel-- > 0 ) {
+                            Gdx.app.log("CatchDaStars", "setup: adding previous blue balloon");
                             addBalloon((Balloon) gameObject, stage);
                         }
                     } else if( gameObject instanceof BalloonRed ) {
                         if( amountOfRedBalloonsFromPreviousLevel-- > 0 ) {
+                            Gdx.app.log("CatchDaStars", "setup: adding previous red balloon" + gameMetaData);
                             addBalloon((Balloon) gameObject, stage);
                         }
                     }
