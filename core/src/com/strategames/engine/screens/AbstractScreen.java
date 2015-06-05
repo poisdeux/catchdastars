@@ -477,11 +477,15 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	}
 
 	/**
+	 *
+	 */
+
+	/**
 	 * Called to create the stage for the UI elements.
 	 * <br>
 	 * The actors in this stage will only be drawn and
 	 * not updated using Box2D
-	 * @return stage that should hold the UI elements
+	 * @param stage that should hold the UI actors.
 	 */
 	abstract protected void setupUI(Stage stage);
 

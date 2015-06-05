@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import aurelienribon.tweenengine.Timeline;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.input.GestureDetector;
@@ -118,6 +119,7 @@ public class LevelEditorScreen extends AbstractScreen
         //previous levels. For example balloons
         Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
 
+        Gdx.app.log("LevelEditorScreen", "setupActors: level="+level);
         onLevelLoaded(this.level);
     }
 
@@ -147,7 +149,7 @@ public class LevelEditorScreen extends AbstractScreen
 
         if( ! saveLevel() ) {
             //notify user saving failed
-            ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Failed saving screenshot", getSkin());
+            ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error saving level", getSkin());
             dialog.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -841,6 +843,8 @@ public class LevelEditorScreen extends AbstractScreen
                 break;
         }
     }
+
+
 }
 
 

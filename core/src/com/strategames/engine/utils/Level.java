@@ -171,8 +171,12 @@ public class Level implements Comparable<Level>, Writer {
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append(String.format( Locale.US, "%d, %d,%d, #gameobjects=%d. #doors=%d\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size ));
-		stringBuffer.append("Gameobjects:\n");
+		stringBuffer.append(String.format( Locale.US, "%d, pos=(%d, %d), #gameobjects=%d, #doors=%d, isReachable=%b\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size, isReachable() ));
+		stringBuffer.append("accessibleBy:");
+        for( Vector2 v : getAccessibleBy() ) {
+            stringBuffer.append(" "+v);
+        }
+		stringBuffer.append("\nGameobjects:\n");
 		for( GameObject gameObject : this.gameObjects ) {
 			stringBuffer.append(gameObject.toString());
 			stringBuffer.append("\n");

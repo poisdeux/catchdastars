@@ -28,7 +28,6 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.scenes.scene2d.ui.EventHandler.ActorListener;
 import com.strategames.engine.scenes.scene2d.ui.GridLayout;
 import com.strategames.engine.scenes.scene2d.ui.ScreenshotImage;
-import com.strategames.engine.scenes.scene2d.ui.Table;
 import com.strategames.engine.scenes.scene2d.ui.TextButton;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.Files;
@@ -39,7 +38,6 @@ import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.ScreenBorder;
-import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.engine.utils.Textures;
 import com.strategames.ui.dialogs.ConfirmationDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -104,16 +102,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		this.emptyLevelImage.setColor(0, 1, 0, 0.3f);
 		this.emptyLevelImage.fill();
 
-		Table table = new Table();
-		table.setSkin(skin);
-		int count = 1;
-		for( count = 1; count < 20; count++) {
-			TextButton b = new TextButton("test" + count, skin);
-			b.setListener(this);
-			table.add(b);
-			table.row();
-		}
-
 		this.scrollPane = new ScrollPane(this.levelButtonsGrid, skin);
 		this.scrollPane.setHeight(400f);
 		this.scrollPane.setWidth(stage.getWidth());
@@ -144,7 +132,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Game game = getGameEngine().getGame();
 
 		Collection<Level> levelsArrayList = game.getLevels().values();
-
 		if( editingLevel != null ) {
 			updateGame();
 		}
@@ -296,27 +283,18 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			ScreenshotImage image = createLevelImage(level);
 			this.levelButtonsGrid.set(0, 0, image);
 		} else {
-			/**
-			 * First we need to fill the grid so we can determine which are the outer levels
-			 * accessing non existing levels
-			 */
 			for( Level level : levels ) {
-				int[] position = level.getPosition();
-				this.levelButtonsGrid.set(position[0], position[1], createLevelImage(level));
-			}
-
-			/**
-			 * Create new level images and set arrows to show the the path in which the user can
-			 * access the different levels
-			 */
-			for( Level level : levels ) {
-				int[] position = level.getPosition();
-				if( level.isReachable() ) {
-					handleDoors(level);
-				} else {
-					ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
-					image.setColor(1f, 0.2f, 0.2f, 1f);
-				}
+                int[] position = level.getPosition();
+                ScreenshotImage image = (ScreenshotImage) this.levelButtonsGrid.get(position[0], position[1]);
+                if( image == null ) {
+                    image = createLevelImage(level);
+                    this.levelButtonsGrid.set(position[0], position[1], image);
+                }
+                if( level.isReachable() ) {
+                    handleDoors(level);
+                } else {
+                    image.setColor(1f, 0.2f, 0.2f, 1f);
+                }
 			}
 		}
 	}
@@ -343,7 +321,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
 		Vector2 overlaySize = new Vector2(elementSize.x / 3f, 0);
 
-		int[] levelPosition = level.getPosition();
+        int[] levelPosition = level.getPosition();
 
 		Array<Door> doors = level.getDoors();
 		for(Door door : doors ) {
@@ -490,10 +468,31 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	private void updateGame() {
 		Game game = getGameEngine().getGame();
 		// reload level to include added gameobjects
-		editingLevel = LevelLoader.loadSync(game.getGameMetaData(), editingLevel.getPosition());
-		game.setLevel(editingLevel);
+		Level editedLevel = LevelLoader.loadSync(game.getGameMetaData(), editingLevel.getPosition());
+		game.setLevel(editedLevel);
 
-		Array<Door> doors = editingLevel.getDoors();
+		Array<Door> doors = editedLevel.getDoors();
+		Array<Door> doorsOld = editingLevel.getDoors();
+
+		//Remove all identical doors in new and old
+		//All remaining doors were removed from the level
+		doorsOld.removeAll(doors, false);
+
+        int[] editedLevelPos = editedLevel.getPosition();
+
+        //Handle previously accessible levels from edited level
+		for(Door door : doorsOld) {
+			int[] pos = door.getAccessToPosition();
+			Level level = game.getLevel(pos[0], pos[1]);
+			if( level != null ) {
+                level.delAccessibleBy(editedLevelPos[0], editedLevelPos[1]);
+                if( checkIfLevelStillReachable(level) != level.isReachable() ) {
+                    level.setReachable(! level.isReachable() );
+                    LevelWriter.saveOriginal(level);
+                }
+            }
+		}
+
 		for(Door door : doors) {
 			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
@@ -501,8 +500,21 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 				level.addAccessibleBy(pos[0], pos[1]);
 			}
 		}
-
-		//Check if adjacent rooms are still accessible
-		game.markLevelsReachable();
 	}
+
+    public boolean checkIfLevelStillReachable(Level level) {
+        Game game = getGameEngine().getGame();
+        Array<com.strategames.engine.math.Vector2> levelPositions = level.getAccessibleBy();
+        for(Vector2 pos : levelPositions ) {
+            Level prevLevel = game.getLevel((int) pos.x, (int) pos.y);
+            Gdx.app.log("GameEditorScreen", "checkIfLevelStillReachable:  entryLevel="+pos);
+            if( prevLevel != null ) {
+                if ( prevLevel.isReachable() )
+                        //If entry level is reachable we are reachable!
+                        return true;
+            }
+        }
+        //No entry level found that is reachable which means we are not reachable
+        return false;
+    }
 }
