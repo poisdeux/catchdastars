@@ -77,7 +77,7 @@ public class LevelLoader {
 	 */
 	static private Level loadSync(FileHandle file) {
 		Json json = new Json();
-		Gdx.app.log("LevelLoader", "loadSync: filename="+file.name());
+//		Gdx.app.log("LevelLoader", "loadSync: filename="+file.name());
 		try {
 			String text = file.readString();
 			Object root =  json.fromJson(Level.class, text);
@@ -130,10 +130,13 @@ public class LevelLoader {
 
 	public static Texture loadScreenShot(GameMetaData gameMetaData, Level level) {
 		Texture texture = null;
-		try {
-			texture = new Texture(Gdx.files.local(Files.getScreenshotFilename(level)));
-		} catch (Exception e) {
-			Gdx.app.log("ScreenshotFactory", "loadScreenShot: Error: "+e.getMessage());
+		FileHandle file = Gdx.files.local(Files.getScreenshotFilename(level));
+		if( file.exists() ) {
+			try {
+				texture = new Texture(file);
+			} catch (Exception e) {
+				Gdx.app.log("LevelLoader", "loadScreenShot: Error: " + e.getMessage());
+			}
 		}
 		return texture;
 	}

@@ -119,7 +119,7 @@ public class LevelEditorScreen extends AbstractScreen
         //previous levels. For example balloons
         Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
 
-        Gdx.app.log("LevelEditorScreen", "setupActors: level="+level);
+//        Gdx.app.log("LevelEditorScreen", "setupActors: level="+level);
         onLevelLoaded(this.level);
     }
 

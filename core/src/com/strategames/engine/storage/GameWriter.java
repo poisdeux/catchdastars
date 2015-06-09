@@ -84,7 +84,7 @@ public class GameWriter {
             Json json = new Json();
             file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
         } catch (Exception e) {
-            Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
+            Gdx.app.log("GameWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
         }
 
@@ -106,7 +106,7 @@ public class GameWriter {
             file.writeString(json.prettyPrint(gameMetaData.getJson()), false);
             return true;
         } catch (Exception e) {
-            Gdx.app.log("LevelWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
+            Gdx.app.log("GameWriter", "save: could not write: " + file.path() + "\nError: " + e.getMessage());
             return false;
         }
     }
@@ -119,12 +119,12 @@ public class GameWriter {
     static public boolean deleteInprogress(GameMetaData gameMetaData) {
         FileHandle file = Gdx.files.local(Files.getInProgressGameDirectory(gameMetaData));
         if (file.isDirectory()) {
-            if (file.deleteDirectory()) {
-                return true;
+            try {
+                return file.deleteDirectory();
+            } catch (Exception e) {
+                Gdx.app.log("GameWriter", "deleteInprogress: failed to delete " + file.name());
             }
         }
-
-        Gdx.app.log("Writer", "deleteInprogress: failed to delete " + file.name());
         return false;
     }
 
@@ -136,29 +136,25 @@ public class GameWriter {
     static public boolean deleteOriginal(GameMetaData gameMetaData) {
         FileHandle file = Gdx.files.local(Files.getOriginalGameDirectory(gameMetaData));
         if (file.isDirectory()) {
-            if (file.deleteDirectory()) {
-                return true;
+            try {
+                return file.deleteDirectory();
+            } catch (Exception e) {
+                Gdx.app.log("GameWriter", "deleteOriginal: failed to delete " + file.name());
             }
         }
 
-        Gdx.app.log("Writer", "deleteLocalDir: failed to delete directory " + Files.getOriginalGamesDirectory());
         return false;
     }
 
     static public boolean deleteAllOriginalGames() {
         FileHandle file = Gdx.files.local(Files.getOriginalGamesDirectory());
         if (file.isDirectory()) {
-            if (file.deleteDirectory()) {
-                return true;
+            try {
+                return file.deleteDirectory();
+            } catch (Exception e) {
+                Gdx.app.log("GameWriter", "deleteAllOriginalGames: failed to delete " + file.name());
             }
-        } else if (file.exists()) {
-            if (file.delete()) {
-                return true;
-            }
-        } else {
-            return true; // directory does not exist
         }
-        Gdx.app.log("Writer", "deleteLocalDir: failed to delete directory " + file);
         return false;
     }
 }

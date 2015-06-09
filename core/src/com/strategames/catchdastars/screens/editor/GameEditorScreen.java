@@ -472,24 +472,29 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		game.setLevel(editedLevel);
 
 		Array<Door> doors = editedLevel.getDoors();
-		Array<Door> doorsOld = editingLevel.getDoors();
+		Array<Door> doorsRemoved = editingLevel.getDoors();
 
-		//Remove all identical doors in new and old
+        Gdx.app.log("GameEditorScreen", "updateGame:  editedLevel="+editedLevel);
+
+        Gdx.app.log("GameEditorScreen", "updateGame:  editingLevel="+editingLevel);
+
+        //Remove all identical doors in new and old
 		//All remaining doors were removed from the level
-		doorsOld.removeAll(doors, false);
+		doorsRemoved.removeAll(doors, false);
 
         int[] editedLevelPos = editedLevel.getPosition();
 
         //Handle previously accessible levels from edited level
-		for(Door door : doorsOld) {
+		for(Door door : doorsRemoved) {
 			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
 			if( level != null ) {
                 level.delAccessibleBy(editedLevelPos[0], editedLevelPos[1]);
-                if( checkIfLevelStillReachable(level) != level.isReachable() ) {
-                    level.setReachable(! level.isReachable() );
-                    LevelWriter.saveOriginal(level);
+                Gdx.app.log("GameEditorScreen", "updateGame:  levelPos="+pos[0]+", "+pos[1] +"), delAccessibleBy(" + editedLevelPos[0] +", " + editedLevelPos[1] +")");
+                if( checkIfLevelReachable(level) != level.isReachable() ) {
+                    level.setReachable(!level.isReachable());
                 }
+				LevelWriter.saveOriginal(level);
             }
 		}
 
@@ -497,19 +502,25 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			int[] pos = door.getAccessToPosition();
 			Level level = game.getLevel(pos[0], pos[1]);
 			if( level != null ) {
-				level.addAccessibleBy(pos[0], pos[1]);
+				level.addAccessibleBy(editedLevelPos[0], editedLevelPos[1]);
+                Gdx.app.log("GameEditorScreen", "updateGame:  levelPos="+pos[0]+", "+pos[1] +"), addAccessibleBy(" + editedLevelPos[0] +", " + editedLevelPos[1] +")");
+                if( checkIfLevelReachable(level) != level.isReachable() ) {
+					level.setReachable(!level.isReachable());
+				}
+				LevelWriter.saveOriginal(level);
 			}
 		}
 	}
 
-    public boolean checkIfLevelStillReachable(Level level) {
+    public boolean checkIfLevelReachable(Level level) {
         Game game = getGameEngine().getGame();
         Array<com.strategames.engine.math.Vector2> levelPositions = level.getAccessibleBy();
         for(Vector2 pos : levelPositions ) {
             Level prevLevel = game.getLevel((int) pos.x, (int) pos.y);
-            Gdx.app.log("GameEditorScreen", "checkIfLevelStillReachable:  entryLevel="+pos);
+//            Gdx.app.log("GameEditorScreen", "checkIfLevelStillReachable:  entryLevel="+pos+" x="+pos.x);
             if( prevLevel != null ) {
                 if ( prevLevel.isReachable() )
+//                    Gdx.app.log("GameEditorScreen", "checkIfLevelStillReachable:  prevLevel is reachable");
                         //If entry level is reachable we are reachable!
                         return true;
             }
