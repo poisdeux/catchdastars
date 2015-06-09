@@ -30,6 +30,7 @@ import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Textures;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 import aurelienribon.tweenengine.Tween;
@@ -299,7 +300,11 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     public Screen popBackstack() {
-        return this.backStack.pop();
+        try {
+            return this.backStack.pop();
+        } catch (EmptyStackException e) {
+            return null;
+        }
     }
 
     public Screen peekBackStack() {
@@ -518,8 +523,9 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
      * TODO implement disposing screens when popped from backstack. This must be done after hide animation has finished
      */
     public void stopScreen() {
-        popBackstack();
-        setScreen(peekBackStack());
+        if( popBackstack() != null ) {
+            setScreen(peekBackStack());
+        }
     }
 
     @Override

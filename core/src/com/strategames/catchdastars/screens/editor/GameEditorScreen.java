@@ -513,7 +513,13 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	}
 
     public boolean checkIfLevelReachable(Level level) {
-        Game game = getGameEngine().getGame();
+        int[] levelPos = level.getPosition();
+		if( (levelPos[0] == 0 ) && ( levelPos[1] == 0 ) ) {
+			//Start level always reachable
+			return true;
+		}
+
+		Game game = getGameEngine().getGame();
         Array<com.strategames.engine.math.Vector2> levelPositions = level.getAccessibleBy();
         for(Vector2 pos : levelPositions ) {
             Level prevLevel = game.getLevel((int) pos.x, (int) pos.y);
