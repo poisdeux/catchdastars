@@ -21,7 +21,7 @@ public class Level implements Comparable<Level>, Writer {
 	private int[] position = new int[2];
 	private boolean reachable;
 	private GameMetaData gameMetaData;
-	
+
 	public Level() {
 	}
 
