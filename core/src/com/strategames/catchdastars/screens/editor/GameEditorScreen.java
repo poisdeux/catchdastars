@@ -18,10 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.strategames.catchdastars.game.CatchDaStars;
-import com.strategames.catchdastars.gameobjects.BalloonBlue;
-import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.engine.game.GameEngine;
-import com.strategames.engine.gameobject.types.Balloon;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.interfaces.OnLevelsReceivedListener;
 import com.strategames.engine.scenes.scene2d.Stage;
@@ -241,6 +238,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 			}
 		}
 
+		game.setLevel(level);
 		game.setCurrentLevelPosition(level.getPosition());
 		editingLevel = level;
 		gameEngine.showLevelEditor();
@@ -432,19 +430,6 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		level.setPosition(x, y);
 
 		ScreenBorder.create(level, game);
-
-		Balloon balloon = new BalloonBlue();
-		float xWorld = worldSize.x / 3f;
-		float yWorld = 1f;
-
-		balloon.setPosition(xWorld, yWorld);
-        balloon.setNew(false);
-        level.addGameObject(balloon);
-
-		balloon = new BalloonRed();
-		balloon.setPosition(xWorld + xWorld, yWorld);
-        balloon.setNew(false);
-        level.addGameObject(balloon);
 
 		level.setGameMetaData(game.getGame().getGameMetaData());
 

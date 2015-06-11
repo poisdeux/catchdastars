@@ -50,7 +50,7 @@ import com.strategames.ui.helpers.Grid;
  * @TODO When balloon is dragged out of screen area it is removed from game. This should not happen
  */
 public class LevelEditorScreen extends AbstractScreen
-        implements OnLevelLoadedListener, ActorListener, GestureListener, Dialog.OnClickListener {
+        implements ActorListener, GestureListener, Dialog.OnClickListener {
 
     private ButtonsDialog mainMenu;
     private Vector2 dragDirection;
@@ -71,27 +71,30 @@ public class LevelEditorScreen extends AbstractScreen
     private OrthographicCamera camera;
 
     private Level level;
-    private int[] currentLevelPosition;
 
-    private enum States {
+	private int blueBalloonsFromEntryLevels;
+	private int redBalloonsFromEntryLevels;
+
+	private enum States {
         ZOOM, LONGPRESS, DRAG, NONE
     }
 
     private States state;
 
-    public LevelEditorScreen(GameEngine game) {
-        super(game);
+    public LevelEditorScreen(GameEngine gameEngine) {
+        super(gameEngine);
 
         this.initialTouchPosition = new Vector2();
         this.dragDirection = new Vector2();
 
         this.selectedGameObjects = new ArrayList<GameObject>();
 
-        this.worldSize = game.getWorldSize();
+        this.worldSize = gameEngine.getWorldSize();
 
         this.grid = new Grid(this.worldSize.x, this.worldSize.y);
 
-        this.currentLevelPosition = game.getGame().getCurrentLevelPosition();
+	    Game game = gameEngine.getGame();
+	    this.level = game.getCurrentLevel();
     }
 
     @Override
@@ -112,26 +115,25 @@ public class LevelEditorScreen extends AbstractScreen
 
         displayGrid(LevelEditorPreferences.displayGridEnabled());
 
-        Game game = getGameEngine().getGame();
-        this.level = LevelLoader.loadSync(game.getGameMetaData(), this.currentLevelPosition);
-
-        //We need entryLevels to setup objects that are not new but should be added from
-        //previous levels. For example balloons
-        Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
-
-//        Gdx.app.log("LevelEditorScreen", "setupActors: level="+level);
-        onLevelLoaded(this.level);
+        setupLevel();
     }
 
     @Override
     public void show() {
-        //Set to high value to avoid overwriting game progressions
+	    /**
+	     * Testing level from the leveleditor will start LevelScreen which automatically
+	     * saves game progression. To prevent intervening with any real game progression
+	     * we set it to a high value.
+	     * TODO change int to a UUID?
+	     */
         getGameEngine().getGame().getGameMetaData().setSavedGameProgressNumber(1000);
-        //Remove any progression that might have been saved testing level
         GameWriter.deleteInprogress(getGameEngine().getGame().getGameMetaData());
 
         resetStageActors();
-        super.show();
+
+	    setupInfoFromEntryLevels();
+	    
+	    super.show();
     }
 
     @Override
@@ -369,9 +371,8 @@ public class LevelEditorScreen extends AbstractScreen
         }
     }
 
-    @Override
-    public void onLevelLoaded(Level level) {
-        if( level == null ) {
+    public void setupLevel() {
+        if( this.level == null ) {
             ErrorDialog dialog = new ErrorDialog(getStageUIActors(), "Error loading level", getSkin());
             dialog.setOnClickListener(this);
             dialog.create();
@@ -381,7 +382,7 @@ public class LevelEditorScreen extends AbstractScreen
 
         GameEngine gameEngine = getGameEngine();
         Stage stage = getStageActors();
-        Array<GameObject> gameObjects = level.getGameObjects();
+        Array<GameObject> gameObjects = this.level.getGameObjects();
         if( (gameObjects != null) ) {
             for( GameObject gameObject : gameObjects ) {
                 gameObject.initializeConfigurationItems();
@@ -393,7 +394,7 @@ public class LevelEditorScreen extends AbstractScreen
             }
         }
 
-        Array<Door> doors = level.getDoors();
+        Array<Door> doors = this.level.getDoors();
         if( (doors != null) ) {
             for( Door door : doors ) {
                 door.initializeConfigurationItems();
@@ -504,7 +505,7 @@ public class LevelEditorScreen extends AbstractScreen
      * Positions camera to make room for menu
      */
     private void zoomCamera(OrthographicCamera camera) {
-        camera.position.set(camera.viewportWidth/2f, camera.viewportHeight/2f, 0f);
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f);
         this.cameraZoomInitial = camera.zoom;
 
         Vector2 maxObjectSize = getMaxObjectSize();
@@ -640,42 +641,42 @@ public class LevelEditorScreen extends AbstractScreen
         });
 
         this.mainMenu.add("Options", new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                mainMenu.hide();
-                LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), LevelEditorScreen.this);
-                dialog.create();
-                dialog.setPosition(mainMenu.getX() - (dialog.getWidth() / 2f), mainMenu.getY());
-                dialog.show();
-            }
+	        @Override
+	        public void clicked(InputEvent event, float x, float y) {
+		        mainMenu.hide();
+		        LevelEditorOptionsDialog dialog = new LevelEditorOptionsDialog(stageUIActors, getSkin(), LevelEditorScreen.this);
+		        dialog.create();
+		        dialog.setPosition(mainMenu.getX() - (dialog.getWidth() / 2f), mainMenu.getY());
+		        dialog.show();
+	        }
         });
 
         this.mainMenu.add("Play level", new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                mainMenu.hide();
-                saveLevel();
-                GameEngine game = getGameEngine();
-                game.setTestMode(true);
-                game.startLevel(level);
-            }
+	        @Override
+	        public void clicked(InputEvent event, float x, float y) {
+		        mainMenu.hide();
+		        saveLevel();
+		        GameEngine game = getGameEngine();
+		        game.setTestMode(true);
+		        game.startLevel(level);
+	        }
         });
 
         this.mainMenu.setPositiveButton("Save", new OnClickListener() {
 
-            @Override
-            public void onClick(Dialog dialog, int which) {
-                mainMenu.hide();
-                saveLevel();
-            }
+	        @Override
+	        public void onClick(Dialog dialog, int which) {
+		        mainMenu.hide();
+		        saveLevel();
+	        }
         });
         this.mainMenu.setNegativeButton("Quit", new OnClickListener() {
 
-            @Override
-            public void onClick(Dialog dialog, int which) {
-                mainMenu.hide();
-                saveLevel();
-            }
+	        @Override
+	        public void onClick(Dialog dialog, int which) {
+		        mainMenu.hide();
+		        saveLevel();
+	        }
         });
 
         this.mainMenu.create();
@@ -730,9 +731,17 @@ public class LevelEditorScreen extends AbstractScreen
         y-=delta;
 
         for(GameObject object : gameObjects ) {
-            if( !  ( object instanceof Balloon ) ) { // do not add balloons to menu as only two balloons are allowed maximum
-                addGameObjectToMenu(stage, object, x, y);
-                y -= delta;
+            if( object instanceof Balloon ) { //only add balloons to menu if no balloon available from entry level
+				if( ( object instanceof BalloonBlue ) && ( this.blueBalloonsFromEntryLevels == 0 ) ) {
+					addGameObjectToMenu(stage, object, x, y);
+					y -= delta;
+				} else if( ( object instanceof BalloonRed ) && ( this.redBalloonsFromEntryLevels == 0 ) ) {
+					addGameObjectToMenu(stage, object, x, y);
+					y -= delta;
+				}
+            } else {
+	            addGameObjectToMenu(stage, object, x, y);
+	            y -= delta;
             }
         }
     }
@@ -844,7 +853,26 @@ public class LevelEditorScreen extends AbstractScreen
         }
     }
 
+    private void setupInfoFromEntryLevels() {
+	    Game game = getGameEngine().getGame();
+		//We need entryLevels to setup objects that are not new but should be added from
+	    //previous levels. For example balloons
+	    Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
+	    for(Vector2 pos : entryLevels) {
+			parseEntryLevel(game.getLevel((int) pos.x, (int) pos.y));
+	    }
+    }
 
+	private void parseEntryLevel(Level level) {
+		Array<GameObject> gameObjects = level.getGameObjects();
+		for(GameObject gameObject : gameObjects ) {
+			if( gameObject instanceof BalloonBlue ) {
+				this.blueBalloonsFromEntryLevels++;
+			} else if( gameObject instanceof BalloonRed ) {
+				this.redBalloonsFromEntryLevels++;
+			}
+		}
+	}
 }
 
 

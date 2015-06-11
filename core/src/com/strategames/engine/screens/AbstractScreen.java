@@ -169,6 +169,16 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 		return skin;
 	}
 
+	/**
+	 * {@inheritDoc show}
+	 * <br/>
+	 * Calls {@link #setupUI(Stage)}, {@link #setupMenu()}, and {@link #setupActors(Stage)} in that order.
+	 * <br/>
+	 * {@link #setupUI(Stage)} and {@link #setupMenu()} are ONLY called if UI stage has not already been setup.
+	 * In other words if {@link #getStageUIActors()} returns null
+	 * <br/>
+	 * {@link #setupActors(Stage)} is ONLY called if {@link #getStageActors()} returns null
+	 */
 	@Override
 	public void show()
 	{	
