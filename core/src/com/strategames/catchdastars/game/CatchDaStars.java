@@ -132,7 +132,7 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void resetLevel() {
-        initializeGameFromSavedState();
+        initializeGame();
     }
 
     @Override
@@ -228,17 +228,9 @@ public class CatchDaStars extends GameEngine {
     public void setGame(Game game) {
         super.setGame(game);
 
-        Textures textures = Textures.getInstance();
 
-        Score score = game.getScore();
 
-        score.addItem(KEY_BLUE_BALLOON, new Image(textures.balloonBlue), 10);
-        score.addItem(KEY_RED_BALLOON, new Image(textures.balloonRed), 10);
-        score.addItem(KEY_BLUE_STAR, new Image(textures.starBlue), 1);
-        score.addItem(KEY_RED_STAR, new Image(textures.starRed), 1);
-        score.addItem(KEY_GOLD_STAR, new Image(textures.starYellow), 5);
-
-        initializeGameFromSavedState();
+        initializeGame();
     }
 
     @Override
@@ -258,12 +250,18 @@ public class CatchDaStars extends GameEngine {
         }
     }
 
-    private void initializeGameFromSavedState() {
+    private void initializeGame() {
         Game game = getGame();
-
         GameMetaData gameMetaData = game.getGameMetaData();
-
+        Textures textures = Textures.getInstance();
         Score score = game.getScore();
+
+        score.addItem(KEY_BLUE_BALLOON, new Image(textures.balloonBlue), 10);
+        score.addItem(KEY_RED_BALLOON, new Image(textures.balloonRed), 10);
+        score.addItem(KEY_BLUE_STAR, new Image(textures.starBlue), 1);
+        score.addItem(KEY_RED_STAR, new Image(textures.starRed), 1);
+        score.addItem(KEY_GOLD_STAR, new Image(textures.starYellow), 5);
+
         String savedScore = gameMetaData.getAdditionalInfo(KEY_SCORE);
         if( savedScore == null ) {
             score.setCumulatedScore(0);

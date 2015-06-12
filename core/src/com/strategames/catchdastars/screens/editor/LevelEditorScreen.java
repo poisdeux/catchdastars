@@ -36,8 +36,6 @@ import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.utils.Game;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
-import com.strategames.engine.storage.LevelLoader;
-import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.utils.ScreenshotFactory;
 import com.strategames.ui.dialogs.ButtonsDialog;
 import com.strategames.ui.dialogs.Dialog;
@@ -46,9 +44,6 @@ import com.strategames.ui.dialogs.ErrorDialog;
 import com.strategames.ui.dialogs.GameObjectConfigurationDialog;
 import com.strategames.ui.helpers.Grid;
 
-/**
- * @TODO When balloon is dragged out of screen area it is removed from game. This should not happen
- */
 public class LevelEditorScreen extends AbstractScreen
         implements ActorListener, GestureListener, Dialog.OnClickListener {
 
@@ -68,12 +63,13 @@ public class LevelEditorScreen extends AbstractScreen
     private Vector3 worldSize;
 
     private float cameraZoomInitial;
-    private OrthographicCamera camera;
 
     private Level level;
 
 	private int blueBalloonsFromEntryLevels;
 	private int redBalloonsFromEntryLevels;
+
+    private Array<Door> entryLevelsDoors;
 
 	private enum States {
         ZOOM, LONGPRESS, DRAG, NONE
@@ -108,8 +104,7 @@ public class LevelEditorScreen extends AbstractScreen
     @Override
     protected void setupActors(Stage stage) {
         getMultiplexer().addProcessor(stage);
-        this.camera = (OrthographicCamera) stage.getCamera();
-        zoomCamera(this.camera);
+        zoomCamera((OrthographicCamera) stage.getCamera());
 
         getGameEngine().pauseGame();
 
@@ -132,7 +127,7 @@ public class LevelEditorScreen extends AbstractScreen
         resetStageActors();
 
 	    setupInfoFromEntryLevels();
-	    
+
 	    super.show();
     }
 
@@ -340,30 +335,10 @@ public class LevelEditorScreen extends AbstractScreen
         return false;
     }
 
-    /**
-     * Creates a copy of object and adds the copy to the game
-     * @param object
-     * @param xStage
-     * @param yStage
-     * @return game object added to the game
-     */
-    public GameObject addGameObject(GameObject object, float xStage, float yStage) {
-        GameObject copy = object.copy();
-        copy.setMenuItem(false);
-        copy.setInitialPosition(new Vector2(xStage, yStage));
-        copy.moveTo(xStage, yStage);
-        copy.initializeConfigurationItems();
-        copy.setGame(getGameEngine());
-        copy.setupImage();
-        copy.setupBody();
-        this.level.addGameObject(copy);
-        return copy;
-    }
-
     @Override
     public void onClick(Dialog dialog, int which) {
         if( dialog instanceof LevelEditorOptionsDialog ) {
-            handleLevelEditorOptionsDialogOnClick(dialog, which);
+            handleLevelEditorOptionsDialogOnClick(which);
         } else if (dialog instanceof GameObjectConfigurationDialog ) {
             handleGameObjectConfigurationDialogOnClick(dialog, which);
         } else if( dialog instanceof ChangeWorldSizeDialog ) {
@@ -403,6 +378,7 @@ public class LevelEditorScreen extends AbstractScreen
             }
         }
 
+
         //We setup the menu last to make sure menu items are drawn on top
         setupMenu(getStageActors());
     }
@@ -414,7 +390,7 @@ public class LevelEditorScreen extends AbstractScreen
 
     /**
      * TODO Show progress dialog while creating screenshot
-     * @return
+     * @return Timeline
      */
     @Override
     protected Timeline hideAnimation() {
@@ -565,7 +541,8 @@ public class LevelEditorScreen extends AbstractScreen
 
     /**
      * Moves actor to position v.
-     * @param actor
+     * @param stage holding the actor
+     * @param actor that should be moved
      * @param v new position of actor. Note: v will be changed,
      * so make a copy before calling this method if you wish to keep
      * its value
@@ -748,10 +725,10 @@ public class LevelEditorScreen extends AbstractScreen
 
     /**
      * Creates a copy of object and adds copy as menu item at position x,y
-     * @param stage
-     * @param object
-     * @param x
-     * @param y
+     * @param stage in which the menu is placed
+     * @param object that should be added to the menu
+     * @param x horizontal position
+     * @param y vertical position
      */
     private void addGameObjectToMenu(Stage stage, GameObject object, float x, float y) {
         GameObject gameObject = object.copy();
@@ -789,11 +766,8 @@ public class LevelEditorScreen extends AbstractScreen
     private boolean inGameArea(GameObject gameObject) {
         float x = gameObject.getX();
         float y = gameObject.getY();
-        if( ( x < 0 ) || ( x > worldSize.x ) ||
-                ( y < 0 ) || ( y > worldSize.y ) ) {
-            return false;
-        }
-        return true;
+        return ! ( ( x < 0 ) || ( x > worldSize.x ) ||
+                ( y < 0 ) || ( y > worldSize.y ) );
     }
 
     private void resizeWorld(int w, int h) {
@@ -806,7 +780,7 @@ public class LevelEditorScreen extends AbstractScreen
         camera.viewportHeight =  viewSize.y * h;
     }
 
-    private void handleLevelEditorOptionsDialogOnClick(Dialog dialog,int which) {
+    private void handleLevelEditorOptionsDialogOnClick(int which) {
         switch( which ) {
             case LevelEditorOptionsDialog.CHECKBOX_DISPLAYGRID:
                 displayGrid(LevelEditorPreferences.displayGridEnabled());
@@ -855,6 +829,9 @@ public class LevelEditorScreen extends AbstractScreen
 
     private void setupInfoFromEntryLevels() {
 	    Game game = getGameEngine().getGame();
+
+        this.entryLevelsDoors = new Array<>();
+
 		//We need entryLevels to setup objects that are not new but should be added from
 	    //previous levels. For example balloons
 	    Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
@@ -870,9 +847,15 @@ public class LevelEditorScreen extends AbstractScreen
 				this.blueBalloonsFromEntryLevels++;
 			} else if( gameObject instanceof BalloonRed ) {
 				this.redBalloonsFromEntryLevels++;
-			}
+			} else if( gameObject instanceof Door ) {
+                this.entryLevelsDoors.add((Door) gameObject);
+            }
 		}
 	}
+
+    private void addBalloons() {
+        
+    }
 }
 
 

@@ -13,9 +13,9 @@ import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
 public class Level implements Comparable<Level>, Writer {
-	private Array<GameObject> gameObjects = new Array<GameObject>();
-	private Array<Door> doors = new Array<Door>();;
-	private Array<com.strategames.engine.math.Vector2> accessibleBy = new Array<com.strategames.engine.math.Vector2>();
+	private Array<GameObject> gameObjects = new Array<>();
+	private Array<Door> doors = new Array<>();
+	private Array<com.strategames.engine.math.Vector2> accessibleBy = new Array<>();
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -29,7 +29,7 @@ public class Level implements Comparable<Level>, Writer {
 		if( gameObjects == null )
 			return;
 
-		this.gameObjects = new Array<GameObject>();
+		this.gameObjects = new Array<>();
 
 		for( GameObject object : gameObjects ) {
 			addGameObject(object);
@@ -40,7 +40,7 @@ public class Level implements Comparable<Level>, Writer {
 	 * Adds a gameobject to the level.
 	 * Note that gameobjects will only be added if {@link GameObject#setSaveToFile(boolean)}
 	 * is set to true
-	 * @param object
+	 * @param object gameobject that should be added to the level
 	 */
 	public void addGameObject(GameObject object) {
 		if( object.getSaveToFile() ){
@@ -76,20 +76,20 @@ public class Level implements Comparable<Level>, Writer {
 	 * Adds level position from which this level is accessible.
 	 * <br/>
 	 * If position has already been added it will not be added again.
-	 * @param x
-	 * @param y
+	 * @param x horizontal position
+	 * @param y vertical position
 	 */
 	public void addAccessibleBy(int x, int y) {
 		com.strategames.engine.math.Vector2 v = new com.strategames.engine.math.Vector2(x, y);
-		if( this.accessibleBy.contains(v, false) == false ) {
+		if( ! this.accessibleBy.contains(v, false) ) {
 			this.accessibleBy.add(v);
 		}
 	}
 
 	/**
 	 * Removes level position from which this level is accessible.
-	 * @param x
-	 * @param y
+	 * @param x horizontal position
+	 * @param y vertical position
 	 */
 	public void delAccessibleBy(int x, int y) {
 		this.accessibleBy.removeValue(new com.strategames.engine.math.Vector2(x, y), false);
@@ -99,6 +99,11 @@ public class Level implements Comparable<Level>, Writer {
 		return accessibleBy;
 	}
 
+	/**
+	 * Returns door gameobjects that have been added using {@link #addGameObject(GameObject)} or
+	 * set using {@link #setDoors(Array)}
+	 * @return array of Door(s)
+	 */
 	public Array<Door> getDoors() {
 		return doors;
 	}
@@ -149,18 +154,19 @@ public class Level implements Comparable<Level>, Writer {
 	public String getFilename() {
 		return position[0]+","+position[1];
 	}
-	
+
 	@Override
 	public int compareTo(Level o) {
+		if (o == null) return 1;
 		int[] oPosition = o.getPosition();
-		if( position[0] > oPosition[0] ) {
+		if (position[0] > oPosition[0]) {
 			return 1;
-		} else if( position[0] < oPosition[0] ) {
+		} else if (position[0] < oPosition[0]) {
 			return -1;
 		} else {
-			if( position[1] > oPosition[1] ) {
+			if (position[1] > oPosition[1]) {
 				return 1;
-			} else if( position[1] < oPosition[1] ) {
+			} else if (position[1] < oPosition[1]) {
 				return -1;
 			} else {
 				return 0;
@@ -170,28 +176,29 @@ public class Level implements Comparable<Level>, Writer {
 
 	@Override
 	public String toString() {
-		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append(String.format( Locale.US, "%d, pos=(%d, %d), #gameobjects=%d, #doors=%d, isReachable=%b\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size, isReachable() ));
-		stringBuffer.append("accessibleBy:");
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(String.format(Locale.US, "%d, pos=(%d, %d), #gameobjects=%d, #doors=%d, isReachable=%b\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size, isReachable()));
+		stringBuilder.append("accessibleBy:");
         for( Vector2 v : getAccessibleBy() ) {
-            stringBuffer.append(" "+v);
+            stringBuilder.append(" ");
+	        stringBuilder.append(v);
         }
-		stringBuffer.append("\nGameobjects:\n");
+		stringBuilder.append("\nGameobjects:\n");
 		for( GameObject gameObject : this.gameObjects ) {
-			stringBuffer.append(gameObject.toString());
-			stringBuffer.append("\n");
+			stringBuilder.append(gameObject.toString());
+			stringBuilder.append("\n");
 		}
 		for( GameObject gameObject : this.doors ) {
-			stringBuffer.append(gameObject.toString());
-			stringBuffer.append("\n");
+			stringBuilder.append(gameObject.toString());
+			stringBuilder.append("\n");
 		}
-		return stringBuffer.toString();
+		return stringBuilder.toString();
 	}
 
 	public Level copy() {
 		Level level = new Level();
 		if( this.gameObjects != null ) {
-			Array<GameObject> copyGameObjects = new Array<GameObject>();
+			Array<GameObject> copyGameObjects = new Array<>();
 			for( GameObject gameObject : this.gameObjects ) {
 				GameObject copy = gameObject.copy();
 				copy.setupImage();
