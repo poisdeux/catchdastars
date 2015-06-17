@@ -843,6 +843,7 @@ public class LevelEditorScreen extends AbstractScreen
 	private void parseEntryLevel(Level level) {
 		Array<GameObject> gameObjects = level.getGameObjects();
 		for(GameObject gameObject : gameObjects ) {
+            Gdx.app.log("LevelEditorScreen", "parseEntryLevel: gameObject="+gameObject);
 			if( gameObject instanceof BalloonBlue ) {
 				this.blueBalloonsFromEntryLevels++;
 			} else if( gameObject instanceof BalloonRed ) {

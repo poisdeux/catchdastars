@@ -6,13 +6,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
 import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.storage.Writer;
 
-public class Level implements Comparable<Level>, Writer {
+public class Level implements Json.Serializable, Comparable<Level>, Writer {
 	private Array<GameObject> gameObjects = new Array<>();
 	private Array<Door> doors = new Array<>();
 	private Array<com.strategames.engine.math.Vector2> accessibleBy = new Array<>();
@@ -24,6 +25,36 @@ public class Level implements Comparable<Level>, Writer {
 
 	public Level() {
 	}
+
+	@Override
+	public void write(Json json) {
+        json.writeValue("gameObjects", gameObjects);
+		json.writeValue("reachable", reachable);
+		json.writeValue("doors", doors);
+		json.writeValue("viewSize", viewSize);
+        json.writeValue("position", position);
+        json.writeValue("worldSize", worldSize);
+	}
+
+	@Override
+	public void read(Json json, JsonValue jsonData) {
+		JsonValue child = jsonData.child();
+
+		while( child != null ) {
+			if (child.name.contentEquals("gameObjects")) {
+				json.readFields(this.gameObjects, child);
+			} else if (child.name.contentEquals("reachable")) {
+				name = child.asString();
+			} else if (child.name.contentEquals("doors")) {
+				designer = child.asString();
+			} else if (child.name.contentEquals("viewSize")) {
+				parseAdditionalInfo(child.asString());
+			}
+
+			child = child.next();
+		}
+	}
+
 
 	public void setGameObjects(Array<GameObject> gameObjects) {
 		if( gameObjects == null )
