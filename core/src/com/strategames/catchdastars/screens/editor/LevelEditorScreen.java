@@ -378,6 +378,26 @@ public class LevelEditorScreen extends AbstractScreen
             }
         }
 
+        Game game = gameEngine.getGame();
+        //Get and add entry level doors leading to this level
+        int[] levelPos = this.level.getPosition();
+        Array<com.strategames.engine.math.Vector2> entryLevelsPos = this.level.getAccessibleBy();
+        for(com.strategames.engine.math.Vector2 entryLevelPos : entryLevelsPos) {
+            Level level = game.getLevel((int) entryLevelPos.x, (int) entryLevelPos.y);
+            doors = level.getDoors();
+            for(Door door : doors) {
+                int[] pos = door.getAccessToPosition();
+                if( (pos[0] == levelPos[0]) && (pos[0] == levelPos[0])) {
+                    //determine amount of red and blue balloons from entryLevel
+                    //add balloons from entryLevel at door position
+                }
+            }
+        }
+
+        //Add balloons from entry level at door positions
+        //Add entry level position to balloon so we know during gameplay
+        //which balloon position to take when player enters level
+
 
         //We setup the menu last to make sure menu items are drawn on top
         setupMenu(getStageActors());
