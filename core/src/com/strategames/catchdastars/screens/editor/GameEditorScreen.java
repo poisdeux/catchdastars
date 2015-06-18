@@ -85,6 +85,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		Array<Level> localLevels = LevelLoader.loadAllLocalLevels(game.getGameMetaData());
 		game.clearLevels();
 		for(Level level : localLevels) {
+			level.setGameMetaData(game.getGameMetaData());
 			game.setLevel(level);
 		}
 
@@ -128,11 +129,11 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		super.show();
 		Game game = getGameEngine().getGame();
 
-		Collection<Level> levelsArrayList = game.getLevels().values();
 		if( editingLevel != null ) {
 			updateGame();
 		}
 
+		Collection<Level> levelsArrayList = game.getLevels().values();
 		createLevelsOverview(levelsArrayList);
 
 		this.scrollPane.scrollToCenter(30, 40, 100, 100);
@@ -509,9 +510,11 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private void saveGame() {
 		Game game = getGameEngine().getGame();
+		GameMetaData metaData = game.getGameMetaData();
 		Collection<Level> allLevels = game.getLevels().values();
 		boolean savingFailed = false;
 		for( Level level : allLevels ) {
+			level.setGameMetaData(metaData);
 			if( ! LevelWriter.saveOriginal(level) ) {
 				savingFailed = true;
 			}

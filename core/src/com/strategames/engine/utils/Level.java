@@ -38,21 +38,7 @@ public class Level implements Json.Serializable, Comparable<Level>, Writer {
 
 	@Override
 	public void read(Json json, JsonValue jsonData) {
-		JsonValue child = jsonData.child();
-
-		while( child != null ) {
-			if (child.name.contentEquals("gameObjects")) {
-				json.readFields(this.gameObjects, child);
-			} else if (child.name.contentEquals("reachable")) {
-				name = child.asString();
-			} else if (child.name.contentEquals("doors")) {
-				designer = child.asString();
-			} else if (child.name.contentEquals("viewSize")) {
-				parseAdditionalInfo(child.asString());
-			}
-
-			child = child.next();
-		}
+		json.readFields(this, jsonData);
 	}
 
 

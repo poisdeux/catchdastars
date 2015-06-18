@@ -129,8 +129,13 @@ public class LevelLoader {
 	}
 
 	public static Texture loadScreenShot(GameMetaData gameMetaData, Level level) {
+		String filename = Files.getScreenshotFilename(level);
+		if( filename == null ) {
+			return null;
+		}
+
 		Texture texture = null;
-		FileHandle file = Gdx.files.local(Files.getScreenshotFilename(level));
+		FileHandle file = Gdx.files.local(filename);
 		if( file.exists() ) {
 			try {
 				texture = new Texture(file);
