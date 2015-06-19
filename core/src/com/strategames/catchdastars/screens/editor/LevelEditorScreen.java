@@ -387,20 +387,54 @@ public class LevelEditorScreen extends AbstractScreen
             doors = level.getDoors();
             for(Door door : doors) {
                 int[] pos = door.getAccessToPosition();
-                if( (pos[0] == levelPos[0]) && (pos[0] == levelPos[0])) {
+                if( (pos[0] == levelPos[0]) && (pos[0] == levelPos[0]) ) {
                     //determine amount of red and blue balloons from entryLevel
-                    //add balloons from entryLevel at door position
+                    for(GameObject gameObject : level.getGameObjects() ) {
+                        if( gameObject instanceof Balloon ) {
+                            //add balloons from entryLevel at door position
+                            addBalloonFromEntryLevel((Balloon) gameObject, door, level);
+                        }
+                    }
                 }
             }
         }
 
-        //Add balloons from entry level at door positions
-        //Add entry level position to balloon so we know during gameplay
-        //which balloon position to take when player enters level
-
-
         //We setup the menu last to make sure menu items are drawn on top
         setupMenu(getStageActors());
+    }
+
+    private void addBalloonFromEntryLevel(Balloon balloon, Door door, Level level) {
+        int[] pos = door.getAccessToPosition();
+        int[] levelPos = this.level.getPosition();
+        int[] entryLevelPos = this.level.getPosition();
+
+        /**
+         * -----D------
+         * |    b     |
+         * |         bD
+         * Db         |
+         * |          |
+         * |       b  |
+         * --------D---
+         *
+         * |,- = wall
+         * D = door
+         * b = balloon
+         */
+
+
+        //entrylevel right from current level then we should position
+        //balloon at the rightside of the door. Otherwise on the leftside.
+        int xPos = (int) (pos[0] + (levelPos[0] - entryLevelPos[0]) * balloon.getWidth());
+
+        //entrylevel on top of current level then we should position
+        //balloon below the door. Otherwise on above the door.
+        int yPos = (int) (pos[1] + (levelPos[1] - entryLevelPos[1]) * balloon.getHeight());
+
+        Balloon balloonCopy = (Balloon) balloon.copy();
+        balloonCopy.moveTo(xPos, yPos);
+        balloonCopy.setNew(false);
+        level.addGameObject(balloonCopy);
     }
 
     @Override
