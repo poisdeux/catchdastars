@@ -109,6 +109,10 @@ public class Files {
      * @return
      */
     static public String getScreenshotFilename(Level level) {
+        if( level == null ) {
+            return null;
+        }
+        
         GameMetaData gameMetaData = level.getGameMetaData();
 
         if( level == null ) {

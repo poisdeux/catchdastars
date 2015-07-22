@@ -109,9 +109,7 @@ public class LevelEditorScreen extends AbstractScreen
         getGameEngine().pauseGame();
 
         displayGrid(LevelEditorPreferences.displayGridEnabled());
-        Gdx.app.log("LevelEditorScreen", "setupActors: 1");
         setupLevel();
-        Gdx.app.log("LevelEditorScreen", "setupActors: 2");
     }
 
     @Override
@@ -408,9 +406,10 @@ public class LevelEditorScreen extends AbstractScreen
     }
 
     private void addBalloonFromEntryLevel(Balloon balloon, Door door, Level entryLevel) {
-        int[] pos = door.getAccessToPosition();
-        int[] levelPos = this.level.getPosition();
+        int[] levelPos = door.getAccessToPosition();
         int[] entryLevelPos = entryLevel.getPosition();
+
+        Vector2 wordlSize = entryLevel.getWorldSize();
 
         /**
          * -----D------
@@ -426,14 +425,45 @@ public class LevelEditorScreen extends AbstractScreen
          * b = balloon
          */
 
+        Gdx.app.log("LevelEditorScreen", "addBalloonFromEntryLevel: pos=("+door.getX()+","+door.getY()+
+                "), levelPos=("+levelPos[0]+","+levelPos[1]+
+                "), entryLevelPos=("+entryLevelPos[0]+","+entryLevelPos[0]+
+                "), worldSize="+wordlSize);
+
+        /**
+         * Determine if entryLevel is left or right from current level
+         * and if it is above or below current level
+         *
+         *    Vertical position:
+         *    below: ySign = +1
+         *    above: ySign = -1
+         *    same:  ySign = 0
+         *
+         *    Horizontal position:
+         *    left:  xSign = -1
+         *    right: xSign = +1
+         *    same:  xSign = 0
+         */
+        int ySign = levelPos[1] - entryLevelPos[1];
+        int xSign = levelPos[0] - entryLevelPos[0];
+
+        //Door's position from entryLevel should be mirrored
+        //in current level
+        float xDoor = xSign != 0 ? (worldSize.x - door.getX()) : door.getX();
+        float yDoor = ySign != 0 ? (worldSize.y - door.getY()) : door.getY();
+
+        float balloonHeight = ySign < 0 ? balloon.getHeight() : 0;
+        float balloonWidth = xSign < 0 ? 0 : balloon.getWidth();
 
         //entrylevel right from current level then we should position
         //balloon at the rightside of the door. Otherwise on the leftside.
-        int xPos = (int) (pos[0] + (levelPos[0] - entryLevelPos[0]) * balloon.getWidth());
+        float xPos = xDoor + (xSign * (balloonWidth + door.getHalfWidth()));
 
         //entrylevel on top of current level then we should position
         //balloon below the door. Otherwise on above the door.
-        int yPos = (int) (pos[1] + (levelPos[1] - entryLevelPos[1]) * balloon.getHeight());
+        float yPos = yDoor + (ySign * (balloonHeight + door.getHalfHeight()));
+
+        Gdx.app.log("LevelEditorScreen", "addBalloonFromEntryLevel: balloon="+xPos+", "+yPos+")");
 
         Balloon balloonCopy = (Balloon) balloon.copy();
         balloonCopy.moveTo(xPos, yPos);
@@ -901,7 +931,6 @@ public class LevelEditorScreen extends AbstractScreen
     private void parseEntryLevel(Level level) {
         Array<GameObject> gameObjects = level.getGameObjects();
         for(GameObject gameObject : gameObjects ) {
-            Gdx.app.log("LevelEditorScreen", "parseEntryLevel: gameObject="+gameObject);
             if( gameObject instanceof BalloonBlue ) {
                 this.blueBalloonsFromEntryLevels++;
             } else if( gameObject instanceof BalloonRed ) {
