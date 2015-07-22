@@ -181,8 +181,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor
 	 */
 	@Override
 	public void show()
-	{	
-
+	{
 		if( this.stageUIActors == null ) {
 			getMultiplexer().addProcessor(getStageUIActors());
 			setupUI(getStageUIActors());

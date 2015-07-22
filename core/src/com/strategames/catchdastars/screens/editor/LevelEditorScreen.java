@@ -109,8 +109,9 @@ public class LevelEditorScreen extends AbstractScreen
         getGameEngine().pauseGame();
 
         displayGrid(LevelEditorPreferences.displayGridEnabled());
-
+        Gdx.app.log("LevelEditorScreen", "setupActors: 1");
         setupLevel();
+        Gdx.app.log("LevelEditorScreen", "setupActors: 2");
     }
 
     @Override
@@ -355,6 +356,8 @@ public class LevelEditorScreen extends AbstractScreen
             return;
         }
 
+        addBalloonsFromEntryLevels();
+
         GameEngine gameEngine = getGameEngine();
         Stage stage = getStageActors();
         Array<GameObject> gameObjects = this.level.getGameObjects();
@@ -368,7 +371,6 @@ public class LevelEditorScreen extends AbstractScreen
                 }
             }
         }
-
         Array<Door> doors = this.level.getDoors();
         if( (doors != null) ) {
             for( Door door : doors ) {
@@ -378,35 +380,37 @@ public class LevelEditorScreen extends AbstractScreen
             }
         }
 
-        Game game = gameEngine.getGame();
+        //We setup the menu last to make sure menu items are drawn on top
+        setupMenu(getStageActors());
+    }
+
+    private void addBalloonsFromEntryLevels() {
+        Game game = getGameEngine().getGame();
         //Get and add entry level doors leading to this level
         int[] levelPos = this.level.getPosition();
         Array<com.strategames.engine.math.Vector2> entryLevelsPos = this.level.getAccessibleBy();
         for(com.strategames.engine.math.Vector2 entryLevelPos : entryLevelsPos) {
-            Level level = game.getLevel((int) entryLevelPos.x, (int) entryLevelPos.y);
-            doors = level.getDoors();
+            Level entryLevel = game.getLevel((int) entryLevelPos.x, (int) entryLevelPos.y);
+            Array<Door> doors = entryLevel.getDoors();
             for(Door door : doors) {
                 int[] pos = door.getAccessToPosition();
-                if( (pos[0] == levelPos[0]) && (pos[0] == levelPos[0]) ) {
+                if ((pos[0] == levelPos[0]) && (pos[0] == levelPos[0])) {
                     //determine amount of red and blue balloons from entryLevel
-                    for(GameObject gameObject : level.getGameObjects() ) {
-                        if( gameObject instanceof Balloon ) {
+                    for (GameObject gameObject : entryLevel.getGameObjects()) {
+                        if (gameObject instanceof Balloon) {
                             //add balloons from entryLevel at door position
-                            addBalloonFromEntryLevel((Balloon) gameObject, door, level);
+                            addBalloonFromEntryLevel((Balloon) gameObject, door, entryLevel);
                         }
                     }
                 }
             }
         }
-
-        //We setup the menu last to make sure menu items are drawn on top
-        setupMenu(getStageActors());
     }
 
-    private void addBalloonFromEntryLevel(Balloon balloon, Door door, Level level) {
+    private void addBalloonFromEntryLevel(Balloon balloon, Door door, Level entryLevel) {
         int[] pos = door.getAccessToPosition();
         int[] levelPos = this.level.getPosition();
-        int[] entryLevelPos = this.level.getPosition();
+        int[] entryLevelPos = entryLevel.getPosition();
 
         /**
          * -----D------
@@ -434,7 +438,7 @@ public class LevelEditorScreen extends AbstractScreen
         Balloon balloonCopy = (Balloon) balloon.copy();
         balloonCopy.moveTo(xPos, yPos);
         balloonCopy.setNew(false);
-        level.addGameObject(balloonCopy);
+        this.level.addGameObject(balloonCopy);
     }
 
     @Override
@@ -906,10 +910,6 @@ public class LevelEditorScreen extends AbstractScreen
                 this.entryLevelsDoors.add((Door) gameObject);
             }
         }
-    }
-
-    private void addBalloons() {
-
     }
 }
 
