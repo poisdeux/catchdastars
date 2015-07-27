@@ -383,12 +383,17 @@ public class LevelEditorScreen extends AbstractScreen
     }
 
     private void addBalloonsFromEntryLevels() {
-        Game game = getGameEngine().getGame();
         //Get and add entry level doors leading to this level
         int[] levelPos = this.level.getPosition();
+
+        Array<Level> entryLevels = new Array<>();
+        Game game = getGameEngine().getGame();
         Array<com.strategames.engine.math.Vector2> entryLevelsPos = this.level.getAccessibleBy();
+
         for(com.strategames.engine.math.Vector2 entryLevelPos : entryLevelsPos) {
+
             Level entryLevel = game.getLevel((int) entryLevelPos.x, (int) entryLevelPos.y);
+
             Array<Door> doors = entryLevel.getDoors();
             for(Door door : doors) {
                 int[] pos = door.getAccessToPosition();
