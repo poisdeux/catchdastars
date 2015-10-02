@@ -68,7 +68,11 @@ public class LevelLoader {
             if( ! file.exists() ) {
                 file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
             }
-            return loadSync(file);
+            Level level = loadSync(file);
+	        if( level != null ) {
+		        level.setGameMetaData(gameMetaData);
+	        }
+	        return level;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -84,7 +88,11 @@ public class LevelLoader {
     static public Level loadOriginal(GameMetaData gameMetaData, int[] pos) {
         try {
             FileHandle file = Gdx.files.local(Files.getOriginalLevelFilename(gameMetaData, pos));
-            return loadSync(file);
+	        Level level = loadSync(file);
+	        if( level != null ) {
+		        level.setGameMetaData(gameMetaData);
+	        }
+	        return level;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -149,7 +157,7 @@ public class LevelLoader {
 		return levels;
 	}
 
-	public static Texture loadScreenShot(GameMetaData gameMetaData, Level level) {
+	public static Texture loadScreenShot(Level level) {
 		String filename = Files.getScreenshotFilename(level);
 		if( filename == null ) {
 			return null;

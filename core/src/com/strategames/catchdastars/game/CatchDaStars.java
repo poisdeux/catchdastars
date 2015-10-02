@@ -407,7 +407,8 @@ public class CatchDaStars extends GameEngine {
         gameMetaData.setAdditionalInfo(KEY_RED_BALLOON, String.valueOf(this.amountOfRedBalloons));
 
         Gdx.app.log("CatchDaStars", "levelComplete(): gameMetaData=" + gameMetaData);
-        GameWriter.saveProgress(game.getGameMetaData(), this.level);
+
+        GameWriter.saveProgress(this.level);
     }
 
     @Override

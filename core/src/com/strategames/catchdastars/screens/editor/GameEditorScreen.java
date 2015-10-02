@@ -321,7 +321,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 
 	private ScreenshotImage createLevelImage(Level level) {
 		Vector2 elementSize = this.levelButtonsGrid.getElementSize();
-		Texture texture = LevelLoader.loadScreenShot(level.getGameMetaData(), level);
+		Texture texture = LevelLoader.loadScreenShot(level);
 		if( texture == null ) {
 			texture = new Texture(emptyLevelImage);
 		}

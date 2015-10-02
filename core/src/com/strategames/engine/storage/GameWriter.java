@@ -30,12 +30,11 @@ public class GameWriter {
 
     /**
      * Saves progress in game meta data file and saves progress in level file
-     * @param gameMetaData
      * @param level
      * @return true if succeeded, false otherwise
      */
-    static public boolean saveProgress(GameMetaData gameMetaData, Level level) {
-        if( ! saveProgress(gameMetaData) ) {
+    static public boolean saveProgress(Level level) {
+        if( ! saveProgress(level.getGameMetaData()) ) {
             return false;
         }
 
@@ -72,12 +71,11 @@ public class GameWriter {
 
     /**
      * Saves original game meta data file and original level file
-     * @param gameMetaData
      * @param level
      * @return true if succeeded, false otherwise
      */
-    static public boolean saveOriginal(GameMetaData gameMetaData, Level level) {
-        if( ! saveOriginal(gameMetaData) ) {
+    static public boolean saveOriginal(Level level) {
+        if( ! saveOriginal(level.getGameMetaData()) ) {
             return false;
         }
 

@@ -23,7 +23,6 @@ package com.strategames.engine.storage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Array;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.ScreenDensity;
 
@@ -73,6 +72,7 @@ public class Files {
 
     static public String getInProgressGameDirectory(GameMetaData gameMetaData) {
         if( gameMetaData == null ) {
+            Gdx.app.log("Files", "WARNING: getInProgressGameDirectory: gameMetaData is null");
             return null;
         }
 
