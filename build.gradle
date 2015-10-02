@@ -75,8 +75,6 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         compile fileTree(dir: '../libs', include: '*.jar')
-	androidTestCompile 'junit:junit:4.12'
-        androidTestCompile "org.mockito:mockito-core:1.9.5"
     }
 }
 
@@ -109,6 +107,9 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        // Test dependencies :
+        testCompile "junit:junit:4.11"
+        testCompile "org.mockito:mockito-core:1.9.5"
 	compile fileTree(dir: '../libs', include: '*.jar')
     }
 

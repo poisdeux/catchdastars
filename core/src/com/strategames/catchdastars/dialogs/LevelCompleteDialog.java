@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -166,7 +167,7 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 			showCashRegistry(this.animPosition.x, this.animPosition.y);
 			break;
 		case 5:
-            int totalScore = score.getCumulatedScore() - score.getTotalScoreFromScoreItems();
+            totalScore = score.getCumulatedScore() - score.getTotalScoreFromScoreItems();
             for(int i = 0; i < this.scoreActors.size(); i++) {
                 calculateTotalAnimation(i, this.scoreActors.get(i), this.animPosition.y);
             }
@@ -195,10 +196,9 @@ public class LevelCompleteDialog extends GameStateDialog implements ChalkLineAni
 		double scaleFactor = this.maxImageHeight / (double) image.getHeight() ;
 		float height = this.maxImageHeight;
 		float width = (float) (image.getWidth() * scaleFactor);
-		
+
 		Table scoreItemTable = new Table();
-		scoreItemTable.setHeight(height);
-		scoreItemTable.add(image).padRight(20f).width(width);
+		scoreItemTable.add(image).padRight(20f).width(width).height(height);
 
 		final Label label = new Label("", getSkin());
 		scoreItemTable.add(label).width(50f);
