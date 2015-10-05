@@ -39,17 +39,19 @@ import com.strategames.engine.sounds.BalloonPopSound;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
+import com.sun.org.apache.xml.internal.utils.IntVector;
 
 abstract public class Balloon extends DynamicBody implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;
 	private static final float MAX_LIFTFACTOR = 2f;
 	private static final float DEFAULT_LIFTFACTOR = 1.4f;
 
-	private static final float WIDTH = 0.30f;
+	public static final float WIDTH = 0.30f;
 
 	private Vector2 upwardLiftPosition;
 	private float upwardLift;
 	private float liftFactor = DEFAULT_LIFTFACTOR;
+	private int[] entryLevelPosition = {0,0};
 
 	private BalloonPopSound soundBalloonPop = new BalloonPopSound();
 	private BalloonBounceSound soundBalloonBounce = new BalloonBounceSound();
@@ -76,6 +78,31 @@ abstract public class Balloon extends DynamicBody implements OnConfigurationItem
 
 	public float getLiftFactor() {
 		return liftFactor;
+	}
+
+	/**
+	 * All levels except the first contain balloons that represent balloons
+	 * from other levels that provide access.
+	 * To mark this balloon as a representation of another level's balloon,
+	 * you need to set the position of the other level.
+	 *
+	 * Needed during gameplay to determine where to place a balloon when user enters
+	 * from a specific door.
+	 * Needed by the editor to determine if a balloon representing a balloon position
+	 * for a balloon from a specific level has already been added to the level.
+	 * @param x
+	 * @param y
+	 */
+	public void setEntryLevelPosition(int x, int y) {
+		this.entryLevelPosition = entryLevelPosition;
+	}
+
+	/**
+	 *
+	 * @return 1-dimensional array containing x value at index 0 and y value at index 1
+	 */
+	public int[] getEntryLevelPosition() {
+		return entryLevelPosition;
 	}
 
 	@Override

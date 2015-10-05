@@ -55,6 +55,7 @@ import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelWriter;
 import com.strategames.engine.utils.Game;
+import com.strategames.engine.utils.GameObjectUtils;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.LevelEditorPreferences;
 import com.strategames.engine.utils.ScreenshotFactory;
@@ -404,16 +405,24 @@ public class LevelEditorScreen extends AbstractScreen
     }
 
     private void addBalloonsFromEntryLevels() {
+        //Get balloons from current level
+        Array<Balloon> balloons = GameObjectUtils.<Balloon>getGameObjectsOfType(this.level.getGameObjects(), Balloon.class);
+
         //Get and add entry level doors leading to this level
         int[] levelPos = this.level.getPosition();
 
         Array<Level> entryLevels = new Array<>();
         Game game = getGameEngine().getGame();
-        Array<com.strategames.engine.math.Vector2> entryLevelsPos = this.level.getAccessibleBy();
+        Array<int[]> entryLevelsPos = this.level.getAccessibleBy();
 
-        for(com.strategames.engine.math.Vector2 entryLevelPos : entryLevelsPos) {
+        //For each level that provides access to the current level determine if
+        //balloons must be added to the current level
+        for(int[] entryLevelPos : entryLevelsPos) {
 
-            Level entryLevel = game.getLevel((int) entryLevelPos.x, (int) entryLevelPos.y);
+            if( entryLevelBalloonAvailable(balloons, entryLevelPos[0], entryLevelPos[1]))
+                continue;
+
+            Level entryLevel = game.getLevel(entryLevelPos[0], entryLevelPos[1]);
 
             Array<Door> doors = entryLevel.getDoors();
             for(Door door : doors) {
@@ -431,11 +440,21 @@ public class LevelEditorScreen extends AbstractScreen
         }
     }
 
+    private boolean entryLevelBalloonAvailable(Array<Balloon> balloons, int x, int y) {
+        for( GameObject balloon : balloons ) {
+            int[] pos = ((Balloon) balloon).getEntryLevelPosition();
+            if( ( pos[0] == x ) && ( pos[1] == y ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void addBalloonFromEntryLevel(Balloon balloon, Door door, Level entryLevel) {
         int[] levelPos = door.getAccessToPosition();
         int[] entryLevelPos = entryLevel.getPosition();
 
-        Vector2 wordlSize = entryLevel.getWorldSize();
+        Vector2 worldSize = entryLevel.getWorldSize();
 
         /**
          * -----D------
@@ -454,7 +473,7 @@ public class LevelEditorScreen extends AbstractScreen
         Gdx.app.log("LevelEditorScreen", "addBalloonFromEntryLevel: pos=("+door.getX()+","+door.getY()+
                 "), levelPos=("+levelPos[0]+","+levelPos[1]+
                 "), entryLevelPos=("+entryLevelPos[0]+","+entryLevelPos[0]+
-                "), worldSize="+wordlSize);
+                "), worldSize="+worldSize);
 
         /**
          * Determine if entryLevel is left or right from current level
@@ -475,8 +494,8 @@ public class LevelEditorScreen extends AbstractScreen
 
         //Door's position from entryLevel should be mirrored
         //in current level
-        float xDoor = xSign != 0 ? (worldSize.x - door.getX()) : door.getX();
-        float yDoor = ySign != 0 ? (worldSize.y - door.getY()) : door.getY();
+        float xDoor = xSign != 0 ? (this.worldSize.x - door.getX()) : door.getX();
+        float yDoor = ySign != 0 ? (this.worldSize.y - door.getY()) : door.getY();
 
         float balloonHeight = ySign < 0 ? balloon.getHeight() : 0;
         float balloonWidth = xSign < 0 ? 0 : balloon.getWidth();
@@ -489,11 +508,13 @@ public class LevelEditorScreen extends AbstractScreen
         //balloon below the door. Otherwise on above the door.
         float yPos = yDoor + (ySign * (balloonHeight + door.getHalfHeight()));
 
-        Gdx.app.log("LevelEditorScreen", "addBalloonFromEntryLevel: balloon="+xPos+", "+yPos+")");
+        Gdx.app.log("LevelEditorScreen", "addBalloonFromEntryLevel: balloon=" + xPos + ", " + yPos + ")");
 
         Balloon balloonCopy = (Balloon) balloon.copy();
+
         balloonCopy.moveTo(xPos, yPos);
         balloonCopy.setNew(false);
+        balloonCopy.setEntryLevelPosition(entryLevelPos[0], entryLevelPos[1]);
         this.level.addGameObject(balloonCopy);
     }
 
@@ -948,9 +969,10 @@ public class LevelEditorScreen extends AbstractScreen
 
         //We need entryLevels to setup objects that are not new but should be added from
         //previous levels. For example balloons
-        Array<com.strategames.engine.math.Vector2> entryLevels = this.level.getAccessibleBy();
-        for(Vector2 pos : entryLevels) {
-            parseEntryLevel(game.getLevel((int) pos.x, (int) pos.y));
+        Array<int[]> entryLevels = this.level.getAccessibleBy();
+
+        for(int[] pos : entryLevels) {
+            parseEntryLevel(game.getLevel(pos[0], pos[1]));
         }
     }
 

@@ -37,7 +37,7 @@ import com.strategames.engine.storage.Writer;
 public class Level implements Json.Serializable, Comparable<Level>, Writer {
 	private Array<GameObject> gameObjects = new Array<>();
 	private Array<Door> doors = new Array<>();
-	private Array<com.strategames.engine.math.Vector2> accessibleBy = new Array<>();
+	private Array<int[]> accessibleBy = new Array<>();
 	private Vector2 worldSize = new Vector2(0, 0);
 	private Vector2 viewSize  = new Vector2(0, 0);;
 	private int[] position = new int[2];
@@ -118,10 +118,11 @@ public class Level implements Json.Serializable, Comparable<Level>, Writer {
 	 * @param y vertical position
 	 */
 	public void addAccessibleBy(int x, int y) {
-		com.strategames.engine.math.Vector2 v = new com.strategames.engine.math.Vector2(x, y);
-		if( ! this.accessibleBy.contains(v, false) ) {
-			this.accessibleBy.add(v);
+		for( int[] pos : this.accessibleBy ) {
+			if( ( pos[0] == x ) && ( pos[1] == y ) )
+				return;
 		}
+		this.accessibleBy.add(new int[] {x, y});
 	}
 
 	/**
@@ -130,10 +131,14 @@ public class Level implements Json.Serializable, Comparable<Level>, Writer {
 	 * @param y vertical position
 	 */
 	public void delAccessibleBy(int x, int y) {
-		this.accessibleBy.removeValue(new com.strategames.engine.math.Vector2(x, y), false);
+		this.accessibleBy.removeValue(new int[]{x, y}, false);
 	}
 
-	public Array<com.strategames.engine.math.Vector2> getAccessibleBy() {
+	/**
+	 *
+	 * @return array of integer tuples. Each tuple has x value at index 0 and y value at index 1
+	 */
+	public Array<int[]> getAccessibleBy() {
 		return accessibleBy;
 	}
 
@@ -217,9 +222,8 @@ public class Level implements Json.Serializable, Comparable<Level>, Writer {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(String.format(Locale.US, "%d, pos=(%d, %d), #gameobjects=%d, #doors=%d, isReachable=%b\n", hashCode(), this.position[0], this.position[1], this.gameObjects.size, this.doors.size, isReachable()));
 		stringBuilder.append("accessibleBy:");
-        for( Vector2 v : getAccessibleBy() ) {
-            stringBuilder.append(" ");
-	        stringBuilder.append(v);
+        for( int[] pos : getAccessibleBy() ) {
+            stringBuilder.append(" ["+pos[0]+","+pos[1]+"]");
         }
 		stringBuilder.append("\nGameobjects:\n");
 		for( GameObject gameObject : this.gameObjects ) {
@@ -295,7 +299,7 @@ public class Level implements Json.Serializable, Comparable<Level>, Writer {
 			return false;
 		}
 
-		Array<com.strategames.engine.math.Vector2> accessiblePos = level.getAccessibleBy();
+		Array<int[]> accessiblePos = level.getAccessibleBy();
 		if( ! accessiblePos.equals(accessibleBy) ) {
 			return false;
 		}

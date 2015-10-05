@@ -51,16 +51,12 @@ import com.strategames.engine.utils.ConfigurationItem;
  * GameObject assumes sprite origin is located at bottom left. If you extend this
  * class for an object where the sprite origin is somewhere else you need to override
  * the following methods
- * <br/> 
- * {@link #draw(SpriteBatch, float)}
  * <br/>
  * {@link #moveTo(float, float)}
  * <br/>
  * and make sure your images and bodies are aligned. You can check this by calling
  * {@link #drawBoundingBox(SpriteBatch)} in {@link #draw(SpriteBatch, float)}.
- *  
- *  TODO: create subclasses DynamicObject and StaticObject replacing createBody with createFixture 
- *  and applyForce and handleCollision only available in DynamicObject
+ *
  * @author martijn brekhof
  *
  */
@@ -75,7 +71,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	private boolean isNew = true;
 	private boolean toBeDestroyed;
 	private Array<GameObject> isHitBy;
-	
+
 	protected Vector2 initialPosition = new Vector2(); 
 
 	private boolean isMenuItem;
@@ -232,7 +228,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 
 	/**
 	 * Use this to mark this object for deletion.
-	 * @param delete
+	 * @param remove
 	 */
 	synchronized public void setCanBeRemoved(boolean remove) {
 		this.canBeRemoved = remove;
@@ -497,7 +493,7 @@ abstract public class GameObject extends Image implements Json.Serializable {
 	abstract protected TextureRegion createImage();
 
 	/**
-	 * Called after {@link #createTextureRegionDrawable()} to create the Box2D body of the game object.
+	 * Called to create the Box2D body of the game object.
 	 * @return the created body
 	 */
 	abstract protected Body createBody(World world);
