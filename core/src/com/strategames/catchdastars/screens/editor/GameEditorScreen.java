@@ -414,6 +414,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(gameMetaData.getJson());
 		}else if(text.contentEquals("Play game")) {
+			GameWriter.deleteInprogress(gameMetaData);
             gameEngine.setTestMode(true);
 			gameEngine.startLevel(new int[] {0,0});
 		} else if(text.contentEquals("Delete game")) {
