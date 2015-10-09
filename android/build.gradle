@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
+
 android {
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "22.0.1"
     compileSdkVersion 22
     sourceSets {
         main {
@@ -12,10 +13,6 @@ android {
             assets.srcDirs = ['assets']
         }
 
-        test {
-            java.srcDirs = ['tests/src']
-        }
-
         androidTest.setRoot('tests')
         instrumentTest.setRoot('tests')
     }
@@ -23,38 +20,30 @@ android {
     repositories {
         def androidHome = System.getenv("ANDROID_HOME")
         maven { url "$androidHome/extras/android/m2repository/" }
-        maven { url "$androidHome/extras/google/m2repository/" }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
+        maven { url "$androidHome/extras/google/m2repository/"}
     }
 }
-//Fixes issue with gradle scanning all classes for test patterns
-//See https://issues.gradle.org/browse/GRADLE-1682
-tasks.withType(Test) {
-    scanForTestClasses = false
-    include "**/*SelectMusicActivityTest.class"
-    // whatever Ant pattern matches your test class files
-}
+
 // needed to add JNI shared libraries to APK when compiling on CLI
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
     pkgTask.jniFolders = new HashSet<File>()
     pkgTask.jniFolders.add(new File(projectDir, 'libs'))
 }
+
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives() {
+task copyAndroidNatives() { 
     file("libs/armeabi/").mkdirs();
     file("libs/armeabi-v7a/").mkdirs();
     file("libs/x86/").mkdirs();
 
     configurations.natives.files.each { jar ->
         def outputDir = null
-        if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-        if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-        if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-        if (outputDir != null) {
+        if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+        if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+        if(outputDir != null) {
             copy {
                 from zipTree(jar)
                 into outputDir
@@ -63,10 +52,12 @@ task copyAndroidNatives() {
         }
     }
 }
+
 task run(type: Exec) {
     def adb = "$System.env.ANDROID_HOME/platform-tools/adb"
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.strategames.catchdastars.android/com.strategames.catchdastars.android.AndroidLauncher'
 }
+
 // sets up the Android Eclipse project, using the old Ant based build.
 eclipse {
     // need to specify Java source sets explicitely, SpringSource Gradle Eclipse plugin
@@ -83,8 +74,8 @@ eclipse {
     }
 
     classpath {
-        plusConfigurations += project.configurations.compile
-        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'
+        plusConfigurations += project.configurations.compile        
+        containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'       
     }
 
     project {
@@ -97,11 +88,12 @@ eclipse {
         buildCommand "com.android.ide.eclipse.adt.ApkBuilder"
     }
 }
+
 // sets up the Android Idea project, using the old Ant based build.
 idea {
     module {
         sourceDirs += file("src");
-        scopes = [COMPILE: [plus: [project.configurations.compile]]]
+        scopes = [ COMPILE: [plus:[project.configurations.compile]]]        
 
         iml {
             withXml {
@@ -111,14 +103,11 @@ idea {
                 builder.component(name: "FacetManager") {
                     facet(type: "android", name: "Android") {
                         configuration {
-                            option(name: "UPDATE_PROPERTY_FILES", value: "true")
+                            option(name: "UPDATE_PROPERTY_FILES", value:"true")
                         }
                     }
                 }
             }
         }
     }
-}
-
-dependencies {
 }
