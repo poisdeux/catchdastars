@@ -21,8 +21,6 @@
 
 package com.strategames.engine.gameobject.types;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -39,7 +37,8 @@ import com.strategames.engine.sounds.BalloonPopSound;
 import com.strategames.engine.utils.BodyEditorLoader;
 import com.strategames.engine.utils.ConfigurationItem;
 import com.strategames.engine.utils.ConfigurationItem.OnConfigurationItemChangedListener;
-import com.sun.org.apache.xml.internal.utils.IntVector;
+
+import java.util.ArrayList;
 
 abstract public class Balloon extends DynamicBody implements OnConfigurationItemChangedListener {
 	private static final float MIN_LIFTFACTOR = 1f;

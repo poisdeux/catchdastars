@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.+'
-        classpath 'com.github.jtakakura:gradle-robovm-plugin:0.0.8'
+        classpath 'org.robovm:robovm-gradle-plugin:1.8.0'
     }
 }
 
@@ -17,8 +17,8 @@ allprojects {
     version = '1.0'
     ext {
         appName = 'catchdastars'
-        gdxVersion = '1.0.1'
-        roboVMVersion = '0.0.12'
+        gdxVersion = '1.0.+'
+        roboVMVersion = '1.8.0'
     }
 
     repositories {
@@ -38,8 +38,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-	testCompile "junit:junit:4.12"
-	testCompile "org.mockito:mockito-core:1.9.5"
+	    testCompile "junit:junit:4.12"
         testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
@@ -60,8 +59,10 @@ project(":android") {
 
     dependencies {
         compile project(":core")
-        compile "com.android.support:support-v4:23.+"
+        compile "com.android.support:support-v4:23.0.1"
 	    compile 'com.google.android.gms:play-services-drive:7.0.0'
+        testCompile 'junit:junit:4.12'
+        testCompile "org.mockito:mockito-core:1.9.5"
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -74,8 +75,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+        testCompile fileTree(dir: 'tests/libs', include: 'robotium-solo-5.2.1.jar')
         compile fileTree(dir: '../libs', include: '*.jar')
-        androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
     }
 }
 
@@ -105,12 +106,12 @@ project(":core") {
     apply plugin: "java"
 
     dependencies {
+        compile "org.robovm:robovm-rt:$roboVMVersion"
+        compile "org.robovm:robovm-cocoatouch:$roboVMVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        // Test dependencies :
-        testCompile "junit:junit:4.11"
-        testCompile "org.mockito:mockito-core:1.9.5"
 	compile fileTree(dir: '../libs', include: '*.jar')
     }
 

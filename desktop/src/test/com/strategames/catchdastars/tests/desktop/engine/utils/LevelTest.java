@@ -87,28 +87,28 @@ public class LevelTest {
 
 	@Test
 	public void accessibleByTest() {
-		Array<com.strategames.engine.math.Vector2> positions = this.level.getAccessibleBy();
+		Array<int[]> positions = this.level.getAccessibleBy();
 		assertTrue(positions.size == 0);
 
 		this.level.addAccessibleBy(0, 0);
 		positions = this.level.getAccessibleBy();
 		assertTrue(positions.size == 1);
-		Vector2 pos = positions.get(0);
-		assertTrue((pos.x == 0) && (pos.y == 0));
+		int[] pos = positions.get(0);
+		assertTrue((pos[0] == 0) && (pos[1] == 0));
 
 		this.level.addAccessibleBy(2, 3);
 		positions = this.level.getAccessibleBy();
 		assertTrue(positions.size == 2);
 		pos = positions.get(1);
-		assertTrue((pos.x == 2) && (pos.y == 3));
+		assertTrue((pos[0] == 2) && (pos[1] == 3));
 
 		this.level.addAccessibleBy(0, 0); //should not be added again
 		positions = this.level.getAccessibleBy();
 		assertTrue(positions.size == 2);
 		pos = positions.get(0);
-		assertTrue((pos.x == 0) && (pos.y == 0));
+		assertTrue((pos[0] == 0) && (pos[1] == 0));
 		pos = positions.get(1);
-		assertTrue((pos.x == 2) && (pos.y == 3));
+		assertTrue((pos[0] == 2) && (pos[1] == 3));
 	}
 
 	private void testEqual(Level level1, Level level2) {
