@@ -68,5 +68,6 @@ desktop/games/
 desktop/screenshots/
 android/assets/games/
 android/assets/screenshots/
+android/libs/
 .asexeccache
 .sdklockcache
