@@ -149,6 +149,14 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 	public void show() {
 		super.show();
 		Game game = getGameEngine().getGame();
+		GameMetaData gameMetaData = game.getGameMetaData();
+
+		// We use 1000 to not intervene with any other saved game progressions
+		// assuming user does not store more then 999 progressions
+		gameMetaData.setSavedGameProgressNumber(1000);
+		GameWriter.deleteInprogress(gameMetaData);
+		getGameEngine().setTestMode(true);
+		game.reset();
 
 		if( editingLevel != null ) {
 			updateGame();
@@ -414,8 +422,7 @@ public class GameEditorScreen extends AbstractScreen implements Dialog.OnClickLi
 		if(text.contentEquals("Export game")) {
 			getGameEngine().getExporterImporter().export(gameMetaData.getJson());
 		}else if(text.contentEquals("Play game")) {
-			GameWriter.deleteInprogress(gameMetaData);
-            gameEngine.setTestMode(true);
+			Gdx.app.log("GameEditorScreen", "playing game: " + gameMetaData);
 			gameEngine.startLevel(new int[] {0,0});
 		} else if(text.contentEquals("Delete game")) {
 			//ask for confirmation

@@ -62,7 +62,8 @@ public class Game {
     }
 
     /**
-     * Resets game
+     * Resets game setting current level to start level
+	 * and resetting the score
      */
     public void reset() {
         if( this.currentLevelPosition == null ) {

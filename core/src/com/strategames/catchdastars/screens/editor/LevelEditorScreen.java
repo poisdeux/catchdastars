@@ -136,13 +136,6 @@ public class LevelEditorScreen extends AbstractScreen
 
     @Override
     public void show() {
-        /**
-         * Testing level from the leveleditor will start LevelScreen which automatically
-         * saves game progression. To prevent intervening with any real game progression
-         * we set it to a high value.
-         * TODO change int to a UUID?
-         */
-        getGameEngine().getGame().getGameMetaData().setSavedGameProgressNumber(1000);
         GameWriter.deleteInprogress(getGameEngine().getGame().getGameMetaData());
 
         resetStageActors();
