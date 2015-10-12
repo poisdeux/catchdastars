@@ -36,6 +36,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
+import com.strategames.catchdastars.gameobjects.AnimatedDoor;
 import com.strategames.catchdastars.gameobjects.BalloonBlue;
 import com.strategames.catchdastars.gameobjects.BalloonRed;
 import com.strategames.catchdastars.gameobjects.StarBlue;
@@ -424,65 +425,24 @@ public class CatchDaStars extends GameEngine {
 
         this.doorsOpen = true;
 
-        AbstractScreen screen = ((AbstractScreen) getScreen());
-        Stage stage = screen.getStageActors();
-
         Array<Door> doors = this.level.getDoors();
         for(int i = 0; i < doors.size; i++) {
             Door door = doors.get(i);
-            door.setOpen(true);
-            Wall w = door.getWall();
-            if(w instanceof WallVertical) {
-                openVerticalWall(w, door, screen, stage);
-            } else {
-                openHorizontalWall(w, door, screen, stage);
+
+            ((AnimatedDoor) door).open(this);
+        }
+    }
+
+    private void closeOtherDoors(Door door) {
+        Array<Door> doors = this.level.getDoors();
+        for(int i = 0; i < doors.size; i++) {
+            Door d = doors.get(i);
+            if( door != d ) {
+                d.close();
             }
         }
     }
 
-    private void openVerticalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
-        Vector2 cutPoint = new Vector2(door.getX(), door.getY());
-
-        Wall bottom = new WallVertical();
-        bottom.setPosition(w.getX(), w.getY());
-        bottom.setLength(cutPoint.y - w.getY());
-        addGameObject(bottom, stage);
-
-        Wall top = new WallVertical();
-        top.setPosition(cutPoint.x, cutPoint.y);
-        top.setLength(w.getLength() - bottom.getLength());
-        addGameObject(top, stage);
-
-        w.setCanBeRemoved(true);
-        deleteGameObject(w);
-
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
-                .target(cutPoint.y + door.getHeight()));
-        getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
-    }
-
-    private void openHorizontalWall(Wall w, Door door, AbstractScreen screen, Stage stage) {
-        Vector2 cutPoint = new Vector2(door.getX(), door.getY());
-
-        Wall left = new WallHorizontal();
-        left.setPosition(w.getX(), w.getY());
-        left.setLength(cutPoint.x - w.getX());
-        addGameObject(left, stage);
-
-        Wall right = new WallHorizontal();
-        right.setPosition(cutPoint.x, cutPoint.y);
-        right.setLength(w.getLength() - left.getLength());
-        addGameObject(right, stage);
-
-        w.setCanBeRemoved(true);
-        deleteGameObject(w);
-
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
-                .target(cutPoint.x + door.getWidth()));
-        getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
-    }
 
     /**
      * Beware that you do not change the returned array.
@@ -507,7 +467,7 @@ public class CatchDaStars extends GameEngine {
         objects.add(icecube);
         objects.add(new WallHorizontal());
         objects.add(new WallVertical());
-        objects.add(new Door());
+        objects.add(new AnimatedDoor());
 
         for(GameObject object : objects) {
             object.setGame(this);
@@ -573,6 +533,7 @@ public class CatchDaStars extends GameEngine {
             }
         } else if( object instanceof Door ) {
             this.nextLevelPosition = ((Door) object).getAccessToPosition();
+            closeOtherDoors((Door) object);
         } else if ( object instanceof RectangularSensor ) {
             if( balloon.isInGame() ) {
                 getWorldThread().setGameObjectInactive(balloon);

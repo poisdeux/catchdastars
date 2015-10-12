@@ -23,6 +23,7 @@ package com.strategames.engine.gameobject.types;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -87,7 +88,7 @@ public class Door extends StaticBody {
 
 	@Override
 	public GameObject copy() {
-		Door door = new Door();
+		Door door = (Door) newInstance();
 		door.setPosition(getX(), getY());
 		int[] pos = getAccessToPosition();
 		door.setAccessTo(pos[0], pos[1]);
@@ -138,10 +139,6 @@ public class Door extends StaticBody {
 		this.wall = wall;
 	}
 	
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-	
 	public boolean isOpen() {
 		return open;
 	}
@@ -179,7 +176,7 @@ public class Door extends StaticBody {
 	public int[] getAccessFromPosition() {
 		return exitLevel;
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString() + ", nextLevelPosition="+entryLevel[0]+","+entryLevel[1];
@@ -196,5 +193,14 @@ public class Door extends StaticBody {
 		int[] pos = door.getAccessToPosition();
 		return pos[0] == entryLevel[0] && pos[1] == entryLevel[1] && 
 				super.equals(obj);
+	}
+
+	public void open() {
+		Gdx.app.log("Door", "open");
+		this.open = true;
+	}
+
+	public void close(){
+		this.open = false;
 	}
 }
