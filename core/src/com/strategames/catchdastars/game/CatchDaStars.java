@@ -413,7 +413,7 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void levelFailed() {
-        pauseGame();
+        pauseGamePlay();
         ((LevelScreen) getScreen()).showLevelFailedDialog();
     }
 

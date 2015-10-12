@@ -29,7 +29,6 @@ import com.strategames.engine.scenes.scene2d.Stage;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.LevelLoader.OnLevelLoadedListener;
 import com.strategames.engine.tweens.ActorAccessor;
-import com.strategames.engine.storage.GameMetaData;
 import com.strategames.engine.utils.Level;
 import com.strategames.engine.utils.MusicPlayer;
 import com.strategames.engine.utils.Score;
@@ -100,7 +99,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 	public void show() {
 		super.show();
         GameEngine gameEngine = getGameEngine();
-        gameEngine.pauseGame();
+        gameEngine.pauseGamePlay();
 
         gameEngine.loadLevel(this);
 	}
@@ -135,7 +134,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				getGameEngine().stopScreen();
 				break;
 			case LevelPausedDialog.BUTTON_RESUME_CLICKED:
-				getGameEngine().resumeGame();
+				getGameEngine().resumeGamePlay();
 				break;
 			case LevelPausedDialog.BUTTON_RETRY_CLICKED:
 				resetStageActors();
@@ -244,7 +243,7 @@ public class LevelScreen extends AbstractScreen implements OnClickListener, OnLe
 				levelImage.remove();
 				filter.remove();
 				MusicPlayer.getInstance().playNext();
-				getGameEngine().startGame();			}
+				getGameEngine().startGamePlay();			}
 		});
 		levelStartAnimation.push(slideoutTween);
 		

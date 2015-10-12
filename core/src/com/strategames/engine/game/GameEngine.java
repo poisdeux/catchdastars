@@ -42,7 +42,6 @@ import com.strategames.engine.interfaces.MusicSelector;
 import com.strategames.engine.interfaces.OnMusicFilesReceivedListener;
 import com.strategames.engine.screens.AbstractScreen;
 import com.strategames.engine.storage.GameMetaData;
-import com.strategames.engine.storage.GameWriter;
 import com.strategames.engine.storage.LevelLoader;
 import com.strategames.engine.tweens.ActorAccessor;
 import com.strategames.engine.tweens.GameObjectAccessor;
@@ -203,7 +202,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         }
     }
 
-    public void pauseGame() {
+    public void pauseGamePlay() {
         this.gameState = GAME_STATE.PAUSED;
         MusicPlayer.getInstance().pause();
         if( this.worldThread != null ) {
@@ -211,13 +210,13 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         }
     }
 
-    public void resumeGame() {
+    public void resumeGamePlay() {
         this.gameState = GAME_STATE.RUNNING;
         MusicPlayer.getInstance().resume();
         startBox2DThread();
     }
 
-    public void startGame() {
+    public void startGamePlay() {
         this.gameState = GAME_STATE.RUNNING;
         this.levelState = LEVEL_STATE.INPROGRESS;
         this.levelCompleteCalled = false;
@@ -233,7 +232,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
     }
 
     /**
-     * Resets the current level and starts it
+     * Resets the current level and starts the level screen
      */
     public void restartLevel() {
         this.levelState = LEVEL_STATE.NONE;
@@ -241,6 +240,10 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         showLevelScreen();
     }
 
+    /**
+     * Sets the current level at pos and starts the level screen
+     * @param pos
+     */
     public void startLevel(int[] pos) {
         this.game.setCurrentLevelPosition(pos);
         this.levelState = LEVEL_STATE.NONE;
@@ -519,7 +522,7 @@ abstract public class GameEngine extends com.badlogic.gdx.Game implements Contac
         if((keycode == Keys.BACK)
                 || (keycode == Keys.ESCAPE)) {
             if( this.gameState == GAME_STATE.RUNNING ) {
-                pauseGame();
+                pauseGamePlay();
             } else {
                 stopScreen();
             }

@@ -128,7 +128,7 @@ public class LevelEditorScreen extends AbstractScreen
         getMultiplexer().addProcessor(stage);
         zoomCamera((OrthographicCamera) stage.getCamera());
 
-        getGameEngine().pauseGame();
+        getGameEngine().pauseGamePlay();
 
         displayGrid(LevelEditorPreferences.displayGridEnabled());
         setupLevel();
