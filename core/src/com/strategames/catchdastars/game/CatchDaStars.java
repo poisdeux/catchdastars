@@ -93,11 +93,11 @@ public class CatchDaStars extends GameEngine {
     private int amountOfRedBalloons;
     private int amountBalloonsInGame;
 
+    private Door doorTakenToNextLevel;
+
     private Box2DDebugRenderer debugRenderer;
 
     private boolean doorsOpen;
-
-    private int[] nextLevelPosition;
 
     private Level level;
 
@@ -257,7 +257,7 @@ public class CatchDaStars extends GameEngine {
 
     @Override
     public void startNextLevel() {
-        startLevel(nextLevelPosition);
+        startLevel(this.doorTakenToNextLevel.getAccessToPosition());
     }
 
     private int getAmountOfBalloonsFromPreviousLevel(String key) {
@@ -399,7 +399,7 @@ public class CatchDaStars extends GameEngine {
 
         ((LevelScreen) getScreen()).showLevelCompleteDialog(score);
 
-        game.setCurrentLevelPosition(nextLevelPosition);
+        game.setCurrentLevelPosition(this.doorTakenToNextLevel.getAccessToPosition());
 
         Gdx.app.log("CatchDaStars", "levelComplete(): amountOfBlueBalloons="+amountOfBlueBalloons);
         GameMetaData gameMetaData = game.getGameMetaData();
@@ -428,7 +428,6 @@ public class CatchDaStars extends GameEngine {
         Array<Door> doors = this.level.getDoors();
         for(int i = 0; i < doors.size; i++) {
             Door door = doors.get(i);
-
             ((AnimatedDoor) door).open(this);
         }
     }
@@ -532,14 +531,18 @@ public class CatchDaStars extends GameEngine {
                 destroyBalloon(balloon);
             }
         } else if( object instanceof Door ) {
-            this.nextLevelPosition = ((Door) object).getAccessToPosition();
-            closeOtherDoors((Door) object);
+            this.doorTakenToNextLevel = (Door) object;
         } else if ( object instanceof RectangularSensor ) {
             if( balloon.isInGame() ) {
                 getWorldThread().setGameObjectInactive(balloon);
                 balloon.setInGame(false);
                 if( --this.amountBalloonsInGame < 1 ) {
                     setLevelCompleted();
+                }
+
+                if( doorsOpen ) {
+                    doorsOpen = false;
+                    closeOtherDoors(this.doorTakenToNextLevel);
                 }
             }
         }

@@ -22,6 +22,7 @@
 package com.strategames.engine.game;
 
 import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.physics.box2d.World;
@@ -86,9 +87,17 @@ public class WorldThread extends Thread {
 	}
 
 	public void startTimeline(Timeline timeline) {
-		timeline.start(this.tweenManager);
+		this.tweenManager.add(timeline);
 	}
-	
+
+	public void startTimeline(Tween tween) {
+		this.tweenManager.add(tween);
+	}
+
+	public void removeTargetAnimation(Object object) {
+		this.tweenManager.killTarget(object);
+	}
+
 	public void stopThread() {
 		this.stopThread = true;
 	}

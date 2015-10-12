@@ -22,6 +22,9 @@
 package com.strategames.catchdastars.gameobjects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.strategames.engine.game.GameEngine;
 import com.strategames.engine.gameobject.GameObject;
 import com.strategames.engine.gameobject.types.Door;
@@ -33,12 +36,21 @@ import com.strategames.engine.tweens.GameObjectAccessor;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.repeat;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+
 public class AnimatedDoor extends Door {
 
     private Wall top;
     private Wall right;
 
     private GameEngine gameEngine;
+
+    private Action openAction;
 
     @Override
     protected GameObject newInstance() {
@@ -83,10 +95,8 @@ public class AnimatedDoor extends Door {
         top.setLength(w.getLength() - bottom.getLength());
         gameEngine.addGameObject(top, getStage());
 
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
-                .target(y + getHeight()));
-        gameEngine.getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
+        openAction = Actions.moveBy(0, getWidth(), 1f, Interpolation.linear);
+        top.addAction(openAction);
     }
 
     private void openHorizontalWall(Wall w) {
@@ -103,23 +113,20 @@ public class AnimatedDoor extends Door {
         right.setLength(w.getLength() - left.getLength());
         gameEngine.addGameObject(right, getStage());
 
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
+        gameEngine.getWorldThread().startTimeline(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
                 .target(x + getWidth()));
-        gameEngine.getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
     }
 
     private void closeHorizontal() {
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
+        gameEngine.getWorldThread().removeTargetAnimation(right);
+        gameEngine.getWorldThread().startTimeline(Tween.to(right, GameObjectAccessor.POSITION_X, 1f)
                 .target(getX()));
-        gameEngine.getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
     }
 
     private void closeVertical() {
-        Timeline timeline = Timeline.createSequence();
-        timeline.push(Tween.to(top, GameObjectAccessor.POSITION_Y, 1f)
-                .target(getY()));
-        gameEngine.getWorldThread().startTimeline(timeline); // as Wall has a body which is moved we need to make sure we do not move while worldstep is running
+        top.removeAction(openAction);
+
+        openAction = Actions.moveBy(0, -getWidth(), 1f, Interpolation.linear);
+        top.addAction(openAction);
     }
 }
